@@ -1,0 +1,277 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* =============================================================================================
+   TRAFAL · tokens de diseño
+   Estilo oscuro, neón moderado, inspiración retro/pixel sin exagerar.
+   La paleta de abajo es la ÚNICA fuente de colores: los tests de contraste (design/contrast.test.ts)
+   leen estos valores y exigen ≥ 4,5:1 en cada par de texto/fondo.
+   ============================================================================================= */
+
+:root {
+  color-scheme: dark;
+
+  /* Superficies */
+  --trafal-bg: #07060e;
+  --trafal-surface: #110f1e; /* tarjetas: se usan al 90 % de opacidad */
+  --trafal-panel: #0e0c1c; /* paneles flotantes: menús, diálogos, nav */
+
+  /* Texto */
+  --trafal-text: #f4f2ff;
+  --trafal-text-2: #cfcbe8;
+  --trafal-text-3: #a9a4c7;
+
+  /* Acentos. Lima SOLO para acciones de jugar; coral SOLO para me gusta / errores. */
+  --trafal-violet: #8b5cff;
+  --trafal-cyan: #2ee6ff;
+  --trafal-lime: #c6ff3d;
+  --trafal-coral: #ff5c7a;
+
+  /* Variables semánticas (las usan los componentes de shadcn) */
+  --background: var(--trafal-bg);
+  --foreground: var(--trafal-text);
+  --card: color-mix(in srgb, var(--trafal-surface) 90%, transparent);
+  --card-foreground: var(--trafal-text);
+  --popover: var(--trafal-panel);
+  --popover-foreground: var(--trafal-text);
+  --primary: var(--trafal-violet);
+  --primary-foreground: var(--trafal-bg);
+  --secondary: var(--trafal-text);
+  --secondary-foreground: var(--trafal-bg);
+  --muted: rgb(255 255 255 / 0.06);
+  --muted-foreground: var(--trafal-text-3);
+  --accent: rgb(139 92 255 / 0.18);
+  --accent-foreground: #ffffff;
+  --destructive: var(--trafal-coral);
+  --border: rgb(255 255 255 / 0.08);
+  --input: rgb(255 255 255 / 0.14);
+  --ring: var(--trafal-cyan);
+  --radius: 1.5rem; /* 24 px: tarjetas con bordes muy redondeados */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Marca */
+  --color-violet: var(--trafal-violet);
+  --color-cyan: var(--trafal-cyan);
+  --color-lime: var(--trafal-lime);
+  --color-coral: var(--trafal-coral);
+  --color-ink: var(--trafal-bg); /* texto oscuro sobre botones de acento */
+  --color-panel: var(--trafal-panel);
+  --color-surface: var(--trafal-surface);
+  --color-text-2: var(--trafal-text-2);
+  --color-text-3: var(--trafal-text-3);
+
+  /* Tipografías: Oxanium (títulos), Space Grotesk (texto y botones), Pixelify Sans (logo y etiquetas chicas) */
+  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-oxanium), var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-pixel: var(--font-pixelify-sans), ui-monospace, monospace;
+
+  /* Radios derivados de --radius (shadcn) */
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.65);
+  --radius-lg: calc(var(--radius) * 0.85);
+  --radius-xl: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.15);
+  --radius-3xl: calc(var(--radius) * 1.4);
+
+  /* Brillo neón suave */
+  --shadow-glow-violet: 0 0 18px rgb(139 92 255 / 0.6);
+  --shadow-glow-violet-lg: 0 0 24px rgb(139 92 255 / 0.6), 0 0 52px rgb(46 230 255 / 0.22);
+  --shadow-glow-cyan: 0 0 14px rgb(46 230 255 / 0.35);
+  --shadow-glow-lime: 0 0 18px rgb(198 255 61 / 0.45);
+  --shadow-glow-coral: 0 0 14px rgb(255 92 122 / 0.4);
+  --shadow-card-hover: 0 0 0 1px rgb(139 92 255 / 0.6), 0 0 30px rgb(139 92 255 / 0.25);
+  --shadow-float: 0 12px 40px rgb(0 0 0 / 0.45);
+
+  /* Degradé principal violeta → cian y bordes de marca */
+  --background-image-brand: linear-gradient(90deg, var(--trafal-violet), var(--trafal-cyan));
+  --background-image-brand-diag: linear-gradient(135deg, var(--trafal-violet), var(--trafal-cyan));
+  --background-image-nav-border: linear-gradient(
+    90deg,
+    rgb(139 92 255 / 0.95),
+    rgb(46 230 255 / 0.75) 55%,
+    rgb(198 255 61 / 0.55)
+  );
+  --background-image-feature-border: linear-gradient(120deg, var(--trafal-lime), var(--trafal-cyan) 45%, var(--trafal-violet));
+  --background-image-dots: radial-gradient(rgb(255 255 255 / 0.1) 1px, transparent 1.4px);
+
+  --animate-aurora-a: aurora-a 24s ease-in-out infinite;
+  --animate-aurora-b: aurora-b 30s ease-in-out infinite;
+  --animate-aurora-c: aurora-a 36s ease-in-out infinite reverse;
+}
+
+@keyframes aurora-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(8vw, 6vh) scale(1.2);
+  }
+}
+
+@keyframes aurora-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1.1);
+  }
+  50% {
+    transform: translate(-10vw, -4vh) scale(0.9);
+  }
+}
+
+/* Utilidades de marca */
+@utility text-gradient {
+  background-image: var(--background-image-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgb(46 230 255 / 0.45));
+}
+
+@utility pixel-label {
+  font-family: var(--font-pixel);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@utility text-glow-violet {
+  text-shadow: 0 0 22px rgb(139 92 255 / 0.5);
+}
+
+@utility text-glow-cyan {
+  text-shadow: 0 0 10px rgb(46 230 255 / 0.6);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background font-sans text-foreground antialiased;
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+
+  /* Foco SIEMPRE visible (accesibilidad): anillo cian neón. */
+  :focus-visible {
+    outline: 2px solid var(--trafal-cyan);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: rgb(139 92 255 / 0.55);
+    color: #ffffff;
+  }
+
+  /* Sin animaciones para quienes lo piden. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Aurora de fondo: quieta en celulares (ahorra batería) y con prefers-reduced-motion (regla global de arriba). */
+@media (max-width: 640px) {
+  .aurora-blob {
+    animation: none !important;
+  }
+}
+
+/* =============================================================================================
+   CURSOR
+   · Flecha pixelada cian como cursor general (solo con mouse: en pantallas táctiles no hay cursor).
+   · La manita del sistema (cursor: pointer) en TODO lo que se puede apretar o elegir: enlaces, botones, casillas y
+     chips (aunque la etiqueta no tenga `for`), menús desplegables, pestañas, listas, selectores de archivo...
+   · «No permitido» en lo deshabilitado.
+
+   Estas reglas van FUERA de @layer a propósito: lo que no está en una capa le gana a todo lo que sí (las utilidades
+   de Tailwind incluidas). Así ningún componente puede dejar la flecha por un `cursor-default` heredado; por ejemplo,
+   los ítems de menú de shadcn lo traen. Un test de punta a punta recorre las pantallas y comprueba el cursor real.
+   ============================================================================================= */
+@media (pointer: fine) {
+  html {
+    cursor: url("/cursors/arrow.svg") 0 0, auto;
+  }
+
+  a[href],
+  button,
+  summary,
+  select,
+  label[for],
+  label:has(input:is([type="checkbox"], [type="radio"])),
+  input:is([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="submit"], [type="button"], [type="reset"]),
+  [role="button"],
+  [role="link"],
+  [role="tab"],
+  [role="menuitem"],
+  [role="menuitemcheckbox"],
+  [role="menuitemradio"],
+  [role="option"],
+  [role="switch"],
+  [role="checkbox"],
+  [role="radio"],
+  [aria-haspopup]:not([aria-haspopup="false"]) {
+    cursor: pointer;
+  }
+
+  /* El botón «Elegir archivo» que dibuja el navegador dentro de <input type="file">. */
+  input::file-selector-button {
+    cursor: pointer;
+  }
+
+  input:not(:is([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="submit"], [type="button"], [type="reset"], [type="color"])),
+  textarea {
+    cursor: text;
+  }
+
+  /* Lo deshabilitado va al final: a igual especificidad, la última regla gana. */
+  :disabled,
+  [aria-disabled="true"],
+  [data-disabled],
+  label:has(input:disabled) {
+    cursor: not-allowed;
+  }
+}

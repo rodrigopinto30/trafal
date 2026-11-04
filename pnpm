@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Corre pnpm DENTRO del contenedor de Node del proyecto (el host no necesita Node ni pnpm).
+#   ./pnpm install            ./pnpm test            ./pnpm lint            ./pnpm typecheck
+#   ./pnpm --filter @trafal/web add <paquete>
+set -euo pipefail
+cd "$(dirname "${BASH_SOURCE[0]}")"
+if ! docker image inspect trafal-web:base >/dev/null 2>&1; then
+  docker build -q -t trafal-web:base --target base -f docker/web.Dockerfile . >/dev/null
+fi
+exec docker run --rm -u "$(id -u):$(id -g)" -e HOME=/tmp/home -e CI=true \
+  -v "$PWD":/app -w /app trafal-web:base \
+  sh -c 'mkdir -p "$HOME" && exec pnpm "$@"' -- "$@"

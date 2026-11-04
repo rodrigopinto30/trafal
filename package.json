@@ -1,0 +1,16 @@
+{
+  "name": "trafal",
+  "private": true,
+  "description": "Trafal — la red social para quienes hacen videojuegos que se juegan en el navegador.",
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @trafal/web dev",
+    "build": "pnpm --filter @trafal/web build",
+    "lint": "pnpm --filter @trafal/web lint",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm --filter @trafal/web test"
+  }
+}

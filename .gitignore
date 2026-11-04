@@ -1,0 +1,30 @@
+# dependencias y builds
+node_modules/
+.pnpm-store/
+.next/
+out/
+build/
+dist/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# entorno (los secretos nunca se versionan; .env.example sí)
+.env
+.env.*
+!.env.example
+
+# herramientas descargadas por start.sh y archivos de supabase locales
+.tools/
+supabase/.temp/
+supabase/.branches/
+
+# tests e2e
+test-results/
+playwright-report/
+e2e/screenshots/
+
+# varios
+.vercel/
+.DS_Store
+*.log

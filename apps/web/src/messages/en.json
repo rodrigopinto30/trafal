@@ -1,0 +1,358 @@
+{
+  "meta": {
+    "siteName": "Trafal",
+    "defaultTitle": "Trafal — Publish your game. Get players.",
+    "titleTemplate": "%s · Trafal",
+    "description": "Trafal is the social network for people making video games: upload a browser game, show how you build it and get feedback from the community."
+  },
+  "common": {
+    "skipToContent": "Skip to content",
+    "loading": "Loading…",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "backToTop": "Back to top",
+    "optional": "optional",
+    "or": "or",
+    "genericError": "Something went wrong. Please try again in a few seconds.",
+    "languageName": {
+      "es": "Español",
+      "en": "English"
+    }
+  },
+  "nav": {
+    "label": "Main",
+    "mobileLabel": "Mobile menu",
+    "home": "Go to the Trafal home page",
+    "community": "Community",
+    "creators": "Creators",
+    "upload": "Upload game",
+    "login": "Log in",
+    "signup": "Sign up",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "account": "Your account",
+    "myProfile": "My profile",
+    "settings": "Settings",
+    "completeProfile": "Finish profile",
+    "logout": "Log out"
+  },
+  "footer": {
+    "tagline": "The social network for publishing browser games and sharing how they're made.",
+    "product": "Product",
+    "help": "Help",
+    "legal": "Legal",
+    "explore": "Explore games",
+    "community": "Community",
+    "howToUpload": "How to upload a game",
+    "guidelines": "Community guidelines",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "copyright": "Copyright",
+    "rights": "© {year} Trafal"
+  },
+  "home": {
+    "badge": "NEW",
+    "badgeText": "The social network for game makers",
+    "titleLead": "Publish your game.",
+    "titleAccent": "Get players.",
+    "subtitle": "Browser games made by people just getting started. Play, comment and upload yours.",
+    "ctaSignup": "Create my free profile",
+    "ctaUpload": "Upload a game",
+    "howLabel": "HOW IT WORKS",
+    "howTitle": "From “I started it” to “people are playing it”.",
+    "steps": {
+      "upload": {
+        "title": "Upload your game",
+        "text": "A .zip with your web build and you're done: it plays instantly on desktop and mobile. Godot, Unity, GameMaker, Phaser, PICO-8 or Scratch."
+      },
+      "share": {
+        "title": "Post your progress",
+        "text": "Screenshots, GIFs, before and after, problems you solved. Every post lands on your game's timeline."
+      },
+      "feedback": {
+        "title": "Get feedback",
+        "text": "People play, comment, like and share. You mark which comments helped."
+      }
+    },
+    "finalTitle": "Your game doesn't have to be perfect. It has to be published.",
+    "finalText": "Create your profile, upload what you have and tell us what you're working on. The community does the rest."
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least 8 characters, with letters and numbers.",
+    "confirmPassword": "Repeat the password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "google": "Continue with Google",
+    "login": {
+      "title": "Welcome back",
+      "subtitle": "Pick up where you left off: your games, your devlogs and your community are waiting.",
+      "forgot": "Forgot your password?",
+      "submit": "Log in",
+      "submitting": "Logging in…",
+      "noAccount": "Don't have an account yet?",
+      "signupLink": "Create one for free"
+    },
+    "signup": {
+      "title": "Create your account",
+      "subtitle": "It's free. Upload your first game in under five minutes.",
+      "consent": "I am {age} or older and I accept the <terms>Terms</terms> and the <privacy>Privacy Policy</privacy>.",
+      "submit": "Create account",
+      "submitting": "Creating your account…",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in"
+    },
+    "checkEmail": {
+      "title": "Check your email",
+      "text": "We sent a link to <strong>{email}</strong>. Tap it to confirm your account. If you can't see it, check your spam folder.",
+      "back": "Back to log in"
+    },
+    "forgot": {
+      "title": "Recover your password",
+      "subtitle": "Enter your email and we'll send you a link to choose a new one.",
+      "submit": "Send me the link",
+      "submitting": "Sending…",
+      "sentTitle": "Done, check your email",
+      "sentText": "If there's an account with that email, you'll get a link to choose a new password in a few minutes.",
+      "back": "Back to log in"
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "subtitle": "Easy for you to remember, hard for everyone else to guess.",
+      "newPassword": "New password",
+      "submit": "Change my password",
+      "submitting": "Changing…"
+    },
+    "errors": {
+      "required": "Please fill in this field.",
+      "invalidCredentials": "The email and password don't match.",
+      "emailNotConfirmed": "You haven't confirmed your email yet. Check your inbox (and spam).",
+      "invalidEmail": "That email doesn't look valid.",
+      "weakPassword": "That password is too weak. Use at least 8 characters, with letters and numbers.",
+      "passwordsDontMatch": "The passwords don't match.",
+      "consentRequired": "To create your account, confirm that you're {age} or older and accept the terms.",
+      "rateLimited": "Too many attempts in a row. Wait a few minutes and try again.",
+      "linkExpired": "That link has expired or was already used. Ask for a new one.",
+      "oauthFailed": "We couldn't log you in with Google. Try again or use your email.",
+      "generic": "We couldn't complete that. Please try again in a few seconds."
+    }
+  },
+  "onboarding": {
+    "title": "Last step: your profile",
+    "subtitle": "This is how people will see you on Trafal. You can change it later (except your @username).",
+    "username": "Your @username",
+    "usernameHint": "3 to 30 characters: letters, dots (.) and underscores (_). Numbers are optional.",
+    "usernameStatus": {
+      "checking": "Checking…",
+      "available": "It's free!",
+      "availableAs": "It's free! It will be saved as @{username}.",
+      "taken": "Someone else already uses that @username.",
+      "invalid": {
+        "tooShort": "Too short: use at least 3 characters.",
+        "tooLong": "Too long: the maximum is 30 characters.",
+        "characters": "Use only letters, numbers, dots (.) and underscores (_), with no spaces.",
+        "dots": "A dot can't be at the start, at the end or repeated.",
+        "noLetters": "It must include at least one letter or number."
+      },
+      "reserved": "That @username isn't available."
+    },
+    "usernameSuggest": "You could try:",
+    "usernameSuggestUse": "Use @{username}",
+    "displayName": "Your name",
+    "displayNameHint": "It can be your real name or an artist name.",
+    "submit": "Enter Trafal",
+    "submitting": "Saving…",
+    "errors": {
+      "username_taken": "Someone else already uses that @username. Pick another one.",
+      "invalid_username": "That @username isn't valid: use 3 to 30 characters from letters, numbers, dots or underscores.",
+      "reserved_username": "That @username isn't available. Pick another one.",
+      "invalid_display_name": "Enter your name (up to 50 characters).",
+      "age_confirmation_required": "You need to confirm that you're {age} or older.",
+      "terms_required": "You need to accept the terms to continue.",
+      "already_onboarded": "Your profile was already created.",
+      "generic": "We couldn't create your profile. Please try again."
+    }
+  },
+  "profile": {
+    "followersLabel": "{count, plural, one {follower} other {followers}}",
+    "followingLabel": "{count, plural, one {following} other {following}}",
+    "gamesLabel": "{count, plural, one {game} other {games}}",
+    "postsLabel": "{count, plural, one {devlog} other {devlogs}}",
+    "follow": "Follow",
+    "following": "Following",
+    "unfollow": "Unfollow",
+    "followAction": "Follow @{username}",
+    "unfollowAction": "Unfollow @{username}",
+    "edit": "Edit profile",
+    "memberOf": "Uses",
+    "enginesLabel": "Engines they use",
+    "genresLabel": "Genres they like",
+    "tabs": {
+      "label": "Profile sections",
+      "games": "Games",
+      "posts": "Devlogs"
+    },
+    "empty": {
+      "gamesOwn": "You haven't uploaded any games yet.",
+      "gamesOther": "They haven't uploaded any games yet.",
+      "postsOwn": "You haven't posted any devlogs yet.",
+      "postsOther": "They haven't posted any devlogs yet.",
+      "cta": "Upload my first game"
+    },
+    "followersTitle": "@{username}'s followers",
+    "followingTitle": "Who @{username} follows",
+    "noFollowers": "No followers yet.",
+    "noFollowing": "Not following anyone yet.",
+    "backToProfile": "Back to profile",
+    "notFoundTitle": "We couldn't find that profile",
+    "notFoundText": "The @username may be misspelled or the account may no longer exist.",
+    "loginToFollow": "Log in to follow this person.",
+    "completeTitle": "Finish your profile",
+    "completeText": "Add a photo and pick the game genres you like so the community can get to know you.",
+    "completeCta": "Finish my profile"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Your profile, your photo and how you want to use Trafal.",
+    "navLabel": "Settings sections",
+    "nav": {
+      "profile": "Profile",
+      "preferences": "Preferences"
+    },
+    "profile": {
+      "title": "Edit profile",
+      "subtitle": "Tell the community who you are and what you make your games with.",
+      "aboutTitle": "About you",
+      "displayName": "Name",
+      "bio": "Bio",
+      "bioHint": "Tell us something about you (up to 280 characters).",
+      "city": "City",
+      "country": "Country",
+      "countryPlaceholder": "Choose your country",
+      "enginesTitle": "Engines you use",
+      "enginesHint": "Pick up to 8.",
+      "genresTitle": "Genres you like",
+      "genresHint": "Tap the ones you like. Tap again to remove one. They show up on your profile.",
+      "genresCount": "{count, plural, =0 {You haven't picked any yet.} one {You picked 1 genre.} other {You picked # genres.}}",
+      "saved": "Changes saved!"
+    },
+    "avatar": {
+      "title": "Your photo",
+      "text": "It replaces the colored letter. It shows on your profile, in lists and on what you post.",
+      "hint": "JPG, PNG or WebP, up to 15 MB. We crop it to a square and shrink it.",
+      "upload": "Upload photo",
+      "change": "Change photo",
+      "remove": "Remove photo",
+      "removing": "Removing…",
+      "removed": "We removed your photo.",
+      "saved": "Photo updated!",
+      "editorTitle": "Adjust your photo",
+      "editorHelp": "Drag the image to move it and use the zoom to get closer or farther. With the keyboard, move it with the arrow keys.",
+      "cropArea": "Photo crop: drag or use the arrow keys to move",
+      "zoom": "Zoom",
+      "save": "Save photo",
+      "saving": "Uploading…",
+      "errors": {
+        "unreadable": "We couldn't read that image. Try another photo (JPG, PNG or WebP).",
+        "sourceTooBig": "That image is too big (15 MB maximum). Try a smaller one.",
+        "missing": "Pick a photo first.",
+        "tooLarge": "The photo ended up too heavy. Try another one.",
+        "invalid": "That format isn't supported. Use JPG, PNG or WebP.",
+        "dimensions": "The photo isn't the expected size. Try again.",
+        "animated": "Animated images aren't supported. Pick a still photo.",
+        "storage": "We couldn't store the photo. Please try again in a few seconds.",
+        "save": "We couldn't update your profile with the photo. Please try again.",
+        "unauthenticated": "Your session expired. Log in again."
+      }
+    },
+    "preferences": {
+      "title": "Preferences",
+      "subtitle": "How you want to use Trafal.",
+      "languageTitle": "Language",
+      "languageText": "By default we use the language of your browser or your system. If you prefer another one, pick it here and we'll remember it for your account.",
+      "languageLabel": "Interface language",
+      "save": "Save preferences",
+      "saved": "Preferences saved!"
+    },
+    "errors": {
+      "bioTooLong": "Your bio can be up to 280 characters.",
+      "cityTooLong": "The city can be up to 80 characters.",
+      "invalidCountry": "Choose a country from the list.",
+      "invalidEngine": "One of the chosen engines isn't valid.",
+      "tooManyEngines": "You can pick up to 8 engines.",
+      "invalidGenre": "One of the chosen genres isn't valid.",
+      "generic": "We couldn't save your changes. Please try again."
+    }
+  },
+  "engines": {
+    "godot": "Godot",
+    "unity": "Unity",
+    "gamemaker": "GameMaker",
+    "phaser": "Phaser",
+    "pico8": "PICO-8",
+    "scratch": "Scratch",
+    "twine": "Twine",
+    "construct": "Construct",
+    "other": "Other"
+  },
+  "genres": {
+    "platformer": "Platformer",
+    "arcade": "Arcade",
+    "puzzle": "Puzzle",
+    "narrative": "Narrative",
+    "roguelike": "Roguelike",
+    "cozy": "Cozy",
+    "horror": "Horror",
+    "rhythm": "Rhythm",
+    "racing": "Racing",
+    "adventure": "Adventure",
+    "strategy": "Strategy",
+    "shooter": "Shooter",
+    "simulation": "Simulation",
+    "sports": "Sports",
+    "fighting": "Fighting",
+    "idle": "Idle",
+    "other": "Other"
+  },
+  "comingSoon": {
+    "badge": "UNDER CONSTRUCTION",
+    "text": "We're finishing this part of Trafal. Come back soon.",
+    "backHome": "Back to home",
+    "explore": {
+      "title": "Explore games",
+      "description": "Here you'll search games, filter by genre and engine, sort by trending and hit “Surprise me”."
+    },
+    "community": {
+      "title": "Community",
+      "description": "The feed with progress from people making games: devlogs, new games and feedback requests."
+    },
+    "creators": {
+      "title": "Creators",
+      "description": "Discover people just getting started and follow them so you don't miss anything they publish."
+    },
+    "upload": {
+      "title": "Upload a game",
+      "description": "Upload the .zip of your web build and in minutes it plays on desktop and mobile."
+    }
+  },
+  "legal": {
+    "draftTitle": "Document being drafted",
+    "draftText": "We're finishing this document. It will be published before launch.",
+    "terms": "Terms and conditions",
+    "privacy": "Privacy policy",
+    "guidelines": "Community guidelines",
+    "copyright": "Copyright claims"
+  },
+  "errors": {
+    "notFoundTitle": "We couldn't find that page",
+    "notFoundText": "The link may be broken or the page no longer exists.",
+    "backHome": "Back to home",
+    "unexpectedTitle": "Something went wrong",
+    "unexpectedText": "We hit an unexpected problem. Try again; if it keeps happening, let us know.",
+    "retry": "Try again"
+  }
+}

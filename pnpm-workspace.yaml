@@ -1,0 +1,13 @@
+packages:
+  - apps/*
+  - packages/*
+  - e2e
+
+# Store de pnpm dentro del repo (ignorado por git): mismo disco que node_modules → enlaces duros, sin copias.
+storeDir: .pnpm-store
+
+# pnpm 12 bloquea por defecto los scripts de instalación de las dependencias.
+# Acá se aprueban explícitamente (solo lo estrictamente necesario).
+allowBuilds:
+  sharp: false
+  unrs-resolver: false

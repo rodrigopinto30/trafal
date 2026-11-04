@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>Trafal</title></head>
+<body style="margin:0;padding:0;background:#07060E;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#07060E;">
+    <tr><td align="center" style="padding:32px 16px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#110F1E;border:1px solid #2A2745;border-radius:24px;">
+        <tr><td style="padding:32px 32px 8px;font-family:'Courier New',monospace;font-weight:700;font-size:24px;color:#F4F2FF;">trafal<span style="color:#2EE6FF;">.</span></td></tr>
+        <tr><td style="padding:8px 32px 0;font-family:Arial,Helvetica,sans-serif;color:#F4F2FF;">
+          <h1 style="margin:0 0 12px;font-size:24px;line-height:1.2;color:#F4F2FF;">Elegí una contraseña nueva</h1>
+          <p style="margin:0 0 24px;font-size:16px;line-height:1.55;color:#CFCBE8;">Pediste recuperar tu contraseña. Tocá el botón para elegir una nueva. El enlace vence en una hora.</p>
+        </td></tr>
+        <tr><td style="padding:0 32px 8px;">
+          <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/reset-password" style="display:inline-block;padding:14px 28px;border-radius:999px;background:#8B5CFF;background-image:linear-gradient(90deg,#8B5CFF,#2EE6FF);color:#07060E;font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:16px;text-decoration:none;">Cambiar mi contraseña</a>
+        </td></tr>
+        <tr><td style="padding:16px 32px 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.5;color:#A9A4C7;">Si no fuiste vos, ignorá este mail: tu contraseña actual sigue funcionando.</td></tr>
+        <tr><td style="padding:24px 32px 0;"><div style="height:1px;background:#2A2745;"></div></td></tr>
+        <tr><td style="padding:24px 32px 0;font-family:Arial,Helvetica,sans-serif;color:#F4F2FF;">
+          <h2 style="margin:0 0 8px;font-size:18px;color:#F4F2FF;">Choose a new password</h2>
+          <p style="margin:0 0 16px;font-size:15px;line-height:1.55;color:#CFCBE8;">You asked to reset your password. Tap the button above to choose a new one; the link expires in one hour. If it wasn't you, ignore this email: your current password still works.</p>
+        </td></tr>
+        <tr><td style="padding:0 32px 32px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#A9A4C7;">¿El botón no funciona? / Button not working?<br><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/reset-password" style="color:#2EE6FF;word-break:break-all;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=recovery&amp;next=/reset-password</a></td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>
