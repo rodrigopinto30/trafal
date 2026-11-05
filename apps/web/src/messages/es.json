@@ -305,6 +305,27 @@
     "resultsTitle": "Resultados de la búsqueda",
     "gamesTitle": "Juegos"
   },
+  "uploadErrors": {
+    "NOT_A_ZIP": "Ese archivo no es un .zip válido. Comprimí la carpeta de tu juego en un .zip y volvé a subirlo.",
+    "CORRUPT_ARCHIVE": "El .zip está dañado o incompleto. Volvé a comprimir tu juego y probá de nuevo.",
+    "ZIP_TOO_LARGE": "El .zip pesa demasiado: el máximo es {limit}. Probá comprimir las imágenes y el audio, o sacá lo que no uses.",
+    "UNCOMPRESSED_TOO_LARGE": "Tu juego ocupa demasiado una vez descomprimido: el máximo es {limit}. Sacá archivos que no uses o achicá los recursos.",
+    "FILE_TOO_LARGE": "El archivo «{path}» es demasiado grande: el máximo por archivo es {limit}.",
+    "TOO_MANY_FILES": "El .zip tiene demasiados archivos: el máximo es {limit}. Juntá recursos en atlas o sacá los que no uses.",
+    "UNSAFE_PATH": "El archivo «{path}» tiene un nombre o una ruta que no podemos aceptar. Renombralo sin barras invertidas, «..» ni caracteres raros.",
+    "PATH_TOO_LONG": "La ruta de «{path}» es demasiado larga (máximo {limit} caracteres). Acortá los nombres de las carpetas.",
+    "DUPLICATE_PATH": "Hay dos archivos con el mismo nombre, que solo cambia en mayúsculas o acentos: «{path}». Dejá uno solo.",
+    "PATH_CONFLICT": "«{path}» es a la vez un archivo y una carpeta. Renombrá uno de los dos.",
+    "ENCRYPTED_ENTRY": "El .zip tiene archivos protegidos con contraseña («{path}»). Volvé a comprimirlo sin contraseña.",
+    "UNSUPPORTED_COMPRESSION": "El .zip usa un método de compresión que no soportamos («{path}»). Volvé a comprimirlo con el método normal (Deflate).",
+    "OVERLAPPING_ENTRIES": "El .zip tiene una estructura interna inválida («{path}»). Volvé a comprimir tu juego con un programa común.",
+    "SYMLINK_NOT_ALLOWED": "El .zip tiene un acceso directo o enlace simbólico («{path}»). Reemplazalo por el archivo real.",
+    "SPECIAL_FILE": "El .zip tiene un archivo especial que no es un archivo común («{path}»). Sacalo y volvé a comprimir.",
+    "EXECUTABLE_FILE": "No aceptamos programas ejecutables («{path}»). Trafal solo aloja juegos que se juegan en el navegador.",
+    "NESTED_ARCHIVE": "No aceptamos archivos comprimidos adentro del .zip («{path}»). Descomprimilo y subí sus archivos sueltos.",
+    "EXTENSION_NOT_ALLOWED": "No aceptamos archivos de tipo «{extension}» («{path}»). Sacalo del .zip o cambiá a un formato web común.",
+    "NO_INDEX_HTML": "Falta el archivo {file} en la carpeta principal. Es el que abre tu juego en el navegador: tiene que estar en la raíz del .zip."
+  },
   "posts": {
     "kinds": {
       "avance": "Avance",

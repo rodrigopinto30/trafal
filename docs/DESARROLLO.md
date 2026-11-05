@@ -31,16 +31,19 @@ Lo único que necesitás instalado es **Docker** (con Compose v2) y unos 4 GB de
 ## Verificar que todo anda
 
 ```bash
-./check.sh                # lint + tipos + tests unitarios + tests de la base (RLS/permisos) + tipos de la DB al día
+./check.sh                # lint + tipos + tests unitarios + worker de Python + tests de la base (RLS/permisos) + tipos de la DB al día
 ./check.sh --e2e          # además, pruebas de punta a punta con Playwright (~2 min)
 ./pnpm test               # solo los tests unitarios
+tools/worker-check.sh     # solo el worker de Python (ruff, mypy estricto, pytest), en Docker
+tools/validate-zip.sh juego.zip   # valida un zip con las reglas de subida y muestra el resultado en JSON
 ./pnpm add <paquete>      # pnpm dentro del contenedor (no hace falta Node en tu máquina)
 ```
 
 Qué cubren los tests:
 
 - **Base de datos (pgTAP, 374 aserciones):** quién puede leer/escribir cada tabla, por rol (visitante, dueño, otra persona, admin, cuenta suspendida). Un test de invariantes falla si alguien agrega una tabla sin RLS o abre una columna protegida al cliente. Se probó rompiendo permisos a propósito: los tests lo detectan.
-- **Unitarios (Vitest, 312):** esquemas de **Zod** y saneado de texto, reglas del @usuario (con paridad contra la migración), **inspección de imágenes** (PNG/JPEG/WebP manipulados, animados, con datos pegados), recorte de la foto, i18n (paridad es/en, voseo), seguridad de redirecciones, **contraste de colores ≥ 4,5:1 de toda la paleta** y que no haya caracteres invisibles en el código.
+- **Worker de Python (pytest, 95):** el validador de zips contra archivos armados a mano a nivel de bytes: rutas con `..`, absolutas, con barra invertida, con caracteres de control o de dirección; symlinks y archivos especiales; ejecutables (por extensión y por bytes iniciales, también disfrazados); zips anidados; cifrados; zip-bombs (tamaño declarado falso, entradas que se pisan, millones de entradas); nombres duplicados por mayúsculas o Unicode; `index.html` obligatorio. Más la paridad entre el JSON de reglas y los códigos de error.
+- **Unitarios (Vitest, 319):** esquemas de **Zod** y saneado de texto, reglas del @usuario (con paridad contra la migración), **inspección de imágenes** (PNG/JPEG/WebP manipulados, animados, con datos pegados), recorte de la foto, i18n (paridad es/en, voseo), seguridad de redirecciones, **contraste de colores ≥ 4,5:1 de toda la paleta** y que no haya caracteres invisibles en el código.
 - **Punta a punta (Playwright, 216 = 108 × 2 tamaños; las 16 que miden el cursor o las barras de scroll reales solo corren en escritorio):** registro (18+, contraseña repetida) → mail → onboarding (@usuario libre sin números, sugerencias) → configuración (foto, géneros, idioma) → seguir → cerrar sesión; **el buscador de la portada** (sugerencias, teclado, tildes, texto hostil, inglés) y que **el menú de la cuenta y los avisos de «guardado» no muevan ni repitan nada**; **el servidor rechaza fotos manipuladas** (HTML disfrazado, SVG, tamaño o tipo falso, animadas, con datos pegados); el idioma sale del sistema y se cambia en Configuración; la **manito en todo lo clickeable** (se mide el cursor real); rutas protegidas; sin scroll horizontal a 360 px; objetivos táctiles ≥ 44 px; auditoría de accesibilidad **axe WCAG 2.2 AA** en 12 pantallas, en escritorio y celular.
 
 ## Variables de entorno
@@ -68,7 +71,7 @@ Las claves y URLs de Supabase **no** se configuran a mano: `start.sh` las lee de
 ```
 trafal/
 ├─ start.sh · stop.sh · check.sh · pnpm        scripts (todo corre en Docker)
-├─ docker-compose.yml · docker/web.Dockerfile
+├─ docker-compose.yml · docker/{web,worker}.Dockerfile
 ├─ apps/web/                                   Next.js 16 · TypeScript estricto · Tailwind 4 · shadcn
 │  ├─ src/app/[lang]/…                         páginas (el idioma es el segmento raíz)
 │  ├─ src/proxy.ts                             idioma (es sin prefijo, /en) + refresco de la sesión
@@ -82,8 +85,12 @@ trafal/
 │  ├─ tests/database/                          pgTAP: permisos de cada tabla
 │  ├─ templates/                               mails bilingües con la identidad de Trafal
 │  └─ seeds/                                   10 cuentas, 16 juegos, 30 avances y comentarios de ejemplo
+├─ worker/                                     Python 3.13 sin dependencias de ejecución: validador de zips de juegos
+│  ├─ src/trafal_worker/                       reglas, directorio central, rutas, planificador, verificador, CLI
+│  └─ tests/                                   pytest (con un armador de zips a mano para los casos maliciosos)
+├─ packages/shared/upload-rules.json           reglas de subida: fuente única (límites, extensiones, códigos de error)
 ├─ e2e/                                        Playwright (corre en la imagen oficial)
-├─ tools/db-types.sh                           regenera los tipos de TypeScript desde el esquema real
+├─ tools/                                      db-types.sh (tipos desde el esquema) · worker-check.sh · validate-zip.sh
 └─ docs/                                       ARQUITECTURA.md · DATABASE.md · DECISIONS.md · DESARROLLO.md
 ```
 

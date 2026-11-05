@@ -83,6 +83,24 @@ Migración nueva: `20261106000100_search_games.sql`.
 | **`/explore` pasa a ser la pantalla de resultados** (antes «en construcción») | Sin destino, el buscador no sirve. | Muestra los resultados o, sin texto, los juegos más nuevos (48 como máximo). Los filtros por género y motor, el orden y «Sorprendeme» siguen siendo de la Fase 4. |
 | **Sin JavaScript el formulario igual envía a `/explore?q=…`** | Es un `<form method="get">` real. | Los resultados llegan por *streaming*, igual que el resto del sitio, y sin JavaScript ese contenido no se muestra: es una limitación general de la app, no del buscador. |
 
+## Validador de zips de juegos (2026-11-05)
+
+Primera pieza de la subida de juegos: el validador y las reglas, sin infraestructura. Sin migración nueva (`game_versions` ya tiene `error_code`, `error_params` y `scan_flags`).
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Reglas en un JSON único** (`packages/shared/upload-rules.json`) que leen el validador y los tests de la web | Los límites, las extensiones y los códigos de error no pueden divergir entre el navegador (aviso previo) y el worker (decisión real). | El worker lo carga al arrancar; un test de la web exige un mensaje en es y en en por cada código, y uno de Python que el enum de errores coincida con el JSON. |
+| **Solo biblioteca estándar de Python**, sin dependencias de ejecución | Cada dependencia es superficie de ataque en el componente que abre archivos de desconocidos. `zipfile` basta. | Imagen mínima; ruff, mypy estricto y pytest viven solo en la imagen de pruebas. |
+| **Tres pasadas, en este orden:** directorio central → plan → descompresión | Lo barato y sin riesgo va primero: nada se descomprime hasta que el plan pasó todas las reglas. | `locate_central_directory` cuenta las entradas leyendo solo los encabezados **antes** de que `zipfile` cree un objeto por entrada (millones de entradas diminutas agotarían la memoria); `plan_archive` aplica rutas, tipos y extensiones; `stream_verified` descomprime contando los bytes **reales**. |
+| **El tamaño declarado en el zip no es de fiar** | Un zip puede mentir sobre cuánto pesa al descomprimirse. | Se topea con los bytes que realmente salen, por archivo y en total; si el tamaño real no coincide con el declarado, o falla el CRC, es `CORRUPT_ARCHIVE`. |
+| **Se rechazan las entradas que se pisan** (`OVERLAPPING_ENTRIES`) | Es la forma de armar un zip-bomb sin ocupar disco: muchas entradas apuntando a los mismos bytes comprimidos. | Se compara con cotas inferiores del encabezado local, así no se rechaza ningún zip legítimo. |
+| **Seguridad de la ruta antes que ignorar la basura** | `__MACOSX/../../x` no debe pasar solo por estar en una carpeta que se descarta. | Cualquier ruta insegura rechaza el zip, aunque sea de las que se ignoran (`__MACOSX/`, `.DS_Store`, `Thumbs.db`, `._*`). Rutas que difieren solo en mayúsculas o forma Unicode son `DUPLICATE_PATH`. |
+| **Ejecutables y comprimidos anidados se detectan por extensión y por los primeros bytes** | Renombrar un `.exe` a `.png` no debe servir. | ELF, Mach-O, PE (MZ solo si el offset del encabezado PE cae dentro del archivo, para no confundir un texto que empieza con «MZ»), ZIP, RAR y 7z. Un `.zip` dentro del zip se rechaza aunque su nombre sea `niveles.dat`. |
+| **Solo extensiones de la lista; sin extensión no vale** (`LICENSE`, `.htaccess`) | La lista se mantiene corta y revisable; lo desconocido se rechaza. | `.br`/`.gz` valen solo como segunda extensión (`juego.wasm.br`). Si un motor real necesita otra, se agrega al JSON con su caso de prueba. |
+| **Cifrado, symlinks, archivos especiales y métodos distintos de Stored/Deflate se rechazan** | Cada uno es una forma de saltar el escaneo o de escapar de la carpeta. | `bzip2` y `lzma` se descartan por costo y por ser raros en zips de juegos. |
+| **Escaneo sospechoso que marca pero no bloquea** (`scan_flags`) | Los falsos positivos serían frecuentes (`top.location` aparece en código legítimo). | `CRYPTO_MINER`, `PASSWORD_FIELD` y `TOP_NAVIGATION_ATTEMPT` en html/js; revisa hasta 16 MiB por archivo y encuentra textos partidos entre trozos. Los archivos `.br`/`.gz` no se escanean. |
+| **El validador recibe un destino** (`Sink`) en vez de escribir él mismo | Validar y extraer en una sola pasada, sin leer 1 GB dos veces. | **Nada se publica hasta que `validate_archive` termina sin error**: el worker escribe en una carpeta temporal y sube recién después. Los mensajes de error nunca llevan caracteres de control ni de dirección. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Todas las verificaciones con un solo comando. Necesita ./start.sh corriendo (para los tests de la base de datos).
-#   ./check.sh          lint + tipos + tests unitarios + tests de la base de datos (permisos/RLS)
+#   ./check.sh          lint + tipos + tests unitarios + worker de Python + tests de la base de datos (permisos/RLS)
 #   ./check.sh --e2e    además, las pruebas de punta a punta (Playwright, ~2 min)
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
@@ -13,6 +13,7 @@ step() { printf '\n%s▸ %s%s\n' "$CYAN" "$1" "$RESET"; }
 step "Lint (ESLint)";                       ./pnpm lint
 step "Tipos (TypeScript estricto)";         ./pnpm typecheck
 step "Tests unitarios (Vitest)";            ./pnpm test
+step "Worker de Python (ruff, mypy estricto, pytest)"; tools/worker-check.sh
 step "Tests de la base de datos (pgTAP: RLS y permisos)"; .tools/supabase test db --agent no
 step "Los tipos de la base están al día";   tools/db-types.sh --check
 if [ "${1:-}" = "--e2e" ]; then
