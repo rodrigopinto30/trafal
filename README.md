@@ -1,113 +1,137 @@
 # Trafal
 
-La red social para quienes hacen videojuegos que se juegan en el navegador: subí tu juego, mostrá cómo lo hacés (devlogs) y recibí feedback de la comunidad.
+La red social para quienes hacen videojuegos que se juegan en el navegador. Subís tu juego, mostrás cómo lo hacés con avances (devlogs), y la comunidad lo juega gratis, lo comenta y te da feedback. No es una tienda ni una competencia: es un lugar para quienes están empezando a crear y quieren que alguien juegue lo que hicieron.
 
-> **Estado: Fase 1 · Base ✔** — cuentas (email + Google, 18+), perfiles con foto y géneros favoritos, seguidores, configuración, modelo de datos completo con RLS, sistema de diseño, español/inglés (según tu sistema).
-> Siguen: **2 Juegos** (subida, worker, reproductor seguro) → **3 Social** → **4 Descubrimiento** → **5 Confianza**.
+Para levantar el proyecto y correr las pruebas: [docs/DESARROLLO.md](docs/DESARROLLO.md).
 
-## Levantarlo
+En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está planificado.
 
-Lo único que necesitás instalado es **Docker** (con Compose v2) y unos 4 GB de RAM libres. Node, pnpm y el CLI de Supabase corren dentro de contenedores o se descargan solos.
+## Qué hace Trafal
 
-```bash
-./start.sh        # la primera vez baja imágenes (unos minutos)
-```
+### Cuentas y acceso
 
-| Qué | Dónde |
-|---|---|
-| **Web** | http://localhost:3000 (el idioma sale de tu navegador; se cambia en *Configuración*, o con `/en`) |
-| Correo de pruebas — acá llegan los mails de confirmación | http://localhost:54324 |
-| Supabase Studio (explorar la base) | http://localhost:54323 |
-| API de Supabase | http://127.0.0.1:54321 |
+**Hoy**
+- **Crear cuenta con email y contraseña.** La contraseña tiene entre 8 y 72 bytes e incluye letras y números; hay que escribirla dos veces. Es obligatorio tildar «tengo 18 años o más y acepto los Términos y la Política de privacidad». No se pide fecha de nacimiento: queda guardada la versión de los términos aceptada y cuándo se aceptó.
+- **Confirmación por email.** Llega un mail bilingüe con un link que funciona aunque lo abras en otro dispositivo o navegador.
+- **Entrar con Google** (opcional, se activa al configurar las credenciales).
+- **Completar el perfil al entrar por primera vez**: elegís tu @usuario y tu nombre. Quien llega con Google confirma ahí los 18+ y los términos.
+- **Iniciar y cerrar sesión**, y **recuperar la contraseña** con un link por mail. La pantalla de recuperación responde igual exista o no la cuenta, para no revelar qué emails están registrados.
+- **Pantallas protegidas**: si no tenés sesión te mandan a iniciar sesión y, al entrar, volvés a donde ibas. Solo se aceptan destinos internos del sitio, nunca links a otras páginas. Quien ya tiene sesión no ve el login ni el registro.
+- **Errores claros y sin perder lo escrito**: si algo falla, el formulario conserva el email, las contraseñas y la casilla de términos.
 
-**Cuentas de prueba** (contraseña `trafal123`): `valen@trafal.test` (@valen_makes), `mateo@trafal.test` (@mateo_g) y `admin@trafal.test` (@equipo_trafal, admin). Hay otras siete (`sofi@`, `nacho@`, `juli@`, `caro@`, `tomi@`, `male@`, `santi@` + `trafal.test`) que son creadoras de los **16 juegos de ejemplo** que llenan la portada. Son datos de desarrollo: `./start.sh --reset` los carga.
+### Perfiles
 
-**Para ver el flujo completo de un registro nuevo:** *Crear cuenta* (hay que tener 18 años o más y repetir la contraseña) → abrí http://localhost:54324 → tocá el link del mail → elegí tu @usuario (si está libre, es tuyo: no hacen falta números) → ya tenés perfil. Después, desde el menú de tu cuenta, entrá a *Configuración*: ahí cambiás tu **foto**, tus datos, los **géneros** que te gustan (tocá para elegir, tocá de nuevo para sacar) y el **idioma**. Probá también *Seguir* en el perfil de otra persona.
+**Hoy**
+- **@usuario** de 3 a 30 caracteres con letras, números, punto y guion bajo. **No hace falta ningún número**: si está libre, es tuyo. Podés escribirlo con mayúsculas o acentos y se guarda normalizado («Ñandú» pasa a `nandu`). El punto no puede ir al principio, al final ni repetido.
+- **Disponibilidad en vivo** mientras escribís. Si el nombre está ocupado, te sugiere alternativas libres sin números (`_dev`, `_games`, `.codes`…). Hay una lista corta de nombres reservados para que nadie se haga pasar por el equipo. El @usuario no se puede cambiar, así los links nunca se rompen.
+- **Datos del perfil**: nombre (hasta 50 caracteres), bio (hasta 280), ciudad, país (lista de 249 países en tu idioma), hasta 8 **motores** que usás (Godot, Unity, GameMaker, Phaser, PICO-8, Scratch, Twine, Construct, Otro) y los **géneros de juegos que te gustan**.
+- **Géneros favoritos**: una grilla de 17 géneros con ícono (plataformas, arcade, puzzle, narrativo, roguelike, cozy, terror, ritmo, carreras, aventura, estrategia, disparos, simulación, deportes, lucha, incremental y otro). Tocás uno para elegirlo y lo tocás de nuevo para sacarlo; se muestran en tu perfil.
+- **Foto de perfil** que reemplaza la letra de colores. Elegís una imagen (JPG, PNG o WebP, hasta 15 MB), la encuadrás arrastrándola con el dedo o el mouse, o con las flechas del teclado, y hacés zoom. Se guarda cuadrada de 256 px, en WebP (o JPEG si tu navegador no sabe generar WebP). El servidor la vuelve a verificar: formato real, tamaño exacto, que no sea animada y que no traiga datos escondidos. Al cambiarla o quitarla, la anterior se borra. Si no subís foto, tu avatar es tu inicial sobre un degradé único.
+- **Página pública del perfil**: avatar, nombre, @usuario, bio, ubicación, motores y géneros; contadores de seguidores, seguidos, juegos y avances; pestañas con **tus juegos** y **tus avances**. Si te falta la foto o los géneros, te aparece un aviso para terminar el perfil.
+- **Seguir y dejar de seguir** a otras personas con respuesta inmediata y contador actualizado. Las listas de seguidores y seguidos muestran avatar, nombre y bio. Quien no tiene cuenta, al tocar «Seguir» pasa por el login y vuelve al perfil.
 
-```bash
-./stop.sh                 # baja todo y conserva tus datos
-./stop.sh --purge         # baja todo y BORRA la base (empezar de cero)
-./start.sh --reset        # recrea la base desde las migraciones + seed
-./start.sh --prod         # la web compilada, como en producción
-```
+### Configuración
 
-## Verificar que todo anda
+**Hoy**
+- Se llega desde el menú de tu cuenta. Tiene dos secciones en pestañas, con el mismo ancho que el perfil:
+  - **Perfil**: foto, datos personales, motores y géneros favoritos.
+  - **Preferencias**: idioma de la interfaz.
 
-```bash
-./check.sh                # lint + tipos + tests unitarios + tests de la base (RLS/permisos) + tipos de la DB al día
-./check.sh --e2e          # además, pruebas de punta a punta con Playwright (~2 min)
-./pnpm test               # solo los tests unitarios
-./pnpm add <paquete>      # pnpm dentro del contenedor (no hace falta Node en tu máquina)
-```
+### Idioma
 
-Qué cubren los tests:
+**Hoy**
+- La interfaz está en **español rioplatense (con voseo)** y en **inglés**.
+- El idioma sale solo del navegador o el sistema; no hay selector a la vista. Con cuenta, lo cambiás en *Configuración → Preferencias*: queda guardado y vale en cualquier dispositivo donde inicies sesión.
+- El español no lleva prefijo en la URL y el inglés usa `/en`. Los textos que escriben los creadores (títulos, descripciones, avances) se muestran como los escribieron.
 
-- **Base de datos (pgTAP, 348 aserciones):** quién puede leer/escribir cada tabla, por rol (visitante, dueño, otra persona, admin, cuenta suspendida). Un test de invariantes falla si alguien agrega una tabla sin RLS o abre una columna protegida al cliente. Se probó rompiendo permisos a propósito: los tests lo detectan.
-- **Unitarios (Vitest, 306):** esquemas de **Zod** y saneado de texto, reglas del @usuario (con paridad contra la migración), **inspección de imágenes** (PNG/JPEG/WebP manipulados, animados, con datos pegados), recorte de la foto, i18n (paridad es/en, voseo), seguridad de redirecciones, **contraste de colores ≥ 4,5:1 de toda la paleta** y que no haya caracteres invisibles en el código.
-- **Punta a punta (Playwright, 174 = 87 × 2 tamaños; las 13 del cursor solo corren en escritorio):** registro (18+, contraseña repetida) → mail → onboarding (@usuario libre sin números, sugerencias) → configuración (foto, géneros, idioma) → seguir → cerrar sesión; **el servidor rechaza fotos manipuladas** (HTML disfrazado, SVG, tamaño o tipo falso, animadas, con datos pegados); el idioma sale del sistema y se cambia en Configuración; la **manito en todo lo clickeable** (se mide el cursor real); rutas protegidas; sin scroll horizontal a 360 px; objetivos táctiles ≥ 44 px; auditoría de accesibilidad **axe WCAG 2.2 AA** en 12 pantallas, en escritorio y celular.
+### Juegos
 
-## Variables de entorno
+**Hoy**
+- **Página de cada juego** (`/games/<id>`), abierta a cualquier persona, sin cuenta:
+  - portada, título, creador, etiquetas de género y motor, insignias «Primer juego» y «Funciona en celular», y contadores de partidas, me gusta y comentarios;
+  - **Sobre este juego** (descripción corta) y **Cómo se juega** (controles), más hasta 8 etiquetas;
+  - tarjeta del creador con acceso a su perfil;
+  - los **avances** de ese juego y los **comentarios** con sus respuestas;
+  - una invitación a crear cuenta para quien no tiene.
+- **Marco del reproductor** con la proporción propia de cada juego (16:9, 4:3, 1:1 o 9:16). Por ahora muestra la portada, avisa que el reproductor está en camino y deja el botón «Jugar gratis» desactivado.
+- **Portadas**: la imagen que suba el creador o, mientras no haya, un arte generado con el color e ícono de su género.
 
-`./start.sh` crea `.env` desde [`.env.example`](.env.example) la primera vez. Todo tiene un valor que funciona en local.
+**Próximamente**
+- **Subir un juego** como `.zip` con el build web (hasta 200 MB comprimido, 1 GB descomprimido y 5.000 archivos). La subida es directa a un espacio de cuarentena; un proceso aparte revisa el contenido antes de publicarlo: rechaza rutas peligrosas, ejecutables y tipos de archivo no permitidos, exige un `index.html`, y detecta con qué motor se hizo.
+- **Versiones** (v1, v2…) con nombre editable y registro de cambios, y estados visibles (subiendo, procesando, lista o con error explicado para principiantes).
+- **Jugar en el navegador sin cuenta**: el juego corre en un iframe aislado y servido desde un dominio distinto al de Trafal, de modo que no puede tocar tu sesión. Con pantalla completa, aviso de sonido, botón de reportar y conteo de partidas sin guardar IP.
+- **Ficha completa**: capturas (hasta 6), hasta 3 preguntas de feedback para los jugadores, enlace externo opcional, y cupos por persona.
 
-| Variable | Para qué | Por defecto |
-|---|---|---|
-| `SITE_URL` | URL pública del sitio (links de los mails, redirecciones, metadatos) | `http://localhost:3000` |
-| `WEB_PORT` | Puerto donde se publica la web | `3000` |
-| `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` / `_SECRET` | Login con Google (opcional) | vacío (botón oculto) |
-| `S3_*`, `MEDIA_PUBLIC_URL` | Dónde se guardan las fotos (S3 compatible: en producción, Cloudflare R2) | las genera `./start.sh` (S3 de Supabase Storage); ver `.env.example` para producción |
+### Comunidad
 
-Las claves y URLs de Supabase **no** se configuran a mano: `start.sh` las lee de Supabase y las deja en `.env.supabase` (generado, ignorado por git; incluye las credenciales del almacenamiento local). El navegador usa `http://127.0.0.1:54321`; el servidor de Next, dentro de Docker, usa la red interna (`SUPABASE_INTERNAL_URL`) y, para guardar imágenes, `host.docker.internal:54321`.
+**Hoy**
+- **Avances de cuatro tipos**: avance, nuevo juego, pide feedback e hito (con una etiqueta destacada, como «1000 jugadas»). Se ven en la portada, en la página del juego y en el perfil de cada creador.
+- **Comentarios** en juegos y avances, con dos etiquetas («Me gustó» y «Sugerencia»), respuestas de un nivel y la marca «Le sirvió al creador».
+- **Lo que dice la comunidad**: en la portada se muestran los mensajes de quienes jugaron, con nombre, foto y el juego del que hablan.
 
-### Login con Google
+**Próximamente**
+- **Publicar avances** (hasta 2000 caracteres y hasta 4 imágenes, GIF o videos cortos), **comentar y responder**, contestar las preguntas del creador y marcar qué comentarios te sirvieron.
+- **Me gusta** en juegos y avances, **guardar** y **compartir**.
+- **Feed** con las novedades de la gente que seguís y filtros por tipo de avance.
+- **Notificaciones** de seguidores, comentarios y me gusta.
 
-1. En [Google Cloud Console](https://console.cloud.google.com/apis/credentials) creá un *ID de cliente de OAuth* de tipo **Aplicación web**.
-2. Agregá como URI de redirección autorizado: `http://127.0.0.1:54321/auth/v1/callback`.
-3. Pegá el ID y el secreto en `.env` (`SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` y `…_SECRET`).
-4. Reiniciá: `./stop.sh && ./start.sh`. El botón «Continuar con Google» aparece solo.
+### Descubrir juegos
 
-## Cómo está armado
+**Hoy**
+- **Portada** pensada para quien llega sin cuenta y puede jugar gratis. De arriba abajo:
+  - un **banner grande** del juego más jugado, con botón «Jugar gratis»;
+  - **Recién publicados** (8 juegos);
+  - **Los más jugados** (8 juegos, numerados);
+  - un segundo **banner con el primer juego de la semana** y una frase del equipo;
+  - **Lo que dice la comunidad**, con una invitación a crear cuenta para dejar tu mensaje, dar me gusta, seguir a creadores y publicar tus avances;
+  - **Primeros juegos**, de gente que acaba de publicar el suyo;
+  - **Por género**, con los tres géneros más poblados;
+  - **Novedades de los creadores** (6 avances recientes).
+- **Tarjetas de juego** con portada, título, descripción, género, motor, creador, partidas y me gusta. Toda la tarjeta lleva a la página del juego. En celular, cada fila se desliza con el dedo.
 
-```
-trafal/
-├─ start.sh · stop.sh · check.sh · pnpm        scripts (todo corre en Docker)
-├─ docker-compose.yml · docker/web.Dockerfile
-├─ apps/web/                                   Next.js 16 · TypeScript estricto · Tailwind 4 · shadcn
-│  ├─ src/app/[lang]/…                         páginas (el idioma es el segmento raíz)
-│  ├─ src/proxy.ts                             idioma (es sin prefijo, /en) + refresco de la sesión
-│  ├─ src/components/{ui,brand,layout,auth,profile,settings}
-│  ├─ src/i18n/                                i18n propio (plurales ICU, rutas con idioma)
-│  ├─ src/messages/{es,en}.json                textos (español rioplatense con voseo + inglés)
-│  └─ src/lib/{supabase,auth,profile,settings} clientes, capa de acceso a datos, Server Actions
-│     └─ {validation,media,storage}            Zod + saneado · fotos (recorte, inspección) · cliente S3
-├─ supabase/
-│  ├─ migrations/                              esquema completo + RLS (7 migraciones)
-│  ├─ tests/database/                          pgTAP: permisos de cada tabla
-│  ├─ templates/                               mails bilingües con la identidad de Trafal
-│  └─ seeds/                                   10 cuentas, 16 juegos, 30 avances y comentarios de ejemplo
-├─ e2e/                                        Playwright (corre en la imagen oficial)
-├─ tools/db-types.sh                           regenera los tipos de TypeScript desde el esquema real
-└─ docs/                                       DATABASE.md · DECISIONS.md
-```
+**Próximamente**
+- **Explorar** con búsqueda de texto (en español e inglés, sin importar las tildes) y filtros por género, motor y «funciona en celular», con orden por recientes, tendencia o más jugados.
+- **Sorprendeme**: un juego al azar.
+- **Creadores**: una página para descubrir a quienes están empezando.
+- **Primer juego de la semana** elegido por el equipo.
 
-- **Next.js 16 con Cache Components + prefetch parcial:** cada página tiene un caparazón estático (nav, footer, marco) que llega al instante y lo que depende de la sesión llega por *streaming* dentro de `<Suspense>`. El `next build` falla si algo lee cookies/params fuera de un `<Suspense>`.
-- **La seguridad vive en la base de datos:** RLS en todas las tablas y permisos por columna, no en la interfaz. Detalle en [docs/DATABASE.md](docs/DATABASE.md).
-- **Diseño:** tokens en [`globals.css`](apps/web/src/app/globals.css) (colores de la marca, Oxanium / Space Grotesk / Pixelify Sans, brillo neón, cursor pixelado, aurora y píxeles flotantes que se apagan en celular y con `prefers-reduced-motion`).
+### Moderación y confianza
 
-Las decisiones de diseño y por qué se tomaron están en [docs/DECISIONS.md](docs/DECISIONS.md).
+**Próximamente** (el modelo de datos ya está preparado)
+- **Reportes** de juegos, avances, comentarios y perfiles, con copia del contenido como evidencia.
+- **Reclamos de derechos de autor** con un formulario público.
+- **Panel de administración** donde cada acción de moderación queda registrada en un historial que nadie puede editar ni borrar.
+- **Suspensiones** temporales o permanentes: una cuenta suspendida no puede escribir.
+- **Límites de uso**, captcha en el registro y páginas legales definitivas (Términos, Privacidad, Normas de la comunidad y Derechos de autor).
 
-## Si algo falla
+### Diseño y accesibilidad
 
-| Síntoma | Qué hacer |
-|---|---|
-| «Docker no responde» | Arrancá Docker; en Linux tu usuario tiene que estar en el grupo `docker`. |
-| Un puerto está ocupado (3000, 54321–54324) | Cambiá `WEB_PORT` en `.env`; para Supabase, cerrá lo que use esos puertos. |
-| Quedó un estado raro | `./stop.sh --purge && ./start.sh` (empieza de cero). |
-| El login con Google no aparece | Revisá que las dos variables de Google estén en `.env` y reiniciá. |
-| «No pudimos guardar la foto» | El servidor guarda las imágenes en el S3 de Supabase Storage: tiene que estar corriendo (`./start.sh`) y el contenedor web necesita `host.docker.internal` (ya está en `docker-compose.yml`). `./start.sh` también crea el bucket `media`. |
+**Hoy**
+- **Estética oscura con neón moderado e inspiración retro/pixel**: tipografías Oxanium, Space Grotesk y Pixelify Sans, botones en forma de píldora, barra de navegación flotante con borde neón y un fondo con aurora y píxeles flotantes que se apagan en celular y si pedís menos movimiento.
+- **Menú superior mínimo**: el nombre de la app, «Subir juego» y «Comunidad», y tu cuenta (Mi perfil, Configuración, Cerrar sesión). En celular se abre con una hamburguesa.
+- **Cursor propio**: flecha pixelada, y la manita en todo lo que se puede apretar.
+- **Hecho para celular primero**, desde pantallas de 360 px, sin scroll horizontal y con botón para volver arriba.
+- **Accesible**: contraste de texto de al menos 4,5:1, objetivos táctiles de al menos 44 px, uso completo con teclado, enlace «Saltar al contenido», etiquetas y errores conectados para lectores de pantalla, y una auditoría automática WCAG 2.2 AA sobre las pantallas principales.
+- **Los colores tienen un significado fijo**: el lima es solo para acciones de jugar y el coral solo para me gusta y errores.
 
-> **Aviso (solo desarrollo):** Supabase local publica sus puertos en todas las interfaces y Studio no tiene contraseña. No lo uses en redes que no sean de confianza.
+### Seguridad y privacidad
 
-## Próximos pasos
+**Hoy**
+- **Los permisos viven en la base de datos**, no solo en la pantalla: nadie puede editar ni borrar contenido ajeno, y los administradores solo actúan mediante funciones que dejan registro.
+- **Datos mínimos**: no se pide fecha de nacimiento ni teléfono, y las contraseñas las gestiona un servicio de autenticación que nunca las guarda en texto plano.
+- **Todo lo que escribís se limpia y se valida en el servidor**: sin HTML, sin caracteres invisibles que sirvan para falsificar nombres, con límites de longitud.
+- **Las imágenes se revisan byte a byte** antes de guardarse y solo se aceptan en tres formatos.
+- **Cabeceras de seguridad** en todo el sitio, que además no puede incrustarse en otras páginas.
 
-Las fases 2–5 (juegos y subida segura, social, descubrimiento, confianza), la arquitectura de alojamiento de juegos y las reglas de seguridad están en [docs/ROADMAP.md](docs/ROADMAP.md).
+**Próximamente**
+- Los juegos subidos corren en **otro dominio**, dentro de un iframe aislado, sin acceso a cookies ni a datos del sitio principal, y se verifican con un juego malicioso de prueba.
+
+## Tecnologías
+
+- **Interfaz:** Next.js 16 (App Router, Cache Components y Server Actions), React 19, TypeScript estricto, Tailwind CSS 4, shadcn/ui sobre Radix, lucide-react y Sonner.
+- **Validación:** Zod 4 en el servidor, con textos propios de internacionalización (español e inglés).
+- **Datos y autenticación:** Supabase: PostgreSQL 17 con seguridad por filas (RLS), Auth con email y Google, y Realtime.
+- **Almacenamiento de imágenes:** Cloudflare R2 en producción y el almacenamiento S3 de Supabase en local, con el SDK de AWS.
+- **Procesamiento de juegos** *(planificado)*: worker en Python, en contenedor y desplegado en Fly.io; servido por un gateway en Cloudflare Workers.
+- **Infraestructura:** Docker y Docker Compose; pnpm y Node 24. Despliegue previsto en Vercel y Cloudflare.
+- **Calidad:** Vitest, pgTAP, Playwright con axe-core y ESLint.

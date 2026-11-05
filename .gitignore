@@ -32,3 +32,6 @@ e2e/screenshots/
 # solo en la máquina de quien trabaja (no se versionan)
 CLAUDE.md
 v4/
+
+# fases de desarrollo: solo en la máquina de quien trabaja
+docs/FASES.md

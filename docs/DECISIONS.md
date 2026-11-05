@@ -1,6 +1,6 @@
 # Decisiones de diseño
 
-Registro corto de lo que se decidió y por qué. Las decisiones grandes de arquitectura están en [ROADMAP.md](ROADMAP.md).
+Registro corto de lo que se decidió y por qué. Las decisiones grandes de arquitectura están en [ARQUITECTURA.md](ARQUITECTURA.md).
 
 ## Fase 1 · Base
 
