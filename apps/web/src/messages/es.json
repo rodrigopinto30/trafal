@@ -373,7 +373,6 @@
       "hidden": "Oculto",
       "removed": "Dado de baja"
     },
-    "draftNote": "Tu juego es un borrador: solo lo ves vos. Se publica cuando termine la revisión.",
     "versionsTitle": "Versiones",
     "versionName": "Versión {label}",
     "versionStatus": {
@@ -389,7 +388,21 @@
       "error": "No pudimos aceptar este archivo:"
     },
     "unknownError": "No pudimos aceptar este archivo. Revisá que sea un .zip con tu juego web y probá de nuevo.",
-    "size": "Tamaño del .zip: {size}"
+    "size": "Tamaño del .zip: {size}",
+    "note": {
+      "draft": "Tu juego es un borrador: solo lo ves vos. Cuando una versión pase la revisión vas a poder publicarlo.",
+      "draftReady": "Tu juego pasó la revisión y sigue siendo un borrador que solo ves vos. Publicalo cuando quieras.",
+      "published": "Tu juego está publicado: cualquiera lo puede ver en Trafal.",
+      "hidden": "Tu juego está oculto por moderación.",
+      "removed": "Tu juego fue dado de baja por moderación."
+    },
+    "publish": "Publicar juego",
+    "unpublish": "Volver a borrador",
+    "saving": "Guardando…",
+    "errors": {
+      "notReady": "Todavía no hay una versión lista para publicar.",
+      "generic": "No pudimos cambiar el estado del juego. Probá de nuevo."
+    }
   },
   "search": {
     "label": "Buscar juegos",
@@ -430,7 +443,8 @@
     "EXECUTABLE_FILE": "No aceptamos programas ejecutables («{path}»). Trafal solo aloja juegos que se juegan en el navegador.",
     "NESTED_ARCHIVE": "No aceptamos archivos comprimidos adentro del .zip («{path}»). Descomprimilo y subí sus archivos sueltos.",
     "EXTENSION_NOT_ALLOWED": "No aceptamos archivos de tipo «{extension}» («{path}»). Sacalo del .zip o cambiá a un formato web común.",
-    "NO_INDEX_HTML": "Falta el archivo {file} en la carpeta principal. Es el que abre tu juego en el navegador: tiene que estar en la raíz del .zip."
+    "NO_INDEX_HTML": "Falta el archivo {file} en la carpeta principal. Es el que abre tu juego en el navegador: tiene que estar en la raíz del .zip.",
+    "PROCESSING_FAILED": "No pudimos revisar tu juego por un problema nuestro. Probá subirlo de nuevo en un rato."
   },
   "posts": {
     "kinds": {

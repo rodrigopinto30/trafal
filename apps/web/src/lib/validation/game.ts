@@ -114,3 +114,5 @@ export const zipDeclarationSchema = z.object({
 });
 
 export const uuidSchema = z.uuid();
+
+export const gameVisibilitySchema = z.object({ gameId: z.uuid(), status: z.enum(["draft", "published"]) });

@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AutoRefresh } from "@/components/games/auto-refresh";
-import { Badge } from "@/components/ui/badge";
+import { PublishControls } from "@/components/games/publish-controls";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
 import { Link } from "@/i18n/link";
 import { getLocale, getTranslations } from "@/i18n/server";
 import { requireProfile } from "@/lib/auth/dal";
@@ -29,11 +30,12 @@ export default function ManageGamePage({ params }: ManagePageProps) {
   );
 }
 
-const VERSION_BADGE = { uploading: "cyan", processing: "violet", ready: "lime", error: "coral" } as const;
-type VersionStatus = keyof typeof VERSION_BADGE;
+const VERSION_TONE = { uploading: "cyan", processing: "violet", ready: "cyan", error: "coral" } as const satisfies Record<string, StatusTone>;
+const GAME_TONE = { draft: "neutral", published: "cyan", hidden: "coral", removed: "coral" } as const satisfies Record<string, StatusTone>;
+type VersionStatus = keyof typeof VERSION_TONE;
 
 function isVersionStatus(value: string): value is VersionStatus {
-  return value in VERSION_BADGE;
+  return value in VERSION_TONE;
 }
 
 async function ManageContent({ params }: { params: ManagePageProps["params"] }) {
@@ -51,6 +53,8 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
   ]);
   const inProgress = versions.some((version) => version.status === "uploading" || version.status === "processing");
   const gameStatus = (["draft", "published", "hidden", "removed"] as const).find((status) => status === game.status) ?? "draft";
+  const hasReadyVersion = game.active_version_id !== null && versions.some((version) => version.id === game.active_version_id && version.status === "ready");
+  const canToggle = (gameStatus === "draft" && hasReadyVersion) || gameStatus === "published";
 
   return (
     <div className="grid gap-8">
@@ -58,9 +62,18 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
       <header className="grid gap-3">
         <h1 className="font-display text-[clamp(30px,5vw,44px)] leading-[1.1] font-bold text-glow-violet">{game.title}</h1>
         <div className="flex flex-wrap items-center gap-3">
-          <Badge variant={gameStatus === "published" ? "lime" : "soft"}>{t(`status.${gameStatus}`)}</Badge>
+          <StatusBadge tone={GAME_TONE[gameStatus]}>{t(`status.${gameStatus}`)}</StatusBadge>
         </div>
-        {gameStatus === "draft" ? <p className="text-text-2">{t("draftNote")}</p> : null}
+        <p className="text-text-2">{t(`note.${gameStatus === "draft" && hasReadyVersion ? "draftReady" : gameStatus}`)}</p>
+        {canToggle ? (
+          <PublishControls
+            gameId={game.id}
+            published={gameStatus === "published"}
+            publishLabel={t("publish")}
+            unpublishLabel={t("unpublish")}
+            pendingLabel={t("saving")}
+          />
+        ) : null}
       </header>
 
       <section aria-labelledby="versions-title" className="grid gap-4 rounded-[28px] border border-white/8 bg-card p-6 sm:p-8">
@@ -74,7 +87,9 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
               <li key={version.id} className="grid gap-2 rounded-2xl border border-white/10 bg-white/4 p-4">
                 <div className="flex flex-wrap items-center gap-3">
                   <h3 className="font-semibold">{t("versionName", { label: version.label })}</h3>
-                  <Badge variant={VERSION_BADGE[status]}>{t(`versionStatus.${status}`)}</Badge>
+                  <StatusBadge tone={VERSION_TONE[status]} live={status === "uploading" || status === "processing"}>
+                    {t(`versionStatus.${status}`)}
+                  </StatusBadge>
                 </div>
                 <p className="text-sm text-text-2" role={status === "error" ? "alert" : undefined}>
                   {t(`versionText.${status}`)}

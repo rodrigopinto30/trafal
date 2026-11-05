@@ -1,0 +1,2 @@
+boto3==1.43.124
+psycopg[binary]==3.3.8

@@ -21,6 +21,7 @@ export const UPLOAD_ERROR_CODES = [
   "NESTED_ARCHIVE",
   "EXTENSION_NOT_ALLOWED",
   "NO_INDEX_HTML",
+  "PROCESSING_FAILED",
 ] as const;
 export type UploadErrorCode = (typeof UPLOAD_ERROR_CODES)[number];
 

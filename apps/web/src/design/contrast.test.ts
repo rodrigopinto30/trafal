@@ -63,6 +63,12 @@ const pairs: Pair[] = [
   { name: "botón destructivo (coral)", fg: bg, bg: coral },
   { name: "botón secundario (blanco)", fg: bg, bg: text },
 
+  // Etiquetas de estado (StatusBadge): texto blanco sobre el color teñido al 12 %, 20 %, 25 % o 30 % encima de la tarjeta
+  { name: "estado neutro (borrador)", fg: white, bg: over(white, 0.12, card) },
+  { name: "estado violeta (revisando)", fg: white, bg: over(violet, 0.3, card) },
+  { name: "estado cian (lista, publicado)", fg: white, bg: over(cyan, 0.2, card) },
+  { name: "estado coral (con errores)", fg: white, bg: over(coral, 0.25, card) },
+
   // Etiquetas (Badge)
   { name: "badge violeta", fg: bg, bg: violet },
   { name: "badge cian", fg: cyan, bg: over(cyan, 0.12, bg) },
