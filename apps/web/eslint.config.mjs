@@ -15,6 +15,7 @@ const eslintConfig = defineConfig([
     // Generado por `pnpm db:types` (supabase gen types).
     "src/lib/supabase/database.types.ts",
   ]),
+  { rules: { "@next/next/no-img-element": "off" } },
 ]);
 
 export default eslintConfig;

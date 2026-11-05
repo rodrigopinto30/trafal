@@ -1,5 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { GameShelf } from "@/components/games/game-shelf";
+import { PostCard } from "@/components/games/post-card";
 import { FollowButton } from "@/components/profile/follow-button";
 import { ProfileHeader, type ProfileRow } from "@/components/profile/profile-header";
 import { ProfileTabs } from "@/components/profile/profile-tabs";
@@ -8,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
 import { getTranslations } from "@/i18n/server";
 import { PROFILE_COLUMNS, getAuthUser } from "@/lib/auth/dal";
+import { listGamesByOwner, listPostsByAuthor } from "@/lib/games/queries";
 import { createClient } from "@/lib/supabase/server";
 import { parseUsernameParam } from "@/lib/validation/common";
 
@@ -40,9 +43,10 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
   const [t, me, games, posts] = await Promise.all([
     getTranslations("profile"),
     getAuthUser(),
-    supabase.from("games").select("id", { count: "exact", head: true }).eq("owner_id", profile.id).eq("status", "published"),
-    supabase.from("posts").select("id", { count: "exact", head: true }).eq("author_id", profile.id).eq("status", "published"),
+    listGamesByOwner(profile.id),
+    listPostsByAuthor(profile.id),
   ]);
+  const now = new Date();
 
   const isOwn = me?.id === profile.id;
   let isFollowing = false;
@@ -68,12 +72,28 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
   const incomplete = isOwn && (!profile.avatar_path || profile.favorite_genres.length === 0);
 
   return (
-    <div className="grid gap-8">
-      <ProfileHeader profile={profile} gamesCount={games.count ?? 0} postsCount={posts.count ?? 0} action={action} />
+    <div className="grid grid-cols-[minmax(0,1fr)] gap-8">
+      <ProfileHeader profile={profile} gamesCount={games.length} postsCount={posts.length} action={action} />
       {incomplete ? <CompleteProfileCard title={t("completeTitle")} text={t("completeText")} cta={t("completeCta")} /> : null}
       <ProfileTabs
-        gamesPanel={<EmptyState text={isOwn ? t("empty.gamesOwn") : t("empty.gamesOther")} cta={isOwn ? { href: "/games/new", label: t("empty.cta") } : undefined} />}
-        postsPanel={<EmptyState text={isOwn ? t("empty.postsOwn") : t("empty.postsOther")} />}
+        gamesPanel={
+          games.length > 0 ? (
+            <GameShelf games={games} columns={3} />
+          ) : (
+            <EmptyState text={isOwn ? t("empty.gamesOwn") : t("empty.gamesOther")} cta={isOwn ? { href: "/games/new", label: t("empty.cta") } : undefined} />
+          )
+        }
+        postsPanel={
+          posts.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {posts.map((post) => (
+                <PostCard key={post.id} post={post} now={now} />
+              ))}
+            </div>
+          ) : (
+            <EmptyState text={isOwn ? t("empty.postsOwn") : t("empty.postsOther")} />
+          )
+        }
       />
     </div>
   );

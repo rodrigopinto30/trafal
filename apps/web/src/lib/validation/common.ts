@@ -54,3 +54,13 @@ export function parseUsernameParam(raw: string): string | null {
   const username = normalizeUsername(decoded);
   return isValidUsernameShape(username) ? username : null;
 }
+
+const publicIdSchema = z
+  .string()
+  .max(40)
+  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+
+export function parsePublicIdParam(value: string): string | null {
+  const result = publicIdSchema.safeParse(value);
+  return result.success ? result.data : null;
+}

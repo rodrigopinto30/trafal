@@ -46,7 +46,7 @@ async function clickablesWithoutPointer(page: Page) {
   }, CLICKABLE);
 }
 
-const PUBLIC_PAGES = ["/", "/login", "/signup", "/forgot-password", "/u/valen_makes", "/u/mateo_g/followers", "/explore", "/legal/terms", "/en"];
+const PUBLIC_PAGES = ["/", "/login", "/signup", "/forgot-password", "/u/valen_makes", "/games/orbita", "/u/mateo_g/followers", "/explore", "/legal/terms", "/en"];
 
 for (const path of PUBLIC_PAGES) {
   test(`todo lo clickeable muestra la manito en ${path}`, async ({ page }) => {

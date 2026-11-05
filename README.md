@@ -20,7 +20,7 @@ Lo único que necesitás instalado es **Docker** (con Compose v2) y unos 4 GB de
 | Supabase Studio (explorar la base) | http://localhost:54323 |
 | API de Supabase | http://127.0.0.1:54321 |
 
-**Cuentas de prueba** (contraseña `trafal123`): `valen@trafal.test` (@valen_makes), `mateo@trafal.test` (@mateo_g) y `admin@trafal.test` (@equipo_trafal, admin).
+**Cuentas de prueba** (contraseña `trafal123`): `valen@trafal.test` (@valen_makes), `mateo@trafal.test` (@mateo_g) y `admin@trafal.test` (@equipo_trafal, admin). Hay otras siete (`sofi@`, `nacho@`, `juli@`, `caro@`, `tomi@`, `male@`, `santi@` + `trafal.test`) que son creadoras de los **16 juegos de ejemplo** que llenan la portada. Son datos de desarrollo: `./start.sh --reset` los carga.
 
 **Para ver el flujo completo de un registro nuevo:** *Crear cuenta* (hay que tener 18 años o más y repetir la contraseña) → abrí http://localhost:54324 → tocá el link del mail → elegí tu @usuario (si está libre, es tuyo: no hacen falta números) → ya tenés perfil. Después, desde el menú de tu cuenta, entrá a *Configuración*: ahí cambiás tu **foto**, tus datos, los **géneros** que te gustan (tocá para elegir, tocá de nuevo para sacar) y el **idioma**. Probá también *Seguir* en el perfil de otra persona.
 
@@ -43,8 +43,8 @@ Lo único que necesitás instalado es **Docker** (con Compose v2) y unos 4 GB de
 Qué cubren los tests:
 
 - **Base de datos (pgTAP, 348 aserciones):** quién puede leer/escribir cada tabla, por rol (visitante, dueño, otra persona, admin, cuenta suspendida). Un test de invariantes falla si alguien agrega una tabla sin RLS o abre una columna protegida al cliente. Se probó rompiendo permisos a propósito: los tests lo detectan.
-- **Unitarios (Vitest, 270):** esquemas de **Zod** y saneado de texto, reglas del @usuario (con paridad contra la migración), **inspección de imágenes** (PNG/JPEG/WebP manipulados, animados, con datos pegados), recorte de la foto, i18n (paridad es/en, voseo), seguridad de redirecciones, **contraste de colores ≥ 4,5:1 de toda la paleta** y que no haya caracteres invisibles en el código.
-- **Punta a punta (Playwright, 128 = 64 × 2 tamaños; las 11 del cursor solo corren en escritorio):** registro (18+, contraseña repetida) → mail → onboarding (@usuario libre sin números, sugerencias) → configuración (foto, géneros, idioma) → seguir → cerrar sesión; **el servidor rechaza fotos manipuladas** (HTML disfrazado, SVG, tamaño o tipo falso, animadas, con datos pegados); el idioma sale del sistema y se cambia en Configuración; la **manito en todo lo clickeable** (se mide el cursor real); rutas protegidas; sin scroll horizontal a 360 px; objetivos táctiles ≥ 44 px; auditoría de accesibilidad **axe WCAG 2.2 AA** en 12 pantallas, en escritorio y celular.
+- **Unitarios (Vitest, 306):** esquemas de **Zod** y saneado de texto, reglas del @usuario (con paridad contra la migración), **inspección de imágenes** (PNG/JPEG/WebP manipulados, animados, con datos pegados), recorte de la foto, i18n (paridad es/en, voseo), seguridad de redirecciones, **contraste de colores ≥ 4,5:1 de toda la paleta** y que no haya caracteres invisibles en el código.
+- **Punta a punta (Playwright, 174 = 87 × 2 tamaños; las 13 del cursor solo corren en escritorio):** registro (18+, contraseña repetida) → mail → onboarding (@usuario libre sin números, sugerencias) → configuración (foto, géneros, idioma) → seguir → cerrar sesión; **el servidor rechaza fotos manipuladas** (HTML disfrazado, SVG, tamaño o tipo falso, animadas, con datos pegados); el idioma sale del sistema y se cambia en Configuración; la **manito en todo lo clickeable** (se mide el cursor real); rutas protegidas; sin scroll horizontal a 360 px; objetivos táctiles ≥ 44 px; auditoría de accesibilidad **axe WCAG 2.2 AA** en 12 pantallas, en escritorio y celular.
 
 ## Variables de entorno
 
@@ -84,7 +84,7 @@ trafal/
 │  ├─ migrations/                              esquema completo + RLS (7 migraciones)
 │  ├─ tests/database/                          pgTAP: permisos de cada tabla
 │  ├─ templates/                               mails bilingües con la identidad de Trafal
-│  └─ seed.sql                                 cuentas de desarrollo
+│  └─ seeds/                                   10 cuentas, 16 juegos, 30 avances y comentarios de ejemplo
 ├─ e2e/                                        Playwright (corre en la imagen oficial)
 ├─ tools/db-types.sh                           regenera los tipos de TypeScript desde el esquema real
 └─ docs/                                       DATABASE.md · DECISIONS.md

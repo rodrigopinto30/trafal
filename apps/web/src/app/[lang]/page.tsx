@@ -1,13 +1,12 @@
 import { ArrowRightIcon } from "lucide-react";
+import { Suspense } from "react";
+import { LandingGames } from "@/components/home/landing-games";
+import { LandingSkeleton } from "@/components/home/landing-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/link";
 import { getTranslations } from "@/i18n/server";
 
-/**
- * Portada provisoria: la identidad y el mensaje principal. La landing completa (buscador, juegos, destacado,
- * comunidad...) llega en la Fase 4, cuando haya datos reales que mostrar.
- */
 export default async function HomePage() {
   const t = await getTranslations("home");
 
@@ -42,6 +41,10 @@ export default async function HomePage() {
           </Button>
         </div>
       </section>
+
+      <Suspense fallback={<LandingSkeleton />}>
+        <LandingGames />
+      </Suspense>
 
       <section className="mx-auto max-w-[1200px] px-5 pt-[clamp(80px,10vw,120px)]">
         <div className="max-w-[680px]">

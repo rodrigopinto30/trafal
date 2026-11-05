@@ -44,6 +44,20 @@ Cambios pedidos antes de empezar la Fase 2 (los siete primeros, y después el me
 | **Menú de arriba mínimo: solo «Subir juego» y «Comunidad»** (además del logo y la cuenta) | Pedido del producto: una barra simple con las dos acciones que importan. | `NAV_ITEMS` en `nav-config.ts` alimenta la barra y el menú del celular. «Explorar» y «Creadores» siguen existiendo como rutas y en el pie, pero ya no en la barra. `nav.spec.ts` comprueba que haya exactamente esos dos links, en español e inglés, en escritorio y celular. |
 | **Nada de caracteres invisibles o de dirección de escritura literales en el código** | «Trojan Source» (CVE-2021-42574) y U+2028/U+2029, que cortan líneas en JavaScript sin que se vea. | `source-hygiene.test.ts` falla si aparece uno en `src/`; en el código se escriben como secuencias de escape. |
 
+## Portada con juegos y comunidad (2026-11-05)
+
+La portada pasó de ser un texto de presentación a mostrar juegos, banners y mensajes de la comunidad. Sin migración nueva.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Datos de ejemplo en `supabase/seeds/`** (10 cuentas, 16 juegos, 30 avances, 31 comentarios, 40 me gusta) | La portada, la página del juego y el perfil necesitan contenido real para diseñarse y probarse; el brief pedía 10 usuarios, 16 juegos y 30 avances. Los 16 juegos salen de la maqueta de diseño original (nombres, creadores, motores, géneros), con descripción y «cómo se juega» escritos como guía. | Tres archivos que corren en orden (`01-usuarios`, `02-juegos`, `03-comunidad`). Las partidas, los me gusta y los guardados que se ven son números fijados a mano en el último archivo: la base no tiene aún funciones que los cuenten. Solo local. |
+| **Cada tarjeta lleva a la página del juego** (`/games/<public_id>`); el reproductor real llega con la Fase 2 | Se pidió poder entrar sin cuenta; el reproductor seguro (subida, worker, dominio aparte) es el trabajo de la Fase 2. | La página ya muestra descripción, cómo se juega, avances, comentarios e invitación a registrarse, y un marco con la proporción del juego que avisa que el reproductor está en camino (botón de jugar desactivado). En el seed los `public_id` son legibles (`orbita`); en producción son aleatorios de 12 caracteres. |
+| **Portadas generadas** (`lib/games/cover.ts`) hasta que cada creador suba la suya | No hay imágenes que sembrar ni almacenamiento de portadas todavía. | Degradé por género + destello + ícono, determinístico por juego. `GameCover` usa la imagen (`cover_path`) apenas exista. Los colores viven en TypeScript, igual que los degradés de avatar. |
+| **Una sola tanda de consultas por portada** y secciones armadas en memoria (`lib/games/sections.ts`) | Son pocos juegos y 4 consultas en paralelo bastan; la lógica pura se prueba sin base. | Cuando haya cientos de juegos, cada sección pasa a su propia consulta con tope y orden en SQL (Fase 4). |
+| **Filas de tarjetas deslizables en celular y grilla desde 768 px** | Ocho tarjetas apiladas hacían la portada interminable en 360 px. | CSS puro (`scroll-snap`), sin JavaScript. |
+| **`scrollbar-gutter: stable` en `html`** | Al pasar de una pantalla larga (con barra de scroll) a una corta, el ancho disponible cambiaba y toda la barra de navegación se corría ~7 px. | `nav.spec.ts` lo mide con barras reales. |
+| **Las grillas con filas deslizables adentro usan `grid-cols-[minmax(0,1fr)]`** | Una celda de grilla no puede ser más angosta que su contenido: la fila de tarjetas estiraba el viewport del celular a 870 px. | Regla en las guías del equipo; lo cubre la prueba de «sin scroll horizontal» de las pantallas nuevas. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.

@@ -12,6 +12,7 @@ const PAGES: readonly Target[] = [
   { name: "signup", path: "/signup" },
   { name: "forgot", path: "/forgot-password" },
   { name: "perfil", path: "/u/valen_makes" },
+  { name: "juego", path: "/games/orbita" },
   { name: "seguidores", path: "/u/mateo_g/followers" },
   { name: "explorar", path: "/explore" },
   { name: "terminos", path: "/legal/terms" },

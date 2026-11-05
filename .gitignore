@@ -28,3 +28,7 @@ e2e/screenshots/
 .vercel/
 .DS_Store
 *.log
+
+# solo en la máquina de quien trabaja (no se versionan)
+CLAUDE.md
+v4/

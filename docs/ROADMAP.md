@@ -7,7 +7,7 @@ Plan aprobado el 2026-11-04. Cada fase cierra con: **qué se hizo · cómo proba
 | 1 | **Base**: proyecto, auth, perfiles, modelo de datos con RLS, sistema de diseño, i18n | ✔ completa (+ ajustes del 2026-11-04: ver [DECISIONS](DECISIONS.md)) |
 | 2 | **Juegos**: crear juego, subida directa, worker, reproductor seguro, versiones | siguiente |
 | 3 | **Social**: avances, comentarios, me gusta, seguir, guardar, compartir, feed | |
-| 4 | **Descubrimiento**: búsqueda, filtros, orden, Sorprendeme, juego de la semana, landing, seed completo | |
+| 4 | **Descubrimiento**: búsqueda, filtros, orden, Sorprendeme, juego de la semana, landing, seed completo | adelantado: portada con juegos, página del juego y seed de 16 juegos (ver [DECISIONS](DECISIONS.md)) |
 | 5 | **Confianza**: notificaciones, reportes, panel de admin, límites, páginas legales | |
 
 ## Arquitectura de alojamiento de juegos (Fase 2)

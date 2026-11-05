@@ -61,6 +61,45 @@
     "subtitle": "Juegos que se juegan en el navegador, hechos por gente que recién empieza. Jugá, comentá y subí el tuyo.",
     "ctaSignup": "Crear mi perfil gratis",
     "ctaUpload": "Subir un juego",
+    "sections": {
+      "spotlight": {
+        "eyebrow": "El más jugado",
+        "cta": "Jugar gratis"
+      },
+      "recent": {
+        "title": "Recién publicados",
+        "subtitle": "Lo último que subió la comunidad. Probalos gratis, sin crear una cuenta."
+      },
+      "mostPlayed": {
+        "title": "Los más jugados",
+        "subtitle": "Lo que más se juega en Trafal."
+      },
+      "featured": {
+        "eyebrow": "Primer juego de la semana",
+        "cta": "Jugar gratis"
+      },
+      "community": {
+        "title": "Lo que dice la comunidad",
+        "subtitle": "Opiniones de quienes juegan los juegos de gente que recién empieza.",
+        "joinTitle": "Tu opinión también cuenta",
+        "joinText": "Creá tu cuenta gratis para dejar mensajes, dar me gusta, seguir a quienes crean y publicar tus propios avances.",
+        "joinCta": "Crear mi cuenta",
+        "loginCta": "Ya tengo cuenta"
+      },
+      "firstGames": {
+        "title": "Primeros juegos",
+        "subtitle": "Gente que acaba de publicar su primer juego. Un comentario amable vale muchísimo."
+      },
+      "byGenre": {
+        "title": "Por género",
+        "subtitle": "Elegí qué tipo de juego tenés ganas de jugar.",
+        "count": "{count, plural, one {# juego} other {# juegos}}"
+      },
+      "devlogs": {
+        "title": "Novedades de los creadores",
+        "subtitle": "Avances, hitos y pedidos de feedback de quienes están haciendo sus juegos."
+      }
+    },
     "howLabel": "CÓMO FUNCIONA",
     "howTitle": "De «lo empecé» a «lo están jugando».",
     "steps": {
@@ -214,6 +253,46 @@
     "completeTitle": "Terminá tu perfil",
     "completeText": "Sumá una foto y elegí los géneros de juegos que te gustan para que la comunidad te conozca.",
     "completeCta": "Completar mi perfil"
+  },
+  "games": {
+    "play": "Jugar gratis",
+    "playerSoonTitle": "El reproductor está en camino",
+    "playerSoonText": "Pronto vas a poder jugar acá mismo, sin crear una cuenta.",
+    "firstGame": "Primer juego",
+    "mobileFriendly": "Funciona en celular",
+    "plays": "{count, plural, one {# partida} other {# partidas}}",
+    "likes": "{count, plural, one {# me gusta} other {# me gusta}}",
+    "comments": "{count, plural, one {# comentario} other {# comentarios}}",
+    "about": "Sobre este juego",
+    "howToPlay": "Cómo se juega",
+    "tags": "Etiquetas",
+    "creator": "Creador",
+    "viewProfile": "Ver perfil",
+    "devlogsTitle": "Avances de este juego",
+    "noDevlogs": "Todavía no hay avances publicados de este juego.",
+    "commentsTitle": "Comentarios",
+    "noComments": "Todavía no hay comentarios. Creá tu cuenta y sé la primera persona en dejar uno.",
+    "commentLabels": {
+      "liked": "Me gustó",
+      "suggestion": "Sugerencia"
+    },
+    "helpful": "Le sirvió al creador",
+    "rank": "Puesto {position}",
+    "join": {
+      "title": "Sumate a la comunidad",
+      "text": "Creá tu cuenta gratis para dar me gusta, comentar y seguir a {name}.",
+      "signup": "Crear mi cuenta",
+      "login": "Ya tengo cuenta"
+    }
+  },
+  "posts": {
+    "kinds": {
+      "avance": "Avance",
+      "nuevo_juego": "Nuevo juego",
+      "pide_feedback": "Pide feedback",
+      "hito": "Hito"
+    },
+    "inGame": "En {title}"
   },
   "settings": {
     "title": "Configuración",

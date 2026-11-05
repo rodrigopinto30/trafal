@@ -61,6 +61,45 @@
     "subtitle": "Browser games made by people just getting started. Play, comment and upload yours.",
     "ctaSignup": "Create my free profile",
     "ctaUpload": "Upload a game",
+    "sections": {
+      "spotlight": {
+        "eyebrow": "Most played",
+        "cta": "Play for free"
+      },
+      "recent": {
+        "title": "Just published",
+        "subtitle": "The latest from the community. Try them for free, no account needed."
+      },
+      "mostPlayed": {
+        "title": "Most played",
+        "subtitle": "What people play the most on Trafal."
+      },
+      "featured": {
+        "eyebrow": "First game of the week",
+        "cta": "Play for free"
+      },
+      "community": {
+        "title": "What the community says",
+        "subtitle": "Opinions from people playing games made by beginners.",
+        "joinTitle": "Your opinion counts too",
+        "joinText": "Create a free account to leave messages, like games, follow creators and post your own updates.",
+        "joinCta": "Create my account",
+        "loginCta": "I already have an account"
+      },
+      "firstGames": {
+        "title": "First games",
+        "subtitle": "People who just published their first game. A kind comment means a lot."
+      },
+      "byGenre": {
+        "title": "By genre",
+        "subtitle": "Pick the kind of game you feel like playing.",
+        "count": "{count, plural, one {# game} other {# games}}"
+      },
+      "devlogs": {
+        "title": "News from the creators",
+        "subtitle": "Updates, milestones and feedback requests from people making their games."
+      }
+    },
     "howLabel": "HOW IT WORKS",
     "howTitle": "From “I started it” to “people are playing it”.",
     "steps": {
@@ -214,6 +253,46 @@
     "completeTitle": "Finish your profile",
     "completeText": "Add a photo and pick the game genres you like so the community can get to know you.",
     "completeCta": "Finish my profile"
+  },
+  "games": {
+    "play": "Play for free",
+    "playerSoonTitle": "The player is on its way",
+    "playerSoonText": "Soon you'll be able to play right here, no account needed.",
+    "firstGame": "First game",
+    "mobileFriendly": "Works on mobile",
+    "plays": "{count, plural, one {# play} other {# plays}}",
+    "likes": "{count, plural, one {# like} other {# likes}}",
+    "comments": "{count, plural, one {# comment} other {# comments}}",
+    "about": "About this game",
+    "howToPlay": "How to play",
+    "tags": "Tags",
+    "creator": "Creator",
+    "viewProfile": "View profile",
+    "devlogsTitle": "Updates for this game",
+    "noDevlogs": "There are no updates for this game yet.",
+    "commentsTitle": "Comments",
+    "noComments": "There are no comments yet. Create an account and be the first to leave one.",
+    "commentLabels": {
+      "liked": "Liked it",
+      "suggestion": "Suggestion"
+    },
+    "helpful": "Helped the creator",
+    "rank": "Rank {position}",
+    "join": {
+      "title": "Join the community",
+      "text": "Create a free account to like, comment and follow {name}.",
+      "signup": "Create my account",
+      "login": "I already have an account"
+    }
+  },
+  "posts": {
+    "kinds": {
+      "avance": "Update",
+      "nuevo_juego": "New game",
+      "pide_feedback": "Wants feedback",
+      "hito": "Milestone"
+    },
+    "inGame": "In {title}"
   },
   "settings": {
     "title": "Settings",

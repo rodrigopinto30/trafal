@@ -46,9 +46,6 @@ export function UserAvatar({ username, displayName, avatarPath, size = "md", alt
     >
       <span aria-hidden="true">{avatarInitial(displayName, username)}</span>
       {src ? (
-        // <img> común y no next/image: ya es un WebP de 256 px con caché inmutable, no hay nada que optimizar, y el
-        // optimizador de Next exigiría declarar el dominio del almacenamiento. La imagen es decorativa (alt vacío).
-        // eslint-disable-next-line @next/next/no-img-element
         <img
           src={src}
           alt=""
