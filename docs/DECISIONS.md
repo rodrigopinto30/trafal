@@ -58,6 +58,18 @@ La portada pasó de ser un texto de presentación a mostrar juegos, banners y me
 | **`scrollbar-gutter: stable` en `html`** | Al pasar de una pantalla larga (con barra de scroll) a una corta, el ancho disponible cambiaba y toda la barra de navegación se corría ~7 px. | `nav.spec.ts` lo mide con barras reales. |
 | **Las grillas con filas deslizables adentro usan `grid-cols-[minmax(0,1fr)]`** | Una celda de grilla no puede ser más angosta que su contenido: la fila de tarjetas estiraba el viewport del celular a 870 px. | Regla en las guías del equipo; lo cubre la prueba de «sin scroll horizontal» de las pantallas nuevas. |
 
+## El menú de la cuenta no mueve la página (2026-11-06)
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **`html body[data-scroll-locked] { margin-right: 0 !important }`** en `globals.css` | Radix bloquea el scroll mientras hay un menú o diálogo abierto (`overflow: hidden` en el body) y, para compensar la barra de scroll que desaparece, le suma `margin-right` igual al ancho de la barra. Como `html` ya reserva ese lugar con `scrollbar-gutter: stable`, la compensación se duplicaba y toda la página se corría ~7 px al abrir y al cerrar. | Vale para todo lo que bloquee el scroll (menús, diálogos), no solo el menú de la cuenta. Se gana a la regla de Radix por especificidad (las dos son `!important` y sin capa). `user-menu.spec.ts` mide la barra, el contenido y el scroll antes, con el menú abierto y después, en tres pantallas. Si algún día se saca `scrollbar-gutter`, hay que sacar esta regla. |
+
+## «Cambios guardados» solo al guardar (2026-11-06)
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **`useSuccessToast(state)`** (`lib/use-success-toast.ts`) en vez de un `useEffect` suelto en cada formulario | Next conserva el estado de las pantallas ya visitadas y, al volver con atrás/adelante, reejecuta sus efectos: el resultado «guardado» de una sesión anterior volvía a disparar el aviso (dos veces en desarrollo) aunque la persona solo estuviera entrando a *Editar perfil*. | El hook recuerda qué resultado ya anunció y no repite. Lo usan *Editar perfil* y *Preferencias*; todo formulario nuevo con aviso de éxito debe usarlo. `settings-toast.spec.ts` guarda, va atrás y adelante, y lee el conteo de avisos **sin reintentos** (un reintento dejaría pasar un aviso repetido que dura unos segundos). |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.
