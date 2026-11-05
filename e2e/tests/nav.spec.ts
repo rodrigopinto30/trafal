@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { gotoReady } from "./helpers/session";
+import { gotoReady, loginAndWait } from "./helpers/session";
 
 /**
  * El menú de arriba es mínimo: además del logo y la cuenta, solo «Subir juego» y «Comunidad». En escritorio van en la barra; en
@@ -32,7 +32,14 @@ test("en inglés son «Upload game» y «Community»", async ({ page }) => {
   await expect(links.nth(1)).toHaveAttribute("href", "/en/feed");
 });
 
+test("sin cuenta, «Subir juego» pide iniciar sesión y vuelve al formulario después", async ({ page }) => {
+  await gotoReady(page, "/");
+  await (await openNav(page)).getByRole("link", { name: "Subir juego" }).click();
+  await expect(page).toHaveURL(/\/login\?next=%2Fgames%2Fnew$/);
+});
+
 test("cada opción lleva a su pantalla y queda marcada como la actual", async ({ page }) => {
+  await loginAndWait(page, "valen@trafal.test", "trafal123");
   await gotoReady(page, "/");
   await (await openNav(page)).getByRole("link", { name: "Subir juego" }).click();
   await expect(page).toHaveURL(/\/games\/new$/);

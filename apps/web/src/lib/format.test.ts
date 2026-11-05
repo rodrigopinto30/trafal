@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatCompactNumber, formatRelativeTime } from "./format";
+import { formatBytes, formatCompactNumber, formatRelativeTime } from "./format";
 
 const now = new Date("2026-11-05T12:00:00Z");
 const ago = (seconds: number) => new Date(now.getTime() - seconds * 1000);
@@ -34,5 +34,20 @@ describe("formatCompactNumber", () => {
     expect(withPlainSpaces(formatCompactNumber("es", 6120))).toBe("6,1 mil");
     expect(formatCompactNumber("en", 6120)).toBe("6.1K");
     expect(formatCompactNumber("es", 87)).toBe("87");
+  });
+});
+
+describe("formatBytes", () => {
+  it("uses binary units and trims the decimals", () => {
+    expect(formatBytes("en", 0)).toBe("0 B");
+    expect(formatBytes("en", 1023)).toBe("1,023 B");
+    expect(formatBytes("en", 1024)).toBe("1 KB");
+    expect(formatBytes("en", 1536)).toBe("1.5 KB");
+    expect(formatBytes("en", 200 * 1024 * 1024)).toBe("200 MB");
+    expect(formatBytes("en", 1024 ** 3)).toBe("1 GB");
+  });
+
+  it("follows the locale for the decimal separator", () => {
+    expect(formatBytes("es-AR", 1536)).toBe("1,5 KB");
   });
 });

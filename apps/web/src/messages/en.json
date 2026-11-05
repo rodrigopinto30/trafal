@@ -252,7 +252,9 @@
     "loginToFollow": "Log in to follow this person.",
     "completeTitle": "Finish your profile",
     "completeText": "Add a photo and pick the game genres you like so the community can get to know you.",
-    "completeCta": "Finish my profile"
+    "completeCta": "Finish my profile",
+    "ownDraftsTitle": "Your games in progress",
+    "manageGame": "View status"
   },
   "games": {
     "play": "Play for free",
@@ -284,6 +286,110 @@
       "signup": "Create my account",
       "login": "I already have an account"
     }
+  },
+  "gameForm": {
+    "title": "Upload a game",
+    "subtitle": "Tell us about your game and upload the .zip. We check it before publishing.",
+    "detailsTitle": "About your game",
+    "filesTitle": "Files",
+    "feedbackTitle": "Questions for players",
+    "feedbackHint": "Optional. Up to 3 questions you'd like players to answer in the comments (for example: “Does the jump feel good?”).",
+    "fields": {
+      "title": "Title",
+      "shortDescription": "Short description",
+      "shortDescriptionHint": "Up to 160 characters. It shows on the game cards.",
+      "genre": "Genre",
+      "genrePlaceholder": "Pick a genre",
+      "engine": "Engine",
+      "enginePlaceholder": "Pick an engine",
+      "tags": "Tags",
+      "tagsHint": "Separated by commas, up to 8 (for example: pixel art, retro, relaxing).",
+      "controls": "How to play",
+      "controlsHint": "The controls and what to do. Up to 500 characters.",
+      "displayRatio": "Screen ratio",
+      "worksOnMobile": "Works on mobile",
+      "isFirstGame": "It's my first game",
+      "question": "Question {number}",
+      "questionPlaceholder": "What would you like to know?",
+      "zip": "Game .zip file",
+      "zipHint": "Up to {limit}. The index.html file must be in the main folder of the .zip.",
+      "cover": "Cover (optional)",
+      "coverHint": "PNG, JPG or WebP, at least 320×180 and up to 5 MB.",
+      "screenshots": "Screenshots (optional)",
+      "screenshotsHint": "Up to 6 PNG, JPG or WebP images, up to 5 MB each."
+    },
+    "ratios": {
+      "16:9": "16:9 (landscape)",
+      "4:3": "4:3 (classic)",
+      "1:1": "1:1 (square)",
+      "9:16": "9:16 (portrait)"
+    },
+    "selectedFile": "{name} · {size}",
+    "submit": "Upload game",
+    "steps": {
+      "creating": "Preparing your game…",
+      "uploading": "Uploading the .zip… {percent}%",
+      "confirming": "Finishing…",
+      "done": "Done! Taking you to your game."
+    },
+    "progressLabel": "Upload progress",
+    "retryUpload": "Retry the upload",
+    "uploadFailed": "The upload was interrupted. Your game is already created: you can retry with the same file.",
+    "errors": {
+      "invalidTitle": "Enter a title of up to 80 characters.",
+      "descriptionTooLong": "The description must be 160 characters or fewer.",
+      "invalidGenre": "Pick a genre from the list.",
+      "invalidEngine": "Pick an engine from the list.",
+      "tooManyTags": "You can add up to 8 tags.",
+      "tagTooLong": "Each tag can have up to 24 characters.",
+      "controlsTooLong": "The how-to-play text must be 500 characters or fewer.",
+      "invalidRatio": "Pick a ratio from the list.",
+      "tooManyQuestions": "You can ask up to 3 questions.",
+      "questionLength": "Each question must be between 3 and 140 characters.",
+      "zipRequired": "Pick your game's .zip file.",
+      "zipNotZip": "The file must be a .zip.",
+      "zipTooLarge": "The .zip is too big: the maximum is 200 MB.",
+      "coverInvalid": "The cover must be a valid PNG, JPG or WebP image.",
+      "coverTooLarge": "The cover is too big: the maximum is 5 MB.",
+      "coverDimensions": "The cover must be between 320×180 and 4096×4096 pixels.",
+      "coverAnimated": "The cover cannot be animated.",
+      "screenshotsInvalid": "Screenshots must be valid, non-animated PNG, JPG or WebP images of up to 5 MB, between 320×180 and 4096×4096 pixels.",
+      "tooManyScreenshots": "You can upload up to 6 screenshots.",
+      "firstGameTaken": "You already marked another game as your first.",
+      "dailyLimit": "You reached the limit of 5 uploads per day. Try again tomorrow.",
+      "accountRestricted": "Your account can't upload games right now.",
+      "unauthenticated": "Log in to upload a game.",
+      "storage": "We couldn't save your files. Try again in a while.",
+      "generic": "Something went wrong. Check your details and try again."
+    }
+  },
+  "gameManage": {
+    "title": "Your game",
+    "backToProfile": "Back to my profile",
+    "uploadAnother": "Upload another game",
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "hidden": "Hidden",
+      "removed": "Taken down"
+    },
+    "draftNote": "Your game is a draft: only you can see it. It goes live when the review finishes.",
+    "versionsTitle": "Versions",
+    "versionName": "Version {label}",
+    "versionStatus": {
+      "uploading": "Uploading",
+      "processing": "Reviewing",
+      "ready": "Ready",
+      "error": "Has errors"
+    },
+    "versionText": {
+      "uploading": "The upload didn't finish. If you closed the page, upload your game again.",
+      "processing": "We're reviewing your game. It usually takes a minute and this page updates by itself.",
+      "ready": "Your game passed the review.",
+      "error": "We couldn't accept this file:"
+    },
+    "unknownError": "We couldn't accept this file. Make sure it's a .zip with your web game and try again.",
+    "size": ".zip size: {size}"
   },
   "search": {
     "label": "Search games",

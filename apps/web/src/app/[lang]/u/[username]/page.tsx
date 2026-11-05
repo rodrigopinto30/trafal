@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
 import { getTranslations } from "@/i18n/server";
 import { PROFILE_COLUMNS, getAuthUser } from "@/lib/auth/dal";
-import { listGamesByOwner, listPostsByAuthor } from "@/lib/games/queries";
+import { listGamesByOwner, listOwnUnpublishedGames, listPostsByAuthor, type OwnGame } from "@/lib/games/queries";
 import { createClient } from "@/lib/supabase/server";
 import { parseUsernameParam } from "@/lib/validation/common";
 
@@ -46,9 +46,10 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
     listGamesByOwner(profile.id),
     listPostsByAuthor(profile.id),
   ]);
+  const isOwn = me?.id === profile.id;
+  const unpublished = isOwn ? await listOwnUnpublishedGames(profile.id) : [];
   const now = new Date();
 
-  const isOwn = me?.id === profile.id;
   let isFollowing = false;
   if (me && !isOwn) {
     const { data: follow } = await supabase
@@ -75,6 +76,7 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
     <div className="grid grid-cols-[minmax(0,1fr)] gap-8">
       <ProfileHeader profile={profile} gamesCount={games.length} postsCount={posts.length} action={action} />
       {incomplete ? <CompleteProfileCard title={t("completeTitle")} text={t("completeText")} cta={t("completeCta")} /> : null}
+      {unpublished.length > 0 ? <UnpublishedGames title={t("ownDraftsTitle")} cta={t("manageGame")} games={unpublished} /> : null}
       <ProfileTabs
         gamesPanel={
           games.length > 0 ? (
@@ -110,6 +112,24 @@ function CompleteProfileCard({ title, text, cta }: { title: string; text: string
         <Link href="/settings/profile">{cta}</Link>
       </Button>
     </aside>
+  );
+}
+
+function UnpublishedGames({ title, cta, games }: { title: string; cta: string; games: OwnGame[] }) {
+  return (
+    <section aria-label={title} className="grid gap-3 rounded-3xl border border-white/10 bg-card p-5 sm:p-6">
+      <h2 className="font-display text-lg font-bold">{title}</h2>
+      <ul className="grid gap-2">
+        {games.map((game) => (
+          <li key={game.id} className="flex flex-wrap items-center justify-between gap-3">
+            <span className="min-w-0 truncate font-semibold">{game.title}</span>
+            <Button asChild variant="outline" size="default">
+              <Link href={`/games/${game.public_id}/manage`}>{cta}</Link>
+            </Button>
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

@@ -175,3 +175,56 @@ export async function listCommunityHighlights(limit: number): Promise<CommunityH
     row.author && row.game ? [{ ...row, author: row.author, game: row.game, label: row.label as CommentSummary["label"] }] : [],
   );
 }
+
+export type OwnGame = {
+  id: string;
+  public_id: string;
+  title: string;
+  status: string;
+  works_on_mobile: boolean;
+};
+
+export type OwnGameVersion = {
+  id: string;
+  number: number;
+  label: string;
+  status: string;
+  error_code: string | null;
+  error_params: unknown;
+  declared_size_bytes: number | null;
+  created_at: string;
+};
+
+/** A game of the signed-in person, whatever its status (drafts included). RLS plus the owner filter keep it to their own. */
+export async function findOwnGame(publicId: string, ownerId: string): Promise<OwnGame | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("games")
+    .select("id, public_id, title, status, works_on_mobile")
+    .eq("public_id", publicId)
+    .eq("owner_id", ownerId)
+    .maybeSingle();
+  return data;
+}
+
+export async function listVersionsOfGame(gameId: string): Promise<OwnGameVersion[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("game_versions")
+    .select("id, number, label, status, error_code, error_params, declared_size_bytes, created_at")
+    .eq("game_id", gameId)
+    .order("number", { ascending: false });
+  return data ?? [];
+}
+
+/** The signed-in person's games that are not published yet (drafts, or hidden/removed by moderation). */
+export async function listOwnUnpublishedGames(ownerId: string): Promise<OwnGame[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("games")
+    .select("id, public_id, title, status, works_on_mobile")
+    .eq("owner_id", ownerId)
+    .neq("status", "published")
+    .order("created_at", { ascending: false });
+  return data ?? [];
+}

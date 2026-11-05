@@ -55,12 +55,14 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
   - una invitación a crear cuenta para quien no tiene.
 - **Marco del reproductor** con la proporción propia de cada juego (16:9, 4:3, 1:1 o 9:16). Por ahora muestra la portada, avisa que el reproductor está en camino y deja el botón «Jugar gratis» desactivado.
 - **Portadas**: la imagen que suba el creador o, mientras no haya, un arte generado con el color e ícono de su género.
+- **Subir un juego** (`/games/new`, con cuenta): título, descripción corta, género, motor, hasta 8 etiquetas, cómo se juega, proporción de pantalla, «funciona en celular», «es mi primer juego», hasta 3 preguntas para quienes jueguen, portada y hasta 6 capturas (PNG, JPG o WebP de hasta 5 MB; el servidor mira los bytes reales y rechaza imágenes falsas, animadas o fuera de medida). El `.zip` (hasta 200 MB) viaja **directo del navegador a un espacio de cuarentena** con una dirección firmada que vence en una hora, con barra de progreso y la posibilidad de reintentar si se corta. Hasta 5 subidas por día por persona.
+- **Estado del juego** (`/games/<id>/manage`, solo para su dueño): el juego nace como borrador, que solo ve su creador, y cada versión muestra si está subiendo, en revisión, lista o con un error explicado para principiantes. La página se actualiza sola. Los juegos sin publicar aparecen en el propio perfil.
 
 **Próximamente**
-- **Subir un juego** como `.zip` con el build web (hasta 200 MB comprimido, 1 GB descomprimido y 5.000 archivos). La subida es directa a un espacio de cuarentena; un proceso aparte revisa el contenido antes de publicarlo: rechaza rutas peligrosas, ejecutables y tipos de archivo no permitidos, exige un `index.html`, y detecta con qué motor se hizo.
-- **Versiones** (v1, v2…) con nombre editable y registro de cambios, y estados visibles (subiendo, procesando, lista o con error explicado para principiantes).
+- **Revisión automática del `.zip`**: un proceso aparte lo descomprime y lo valida (rechaza rutas peligrosas, ejecutables y tipos de archivo no permitidos, exige un `index.html`, y detecta con qué motor se hizo) y publica el juego. Hoy una subida terminada queda «en revisión».
+- **Versiones** (v1, v2…) con nombre editable y registro de cambios.
 - **Jugar en el navegador sin cuenta**: el juego corre en un iframe aislado y servido desde un dominio distinto al de Trafal, de modo que no puede tocar tu sesión. Con pantalla completa, aviso de sonido, botón de reportar y conteo de partidas sin guardar IP.
-- **Ficha completa**: capturas (hasta 6), hasta 3 preguntas de feedback para los jugadores, enlace externo opcional, y cupos por persona.
+- **Ficha completa**: mostrar en la página del juego las capturas y las preguntas de feedback, enlace externo opcional y más cupos por persona.
 
 ### Comunidad
 
