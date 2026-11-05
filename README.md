@@ -78,6 +78,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Descubrir juegos
 
 **Hoy**
+- **Buscador de juegos** al inicio de la portada, justo debajo del título y antes de todo lo demás. Mientras escribís sugiere hasta 5 juegos (con su portada y su creador); buscás por título, descripción, etiquetas, género, motor o creador, sin importar tildes ni mayúsculas, y escribir solo el comienzo de una palabra alcanza («orb» encuentra «Órbita»). Se maneja con el teclado (flechas, Enter, Escape) y con lector de pantalla. Al enviar lleva a **Explorar** (`/explore?q=…`), que muestra los resultados con las mismas tarjetas, o todos los juegos si el campo está vacío.
 - **Portada** pensada para quien llega sin cuenta y puede jugar gratis. De arriba abajo:
   - un **banner grande** del juego más jugado, con botón «Jugar gratis»;
   - **Recién publicados** (8 juegos);

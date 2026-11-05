@@ -285,6 +285,26 @@
       "login": "Ya tengo cuenta"
     }
   },
+  "search": {
+    "label": "Buscar juegos",
+    "placeholder": "Buscá un juego o un creador",
+    "submit": "Buscar",
+    "suggestionsLabel": "Sugerencias",
+    "viewAll": "Ver todos los resultados de «{query}»",
+    "count": "{count, plural, =0 {Sin sugerencias.} one {1 sugerencia.} other {# sugerencias.}}",
+    "by": "de {creator}"
+  },
+  "explore": {
+    "title": "Explorar juegos",
+    "subtitleAll": "Todos los juegos publicados, los más nuevos primero.",
+    "subtitleResults": "Resultados para «{query}»",
+    "count": "{count, plural, one {# juego} other {# juegos}}",
+    "emptyTitle": "No encontramos juegos para «{query}»",
+    "emptyText": "Probá con otra palabra, con un género (plataformas, terror, puzzle) o con el nombre de un motor.",
+    "showAll": "Ver todos los juegos",
+    "resultsTitle": "Resultados de la búsqueda",
+    "gamesTitle": "Juegos"
+  },
   "posts": {
     "kinds": {
       "avance": "Avance",

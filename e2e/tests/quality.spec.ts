@@ -15,6 +15,8 @@ const PAGES: readonly Target[] = [
   { name: "juego", path: "/games/orbita" },
   { name: "seguidores", path: "/u/mateo_g/followers" },
   { name: "explorar", path: "/explore" },
+  { name: "explorar-resultados", path: "/explore?q=orbita" },
+  { name: "explorar-sin-resultados", path: "/explore?q=zzzz" },
   { name: "terminos", path: "/legal/terms" },
   { name: "no-encontrado", path: "/pagina-que-no-existe" },
   { name: "configuracion-perfil", path: "/settings/profile", login: true },

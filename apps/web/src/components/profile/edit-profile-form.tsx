@@ -1,7 +1,6 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
-import { toast } from "sonner";
+import { useActionState } from "react";
 import { TopicGrid } from "@/components/profile/topic-grid";
 import { SettingsSection } from "@/components/settings/settings-section";
 import { Button } from "@/components/ui/button";
@@ -13,6 +12,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocale, useTranslations } from "@/i18n/client";
 import { initialFormState } from "@/lib/forms";
+import { useSuccessToast } from "@/lib/use-success-toast";
 import { updateProfileAction } from "@/lib/profile/actions";
 import { ENGINE_IDS } from "@/lib/profile/catalog";
 
@@ -35,9 +35,7 @@ export function EditProfileForm({ countries, ...initial }: Props) {
   const locale = useLocale();
   const [state, formAction, pending] = useActionState(updateProfileAction, initialFormState);
 
-  useEffect(() => {
-    if (state.status === "success" && state.message) toast.success(state.message);
-  }, [state]);
+  useSuccessToast(state);
 
   const values = state.values ?? {
     displayName: initial.displayName,

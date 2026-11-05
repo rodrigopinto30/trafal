@@ -58,6 +58,31 @@ La portada pasó de ser un texto de presentación a mostrar juegos, banners y me
 | **`scrollbar-gutter: stable` en `html`** | Al pasar de una pantalla larga (con barra de scroll) a una corta, el ancho disponible cambiaba y toda la barra de navegación se corría ~7 px. | `nav.spec.ts` lo mide con barras reales. |
 | **Las grillas con filas deslizables adentro usan `grid-cols-[minmax(0,1fr)]`** | Una celda de grilla no puede ser más angosta que su contenido: la fila de tarjetas estiraba el viewport del celular a 870 px. | Regla en las guías del equipo; lo cubre la prueba de «sin scroll horizontal» de las pantallas nuevas. |
 
+## El menú de la cuenta no mueve la página (2026-11-06)
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **`html body[data-scroll-locked] { margin-right: 0 !important }`** en `globals.css` | Radix bloquea el scroll mientras hay un menú o diálogo abierto (`overflow: hidden` en el body) y, para compensar la barra de scroll que desaparece, le suma `margin-right` igual al ancho de la barra. Como `html` ya reserva ese lugar con `scrollbar-gutter: stable`, la compensación se duplicaba y toda la página se corría ~7 px al abrir y al cerrar. | Vale para todo lo que bloquee el scroll (menús, diálogos), no solo el menú de la cuenta. Se gana a la regla de Radix por especificidad (las dos son `!important` y sin capa). `user-menu.spec.ts` mide la barra, el contenido y el scroll antes, con el menú abierto y después, en tres pantallas. Si algún día se saca `scrollbar-gutter`, hay que sacar esta regla. |
+
+## «Cambios guardados» solo al guardar (2026-11-06)
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **`useSuccessToast(state)`** (`lib/use-success-toast.ts`) en vez de un `useEffect` suelto en cada formulario | Next conserva el estado de las pantallas ya visitadas y, al volver con atrás/adelante, reejecuta sus efectos: el resultado «guardado» de una sesión anterior volvía a disparar el aviso (dos veces en desarrollo) aunque la persona solo estuviera entrando a *Editar perfil*. | El hook recuerda qué resultado ya anunció y no repite. Lo usan *Editar perfil* y *Preferencias*; todo formulario nuevo con aviso de éxito debe usarlo. `settings-toast.spec.ts` guarda, va atrás y adelante, y lee el conteo de avisos **sin reintentos** (un reintento dejaría pasar un aviso repetido que dura unos segundos). |
+
+## Buscador de juegos (2026-11-06)
+
+Migración nueva: `20261106000100_search_games.sql`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Buscador en la portada, debajo del título y sobre los botones** (no en la barra de arriba) | Pedido del producto: que sea lo primero que se ve, sin recargar el menú, que quedó con dos opciones. Entra en la primera pantalla en escritorio y en celular de 360 px. | `GameSearch` (`components/search/`) con dos variantes (`hero` y `page`); en celular el botón es solo la lupa. |
+| **La búsqueda vive en la base: `search_games(texto, límite)`** y devuelve ids con su relevancia | Ya existía `games.search_doc` (título > descripción y etiquetas > género, motor y creador, sin tildes). Un solo lugar define qué coincide y en qué orden; la app solo trae los juegos por id. | Cada palabra se busca como **prefijo** (sirve para las sugerencias). Del texto solo se conservan letras y números, así que nada de lo que se escriba llega como operador de `tsquery`; hasta 8 palabras y 80 caracteres. `SECURITY INVOKER` + filtro `published`: ni los borradores propios aparecen. |
+| **Sugerencias por Server Action**, no por una API propia | Mismo patrón que el resto de la app: el texto del navegador se sanea y valida con Zod (`lib/validation/search.ts`) antes de tocar la base. | Pausa de 200 ms al escribir, mínimo 2 caracteres y se descartan respuestas viejas. Sin tope de uso por ahora (llega con la Fase 5). |
+| **Patrón combobox accesible** (flechas, Enter, Escape, `aria-activedescendant`, aviso «N sugerencias») | Es un campo que se usa en cada visita: tiene que andar igual con teclado y lector de pantalla. | `search.spec.ts` lo recorre en escritorio y celular; `quality.spec.ts` audita con axe las pantallas de resultados. |
+| **`/explore` pasa a ser la pantalla de resultados** (antes «en construcción») | Sin destino, el buscador no sirve. | Muestra los resultados o, sin texto, los juegos más nuevos (48 como máximo). Los filtros por género y motor, el orden y «Sorprendeme» siguen siendo de la Fase 4. |
+| **Sin JavaScript el formulario igual envía a `/explore?q=…`** | Es un `<form method="get">` real. | Los resultados llegan por *streaming*, igual que el resto del sitio, y sin JavaScript ese contenido no se muestra: es una limitación general de la app, no del buscador. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.

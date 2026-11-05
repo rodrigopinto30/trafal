@@ -2,6 +2,7 @@ import { ArrowRightIcon } from "lucide-react";
 import { Suspense } from "react";
 import { LandingGames } from "@/components/home/landing-games";
 import { LandingSkeleton } from "@/components/home/landing-skeleton";
+import { GameSearch } from "@/components/search/game-search";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/link";
@@ -29,7 +30,11 @@ export default async function HomePage() {
         </h1>
         <p className="mx-auto mt-4 max-w-[620px] text-lg text-text-2">{t("subtitle")}</p>
 
-        <div className="mt-7 flex flex-wrap justify-center gap-3 max-sm:flex-col">
+        <div className="mt-8">
+          <GameSearch variant="hero" />
+        </div>
+
+        <div className="mt-6 flex flex-wrap justify-center gap-3 max-sm:flex-col">
           <Button size="lg" asChild className="shadow-[0_0_24px_rgb(139_92_255/0.6),0_0_52px_rgb(46_230_255/0.22)]">
             <Link href="/signup">
               {t("ctaSignup")}

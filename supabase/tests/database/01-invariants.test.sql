@@ -76,14 +76,14 @@ select is(
   (select coalesce(string_agg(p.proname, ', ' order by p.proname), '')
      from pg_proc p join pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'public' and has_function_privilege('anon', p.oid, 'execute')),
-  'username_available',
-  'anon solo puede ejecutar username_available'
+  'search_games, username_available',
+  'anon solo puede ejecutar las funciones públicas previstas'
 );
 select is(
   (select coalesce(string_agg(p.proname, ', ' order by p.proname), '')
      from pg_proc p join pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute')),
-  'complete_onboarding, username_available',
+  'complete_onboarding, search_games, username_available',
   'authenticated solo puede ejecutar las funciones públicas previstas'
 );
 

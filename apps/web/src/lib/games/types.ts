@@ -23,6 +23,8 @@ export type GameSummary = {
   owner: Creator;
 };
 
+export type GameSuggestion = Pick<GameSummary, "public_id" | "title" | "genre_id" | "cover_path"> & { creator: string };
+
 export type GameDetail = GameSummary & {
   controls: string;
   save_count: number;

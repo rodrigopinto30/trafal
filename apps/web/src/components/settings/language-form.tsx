@@ -1,13 +1,13 @@
 "use client";
 
 import { CheckIcon } from "lucide-react";
-import { useActionState, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FormMessage } from "@/components/ui/form-message";
 import { useLocale, useTranslations } from "@/i18n/client";
 import { locales, type Locale } from "@/i18n/config";
 import { initialFormState } from "@/lib/forms";
+import { useSuccessToast } from "@/lib/use-success-toast";
 import { updatePreferencesAction } from "@/lib/settings/actions";
 
 /**
@@ -21,9 +21,7 @@ export function LanguageForm() {
   const [state, formAction, pending] = useActionState(updatePreferencesAction, initialFormState);
   const [chosen, setChosen] = useState<Locale>(current);
 
-  useEffect(() => {
-    if (state.status === "success" && state.message) toast.success(state.message);
-  }, [state]);
+  useSuccessToast(state);
 
   return (
     <form action={formAction} noValidate className="grid gap-5">
