@@ -101,6 +101,21 @@ Primera pieza de la subida de juegos: el validador y las reglas, sin infraestruc
 | **Escaneo sospechoso que marca pero no bloquea** (`scan_flags`) | Los falsos positivos serían frecuentes (`top.location` aparece en código legítimo). | `CRYPTO_MINER`, `PASSWORD_FIELD` y `TOP_NAVIGATION_ATTEMPT` en html/js; revisa hasta 16 MiB por archivo y encuentra textos partidos entre trozos. Los archivos `.br`/`.gz` no se escanean. |
 | **El validador recibe un destino** (`Sink`) en vez de escribir él mismo | Validar y extraer en una sola pasada, sin leer 1 GB dos veces. | **Nada se publica hasta que `validate_archive` termina sin error**: el worker escribe en una carpeta temporal y sube recién después. Los mensajes de error nunca llevan caracteres de control ni de dirección. |
 
+## Subida de juegos (2026-11-06)
+
+Migración nueva: `20261106000200_game_upload.sql`. Buckets nuevos: `quarantine` y `games` (privados, sin lista de tipos).
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **El `.zip` va del navegador al bucket de cuarentena con una URL firmada**, nunca por el servidor de la app | Hasta 200 MB: pasarlos por una función serverless sería caro, lento y sujeto a sus límites de cuerpo. | `createQuarantineUploadUrl` firma un PUT que **fija el tipo (`application/zip`) y el tamaño exacto** y vence en 1 hora; un tipo o tamaño distinto da `SignatureDoesNotMatch` (probado). Se firma con `S3_PUBLIC_ENDPOINT`, la dirección que ve el navegador: la firma incluye el host. |
+| **Crear la versión es una función SQL** (`create_game_version`), no un INSERT | El dueño no puede insertar versiones ni cambiar su estado (RLS sin policy). La función revisa dueño, cuenta activa, tamaño declarado (≤ 200 MiB) y el cupo de 5 subidas por 24 h entre **todos** sus juegos, y arma la clave `{game_id}/{version_id}.zip`. | `confirm_version_upload` pasa `uploading` → `processing` (eso la pone en la cola del worker) y solo la puede llamar el dueño. Las constantes del SQL las vigila un test contra `upload-rules.json` y `lib/games/upload-rules.ts`. |
+| **El juego nace borrador y solo se publica cuando el worker marque la versión como lista** | Nadie debe publicar algo que no pasó la revisión. | Los borradores los ve solo su dueño (RLS). Mientras no exista el worker, una subida terminada queda «Revisando». |
+| **Las imágenes sí pasan por el servidor**, con la misma desconfianza que la foto de perfil | Son chicas (≤ 5 MB) y conviene mirar sus bytes antes de guardarlas. | `inspectImage` comprueba formato real, que el tipo declarado coincida, que no sea animada y la medida (320×180 a 4096×4096). La base valida las rutas con un CHECK (`covers/<dueño>/…`, `screenshots/<juego>/…`). |
+| **Si algo falla después de crear el juego, se deshace todo** (juego, imágenes ya subidas) | Que un error no deje borradores a medias ni archivos sin dueño. | Si, en cambio, se corta **solo la subida del zip**, el juego queda creado y el formulario ofrece reintentar con el mismo archivo (pide una URL nueva). |
+| **Orquestación en el cliente** (envío → subida con XHR y barra de progreso → confirmación) | `fetch` no informa el progreso de una subida. | El formulario no es una Server Action de formulario: `createGameAction`, `confirmUploadAction` y `renewUploadUrlAction` son acciones llamadas a mano. |
+| **La pantalla de estado se actualiza con `router.refresh()` cada 3 s** mientras haya versiones en curso | Simple y robusto; Realtime queda para cuando haya más de un estado que seguir. | `/games/<id>/manage` solo existe para el dueño (404 para el resto). |
+| **`e2e/run.sh` borra los archivos que subieron los tests** | Los archivos no se borran con la cuenta. | Usa `supabase --experimental --yes storage rm` sobre las claves exactas (nunca sobre un bucket entero: borraría el bucket). |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.
@@ -110,4 +125,5 @@ Primera pieza de la subida de juegos: el validador y las reglas, sin infraestruc
 - **Fotos de perfil**: el servidor valida pero **no recodifica** la imagen (una recodificación con `sharp` sacaría metadatos EXIF de archivos hechos a mano; el flujo normal ya los pierde al pasar por el canvas). No hay tope de subidas por minuto (lo cubre la Fase 5, junto con el resto de los límites). Dos subidas simultáneas pueden dejar un archivo huérfano.
 - **Al borrar una cuenta** (Fase 5) hay que borrar también `avatars/<id>/`: la base elimina el perfil en cascada, pero no toca el almacenamiento.
 - **En producción**: el dominio público de R2 tiene que servir `X-Content-Type-Options: nosniff` (regla de transformación de Cloudflare) para que un archivo con forma de imagen nunca se interprete como otra cosa.
+- **Subidas interrumpidas**: una versión que quedó en «Subiendo» (la persona cerró la página) no se limpia sola todavía, y su archivo parcial en cuarentena expira por la regla de ciclo de vida del bucket (24 h en producción). La limpieza de versiones abandonadas llega con el worker.
 - **Sin selector de idioma**, quien no tiene cuenta solo puede cambiarlo con el idioma de su navegador o escribiendo `/en` en la URL (es lo que se pidió).

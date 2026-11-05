@@ -118,8 +118,8 @@ select is(tests.dml_count($$ delete from public.games where title = 'Luciérnaga
 select tests.clear_authentication();
 update public.games set status = 'published' where title = 'Luciérnaga Valiente';
 select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
-select lives_ok($$ insert into public.game_screenshots (game_id, path, alt_text, position) select id, 'media/a/1.webp', 'Una luciérnaga en la cueva', 1 from public.games where title = 'Luciérnaga Valiente' $$, 'ana agrega una captura');
-select throws_ok($$ insert into public.game_screenshots (game_id, path, position) select id, 'media/a/7.webp', 7 from public.games where title = 'Luciérnaga Valiente' $$, '23514', null, 'máximo 6 capturas');
+select lives_ok($$ insert into public.game_screenshots (game_id, path, alt_text, position) select id, 'screenshots/' || id || '/0123456789abcdef0123456789abcdef.webp', 'Una luciérnaga en la cueva', 1 from public.games where title = 'Luciérnaga Valiente' $$, 'ana agrega una captura');
+select throws_ok($$ insert into public.game_screenshots (game_id, path, position) select id, 'screenshots/' || id || '/0123456789abcdef0123456789abcdef.webp', 7 from public.games where title = 'Luciérnaga Valiente' $$, '23514', null, 'máximo 6 capturas');
 select lives_ok($$ insert into public.game_questions (game_id, position, question) select id, 1, '¿El salto se siente bien?' from public.games where title = 'Luciérnaga Valiente' $$, 'ana agrega una pregunta de feedback');
 select throws_ok($$ insert into public.game_questions (game_id, position, question) select id, 4, '¿Cuarta pregunta?' from public.games where title = 'Luciérnaga Valiente' $$, '23514', null, 'máximo 3 preguntas');
 select throws_ok($$ insert into public.game_questions (game_id, position, question) select id, 1, 'Repetida en la posición 1' from public.games where title = 'Luciérnaga Valiente' $$, '23505', null, 'una pregunta por posición');

@@ -605,6 +605,14 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"confirm_version_upload":
+{ Args: { "p_version_id": string }; Returns: undefined
+                           },
+"create_game_version":
+{ Args: { "p_changelog"?: string,"p_declared_size_bytes": number,"p_game_id": string,"p_label"?: string }; Returns: {
+              "quarantine_key": string,"version_id": string,"version_number": number
+            }[]
+                           },
 "search_games":
 { Args: { "p_limit"?: number,"p_query": string }; Returns: {
               "id": string,"rank": number

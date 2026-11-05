@@ -19,6 +19,7 @@ const PAGES: readonly Target[] = [
   { name: "explorar-sin-resultados", path: "/explore?q=zzzz" },
   { name: "terminos", path: "/legal/terms" },
   { name: "no-encontrado", path: "/pagina-que-no-existe" },
+  { name: "subir-juego", path: "/games/new", login: true },
   { name: "configuracion-perfil", path: "/settings/profile", login: true },
   { name: "configuracion-preferencias", path: "/settings/preferences", login: true },
 ];

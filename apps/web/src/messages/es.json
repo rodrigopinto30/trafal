@@ -252,7 +252,9 @@
     "loginToFollow": "Iniciá sesión para seguir a esta persona.",
     "completeTitle": "Terminá tu perfil",
     "completeText": "Sumá una foto y elegí los géneros de juegos que te gustan para que la comunidad te conozca.",
-    "completeCta": "Completar mi perfil"
+    "completeCta": "Completar mi perfil",
+    "ownDraftsTitle": "Tus juegos en preparación",
+    "manageGame": "Ver estado"
   },
   "games": {
     "play": "Jugar gratis",
@@ -284,6 +286,110 @@
       "signup": "Crear mi cuenta",
       "login": "Ya tengo cuenta"
     }
+  },
+  "gameForm": {
+    "title": "Subir un juego",
+    "subtitle": "Contanos de tu juego y subí el .zip. Lo revisamos antes de publicarlo.",
+    "detailsTitle": "Sobre tu juego",
+    "filesTitle": "Archivos",
+    "feedbackTitle": "Preguntas para quienes jueguen",
+    "feedbackHint": "Opcional. Hasta 3 preguntas que querés que respondan en los comentarios (por ejemplo: «¿El salto se siente bien?»).",
+    "fields": {
+      "title": "Título",
+      "shortDescription": "Descripción corta",
+      "shortDescriptionHint": "Hasta 160 caracteres. Es lo que se ve en las tarjetas.",
+      "genre": "Género",
+      "genrePlaceholder": "Elegí un género",
+      "engine": "Motor",
+      "enginePlaceholder": "Elegí un motor",
+      "tags": "Etiquetas",
+      "tagsHint": "Separadas por comas, hasta 8 (por ejemplo: pixel art, retro, relax).",
+      "controls": "Cómo se juega",
+      "controlsHint": "Los controles y qué hay que hacer. Hasta 500 caracteres.",
+      "displayRatio": "Proporción de la pantalla",
+      "worksOnMobile": "Funciona en celular",
+      "isFirstGame": "Es mi primer juego",
+      "question": "Pregunta {number}",
+      "questionPlaceholder": "¿Qué te gustaría saber?",
+      "zip": "Archivo .zip del juego",
+      "zipHint": "Hasta {limit}. El archivo index.html tiene que estar en la carpeta principal del .zip.",
+      "cover": "Portada (opcional)",
+      "coverHint": "PNG, JPG o WebP, de 320×180 como mínimo y hasta 5 MB.",
+      "screenshots": "Capturas (opcional)",
+      "screenshotsHint": "Hasta 6 imágenes PNG, JPG o WebP, de hasta 5 MB cada una."
+    },
+    "ratios": {
+      "16:9": "16:9 (horizontal)",
+      "4:3": "4:3 (clásica)",
+      "1:1": "1:1 (cuadrada)",
+      "9:16": "9:16 (vertical)"
+    },
+    "selectedFile": "{name} · {size}",
+    "submit": "Subir juego",
+    "steps": {
+      "creating": "Preparando tu juego…",
+      "uploading": "Subiendo el .zip… {percent}%",
+      "confirming": "Terminando…",
+      "done": "¡Listo! Te llevamos a tu juego."
+    },
+    "progressLabel": "Progreso de la subida",
+    "retryUpload": "Reintentar la subida",
+    "uploadFailed": "La subida se cortó. Tu juego ya está creado: podés reintentar con el mismo archivo.",
+    "errors": {
+      "invalidTitle": "Poné un título de hasta 80 caracteres.",
+      "descriptionTooLong": "La descripción tiene que tener 160 caracteres o menos.",
+      "invalidGenre": "Elegí un género de la lista.",
+      "invalidEngine": "Elegí un motor de la lista.",
+      "tooManyTags": "Podés poner hasta 8 etiquetas.",
+      "tagTooLong": "Cada etiqueta puede tener hasta 24 caracteres.",
+      "controlsTooLong": "El texto de cómo se juega tiene que tener 500 caracteres o menos.",
+      "invalidRatio": "Elegí una proporción de la lista.",
+      "tooManyQuestions": "Podés hacer hasta 3 preguntas.",
+      "questionLength": "Cada pregunta tiene que tener entre 3 y 140 caracteres.",
+      "zipRequired": "Elegí el archivo .zip de tu juego.",
+      "zipNotZip": "El archivo tiene que ser un .zip.",
+      "zipTooLarge": "El .zip pesa demasiado: el máximo es 200 MB.",
+      "coverInvalid": "La portada tiene que ser una imagen PNG, JPG o WebP válida.",
+      "coverTooLarge": "La portada pesa demasiado: el máximo es 5 MB.",
+      "coverDimensions": "La portada tiene que medir entre 320×180 y 4096×4096 píxeles.",
+      "coverAnimated": "La portada no puede ser animada.",
+      "screenshotsInvalid": "Las capturas tienen que ser imágenes PNG, JPG o WebP válidas, sin animar, de hasta 5 MB y entre 320×180 y 4096×4096 píxeles.",
+      "tooManyScreenshots": "Podés subir hasta 6 capturas.",
+      "firstGameTaken": "Ya marcaste otro juego como tu primero.",
+      "dailyLimit": "Llegaste al límite de 5 subidas por día. Probá de nuevo mañana.",
+      "accountRestricted": "Tu cuenta no puede subir juegos por ahora.",
+      "unauthenticated": "Iniciá sesión para subir un juego.",
+      "storage": "No pudimos guardar tus archivos. Probá de nuevo en un rato.",
+      "generic": "Algo salió mal. Revisá los datos y probá de nuevo."
+    }
+  },
+  "gameManage": {
+    "title": "Tu juego",
+    "backToProfile": "Volver a mi perfil",
+    "uploadAnother": "Subir otro juego",
+    "status": {
+      "draft": "Borrador",
+      "published": "Publicado",
+      "hidden": "Oculto",
+      "removed": "Dado de baja"
+    },
+    "draftNote": "Tu juego es un borrador: solo lo ves vos. Se publica cuando termine la revisión.",
+    "versionsTitle": "Versiones",
+    "versionName": "Versión {label}",
+    "versionStatus": {
+      "uploading": "Subiendo",
+      "processing": "Revisando",
+      "ready": "Lista",
+      "error": "Con errores"
+    },
+    "versionText": {
+      "uploading": "La subida no terminó. Si cerraste la página, volvé a subir tu juego.",
+      "processing": "Estamos revisando tu juego. Suele tardar un minuto y esta página se actualiza sola.",
+      "ready": "Tu juego pasó la revisión.",
+      "error": "No pudimos aceptar este archivo:"
+    },
+    "unknownError": "No pudimos aceptar este archivo. Revisá que sea un .zip con tu juego web y probá de nuevo.",
+    "size": "Tamaño del .zip: {size}"
   },
   "search": {
     "label": "Buscar juegos",

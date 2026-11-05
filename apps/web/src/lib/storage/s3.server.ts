@@ -1,5 +1,6 @@
 import "server-only";
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { assertStorageEnv } from "@/lib/env.server";
 
 /**
@@ -44,4 +45,32 @@ export async function putMediaObject(key: string, body: Uint8Array, contentType:
 export async function deleteMediaObject(key: string): Promise<void> {
   const { client, bucket } = s3();
   await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
+}
+
+let signingClient: S3Client | undefined;
+
+/**
+ * Creates a presigned PUT URL so the browser can upload a game zip straight to the quarantine bucket, never through the
+ * app server. The signature pins the content type and the exact size, and expires quickly. It is signed against the
+ * address the BROWSER uses (S3_PUBLIC_ENDPOINT): the signature covers the host, so the server-side address would not work.
+ */
+export async function createQuarantineUploadUrl(key: string, sizeBytes: number, expiresInSeconds: number): Promise<string> {
+  const env = assertStorageEnv();
+  signingClient ??= new S3Client({
+    endpoint: env.publicEndpoint,
+    region: env.region,
+    credentials: { accessKeyId: env.accessKeyId, secretAccessKey: env.secretAccessKey },
+    forcePathStyle: true,
+    requestChecksumCalculation: "WHEN_REQUIRED",
+  });
+  const command = new PutObjectCommand({
+    Bucket: env.quarantineBucket,
+    Key: key,
+    ContentType: "application/zip",
+    ContentLength: sizeBytes,
+  });
+  return getSignedUrl(signingClient, command, {
+    expiresIn: expiresInSeconds,
+    signableHeaders: new Set(["content-type", "content-length"]),
+  });
 }

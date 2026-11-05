@@ -51,7 +51,7 @@ port = 54324
 # usamos el endpoint S3 de Supabase Storage como emulador de R2 (la app habla S3 en los dos casos).
 [storage]
 enabled = true
-file_size_limit = "20MiB"
+file_size_limit = "200MiB"
 
 [storage.s3_protocol]
 enabled = true
@@ -67,6 +67,18 @@ enabled = false
 public = true
 file_size_limit = "20MiB"
 allowed_mime_types = ["image/webp", "image/png", "image/jpeg", "image/gif", "video/mp4", "video/webm"]
+
+# Zips de juegos recién subidos, sin revisar. Privado: solo lo leen el worker y el servidor. En producción (R2) una regla de
+# ciclo de vida los borra a las 24 h. Sin lista de tipos: el contenido lo valida el worker, no el navegador.
+[storage.buckets.quarantine]
+public = false
+file_size_limit = "200MiB"
+
+# Juegos ya validados y descomprimidos (games/{public_id}/v{n}/...). Privado: los lee solo el gateway. Sin lista de tipos
+# (los juegos llevan .wasm, .js, .html...).
+[storage.buckets.games]
+public = false
+file_size_limit = "500MiB"
 
 [edge_runtime]
 enabled = false

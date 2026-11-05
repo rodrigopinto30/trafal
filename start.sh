@@ -116,6 +116,8 @@ HOST_GID=$(id -g)
 # Almacenamiento de imágenes: en local, el endpoint S3 de Supabase Storage hace de Cloudflare R2. El servidor entra por
 # host.docker.internal:<puerto publicado> (y no por la red interna de Docker) porque Storage firma con ese puerto.
 S3_ENDPOINT=http://host.docker.internal:${API_PORT}/storage/v1/s3
+# Mismo almacenamiento, pero con la dirección que ve el NAVEGADOR: las URL firmadas de subida se firman con este host.
+S3_PUBLIC_ENDPOINT=$API_URL/storage/v1/s3
 S3_REGION=$(status_value S3_PROTOCOL_REGION)
 S3_ACCESS_KEY_ID=$(status_value S3_PROTOCOL_ACCESS_KEY_ID)
 S3_SECRET_ACCESS_KEY=$(status_value S3_PROTOCOL_ACCESS_KEY_SECRET)
