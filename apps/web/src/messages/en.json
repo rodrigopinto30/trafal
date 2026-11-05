@@ -285,6 +285,26 @@
       "login": "I already have an account"
     }
   },
+  "search": {
+    "label": "Search games",
+    "placeholder": "Search a game or creator",
+    "submit": "Search",
+    "suggestionsLabel": "Suggestions",
+    "viewAll": "See all results for “{query}”",
+    "count": "{count, plural, =0 {No suggestions.} one {1 suggestion.} other {# suggestions.}}",
+    "by": "by {creator}"
+  },
+  "explore": {
+    "title": "Explore games",
+    "subtitleAll": "Every published game, newest first.",
+    "subtitleResults": "Results for “{query}”",
+    "count": "{count, plural, one {# game} other {# games}}",
+    "emptyTitle": "We couldn't find games for “{query}”",
+    "emptyText": "Try another word, a genre (platformer, horror, puzzle) or an engine name.",
+    "showAll": "See all games",
+    "resultsTitle": "Search results",
+    "gamesTitle": "Games"
+  },
   "posts": {
     "kinds": {
       "avance": "Update",

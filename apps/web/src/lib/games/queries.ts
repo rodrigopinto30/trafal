@@ -63,6 +63,23 @@ export async function listPublishedGames(): Promise<GameSummary[]> {
   return (data ?? []).filter(hasOwner);
 }
 
+/** Juegos publicados que coinciden con el texto, del más al menos relevante (el orden lo decide la función SQL search_games). */
+export async function searchGames(query: string, limit: number): Promise<GameSummary[]> {
+  const supabase = await createClient();
+  const { data: ranked } = await supabase.rpc("search_games", { p_query: query, p_limit: limit });
+  if (!ranked?.length) return [];
+  const { data } = await supabase
+    .from("games")
+    .select(GAME_COLUMNS)
+    .in(
+      "id",
+      ranked.map((row) => row.id),
+    )
+    .eq("status", "published");
+  const byId = new Map((data ?? []).filter(hasOwner).map((game) => [game.id, game]));
+  return ranked.flatMap((row) => byId.get(row.id) ?? []);
+}
+
 export async function listGamesByOwner(ownerId: string): Promise<GameSummary[]> {
   const supabase = await createClient();
   const { data } = await supabase

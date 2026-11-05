@@ -605,6 +605,11 @@ isOneToOne: false
         isOneToOne: true
         isSetofReturn: false
       } },
+"search_games":
+{ Args: { "p_limit"?: number,"p_query": string }; Returns: {
+              "id": string,"rank": number
+            }[]
+                           },
 "username_available":
 { Args: { "p_username": string }; Returns: boolean
                            }
