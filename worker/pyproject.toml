@@ -21,3 +21,7 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 strict = true
 mypy_path = "src"
 python_version = "3.13"
+
+[[tool.mypy.overrides]]
+module = ["boto3", "boto3.*", "botocore", "botocore.*"]
+ignore_missing_imports = true

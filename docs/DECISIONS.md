@@ -116,6 +116,22 @@ Migración nueva: `20261106000200_game_upload.sql`. Buckets nuevos: `quarantine`
 | **La pantalla de estado se actualiza con `router.refresh()` cada 3 s** mientras haya versiones en curso | Simple y robusto; Realtime queda para cuando haya más de un estado que seguir. | `/games/<id>/manage` solo existe para el dueño (404 para el resto). |
 | **`e2e/run.sh` borra los archivos que subieron los tests** | Los archivos no se borran con la cuenta. | Usa `supabase --experimental --yes storage rm` sobre las claves exactas (nunca sobre un bucket entero: borraría el bucket). |
 
+## Worker de juegos y publicación (2026-11-06)
+
+Migración nueva: `20261106000300_game_worker.sql`. Servicio nuevo en `docker-compose.yml`: `worker`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **El worker habla con Postgres con un rol mínimo, `game_worker`**, y solo por cuatro funciones del esquema `worker` | Es el único componente que abre archivos de desconocidos; si lo comprometen, no debe poder leer ni tocar nada más. | El rol se crea **sin login** y sin ningún permiso sobre tablas; `worker.claim_version`, `complete_version`, `fail_version` y `release_version` son `SECURITY DEFINER` y solo ese rol puede ejecutarlas. El esquema no está expuesto por la API. `./start.sh` le pone una contraseña propia de cada máquina. |
+| **Cola en la misma tabla, con `FOR UPDATE SKIP LOCKED`** | Sin un servicio extra; dos workers nunca toman la misma versión. | Un bloqueo de más de 10 minutos se considera abandonado y la versión se toma de nuevo; tras 3 intentos falla con `PROCESSING_FAILED` en vez de repetirse sin fin. |
+| **Rechazo ≠ falla de infraestructura** | Si un zip rompe una regla, es definitivo y se explica; si cayó el almacenamiento, la persona no tiene la culpa. | `UploadRejected` → `fail_version` con el código estable. Cualquier otra excepción → `release_version` y se reintenta; lo publicado a medias se borra. |
+| **Se verifica el tamaño real del objeto antes de descargarlo** | El tamaño declarado lo manda el navegador. | Más grande que el tope → `ZIP_TOO_LARGE`; distinto de lo declarado → `CORRUPT_ARCHIVE`; ni se descarga. |
+| **Nada llega al bucket de juegos hasta que todo pasó** | «Un zip rechazado nunca toca el bucket público». | Se valida mientras se extrae a una carpeta temporal (`DirectorySink`); recién entonces se suben los archivos, en paralelo, a `<public_id>/v<n>/…` con su `Content-Type` y `Content-Encoding`, y se borra el zip de cuarentena. Un reintento limpia primero lo que dejó un intento anterior. |
+| **El motor se detecta por nombres y contenido, y es una etiqueta, no una decisión de seguridad** | Para mostrar «hecho con Godot» y saber si un Godot con hilos pide COOP/COEP. | Si no hay señal clara queda `other`. Un Godot con `GODOT_THREADS_ENABLED = true` o con `*.worker.js` marca `needs_isolation`. |
+| **El contenedor corre endurecido** | Mismo motivo que el rol mínimo. | Usuario sin privilegios, sistema de archivos de solo lectura, sin capacidades, `no-new-privileges`, 1 GB de memoria y 128 procesos; solo escribe en un volumen de trabajo y `/tmp`. Reinicio automático y *healthcheck* por latido. |
+| **El dueño decide cuándo publicar** (botón en `/games/<id>/manage`) | Que la versión esté lista no significa que quiera mostrarlo. | La base rechaza publicar un juego sin versión lista (`publish_requires_ready_version`); el primer `ready` queda como versión activa, las siguientes no la cambian solas. |
+| **`StatusBadge` en vez de `Badge` para estados** | Las etiquetas pixel de 11 px sobre fondos translúcidos casi no se leían. | Texto blanco de 14 px sobre el color teñido, con un punto de color (que late mientras algo está en curso). El test de contraste valida los cuatro estados (≥ 4,5:1). |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.
@@ -125,5 +141,6 @@ Migración nueva: `20261106000200_game_upload.sql`. Buckets nuevos: `quarantine`
 - **Fotos de perfil**: el servidor valida pero **no recodifica** la imagen (una recodificación con `sharp` sacaría metadatos EXIF de archivos hechos a mano; el flujo normal ya los pierde al pasar por el canvas). No hay tope de subidas por minuto (lo cubre la Fase 5, junto con el resto de los límites). Dos subidas simultáneas pueden dejar un archivo huérfano.
 - **Al borrar una cuenta** (Fase 5) hay que borrar también `avatars/<id>/`: la base elimina el perfil en cascada, pero no toca el almacenamiento.
 - **En producción**: el dominio público de R2 tiene que servir `X-Content-Type-Options: nosniff` (regla de transformación de Cloudflare) para que un archivo con forma de imagen nunca se interprete como otra cosa.
-- **Subidas interrumpidas**: una versión que quedó en «Subiendo» (la persona cerró la página) no se limpia sola todavía, y su archivo parcial en cuarentena expira por la regla de ciclo de vida del bucket (24 h en producción). La limpieza de versiones abandonadas llega con el worker.
+- **Subidas interrumpidas**: una versión que quedó en «Subiendo» (la persona cerró la página) no se limpia sola todavía, y su archivo parcial en cuarentena expira por la regla de ciclo de vida del bucket (24 h en producción).
+- **Worker**: no hay un tope de tiempo por versión (solo el de 10 minutos tras el cual otro worker puede retomarla) ni un límite de egreso de red del contenedor; y los archivos publicados todavía no se sirven: falta el gateway y el reproductor.
 - **Sin selector de idioma**, quien no tiene cuenta solo puede cambiarlo con el idioma de su navegador o escribiendo `/en` en la URL (es lo que se pidió).

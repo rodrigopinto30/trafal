@@ -373,7 +373,6 @@
       "hidden": "Hidden",
       "removed": "Taken down"
     },
-    "draftNote": "Your game is a draft: only you can see it. It goes live when the review finishes.",
     "versionsTitle": "Versions",
     "versionName": "Version {label}",
     "versionStatus": {
@@ -389,7 +388,21 @@
       "error": "We couldn't accept this file:"
     },
     "unknownError": "We couldn't accept this file. Make sure it's a .zip with your web game and try again.",
-    "size": ".zip size: {size}"
+    "size": ".zip size: {size}",
+    "note": {
+      "draft": "Your game is a draft: only you can see it. Once a version passes the review you can publish it.",
+      "draftReady": "Your game passed the review and is still a draft only you can see. Publish it whenever you like.",
+      "published": "Your game is published: anyone can see it on Trafal.",
+      "hidden": "Your game is hidden by moderation.",
+      "removed": "Your game was taken down by moderation."
+    },
+    "publish": "Publish game",
+    "unpublish": "Back to draft",
+    "saving": "Saving…",
+    "errors": {
+      "notReady": "There is no ready version to publish yet.",
+      "generic": "We couldn't change the game's status. Try again."
+    }
   },
   "search": {
     "label": "Search games",
@@ -430,7 +443,8 @@
     "EXECUTABLE_FILE": "We don't accept executable programs (“{path}”). Trafal only hosts games that play in the browser.",
     "NESTED_ARCHIVE": "We don't accept compressed archives inside the .zip (“{path}”). Unpack it and upload its files directly.",
     "EXTENSION_NOT_ALLOWED": "We don't accept “{extension}” files (“{path}”). Remove it from the .zip or switch to a common web format.",
-    "NO_INDEX_HTML": "The file {file} is missing from the main folder. It's the one that opens your game in the browser: it must be at the root of the .zip."
+    "NO_INDEX_HTML": "The file {file} is missing from the main folder. It's the one that opens your game in the browser: it must be at the root of the .zip.",
+    "PROCESSING_FAILED": "We couldn't review your game because of a problem on our side. Try uploading it again in a while."
   },
   "posts": {
     "kinds": {

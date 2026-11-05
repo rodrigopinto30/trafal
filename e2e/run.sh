@@ -12,18 +12,27 @@ curl -fsS -o /dev/null http://localhost:3000/ || { echo "La web no responde en h
 # Al terminar (pase o falle) se borran las cuentas «e2e_*» y los mails de prueba que crearon los tests.
 cleanup() {
   if [ -x .tools/supabase ] && docker ps --format '{{.Names}}' | grep -qx supabase_db_trafal; then
-    # Files of the games the tests uploaded (zips in quarantine, covers and screenshots): they are not deleted with the account.
+    # Files of the games the tests uploaded (zips in quarantine, covers, screenshots and published files): they are not
+    # deleted with the account. Only objects that actually exist are listed (removing a missing one aborts the whole command),
+    # and the published files go by folder, one per game. Never `rm -r` on a bucket itself: it would delete the bucket.
     docker exec supabase_db_trafal psql -U postgres -At -c "
-      select 'ss:///quarantine/' || v.quarantine_key from public.game_versions v
-        join public.games g on g.id = v.game_id join auth.users u on u.id = g.owner_id
-        where u.email like 'e2e\_%@trafal.test' and v.quarantine_key is not null
+      with mine as (
+        select g.id, g.public_id, g.cover_path from public.games g join auth.users u on u.id = g.owner_id
+        where u.email like 'e2e\_%@trafal.test'
+      )
+      select 'ss:///quarantine/' || o.name from storage.objects o
+        where o.bucket_id = 'quarantine' and split_part(o.name, '/', 1)::text in (select id::text from mine)
       union all
-      select 'ss:///media/' || g.cover_path from public.games g join auth.users u on u.id = g.owner_id
-        where u.email like 'e2e\_%@trafal.test' and g.cover_path is not null
-      union all
-      select 'ss:///media/' || s.path from public.game_screenshots s
-        join public.games g on g.id = s.game_id join auth.users u on u.id = g.owner_id
-        where u.email like 'e2e\_%@trafal.test'" 2>/dev/null | xargs -r .tools/supabase --experimental --yes storage rm >/dev/null 2>&1 || true
+      select 'ss:///media/' || o.name from storage.objects o
+        where o.bucket_id = 'media'
+          and (o.name in (select cover_path from mine where cover_path is not null)
+               or split_part(o.name, '/', 2) in (select id::text from mine))
+          and split_part(o.name, '/', 1) in ('covers', 'screenshots')" 2>/dev/null | xargs -r .tools/supabase --experimental --yes storage rm >/dev/null 2>&1 || true
+    docker exec supabase_db_trafal psql -U postgres -At -c "
+      select distinct 'ss:///games/' || split_part(o.name, '/', 1) from storage.objects o
+        where o.bucket_id = 'games'
+          and split_part(o.name, '/', 1) in (
+            select g.public_id from public.games g join auth.users u on u.id = g.owner_id where u.email like 'e2e\_%@trafal.test')" 2>/dev/null | xargs -r .tools/supabase --experimental --yes storage rm -r >/dev/null 2>&1 || true
   fi
   if [ -x .tools/supabase ]; then
     .tools/supabase db query --agent no "delete from auth.users where email like 'e2e\_%@trafal.test'" >/dev/null 2>&1 || true

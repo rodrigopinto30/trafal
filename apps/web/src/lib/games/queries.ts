@@ -182,6 +182,7 @@ export type OwnGame = {
   title: string;
   status: string;
   works_on_mobile: boolean;
+  active_version_id: string | null;
 };
 
 export type OwnGameVersion = {
@@ -200,7 +201,7 @@ export async function findOwnGame(publicId: string, ownerId: string): Promise<Ow
   const supabase = await createClient();
   const { data } = await supabase
     .from("games")
-    .select("id, public_id, title, status, works_on_mobile")
+    .select("id, public_id, title, status, works_on_mobile, active_version_id")
     .eq("public_id", publicId)
     .eq("owner_id", ownerId)
     .maybeSingle();
@@ -222,7 +223,7 @@ export async function listOwnUnpublishedGames(ownerId: string): Promise<OwnGame[
   const supabase = await createClient();
   const { data } = await supabase
     .from("games")
-    .select("id, public_id, title, status, works_on_mobile")
+    .select("id, public_id, title, status, works_on_mobile, active_version_id")
     .eq("owner_id", ownerId)
     .neq("status", "published")
     .order("created_at", { ascending: false });

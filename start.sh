@@ -98,6 +98,12 @@ fi
 # --yes y stdin cerrado: si el bucket ya existe el CLI pregunta si actualizar sus propiedades y no debe quedarse esperando.
 sb seed buckets --yes </dev/null >/dev/null 2>&1 || true
 
+# Rol mínimo del worker de juegos (la migración lo crea sin login): se le pone una contraseña propia de esta máquina, que se
+# conserva entre arranques y vive solo en .env.supabase (ignorado por git).
+WORKER_DB_PASSWORD="$(grep '^WORKER_DB_PASSWORD=' .env.supabase 2>/dev/null | cut -d= -f2- || true)"
+[ -n "$WORKER_DB_PASSWORD" ] || WORKER_DB_PASSWORD="$(head -c 24 /dev/urandom | od -An -tx1 | tr -d ' \n')"
+sb db query "alter role game_worker with login password '$WORKER_DB_PASSWORD'" >/dev/null
+
 # Claves y URLs de Supabase para la web (archivo generado, ignorado por git).
 STATUS_ENV="$(sb status -o env 2>/dev/null)"
 status_value() { printf '%s\n' "$STATUS_ENV" | grep "^$1=" | head -1 | cut -d'"' -f2; }
@@ -122,6 +128,9 @@ S3_REGION=$(status_value S3_PROTOCOL_REGION)
 S3_ACCESS_KEY_ID=$(status_value S3_PROTOCOL_ACCESS_KEY_ID)
 S3_SECRET_ACCESS_KEY=$(status_value S3_PROTOCOL_ACCESS_KEY_SECRET)
 MEDIA_PUBLIC_URL=$API_URL/storage/v1/object/public/media
+# Worker de juegos: conexión directa a Postgres con el rol mínimo `game_worker`.
+WORKER_DB_PASSWORD=$WORKER_DB_PASSWORD
+WORKER_DATABASE_URL=postgresql://game_worker:$WORKER_DB_PASSWORD@supabase_db_trafal:5432/postgres
 EOF
 
 # ---------------------------------------------------------------------------------------------

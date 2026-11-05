@@ -5,8 +5,8 @@ import { validGameZip } from "./helpers/zip";
 
 /**
  * Uploading a game: the form creates the draft, the browser uploads the zip straight to quarantine with a presigned URL, and
- * the upload is confirmed so the version enters the review queue. The review itself (worker) is a later step, so a finished
- * upload stays «Revisando». Accounts are new on every run so the daily quota is never shared.
+ * the upload is confirmed so the version enters the review queue; the worker then publishes its files («Lista») and the owner
+ * decides when to publish the game. Accounts are new on every run so the daily quota is never shared.
  */
 async function signUp(page: Page, testName: string, projectName: string) {
   const suffix = uniqueSuffix(projectName);
@@ -57,8 +57,8 @@ test("subir un juego completo: queda como borrador en revisión y solo lo ve su 
   await expect(page.getByRole("heading", { level: 1, name: "Moon Runner" })).toBeVisible();
   await expect(page.getByText("Borrador", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { level: 3, name: "Versión v1" })).toBeVisible();
-  await expect(page.getByText("Revisando", { exact: true })).toBeVisible();
-  await expect(page.getByText("Estamos revisando tu juego")).toBeVisible();
+  await expect(page.getByText("Lista", { exact: true })).toBeVisible({ timeout: 45_000 });
+  await expect(page.getByText("Tu juego pasó la revisión y sigue siendo un borrador")).toBeVisible();
   const publicUrl = page.url().replace("/manage", "");
 
   await page.goto(`/u/${username}`);
@@ -74,6 +74,21 @@ test("subir un juego completo: queda como borrador en revisión y solo lo ve su 
   await expect(visitor.getByText("Moon Runner")).toHaveCount(0);
   await visitor.goto(`${publicUrl}/manage`);
   await expect(visitor).toHaveURL(/\/login/);
+
+  await page.getByRole("button", { name: "Publicar juego" }).click();
+  await expect(page.getByText("Tu juego está publicado")).toBeVisible();
+  await expect(page.getByText("Publicado", { exact: true })).toBeVisible();
+  await visitor.goto(publicUrl);
+  await expect(visitor.getByRole("heading", { level: 1, name: "Moon Runner" })).toBeVisible();
+  await page.goto(`/u/${username}`);
+  await expect(page.getByRole("heading", { name: "Tus juegos en preparación" })).toHaveCount(0);
+  await expect(page.getByRole("article").filter({ hasText: "Moon Runner" })).toBeVisible();
+
+  await page.goto(`${publicUrl}/manage`);
+  await page.getByRole("button", { name: "Volver a borrador" }).click();
+  await expect(page.getByText("Tu juego pasó la revisión y sigue siendo un borrador")).toBeVisible();
+  await visitor.goto(publicUrl);
+  await expect(visitor.getByRole("heading", { name: "No encontramos esa página" })).toBeVisible();
   await stranger.close();
 });
 
@@ -130,5 +145,5 @@ test("si la subida se corta, el juego ya creado se puede reintentar con el mismo
   blocked = false;
   await page.getByRole("button", { name: "Reintentar la subida" }).click();
   await expect(page).toHaveURL(/\/games\/[a-z0-9]+\/manage$/, { timeout: 60_000 });
-  await expect(page.getByText("Revisando", { exact: true })).toBeVisible();
+  await expect(page.getByText("Lista", { exact: true })).toBeVisible({ timeout: 45_000 });
 });
