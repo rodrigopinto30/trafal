@@ -26,6 +26,7 @@ export const CLIENT_NAMESPACES = [
   "engines",
   "genres",
   "search",
+  "uploadErrors",
   "errors",
 ] as const satisfies readonly Namespace[];
 

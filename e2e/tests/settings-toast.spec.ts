@@ -1,11 +1,16 @@
-import { expect, test, type Locator } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { lettersOnly, registerAccount, uniqueSuffix } from "./helpers/session";
 
 /**
  * El aviso «Cambios guardados» aparece al guardar y solo entonces. Next conserva las pantallas ya visitadas y, al volver
  * a ellas con atrás/adelante, vuelve a ejecutar sus efectos: un guardado viejo no debe disparar el aviso otra vez.
  * El conteo se lee una sola vez (sin reintentos): un aviso repetido dura unos segundos y un reintento lo dejaría pasar.
+ * Tras guardar se aparta el cursor: el aviso aparece justo encima del botón y, con el cursor encima, Sonner pausa su cuenta regresiva.
  */
+async function leaveToastAlone(page: Page) {
+  await page.mouse.move(0, 0);
+}
+
 async function expectNoToastNow(toast: Locator) {
   await toast.page().waitForTimeout(1500);
   expect(await toast.count()).toBe(0);
@@ -23,6 +28,7 @@ test("«Cambios guardados» no reaparece al volver a Editar perfil sin guardar n
   await page.getByRole("button", { name: "Guardar cambios", exact: true }).click();
   const toast = page.locator("[data-sonner-toast]");
   await expect(toast).toHaveText(/Cambios guardados/);
+  await leaveToastAlone(page);
   await expect(toast).toHaveCount(0, { timeout: 15_000 });
 
   await page.goBack();
@@ -52,6 +58,7 @@ test("«Preferencias guardadas» tampoco reaparece al volver sin guardar", async
   await page.getByRole("button", { name: "Guardar preferencias" }).click();
   const toast = page.locator("[data-sonner-toast]");
   await expect(toast).toHaveText(/Preferencias guardadas/);
+  await leaveToastAlone(page);
   await expect(toast).toHaveCount(0, { timeout: 15_000 });
 
   await page.goBack();

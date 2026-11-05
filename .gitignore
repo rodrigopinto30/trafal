@@ -35,3 +35,11 @@ v4/
 
 # fases de desarrollo: solo en la máquina de quien trabaja
 docs/FASES.md
+
+# worker de python
+__pycache__/
+*.pyc
+.venv/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/

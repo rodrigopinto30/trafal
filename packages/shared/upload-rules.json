@@ -1,0 +1,75 @@
+{
+  "version": 1,
+  "limits": {
+    "maxZipBytes": 209715200,
+    "maxUncompressedBytes": 1073741824,
+    "maxFiles": 5000,
+    "maxEntries": 20000,
+    "maxFileBytes": 524288000,
+    "maxPathLength": 240
+  },
+  "requiredFiles": ["index.html"],
+  "ignored": {
+    "directories": ["__MACOSX"],
+    "names": [".DS_Store", "Thumbs.db"],
+    "namePrefixes": ["._"]
+  },
+  "allowedExtensions": [
+    "html", "htm", "js", "mjs", "cjs", "css", "json", "map", "wasm", "xml", "txt", "csv", "webmanifest",
+    "png", "jpg", "jpeg", "webp", "gif", "svg", "avif", "bmp", "ico", "cur", "ktx2", "basis", "dds",
+    "mp3", "ogg", "opus", "wav", "m4a", "aac", "flac", "mid", "mp4", "webm", "ogv", "m4v",
+    "ttf", "otf", "woff", "woff2", "eot",
+    "glb", "gltf", "obj", "mtl", "bin",
+    "data", "dat", "pck", "unx", "mem", "bytes", "unityweb", "unity3d",
+    "atlas", "fnt", "tmx", "tsx"
+  ],
+  "compressedSuffixes": ["br", "gz"],
+  "executableExtensions": [
+    "exe", "dll", "so", "dylib", "bat", "cmd", "com", "sh", "bash", "zsh", "ps1", "psm1", "vbs", "vbe", "wsf", "hta",
+    "msi", "msix", "apk", "ipa", "jar", "war", "class", "app", "dmg", "pkg", "deb", "rpm", "scr", "lnk", "reg", "cpl", "pif"
+  ],
+  "archiveExtensions": ["zip", "rar", "7z", "tar", "tgz", "bz2", "xz", "zst"],
+  "executableMagic": [
+    { "name": "ELF", "hex": "7f454c46" },
+    { "name": "MACH_O_32", "hex": "feedface" },
+    { "name": "MACH_O_64", "hex": "feedfacf" },
+    { "name": "MACH_O_32_REVERSED", "hex": "cefaedfe" },
+    { "name": "MACH_O_64_REVERSED", "hex": "cffaedfe" },
+    { "name": "MACH_O_UNIVERSAL_OR_JAVA_CLASS", "hex": "cafebabe" }
+  ],
+  "archiveMagic": [
+    { "name": "ZIP", "hex": "504b0304" },
+    { "name": "RAR", "hex": "526172211a07" },
+    { "name": "SEVEN_ZIP", "hex": "377abcaf271c" }
+  ],
+  "scan": {
+    "extensions": ["html", "htm", "js", "mjs", "cjs"],
+    "maxBytesPerFile": 16777216,
+    "signatures": {
+      "CRYPTO_MINER": ["coinhive", "coin-hive", "cryptonight", "stratum+tcp", "webminer", "authedmine", "cryptoloot", "jsecoin"],
+      "PASSWORD_FIELD": ["type=\"password\"", "type='password'", "type=password"],
+      "TOP_NAVIGATION_ATTEMPT": ["top.location", "parent.location"]
+    }
+  },
+  "errorCodes": [
+    "NOT_A_ZIP",
+    "CORRUPT_ARCHIVE",
+    "ZIP_TOO_LARGE",
+    "UNCOMPRESSED_TOO_LARGE",
+    "FILE_TOO_LARGE",
+    "TOO_MANY_FILES",
+    "UNSAFE_PATH",
+    "PATH_TOO_LONG",
+    "DUPLICATE_PATH",
+    "PATH_CONFLICT",
+    "ENCRYPTED_ENTRY",
+    "UNSUPPORTED_COMPRESSION",
+    "OVERLAPPING_ENTRIES",
+    "SYMLINK_NOT_ALLOWED",
+    "SPECIAL_FILE",
+    "EXECUTABLE_FILE",
+    "NESTED_ARCHIVE",
+    "EXTENSION_NOT_ALLOWED",
+    "NO_INDEX_HTML"
+  ]
+}

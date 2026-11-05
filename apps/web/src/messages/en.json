@@ -305,6 +305,27 @@
     "resultsTitle": "Search results",
     "gamesTitle": "Games"
   },
+  "uploadErrors": {
+    "NOT_A_ZIP": "That file isn't a valid .zip. Compress your game's folder into a .zip and upload it again.",
+    "CORRUPT_ARCHIVE": "The .zip is damaged or incomplete. Compress your game again and retry.",
+    "ZIP_TOO_LARGE": "The .zip is too big: the maximum is {limit}. Try compressing images and audio, or remove what you don't use.",
+    "UNCOMPRESSED_TOO_LARGE": "Your game takes up too much space once unpacked: the maximum is {limit}. Remove unused files or shrink your assets.",
+    "FILE_TOO_LARGE": "The file “{path}” is too large: the maximum per file is {limit}.",
+    "TOO_MANY_FILES": "The .zip has too many files: the maximum is {limit}. Pack assets into atlases or remove the ones you don't use.",
+    "UNSAFE_PATH": "The file “{path}” has a name or path we can't accept. Rename it without backslashes, “..” or odd characters.",
+    "PATH_TOO_LONG": "The path of “{path}” is too long (maximum {limit} characters). Shorten your folder names.",
+    "DUPLICATE_PATH": "Two files have the same name, differing only in case or accents: “{path}”. Keep just one.",
+    "PATH_CONFLICT": "“{path}” is both a file and a folder. Rename one of them.",
+    "ENCRYPTED_ENTRY": "The .zip has password-protected files (“{path}”). Compress it again without a password.",
+    "UNSUPPORTED_COMPRESSION": "The .zip uses a compression method we don't support (“{path}”). Compress it again with the standard method (Deflate).",
+    "OVERLAPPING_ENTRIES": "The .zip has an invalid internal structure (“{path}”). Compress your game again with a common program.",
+    "SYMLINK_NOT_ALLOWED": "The .zip has a shortcut or symbolic link (“{path}”). Replace it with the real file.",
+    "SPECIAL_FILE": "The .zip has a special file that isn't a regular file (“{path}”). Remove it and compress again.",
+    "EXECUTABLE_FILE": "We don't accept executable programs (“{path}”). Trafal only hosts games that play in the browser.",
+    "NESTED_ARCHIVE": "We don't accept compressed archives inside the .zip (“{path}”). Unpack it and upload its files directly.",
+    "EXTENSION_NOT_ALLOWED": "We don't accept “{extension}” files (“{path}”). Remove it from the .zip or switch to a common web format.",
+    "NO_INDEX_HTML": "The file {file} is missing from the main folder. It's the one that opens your game in the browser: it must be at the root of the .zip."
+  },
   "posts": {
     "kinds": {
       "avance": "Update",

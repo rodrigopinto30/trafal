@@ -1,0 +1,23 @@
+[project]
+name = "trafal-worker"
+version = "0.1.0"
+description = "Validación y procesamiento de los juegos que sube la gente a Trafal."
+requires-python = ">=3.13"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.mypy]
+strict = true
+mypy_path = "src"
+python_version = "3.13"
