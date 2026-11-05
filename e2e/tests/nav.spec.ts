@@ -14,6 +14,8 @@ async function openNav(page: import("@playwright/test").Page) {
   return page.getByRole("navigation", { name: mobile ? /Menú móvil|Mobile menu/ : /Principal|Main/ });
 }
 
+test.use({ launchOptions: { ignoreDefaultArgs: ["--hide-scrollbars"] } });
+
 test("el menú de arriba tiene solo «Subir juego» y «Comunidad»", async ({ page }) => {
   await gotoReady(page, "/");
   const links = (await openNav(page)).getByRole("link");
@@ -41,4 +43,16 @@ test("cada opción lleva a su pantalla y queda marcada como la actual", async ({
   await expect(page).toHaveURL(/\/feed$/);
   await expect((await openNav(page)).getByRole("link", { name: "Comunidad" })).toHaveAttribute("aria-current", "page");
   await expect((await openNav(page)).getByRole("link", { name: "Subir juego" })).not.toHaveAttribute("aria-current", "page");
+});
+
+test("al cambiar de pantalla la barra no se mueve (aunque una tenga barra de scroll y otra no)", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "desktop", "En celular las barras de scroll no ocupan lugar");
+  await gotoReady(page, "/");
+  const bar = page.locator("header > div").first();
+  const before = await bar.boundingBox();
+  await page.getByRole("navigation", { name: "Principal" }).getByRole("link", { name: "Comunidad" }).click();
+  await expect(page).toHaveURL(/\/feed$/);
+  const after = await bar.boundingBox();
+  expect(after?.x).toBe(before?.x);
+  expect(after?.width).toBe(before?.width);
 });
