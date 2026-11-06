@@ -64,6 +64,13 @@ La portada pasó de ser un texto de presentación a mostrar juegos, banners y me
 |---|---|---|
 | **`html body[data-scroll-locked] { margin-right: 0 !important }`** en `globals.css` | Radix bloquea el scroll mientras hay un menú o diálogo abierto (`overflow: hidden` en el body) y, para compensar la barra de scroll que desaparece, le suma `margin-right` igual al ancho de la barra. Como `html` ya reserva ese lugar con `scrollbar-gutter: stable`, la compensación se duplicaba y toda la página se corría ~7 px al abrir y al cerrar. | Vale para todo lo que bloquee el scroll (menús, diálogos), no solo el menú de la cuenta. Se gana a la regla de Radix por especificidad (las dos son `!important` y sin capa). `user-menu.spec.ts` mide la barra, el contenido y el scroll antes, con el menú abierto y después, en tres pantallas. Si algún día se saca `scrollbar-gutter`, hay que sacar esta regla. |
 
+## El menú de la cuenta conserva la barra de scroll (2026-11-06)
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Los menús desplegables son no modales por defecto** (`modal={false}` en `components/ui/dropdown-menu.tsx`) | Un menú modal bloquea el scroll de la página y el navegador hace desaparecer su barra mientras está abierto (el ancho de la página igual se conservaba gracias a la regla anterior, pero la barra se iba). | La página no se bloquea ni se mueve y la barra queda donde estaba. El menú se sigue cerrando con Escape, al tocar afuera y al salir el foco. Con el menú abierto se puede scrollear la página. `user-menu.spec.ts` mide el ancho de la barra y que no haya bloqueo (falla con un menú modal). |
+| **La regla `html body[data-scroll-locked]` se queda** | Los diálogos (como el editor de la foto) sí son modales y bloquean el scroll. | Ahí la barra sigue desapareciendo mientras el diálogo está abierto, pero la página ya no se corre. |
+
 ## «Cambios guardados» solo al guardar (2026-11-06)
 
 | Decisión | Por qué | Consecuencia |

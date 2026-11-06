@@ -5,10 +5,16 @@ import { cn } from "@/lib/utils"
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
 
+/**
+ * Menus are non-modal by default: a modal menu locks the page scroll, which makes the browser's scrollbar disappear while
+ * the menu is open. A non-modal one leaves the page (and its scrollbar) alone and still closes on Escape, on an outside
+ * click and when focus leaves it.
+ */
 function DropdownMenu({
+  modal = false,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
-  return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />
+  return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" modal={modal} {...props} />
 }
 
 function DropdownMenuPortal({
