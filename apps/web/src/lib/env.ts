@@ -9,4 +9,6 @@ export const publicEnv = {
   googleEnabled: process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true",
   /** URL pública desde donde se leen las imágenes subidas (en producción, el dominio público del bucket de R2). */
   mediaUrl: process.env.NEXT_PUBLIC_MEDIA_URL ?? "",
+  /** Origin of the games domain without the game id (http://games.localhost:4000): each game lives at <public_id>.<that host>. */
+  gamesBaseUrl: process.env.NEXT_PUBLIC_GAMES_BASE_URL ?? "",
 } as const;

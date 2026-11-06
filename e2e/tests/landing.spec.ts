@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { gotoReady } from "./helpers/session";
 
 const SECTION_TITLES = [
@@ -9,6 +9,32 @@ const SECTION_TITLES = [
   "Por género",
   "Novedades de los creadores",
 ];
+
+/** The 16 example games of supabase/seeds. Games people create in the dev database are not in this list and must not break the tests. */
+const SEED_TITLES = new Set([
+  "Órbita",
+  "Granja Cuántica",
+  "El Faro",
+  "Luciérnaga Valiente",
+  "Colectivo 152",
+  "Isla Eco",
+  "Gato Láser",
+  "Pulpo DJ",
+  "Pasillo 9",
+  "Mazmorra 1-Bit",
+  "Torre de Termos",
+  "Hechizo 404",
+  "Neón Express",
+  "Kart de Cartón",
+  "Chancleta Run",
+  "Bit Bakery",
+]);
+
+/** Titles of the example games shown in a section, in the order shown, ignoring any other game that may be published. */
+async function seedTitlesIn(page: Page, region: string): Promise<string[]> {
+  const titles = await page.getByRole("region", { name: region }).getByRole("article").getByRole("heading").allInnerTexts();
+  return titles.filter((title) => SEED_TITLES.has(title));
+}
 
 test.describe("portada", () => {
   test("muestra las secciones de juegos y comunidad en orden, intercaladas con banners", async ({ page }) => {
@@ -27,14 +53,12 @@ test.describe("portada", () => {
     await gotoReady(page, "/");
     const recent = page.getByRole("region", { name: "Recién publicados" }).getByRole("article");
     await expect(recent).toHaveCount(8);
-    await expect(recent.nth(0)).toContainText("Órbita");
-    await expect(recent.nth(1)).toContainText("Granja Cuántica");
+    expect((await seedTitlesIn(page, "Recién publicados")).slice(0, 2)).toEqual(["Órbita", "Granja Cuántica"]);
 
     const mostPlayed = page.getByRole("region", { name: "Los más jugados" }).getByRole("article");
     await expect(mostPlayed).toHaveCount(8);
-    await expect(mostPlayed.nth(0)).toContainText("Neón Express");
-    await expect(mostPlayed.nth(0)).toContainText("Puesto 1");
-    await expect(mostPlayed.nth(1)).toContainText("Chancleta Run");
+    expect((await seedTitlesIn(page, "Los más jugados")).slice(0, 2)).toEqual(["Neón Express", "Chancleta Run"]);
+    await expect(mostPlayed.first()).toContainText("Puesto 1");
   });
 
   test("un banner lleva a la página del juego, donde se puede entrar sin cuenta", async ({ page }) => {
@@ -80,6 +104,6 @@ test.describe("portada", () => {
     await expect(page.getByRole("region", { name: "Just published" })).toBeVisible();
     await expect(page.getByRole("region", { name: "Most played" })).toBeVisible();
     await expect(page.getByRole("region", { name: "What the community says" })).toBeVisible();
-    await expect(page.getByRole("region", { name: "Just published" }).getByRole("article").first()).toContainText("Órbita");
+    await expect(page.getByRole("region", { name: "Just published" })).toContainText("Órbita");
   });
 });

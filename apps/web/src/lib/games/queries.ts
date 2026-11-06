@@ -229,3 +229,13 @@ export async function listOwnUnpublishedGames(ownerId: string): Promise<OwnGame[
     .order("created_at", { ascending: false });
   return data ?? [];
 }
+
+export type GameDelivery = { needsIsolation: boolean };
+
+/** What the player needs to know about a published game's active version, or null if it cannot be played. */
+export async function findGameDelivery(publicId: string): Promise<GameDelivery | null> {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("game_delivery", { p_public_id: publicId });
+  const row = data?.[0];
+  return row && row.state === "published" ? { needsIsolation: row.needs_isolation } : null;
+}

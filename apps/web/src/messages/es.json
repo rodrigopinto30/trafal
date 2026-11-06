@@ -258,8 +258,6 @@
   },
   "games": {
     "play": "Jugar gratis",
-    "playerSoonTitle": "El reproductor está en camino",
-    "playerSoonText": "Pronto vas a poder jugar acá mismo, sin crear una cuenta.",
     "firstGame": "Primer juego",
     "mobileFriendly": "Funciona en celular",
     "plays": "{count, plural, one {# partida} other {# partidas}}",
@@ -285,6 +283,49 @@
       "text": "Creá tu cuenta gratis para dar me gusta, comentar y seguir a {name}.",
       "signup": "Crear mi cuenta",
       "login": "Ya tengo cuenta"
+    }
+  },
+  "gamePlayer": {
+    "play": "Jugar gratis",
+    "soundNotice": "Este juego puede tener sonido.",
+    "frameTitle": "Juego: {title}",
+    "loading": "Cargando el juego…",
+    "fullscreen": "Pantalla completa",
+    "exitFullscreen": "Salir de pantalla completa",
+    "restart": "Reiniciar",
+    "unavailableTitle": "Este juego todavía no se puede jugar",
+    "unavailableText": "No encontramos los archivos del juego. Si es tuyo, revisá su estado desde tu perfil.",
+    "isolationTitle": "Este juego necesita funciones que todavía no ofrecemos",
+    "isolationText": "Usa una tecnología (hilos de WebAssembly) que el reproductor todavía no soporta. Estamos trabajando en eso.",
+    "report": {
+      "button": "Reportar",
+      "title": "Reportar este juego",
+      "help": "Contanos qué pasa. El equipo lo va a mirar y, si el problema es que no funciona, también le llega a quien lo creó.",
+      "loginHelp": "Para reportar tenés que iniciar sesión: así evitamos reportes falsos o repetidos.",
+      "login": "Iniciar sesión",
+      "reason": "Motivo",
+      "reasonPlaceholder": "Elegí un motivo",
+      "reasons": {
+        "broken": "No funciona",
+        "inappropriate": "Contenido inapropiado",
+        "spam": "Spam o engaño",
+        "abuse": "Acoso o abuso",
+        "copyright": "Derechos de autor",
+        "other": "Otro"
+      },
+      "detail": "Detalles (opcional)",
+      "detailHint": "Hasta 1000 caracteres.",
+      "submit": "Enviar reporte",
+      "sending": "Enviando…",
+      "sent": "¡Gracias! Recibimos tu reporte y lo vamos a revisar.",
+      "errors": {
+        "invalidReason": "Elegí un motivo de la lista.",
+        "detailTooLong": "Los detalles pueden tener hasta 1000 caracteres.",
+        "alreadyReported": "Ya reportaste este juego y tu reporte sigue abierto.",
+        "unauthenticated": "Iniciá sesión para reportar.",
+        "accountRestricted": "Tu cuenta no puede reportar por ahora.",
+        "generic": "No pudimos enviar el reporte. Probá de nuevo."
+      }
     }
   },
   "gameForm": {

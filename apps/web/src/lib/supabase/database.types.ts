@@ -613,10 +613,21 @@ isOneToOne: false
               "quarantine_key": string,"version_id": string,"version_number": number
             }[]
                            },
+"game_delivery":
+{ Args: { "p_public_id": string }; Returns: {
+              "entry_path": string,"needs_isolation": boolean,"state": string,"version_number": number
+            }[]
+                           },
+"play_heartbeat":
+{ Args: { "p_public_id": string,"p_session_id": string }; Returns: undefined
+                           },
 "search_games":
 { Args: { "p_limit"?: number,"p_query": string }; Returns: {
               "id": string,"rank": number
             }[]
+                           },
+"start_play":
+{ Args: { "p_device": string,"p_public_id": string,"p_session_id": string }; Returns: undefined
                            },
 "username_available":
 { Args: { "p_username": string }; Returns: boolean
