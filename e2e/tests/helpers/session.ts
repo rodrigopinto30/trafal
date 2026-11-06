@@ -20,16 +20,15 @@ export async function logout(page: Page) {
 
   // La zona de la cuenta llega por streaming: esperar a que aparezca alguno de los dos antes de decidir.
   await expect(account.or(burger).first()).toBeVisible();
-  // Un clic antes de que React hidrate el botón se pierde: se reintenta hasta que el menú realmente se abra.
+  // Un clic antes de que React hidrate el botón se pierde, y un menú que se está cerrando todavía se ve un instante: se
+  // reintenta todo (abrir y hacer clic en «Cerrar sesión») hasta que funcione.
   await expect(async () => {
     if (!(await logoutItem.isVisible())) {
       if (await account.isVisible()) await account.click();
       else await burger.click();
     }
-    await expect(logoutItem).toBeVisible({ timeout: 2_000 });
+    await logoutItem.click({ timeout: 3_000 });
   }).toPass({ timeout: 20_000 });
-
-  await logoutItem.click();
   await expect(page.getByRole("link", { name: "Crear cuenta" }).first()).toBeVisible();
 }
 

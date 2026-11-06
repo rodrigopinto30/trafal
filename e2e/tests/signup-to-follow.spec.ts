@@ -197,5 +197,6 @@ test("una persona nueva se registra, completa su perfil, lo edita y sigue a otra
   await page.waitForTimeout(400);
   await page.screenshot({ path: `screenshots/${testInfo.project.name}-flujo-menu-abierto.png` });
   await page.keyboard.press("Escape");
+  await expect(page.getByRole("menuitem", { name: "Configuración" })).toBeHidden();
   await logout(page);
 });
