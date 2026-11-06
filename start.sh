@@ -128,6 +128,9 @@ S3_REGION=$(status_value S3_PROTOCOL_REGION)
 S3_ACCESS_KEY_ID=$(status_value S3_PROTOCOL_ACCESS_KEY_ID)
 S3_SECRET_ACCESS_KEY=$(status_value S3_PROTOCOL_ACCESS_KEY_SECRET)
 MEDIA_PUBLIC_URL=$API_URL/storage/v1/object/public/media
+# Dominio de los juegos: cada juego vive en <id>.games.localhost:<puerto> (los navegadores resuelven *.localhost solos), que es
+# OTRO sitio distinto de localhost:3000: sus cookies y su almacenamiento nunca se mezclan con los de Trafal.
+GAMES_BASE_URL=http://games.localhost:${GAMES_PORT:-4000}
 # Worker de juegos: conexión directa a Postgres con el rol mínimo `game_worker`.
 WORKER_DB_PASSWORD=$WORKER_DB_PASSWORD
 WORKER_DATABASE_URL=postgresql://game_worker:$WORKER_DB_PASSWORD@supabase_db_trafal:5432/postgres

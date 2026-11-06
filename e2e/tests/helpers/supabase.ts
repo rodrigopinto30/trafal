@@ -34,3 +34,12 @@ export async function signUpWithoutConsent(email: string, password: string): Pro
   });
   if (!response.ok) throw new Error(`No se pudo crear la cuenta de prueba: ${response.status} ${await response.text()}`);
 }
+
+/** Reads public columns of a published game from the REST API (what any visitor could read). */
+export async function publicGame(publicId: string, columns = "play_count,status"): Promise<Record<string, unknown> | null> {
+  const response = await fetch(`${API}/rest/v1/games?public_id=eq.${encodeURIComponent(publicId)}&select=${columns}`, {
+    headers: { apikey: publishableKey() },
+  });
+  const rows = (await response.json()) as Record<string, unknown>[];
+  return rows[0] ?? null;
+}

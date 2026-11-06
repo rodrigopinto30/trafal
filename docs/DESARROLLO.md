@@ -16,6 +16,7 @@ Lo único que necesitás instalado es **Docker** (con Compose v2) y unos 4 GB de
 | Correo de pruebas — acá llegan los mails de confirmación | http://localhost:54324 |
 | Supabase Studio (explorar la base) | http://localhost:54323 |
 | API de Supabase | http://127.0.0.1:54321 |
+| Servidor de juegos — cada juego vive en `http://<id>.games.localhost:4000` (los navegadores resuelven `*.localhost` solos; con `curl` hay que mandar la cabecera `Host`) | http://games.localhost:4000 |
 
 **Cuentas de prueba** (contraseña `trafal123`): `valen@trafal.test` (@valen_makes), `mateo@trafal.test` (@mateo_g) y `admin@trafal.test` (@equipo_trafal, admin). Hay otras siete (`sofi@`, `nacho@`, `juli@`, `caro@`, `tomi@`, `male@`, `santi@` + `trafal.test`) que son creadoras de los **16 juegos de ejemplo** que llenan la portada. Son datos de desarrollo: `./start.sh --reset` los carga.
 
@@ -37,15 +38,16 @@ Lo único que necesitás instalado es **Docker** (con Compose v2) y unos 4 GB de
 tools/worker-check.sh     # solo el worker de Python (ruff, mypy estricto, pytest), en Docker
 tools/validate-zip.sh juego.zip   # valida un zip con las reglas de subida y muestra el resultado en JSON
 docker compose logs -f worker      # qué está haciendo el worker de juegos (qué versión toma, qué rechaza y por qué)
+docker compose logs -f gateway     # qué pide el navegador al servidor de juegos
 ./pnpm add <paquete>      # pnpm dentro del contenedor (no hace falta Node en tu máquina)
 ```
 
 Qué cubren los tests:
 
-- **Base de datos (pgTAP, 479 aserciones):** quién puede leer/escribir cada tabla, por rol (visitante, dueño, otra persona, admin, cuenta suspendida). Un test de invariantes falla si alguien agrega una tabla sin RLS o abre una columna protegida al cliente. Se probó rompiendo permisos a propósito: los tests lo detectan.
+- **Base de datos (pgTAP, 517 aserciones):** quién puede leer/escribir cada tabla, por rol (visitante, dueño, otra persona, admin, cuenta suspendida). Un test de invariantes falla si alguien agrega una tabla sin RLS o abre una columna protegida al cliente. Se probó rompiendo permisos a propósito: los tests lo detectan.
 - **Worker de Python (pytest, 150):** el validador de zips contra archivos armados a mano a nivel de bytes: rutas con `..`, absolutas, con barra invertida, con caracteres de control o de dirección; symlinks y archivos especiales; ejecutables (por extensión y por bytes iniciales, también disfrazados); zips anidados; cifrados; zip-bombs (tamaño declarado falso, entradas que se pisan, millones de entradas); nombres duplicados por mayúsculas o Unicode; `index.html` obligatorio. Más la paridad entre el JSON de reglas y los códigos de error, y el worker de punta a punta con un almacenamiento y una cola simulados: publica cada archivo con su tipo y codificación, no publica nada de un zip rechazado, devuelve a la cola lo que falla por infraestructura sin dejar archivos a medias, detecta el motor y vacía su carpeta de trabajo.
-- **Unitarios (Vitest, 343):** esquemas de **Zod** y saneado de texto, reglas del @usuario (con paridad contra la migración), **inspección de imágenes** (PNG/JPEG/WebP manipulados, animados, con datos pegados), recorte de la foto, i18n (paridad es/en, voseo), seguridad de redirecciones, **contraste de colores ≥ 4,5:1 de toda la paleta** y que no haya caracteres invisibles en el código.
-- **Punta a punta (Playwright, 238 = 119 × 2 tamaños; las 16 que miden el cursor o las barras de scroll reales solo corren en escritorio):** registro (18+, contraseña repetida) → mail → onboarding (@usuario libre sin números, sugerencias) → configuración (foto, géneros, idioma) → seguir → cerrar sesión; **el buscador de la portada** (sugerencias, teclado, tildes, texto hostil, inglés) y que **el menú de la cuenta y los avisos de «guardado» no muevan ni repitan nada**; **el servidor rechaza fotos manipuladas** (HTML disfrazado, SVG, tamaño o tipo falso, animadas, con datos pegados); el idioma sale del sistema y se cambia en Configuración; la **manito en todo lo clickeable** (se mide el cursor real); rutas protegidas; sin scroll horizontal a 360 px; objetivos táctiles ≥ 44 px; auditoría de accesibilidad **axe WCAG 2.2 AA** en 12 pantallas, en escritorio y celular.
+- **Unitarios (Vitest: 352 de la web y 71 del servidor de juegos):** esquemas de **Zod** y saneado de texto, reglas del @usuario (con paridad contra la migración), **inspección de imágenes** (PNG/JPEG/WebP manipulados, animados, con datos pegados), recorte de la foto, i18n (paridad es/en, voseo), seguridad de redirecciones, **contraste de colores ≥ 4,5:1 de toda la paleta** y que no haya caracteres invisibles en el código.
+- **Punta a punta (Playwright, 248 = 124 × 2 tamaños; las 16 que miden el cursor o las barras de scroll reales solo corren en escritorio):** registro (18+, contraseña repetida) → mail → onboarding (@usuario libre sin números, sugerencias) → configuración (foto, géneros, idioma) → seguir → cerrar sesión; **jugar un juego publicado en un marco aislado** (atributos del marco, pantalla completa, reiniciar, conteo de partidas, reportar, cabeceras del servidor de juegos y que una dirección abierta directo lleve a Trafal); **el buscador de la portada** (sugerencias, teclado, tildes, texto hostil, inglés) y que **el menú de la cuenta y los avisos de «guardado» no muevan ni repitan nada**; **el servidor rechaza fotos manipuladas** (HTML disfrazado, SVG, tamaño o tipo falso, animadas, con datos pegados); el idioma sale del sistema y se cambia en Configuración; la **manito en todo lo clickeable** (se mide el cursor real); rutas protegidas; sin scroll horizontal a 360 px; objetivos táctiles ≥ 44 px; auditoría de accesibilidad **axe WCAG 2.2 AA** en 12 pantallas, en escritorio y celular.
 
 ## Variables de entorno
 
@@ -56,6 +58,7 @@ Qué cubren los tests:
 | `SITE_URL` | URL pública del sitio (links de los mails, redirecciones, metadatos) | `http://localhost:3000` |
 | `WEB_PORT` | Puerto donde se publica la web | `3000` |
 | `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` / `_SECRET` | Login con Google (opcional) | vacío (botón oculto) |
+| `GAMES_BASE_URL` | Origen del dominio de juegos sin el id; cada juego se sirve en `<id>.<ese host>`, que tiene que ser **otro sitio** que `SITE_URL` | `http://games.localhost:4000` (lo escribe `./start.sh`; el puerto sale de `GAMES_PORT`) |
 | `WORKER_DATABASE_URL` | Conexión del worker de juegos a Postgres con el rol mínimo `game_worker` (solo puede llamar a las funciones del esquema `worker`) | la genera `./start.sh`, con una contraseña propia de tu máquina (`WORKER_DB_PASSWORD`, en `.env.supabase`) |
 | `S3_*`, `MEDIA_PUBLIC_URL` | Dónde se guardan las imágenes y los zips de juegos (S3 compatible: en producción, Cloudflare R2). `S3_PUBLIC_ENDPOINT` es el mismo endpoint visto desde el navegador (firma las subidas); `S3_BUCKET_QUARANTINE` es el bucket de los zips sin revisar | las genera `./start.sh` (S3 de Supabase Storage); ver `.env.example` para producción |
 
@@ -87,6 +90,7 @@ trafal/
 │  ├─ tests/database/                          pgTAP: permisos de cada tabla
 │  ├─ templates/                               mails bilingües con la identidad de Trafal
 │  └─ seeds/                                   10 cuentas, 16 juegos, 30 avances y comentarios de ejemplo
+├─ apps/gateway/                               Node 24 + TypeScript: servidor de juegos (<id>.games…) con cabeceras de seguridad; el handler usa Request/Response estándar
 ├─ worker/                                     Python 3.13: valida y publica los zips de juegos (boto3 + psycopg; el validador usa solo la biblioteca estándar)
 │  ├─ src/trafal_worker/                       reglas, validador, cola (Postgres), almacenamiento (S3), procesador, bucle del worker, CLI
 │  └─ tests/                                   pytest (con un armador de zips a mano para los casos maliciosos)

@@ -15,10 +15,13 @@ test.describe("página del juego", () => {
     await expect(page.getByText("Me gustó").first()).toBeVisible();
   });
 
-  test("el reproductor avisa que está en camino y el botón de jugar todavía no se activa", async ({ page }) => {
+  test("el botón de jugar está activo y apunta al dominio aislado de los juegos (los de ejemplo no tienen archivos)", async ({ page }) => {
     await gotoReady(page, "/games/orbita");
-    await expect(page.getByText("El reproductor está en camino")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Jugar gratis" })).toBeDisabled();
+    await expect(page.getByText("Este juego puede tener sonido.")).toBeVisible();
+    await page.getByRole("button", { name: "Jugar gratis" }).click();
+    const frame = page.locator('iframe[title="Juego: Órbita"]');
+    await expect(frame).toHaveAttribute("src", "http://orbita.games.localhost:4000/");
+    await expect(page.frameLocator('iframe[title="Juego: Órbita"]').locator("body")).toContainText("Not found");
   });
 
   test("las respuestas de los creadores aparecen bajo cada comentario", async ({ page }) => {

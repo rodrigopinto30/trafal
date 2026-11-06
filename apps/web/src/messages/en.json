@@ -258,8 +258,6 @@
   },
   "games": {
     "play": "Play for free",
-    "playerSoonTitle": "The player is on its way",
-    "playerSoonText": "Soon you'll be able to play right here, no account needed.",
     "firstGame": "First game",
     "mobileFriendly": "Works on mobile",
     "plays": "{count, plural, one {# play} other {# plays}}",
@@ -285,6 +283,49 @@
       "text": "Create a free account to like, comment and follow {name}.",
       "signup": "Create my account",
       "login": "I already have an account"
+    }
+  },
+  "gamePlayer": {
+    "play": "Play for free",
+    "soundNotice": "This game may play sound.",
+    "frameTitle": "Game: {title}",
+    "loading": "Loading the game…",
+    "fullscreen": "Fullscreen",
+    "exitFullscreen": "Exit fullscreen",
+    "restart": "Restart",
+    "unavailableTitle": "This game can't be played yet",
+    "unavailableText": "We couldn't find the game's files. If it's yours, check its status from your profile.",
+    "isolationTitle": "This game needs features we don't offer yet",
+    "isolationText": "It uses a technology (WebAssembly threads) that the player doesn't support yet. We're working on it.",
+    "report": {
+      "button": "Report",
+      "title": "Report this game",
+      "help": "Tell us what's wrong. The team reviews it and, if the problem is that it doesn't work, the creator is told too.",
+      "loginHelp": "You need to log in to report: it helps us avoid fake or repeated reports.",
+      "login": "Log in",
+      "reason": "Reason",
+      "reasonPlaceholder": "Pick a reason",
+      "reasons": {
+        "broken": "It doesn't work",
+        "inappropriate": "Inappropriate content",
+        "spam": "Spam or deception",
+        "abuse": "Harassment or abuse",
+        "copyright": "Copyright",
+        "other": "Other"
+      },
+      "detail": "Details (optional)",
+      "detailHint": "Up to 1000 characters.",
+      "submit": "Send report",
+      "sending": "Sending…",
+      "sent": "Thank you! We got your report and we'll review it.",
+      "errors": {
+        "invalidReason": "Pick a reason from the list.",
+        "detailTooLong": "Details can be up to 1000 characters.",
+        "alreadyReported": "You already reported this game and your report is still open.",
+        "unauthenticated": "Log in to report.",
+        "accountRestricted": "Your account can't report right now.",
+        "generic": "We couldn't send the report. Try again."
+      }
     }
   },
   "gameForm": {

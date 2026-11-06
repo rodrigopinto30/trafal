@@ -1,31 +1,13 @@
-import { PlayIcon } from "lucide-react";
-import { GameCover } from "@/components/games/game-cover";
-import { Button } from "@/components/ui/button";
-import { getTranslations } from "@/i18n/server";
-import { parseDisplayRatio } from "@/lib/games/ratio";
+import { GamePlayer } from "@/components/games/game-player";
+import { getAuthUser } from "@/lib/auth/dal";
+import { publicEnv } from "@/lib/env";
+import { gameFrameUrl } from "@/lib/games/frame-url";
+import { findGameDelivery } from "@/lib/games/queries";
 import type { GameDetail } from "@/lib/games/types";
 
-/** Marco del reproductor con la proporción del juego. Hasta que exista el reproductor seguro muestra la portada y avisa. */
+/** Looks up what the player needs (whether the game can be played, whether the visitor is signed in) and renders it. */
 export async function GamePlayerShell({ game }: { game: GameDetail }) {
-  const t = await getTranslations("games");
-  const { width, height } = parseDisplayRatio(game.display_ratio);
-
-  return (
-    <div
-      className="relative mx-auto overflow-hidden rounded-[28px] border border-white/10 shadow-[0_0_40px_rgb(139_92_255/0.2)]"
-      style={{ aspectRatio: `${width} / ${height}`, width: `min(100%, calc(72vh * ${width} / ${height}))` }}
-    >
-      <GameCover game={game} className="absolute inset-0" />
-      <div className="absolute inset-0 grid place-items-center bg-black/60 p-5 text-center">
-        <div className="grid max-w-[420px] justify-items-center gap-3">
-          <h2 className="font-display text-xl font-bold text-white sm:text-2xl">{t("playerSoonTitle")}</h2>
-          <p className="text-sm text-white/85 sm:text-base">{t("playerSoonText")}</p>
-          <Button variant="play" size="xl" disabled>
-            <PlayIcon aria-hidden="true" />
-            {t("play")}
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
+  const [delivery, user] = await Promise.all([findGameDelivery(game.public_id), getAuthUser()]);
+  const frameUrl = delivery ? gameFrameUrl(publicEnv.gamesBaseUrl, game.public_id) : null;
+  return <GamePlayer game={game} frameUrl={frameUrl} needsIsolation={delivery?.needsIsolation ?? false} signedIn={user !== null} />;
 }
