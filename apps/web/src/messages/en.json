@@ -283,6 +283,12 @@
       "text": "Create a free account to like, comment and follow {name}.",
       "signup": "Create my account",
       "login": "I already have an account"
+    },
+    "versions": {
+      "title": "Versions",
+      "current": "Current version",
+      "published": "Published {when}",
+      "noChangelog": "No details for this version."
     }
   },
   "gamePlayer": {
@@ -443,6 +449,46 @@
     "errors": {
       "notReady": "There is no ready version to publish yet.",
       "generic": "We couldn't change the game's status. Try again."
+    },
+    "activeBadge": "In use",
+    "versionsHint": "The version «in use» is the one people play. The others stay saved.",
+    "changelogLabel": "What changed",
+    "noChangelog": "No details.",
+    "newVersionHint": "Until the new version passes the review, people keep playing the current one."
+  },
+  "gameVersions": {
+    "newTitle": "Upload a new version",
+    "newHelp": "Upload a new .zip with your changes. Once it passes the review, you choose whether to use it.",
+    "label": "Version name (optional)",
+    "labelHint": "For example v0.2. If you leave it empty it is named after its number.",
+    "changelog": "What changed (optional)",
+    "changelogHint": "Up to 2000 characters. It shows on the game page.",
+    "submit": "Upload version",
+    "uploaded": "Done! The version is now in review.",
+    "edit": "Edit",
+    "editAria": "Edit version {label}",
+    "editTitle": "Edit the version",
+    "editHelp": "Change its name and tell what this version brings.",
+    "editLabel": "Name",
+    "save": "Save",
+    "saving": "Saving…",
+    "activate": "Use this version",
+    "activating": "Switching…",
+    "errors": {
+      "invalidLabel": "The name must be between 1 and 24 characters.",
+      "labelTooLong": "The name can have up to 24 characters.",
+      "changelogTooLong": "What changed can have up to 2000 characters.",
+      "zipRequired": "Pick the version's .zip file.",
+      "zipNotZip": "The file must be a .zip.",
+      "zipTooLarge": "The .zip is too big: the maximum is 200 MB.",
+      "dailyLimit": "You reached the limit of 5 uploads per day. Try again tomorrow.",
+      "gameNotFound": "We couldn't find that game.",
+      "versionNotFound": "We couldn't find that version.",
+      "versionNotReady": "That version hasn't passed the review yet, so it can't be used.",
+      "accountRestricted": "Your account can't make changes right now.",
+      "unauthenticated": "Log in to continue.",
+      "storage": "We couldn't prepare the upload. Try again in a while.",
+      "generic": "Something went wrong. Try again."
     }
   },
   "search": {

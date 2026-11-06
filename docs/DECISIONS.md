@@ -156,6 +156,18 @@ Migración nueva: `20261106000400_game_play.sql`. Servicio nuevo en `docker-comp
 | **Las partidas se cuentan con `start_play` (una por sesión de página) y se mide el tiempo activo con `play_heartbeat`** | Estadísticas sin datos personales: solo se guarda la clase de dispositivo y, si hay sesión, el perfil. | El latido suma como mucho 35 s y no más de uno cada 10 s. Las llamadas son *perezosas*: un `supabase.rpc(...)` no envía nada hasta que se espera su resultado (`fireAndForget`). |
 | **«Reportar» usa la tabla `reports` con la sesión de la persona** | Ya tenía RLS, un tope de un reporte abierto por persona y juego, y copia del contenido. | Requiere cuenta. El enrutado («no funciona» al creador, el resto a la cola de admin) y el panel son de la Fase 5. |
 
+## Versiones de un juego (2026-11-06)
+
+Migración nueva: `20261106000500_game_versions.sql`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Una versión nueva nunca pasa a ser la que se juega sola** | Que una versión esté lista no significa que el creador quiera mostrarla; además puede querer volver atrás si falla. | El worker solo activa la primera versión lista de un juego; después manda el creador con `set_active_version(version)` (función `SECURITY DEFINER`: solo versiones **listas** de juegos **propios**; `games.active_version_id` sigue sin permiso de escritura directa). Se puede elegir una más nueva o volver a una anterior. |
+| **Subir una versión usa la misma tubería que la primera** | Una sola forma de entrar al worker, una sola superficie que defender. | `create_game_version` (con su cupo de 5 por día entre todos los juegos) → URL firmada → `confirm_version_upload` → worker. El hook `useZipUpload` comparte la subida con progreso y reintento entre «subir un juego» y «subir una versión». |
+| **El nombre y el registro de cambios se editan en cualquier momento y en cualquier estado** | Corregir un error de tipeo o completar el registro no cambia lo que corre. | Es el `UPDATE` de dos columnas que la base ya permitía al dueño (RLS + permiso por columna); nombre de 1 a 24 caracteres, cambios hasta 2000. No hay nombres únicos por juego. |
+| **La página pública lista solo las versiones listas** | Las que están subiendo, en revisión o con errores son asunto del creador. | La política de lectura de la tabla ya lo garantizaba; la sección marca la versión actual y muestra cuándo estuvo lista y qué cambió. |
+| **El servidor de juegos sirve la versión activa**: al cambiarla, el cambio llega en pocos segundos | Ya consultaba `game_delivery` con un recuerdo de 10 s. | `game-versions.spec.ts` lo comprueba pidiendo el script del juego al servidor antes y después de cambiar. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.

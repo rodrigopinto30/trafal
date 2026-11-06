@@ -28,6 +28,7 @@ export type GameSuggestion = Pick<GameSummary, "public_id" | "title" | "genre_id
 export type GameDetail = GameSummary & {
   controls: string;
   save_count: number;
+  active_version_id: string | null;
 };
 
 export type GameReference = {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { gameDetailsSchema, zipDeclarationSchema } from "./game";
+import { VERSION_ERROR_KEYS, editVersionSchema, gameDetailsSchema, newVersionSchema, zipDeclarationSchema } from "./game";
 
 const valid = {
   title: "  Moon   Runner ",
@@ -88,5 +88,42 @@ describe("zipDeclarationSchema", () => {
     expect(messages("game.rar", "10")).toEqual(["zipNotZip"]);
     expect(messages("game.zip", "0")).toEqual(["zipRequired"]);
     expect(messages("game.zip", String(200 * 1024 * 1024 + 1))).toEqual(["zipTooLarge"]);
+  });
+});
+
+describe("version schemas", () => {
+  const gameId = "11111111-1111-4111-8111-111111111111";
+  const messages = (schema: { safeParse: (value: unknown) => { success: boolean; error?: { issues: { message: string }[] } } }, input: unknown) => {
+    const result = schema.safeParse(input);
+    return result.success ? [] : (result.error?.issues.map((issue) => issue.message) ?? []);
+  };
+
+  it("a new version may leave its name and changelog empty", () => {
+    expect(newVersionSchema.parse({ gameId, label: "", changelog: "" })).toEqual({ gameId, label: "", changelog: "" });
+  });
+
+  it("cleans the name and the changelog", () => {
+    const parsed = newVersionSchema.parse({ gameId, label: "  v0.2   beta ", changelog: " Nuevo nivel\n\n\n\nY arreglos " });
+    expect(parsed.label).toBe("v0.2 beta");
+    expect(parsed.changelog).toBe("Nuevo nivel\n\nY arreglos");
+  });
+
+  it("limits the name to 24 characters and the changelog to 2000", () => {
+    expect(messages(newVersionSchema, { gameId, label: "a".repeat(25), changelog: "" })).toEqual(["labelTooLong"]);
+    expect(messages(newVersionSchema, { gameId, label: "a".repeat(24), changelog: "" })).toEqual([]);
+    expect(messages(newVersionSchema, { gameId, label: "", changelog: "a".repeat(2001) })).toEqual(["changelogTooLong"]);
+  });
+
+  it("an edit needs a name of 1 to 24 characters", () => {
+    const versionId = gameId;
+    expect(messages(editVersionSchema, { versionId, label: "   ", changelog: "" })).toEqual(["invalidLabel"]);
+    expect(messages(editVersionSchema, { versionId, label: "a".repeat(25), changelog: "" })).toEqual(["invalidLabel"]);
+    expect(messages(editVersionSchema, { versionId, label: "v2", changelog: "" })).toEqual([]);
+  });
+
+  it("rejects ids that are not uuids with a key the forms can translate", () => {
+    for (const message of messages(editVersionSchema, { versionId: "nope", label: "v2", changelog: "" })) {
+      expect(VERSION_ERROR_KEYS as readonly string[]).toContain(message);
+    }
   });
 });

@@ -47,9 +47,9 @@ export function validGameZip(): Buffer {
 }
 
 /** A tiny game that proves it is running: its script writes into the page. */
-export function playableGameZip(): Buffer {
+export function playableGameZip(marker = ""): Buffer {
   return makeZip({
     "index.html": '<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Moon Runner</title></head><body><h1>Moon Runner</h1><p id="status">cargando</p><script src="game.js"></script></body></html>',
-    "game.js": 'document.getElementById("status").textContent = "corriendo";',
+    "game.js": `document.getElementById("status").textContent = "corriendo${marker}";`,
   });
 }
