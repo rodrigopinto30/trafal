@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { NewPostForm } from "@/components/games/new-post-form";
+import { PostForm } from "@/components/games/post-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getTranslations } from "@/i18n/server";
 import { requireProfile } from "@/lib/auth/dal";
@@ -32,5 +32,5 @@ async function NewPostContent({ searchParams }: { searchParams: PageProps<"/[lan
   const { profile } = await requireProfile(returnTo);
   const games = await listGamesByOwner(profile.id);
   const initialGameId = games.find((game) => game.public_id === requested)?.id ?? "";
-  return <NewPostForm games={games.map(({ id, title }) => ({ id, title }))} username={profile.username} initialGameId={initialGameId} />;
+  return <PostForm games={games.map(({ id, title }) => ({ id, title }))} username={profile.username} initialGameId={initialGameId} />;
 }

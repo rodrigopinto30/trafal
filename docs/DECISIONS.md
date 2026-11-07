@@ -190,7 +190,7 @@ Sin migración: las cuatro tablas (`game_likes`, `post_likes`, `game_saves`, `po
 
 ## Publicar avances (2026-11-07)
 
-Migración nueva: `20261107000100_post_media_rules.sql`. Las tablas `posts` y `post_media` y su RLS ya existían desde la Fase 1.
+Migraciones nuevas: `20261107000100_post_media_rules.sql` y `20261107000200_edit_posts.sql`. Las tablas `posts` y `post_media` y su RLS ya existían desde la Fase 1.
 
 | Decisión | Por qué | Consecuencia |
 |---|---|---|
@@ -200,7 +200,9 @@ Migración nueva: `20261107000100_post_media_rules.sql`. Las tablas `posts` y `p
 | **Se quitan los datos de la foto** (EXIF/XMP de JPEG, textos y EXIF de PNG) sin recodificar | Una foto del celular trae la ubicación GPS: publicarla sería regalarla. Los avatares ya los recodifica el navegador, estas imágenes no. | Se recortan los segmentos del archivo y se vuelve a inspeccionar; si el resultado no es la misma imagen, se usa el original. **No** se limpian WebP, GIF ni MP4 (ver limitaciones). |
 | **La base valida cada archivo**: ruta `posts/<id del avance>/<32 hex>.<ext>`, tipo ↔ clase ↔ extensión y tope por clase (imagen 5 MiB, GIF 8 MiB, video 20 MiB) | Nadie debe poder apuntar un archivo a la carpeta de otro avance, a otra carpeta del bucket ni a una URL externa. | Los CHECK `post_media_path_fmt`, `post_media_kind_matches_mime`, `post_media_ext_matches_mime` y `post_media_bytes_by_kind`; `13-post-media.test.sql` los prueba. |
 | **Si algo falla, no queda nada**: el avance y los archivos ya subidos se deshacen | Un avance a medias (sin su video) no es lo que la persona quiso publicar. | El orden es: validar todo → crear el avance → subir cada archivo y registrarlo; ante un error se borran el avance y los objetos guardados. |
-| **Un avance solo se liga a un juego propio y publicado**; el tipo y el juego no cambian después | Un enlace a un borrador daría 404; cambiar el tipo cambiaría lo que la gente ya vio. | La acción lo comprueba (RLS filtra los ajenos) y la base ya solo deja `UPDATE` de texto y dato destacado. |
+| **Un avance solo se liga a un juego propio y publicado** | Un enlace a un borrador daría 404. | La acción lo comprueba (RLS filtra los ajenos) y el trigger `posts_before_write` exige que el juego sea del autor (`game_not_owned`). Un avance cuyo juego se despublicó se puede seguir editando sin cambiarlo. |
+| **Se puede editar todo, en una sola transacción** (`edit_post`, migración `20261107000200`) | La persona pidió poder cambiar tipo, juego, texto y archivos, no solo el texto. Reordenar archivos choca con `unique (post_id, position)`, y un fallo a medias dejaría un avance sin la mitad de sus archivos. | La función reemplaza los campos y la lista de archivos de una vez. Es **`SECURITY INVOKER`** a propósito: cada sentencia corre como quien llama, así que RLS y los permisos por columna siguen decidiendo (solo el autor, solo un avance publicado, solo una cuenta activa) y los CHECK de la tabla siguen validando cada archivo. Se agregó el permiso `UPDATE (kind, game_id)`; autor, estado y contadores siguen fuera de alcance. |
+| **La edición manda la lista final de archivos** (`PUT /api/posts/<id>`, multipart) | El servidor no se fía de lo que dice el navegador sobre archivos ya guardados. | Los archivos que se quedan viajan por id y el servidor arma sus datos desde la base (solo toma la descripción del navegador); los nuevos se inspeccionan igual que al publicar. Primero se suben los nuevos, después la base cambia todo, y recién entonces se borran los que ya no están; si la base falla, se borran los recién subidos. |
 | **Borrar es borrar** (no «ocultar») | La persona pidió borrarlo. Los reportes ya guardan una copia del contenido como evidencia. | Se leen las rutas de los archivos, se borra la fila (caen en cascada me gusta, guardados, comentarios y archivos de la base) y recién después se borran los objetos del almacenamiento. |
 
 ## Limitaciones conocidas

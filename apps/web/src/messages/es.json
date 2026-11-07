@@ -767,22 +767,32 @@
       "unauthenticated": "Iniciá sesión para publicar.",
       "notFound": "No encontramos ese avance.",
       "storage": "No pudimos guardar los archivos. Probá de nuevo en un rato.",
-      "generic": "No pudimos publicar el avance. Probá de nuevo."
+      "generic": "No pudimos publicar el avance. Probá de nuevo.",
+      "invalidMedia": "La lista de archivos no es válida. Recargá la página e intentá de nuevo."
     },
     "manage": {
       "menu": "Opciones del avance",
       "edit": "Editar",
       "delete": "Eliminar",
-      "editTitle": "Editar avance",
-      "editHelp": "Podés cambiar el texto. El tipo, el juego y los archivos no se cambian.",
-      "save": "Guardar cambios",
       "cancel": "Cancelar",
-      "saved": "Cambios guardados",
       "deleteTitle": "¿Eliminar este avance?",
       "deleteText": "Se borra con sus me gusta, comentarios y archivos. No se puede deshacer.",
       "confirmDelete": "Eliminar",
       "deleted": "Avance eliminado"
     },
-    "detailsTitle": "Tu avance"
+    "detailsTitle": "Tu avance",
+    "edit": {
+      "title": "Editar avance",
+      "subtitle": "Cambiá lo que quieras: el tipo, el juego, el texto y los archivos.",
+      "submit": "Guardar cambios",
+      "saving": "Guardando… {percent} %",
+      "saved": "Cambios guardados",
+      "current": "Archivo actual",
+      "new": "Archivo nuevo",
+      "moveBefore": "Mover {name} antes",
+      "moveAfter": "Mover {name} después",
+      "cancel": "Cancelar",
+      "fileNumber": "Archivo {number}"
+    }
   }
 }

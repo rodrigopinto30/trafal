@@ -767,22 +767,32 @@
       "unauthenticated": "Log in to post.",
       "notFound": "We could not find that update.",
       "storage": "We could not save the files. Try again in a while.",
-      "generic": "We could not post the update. Try again."
+      "generic": "We could not post the update. Try again.",
+      "invalidMedia": "The list of files is not valid. Reload the page and try again."
     },
     "manage": {
       "menu": "Update options",
       "edit": "Edit",
       "delete": "Delete",
-      "editTitle": "Edit update",
-      "editHelp": "You can change the text. The type, the game and the files stay as they are.",
-      "save": "Save changes",
       "cancel": "Cancel",
-      "saved": "Changes saved",
       "deleteTitle": "Delete this update?",
       "deleteText": "It is deleted with its likes, comments and files. This cannot be undone.",
       "confirmDelete": "Delete",
       "deleted": "Update deleted"
     },
-    "detailsTitle": "Your update"
+    "detailsTitle": "Your update",
+    "edit": {
+      "title": "Edit update",
+      "subtitle": "Change anything: the type, the game, the text and the files.",
+      "submit": "Save changes",
+      "saving": "Saving… {percent}%",
+      "saved": "Changes saved",
+      "current": "Current file",
+      "new": "New file",
+      "moveBefore": "Move {name} earlier",
+      "moveAfter": "Move {name} later",
+      "cancel": "Cancel",
+      "fileNumber": "File {number}"
+    }
   }
 }

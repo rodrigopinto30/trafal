@@ -25,7 +25,7 @@ const FILES = {
 };
 
 function card(page: Page, text: string) {
-  return page.locator("article").filter({ hasText: text });
+  return page.locator("article").filter({ visible: true }).filter({ hasText: text });
 }
 
 async function openPostsTab(page: Page) {
@@ -165,10 +165,14 @@ test("un avance de un juego propio se muestra en la página del juego, y no se p
   expect(await stolen.json()).toMatchObject({ ok: false, error: "invalidGame" });
 });
 
-test("el autor edita el texto de su avance y lo borra con sus archivos; otra persona no ve esas opciones", async ({ browser }, testInfo) => {
+test("otra persona no ve las opciones de un avance ajeno ni puede abrir su edición", async ({ browser }, testInfo) => {
   await openPostsTab(author);
   const mine = card(author, "Probé el nivel 2 con salto doble.");
-  const imageUrl = (await mine.getByRole("img", { name: "Captura del nivel 2" }).getAttribute("src")) ?? "";
+  await mine.getByRole("button", { name: "Opciones del avance" }).click();
+  const link = author.getByRole("menuitem", { name: "Editar" });
+  const href = (await link.getAttribute("href")) ?? "";
+  expect(href).toMatch(/\/posts\/[0-9a-f-]{36}\/edit$/);
+  await author.keyboard.press("Escape");
 
   const other = await (await browser.newContext({ ...testInfo.project.use })).newPage();
   await loginAndWait(other, "valen@trafal.test", "trafal123");
@@ -176,22 +180,110 @@ test("el autor edita el texto de su avance y lo borra con sus archivos; otra per
   await other.getByRole("tab", { name: "Avances" }).click();
   await expect(card(other, "Probé el nivel 2 con salto doble.")).toBeVisible();
   await expect(other.getByRole("button", { name: "Opciones del avance" })).toHaveCount(0);
+  await other.goto(href);
+  await expect(other.getByText("No encontramos esa página")).toBeVisible();
+  await expect(other.getByLabel("Qué querés contar")).toHaveCount(0);
+  await expect(other.getByText("Probé el nivel 2 con salto doble.")).toHaveCount(0);
   await other.context().close();
+});
+
+test("el autor edita todo: tipo, juego, texto y archivos (quitar, agregar, reordenar y describir)", async () => {
+  await openPostsTab(author);
+  const mine = card(author, "Probé el nivel 2 con salto doble.");
+  const oldImageUrl = (await mine.getByRole("img", { name: "Captura del nivel 2" }).getAttribute("src")) ?? "";
+  const oldGifUrl = (await mine.getByRole("img", { name: "GIF del avance" }).getAttribute("src")) ?? "";
 
   await mine.getByRole("button", { name: "Opciones del avance" }).click();
   await author.getByRole("menuitem", { name: "Editar" }).click();
-  const dialog = author.getByRole("dialog", { name: "Editar avance" });
-  await dialog.getByLabel("Qué querés contar").fill("Texto corregido del nivel 2.");
-  await dialog.getByRole("button", { name: "Guardar cambios" }).click();
-  await expect(author.getByRole("dialog")).toHaveCount(0);
-  await expect(card(author, "Texto corregido del nivel 2.")).toBeVisible();
-  await expect(card(author, "Texto corregido del nivel 2.").getByRole("img", { name: "Captura del nivel 2" })).toBeVisible();
+  await expect(author.getByRole("heading", { level: 1, name: "Editar avance" })).toBeVisible();
+  await author.waitForLoadState("networkidle");
 
-  await card(author, "Texto corregido del nivel 2.").getByRole("button", { name: "Opciones del avance" }).click();
+  await expect(author.getByLabel("Qué querés contar")).toHaveValue("Probé el nivel 2 con salto doble.");
+  const files = author.getByRole("list", { name: "Archivos elegidos" });
+  await expect(files.getByRole("listitem")).toHaveCount(3);
+  await expect(files.getByText("Archivo actual")).toHaveCount(3);
+
+  await author.getByLabel("Tipo de publicación").selectOption("pide_feedback");
+  await author.getByRole("combobox", { name: "Juego", exact: true }).selectOption({ label: "Juego de avances" });
+  await author.getByLabel("Qué querés contar").fill("Texto nuevo: ¿se entiende el nivel 2?");
+
+  await author.getByRole("button", { name: "Quitar Archivo 2" }).click();
+  await expect(files.getByRole("listitem")).toHaveCount(2);
+  await author.getByLabel("Elegir archivos").setInputFiles({ name: "nivel-3.png", mimeType: "image/png", buffer: makePng(80, 60, { color: [255, 120, 60] }) });
+  await expect(files.getByRole("listitem")).toHaveCount(3);
+  await author.getByLabel("Descripción de nivel-3.png (opcional)").fill("Captura del nivel 3");
+  await author.getByLabel("Descripción de Captura del nivel 2 (opcional)").fill("Nivel 2, con el salto doble");
+  await author.getByRole("button", { name: "Mover nivel-3.png antes" }).click();
+  await author.getByRole("button", { name: "Mover nivel-3.png antes" }).click();
+  await author.getByRole("button", { name: "Guardar cambios" }).click();
+
+  await expect(author).toHaveURL(new RegExp(`/games/${publicId}$`), { timeout: 30_000 });
+  const edited = card(author, "Texto nuevo: ¿se entiende el nivel 2?");
+  await expect(edited).toBeVisible();
+  await expect(edited.getByText("Pide feedback")).toBeVisible();
+  const media = edited.getByRole("list", { name: "Archivos del avance" }).getByRole("listitem");
+  await expect(media).toHaveCount(3);
+  await expect(media.nth(0).getByRole("img", { name: "Captura del nivel 3" })).toBeVisible();
+  await expect(media.nth(1).getByRole("img", { name: "Nivel 2, con el salto doble" })).toBeVisible();
+  await expect(media.nth(2).locator("video")).toHaveCount(1);
+  await expect(edited.getByRole("img", { name: "GIF del avance" })).toHaveCount(0);
+
+  const keptUrl = (await media.nth(1).getByRole("img").getAttribute("src")) ?? "";
+  expect(keptUrl).toBe(oldImageUrl);
+  expect((await author.request.get(keptUrl)).status()).toBe(200);
+  const addedUrl = (await media.nth(0).getByRole("img").getAttribute("src")) ?? "";
+  expect((await author.request.get(addedUrl)).status()).toBe(200);
+  await expect.poll(async () => (await author.request.get(oldGifUrl)).status(), { timeout: 15_000 }).toBeGreaterThanOrEqual(400);
+
+  await edited.getByRole("button", { name: "Opciones del avance" }).click();
+  await author.getByRole("menuitem", { name: "Editar" }).click();
+  await author.waitForLoadState("networkidle");
+  await expect(author.getByRole("combobox", { name: "Juego", exact: true })).not.toHaveValue("");
+  await author.getByRole("combobox", { name: "Juego", exact: true }).selectOption("");
+  for (const name of ["Captura del nivel 3", "Nivel 2, con el salto doble", "Archivo 3"]) await author.getByRole("button", { name: `Quitar ${name}` }).click();
+  await author.getByRole("button", { name: "Guardar cambios" }).click();
+  await expect(author).toHaveURL(new RegExp(`/u/${username}$`), { timeout: 30_000 });
+  await author.getByRole("tab", { name: "Avances" }).click();
+  const bare = card(author, "Texto nuevo: ¿se entiende el nivel 2?");
+  await expect(bare).toBeVisible();
+  await expect(bare.getByRole("list", { name: "Archivos del avance" })).toHaveCount(0);
+  await expect.poll(async () => (await author.request.get(keptUrl)).status(), { timeout: 15_000 }).toBeGreaterThanOrEqual(400);
+  await expect.poll(async () => (await author.request.get(addedUrl)).status(), { timeout: 15_000 }).toBeGreaterThanOrEqual(400);
+});
+
+test("el servidor rechaza una edición con una lista de archivos que no es la del avance", async () => {
+  await openPostsTab(author);
+  await card(author, "Texto nuevo: ¿se entiende el nivel 2?").getByRole("button", { name: "Opciones del avance" }).click();
+  const href = (await author.getByRole("menuitem", { name: "Editar" }).getAttribute("href")) ?? "";
+  const postId = /posts\/([0-9a-f-]{36})\/edit/.exec(href)?.[1] ?? "";
+  expect(postId).not.toBe("");
+  await author.keyboard.press("Escape");
+
+  const send = (multipart: Record<string, string>, headers: Record<string, string> = { origin: SITE }) => author.request.put(`/api/posts/${postId}`, { multipart, headers });
+  const base = { kind: "avance", body: "x" };
+  expect(await (await send({ ...base, media: JSON.stringify([{ type: "keep", id: "11111111-1111-4111-8111-111111111111", alt: "" }]) })).json()).toMatchObject({ error: "invalidMedia" });
+  expect(await (await send({ ...base, media: JSON.stringify([{ type: "new", index: 0, alt: "" }]) })).json()).toMatchObject({ error: "invalidMedia" });
+  expect(await (await send({ ...base, media: "esto no es json" })).json()).toMatchObject({ error: "invalidMedia" });
+  expect((await send(base, {})).status()).toBe(403);
+  expect((await author.request.put("/api/posts/00000000-0000-4000-8000-000000000000", { multipart: base, headers: { origin: SITE } })).status()).toBe(404);
+});
+
+test("el autor borra su avance con sus archivos", async () => {
+  await openPostsTab(author);
+  await card(author, "Texto nuevo: ¿se entiende el nivel 2?").getByRole("button", { name: "Opciones del avance" }).click();
+  await author.getByRole("menuitem", { name: "Editar" }).click();
+  await author.waitForLoadState("networkidle");
+  await author.getByLabel("Elegir archivos").setInputFiles({ ...FILES.png, name: "ultima.png" });
+  await author.getByRole("button", { name: "Guardar cambios" }).click();
+  await expect(author).toHaveURL(new RegExp(`/u/${username}$`), { timeout: 30_000 });
+  await author.getByRole("tab", { name: "Avances" }).click();
+  const withFile = card(author, "Texto nuevo: ¿se entiende el nivel 2?");
+  const url = (await withFile.getByRole("img").first().getAttribute("src")) ?? "";
+  expect((await author.request.get(url)).status()).toBe(200);
+
+  await withFile.getByRole("button", { name: "Opciones del avance" }).click();
   await author.getByRole("menuitem", { name: "Eliminar" }).click();
-  const confirm = author.getByRole("dialog", { name: "¿Eliminar este avance?" });
-  await confirm.getByRole("button", { name: "Eliminar" }).click();
-  await expect(card(author, "Texto corregido del nivel 2.")).toHaveCount(0);
-
-  await expect.poll(async () => (await author.request.get(imageUrl)).status(), { timeout: 15_000 }).toBeGreaterThanOrEqual(400);
+  await author.getByRole("dialog", { name: "¿Eliminar este avance?" }).getByRole("button", { name: "Eliminar" }).click();
+  await expect(card(author, "Texto nuevo: ¿se entiende el nivel 2?")).toHaveCount(0);
+  await expect.poll(async () => (await author.request.get(url)).status(), { timeout: 15_000 }).toBeGreaterThanOrEqual(400);
 });

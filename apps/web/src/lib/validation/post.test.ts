@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import es from "@/messages/es.json";
-import { altTextSchema, editPostSchema, newPostSchema, POST_BODY_MAX, POST_ERROR_KEYS, POST_HIGHLIGHT_MAX, postIdSchema } from "./post";
+import { altTextSchema, newPostSchema, POST_BODY_MAX, POST_ERROR_KEYS, POST_HIGHLIGHT_MAX, postIdSchema } from "./post";
 
 const GAME = "11111111-1111-4111-8111-111111111101";
 const messageOf = (result: { success: boolean; error?: { issues: { message: string }[] } }) => result.error?.issues[0]?.message;
@@ -42,13 +42,7 @@ describe("newPostSchema", () => {
   });
 });
 
-describe("editPostSchema, altTextSchema and postIdSchema", () => {
-  it("edits need an id and text", () => {
-    expect(editPostSchema.parse({ id: GAME, body: " nuevo " })).toEqual({ id: GAME, body: "nuevo", highlight: "" });
-    expect(messageOf(editPostSchema.safeParse({ id: "x", body: "y" }))).toBe("notFound");
-    expect(messageOf(editPostSchema.safeParse({ id: GAME, body: "" }))).toBe("bodyRequired");
-  });
-
+describe("altTextSchema and postIdSchema", () => {
   it("a description is one clean line of at most 200 characters", () => {
     expect(altTextSchema.parse("  Un\n nivel \u202E  ")).toBe("Un nivel");
     expect(altTextSchema.safeParse("a".repeat(201)).success).toBe(false);

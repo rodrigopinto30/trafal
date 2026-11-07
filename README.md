@@ -35,7 +35,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 **Hoy**
 - **Publicar un avance** (botón en tu perfil y en la página de tus juegos): cuatro tipos (**Avance**, **Nuevo juego**, **Pide feedback** y **Hito**, este con un dato destacado de hasta 12 caracteres), texto de hasta 2000 caracteres, un juego tuyo ya publicado (obligatorio para «Nuevo juego») y hasta **4 archivos**: imágenes PNG, JPG o WebP de hasta 5 MB, GIF de hasta 8 MB y videos MP4 de hasta 20 MB, cada uno con una descripción para quien no puede verlo.
 - **El servidor no se fía de los archivos**: lee el formato real de los bytes (no el nombre ni el tipo declarado), rechaza lo que no sea exactamente un archivo bien formado (nada pegado atrás), las imágenes animadas que no sean GIF y las dimensiones desmedidas, y **saca los datos de la foto** (EXIF y XMP de los JPEG, como la ubicación GPS). Si algo falla a mitad de camino, no queda nada publicado.
-- **Editar y borrar lo propio**: el autor cambia el texto (y el dato de un hito) y borra el avance con sus me gusta, comentarios y archivos. Nadie más ve esas opciones, y la base tampoco se lo permite.
+- **Editar todo lo propio**: desde el menú del avance se abre una pantalla con el mismo formulario donde cambia **el tipo, el juego, el texto, el dato destacado y los archivos** (quitar, agregar, reordenar con flechas y cambiar la descripción). Se guarda todo junto o nada: si algo falla, el avance queda como estaba. **Borrar** elimina el avance con sus me gusta, comentarios y archivos. Nadie más ve esas opciones, y la base tampoco se lo permite.
 - Los avances se ven en el perfil, en la página del juego y en «Guardados», con sus imágenes, GIF y videos (los videos no se descargan hasta que apretás play).
 
 ### Guardados

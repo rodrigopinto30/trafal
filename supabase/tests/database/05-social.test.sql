@@ -42,8 +42,11 @@ select throws_ok($$ insert into public.posts (author_id, kind, body, like_count)
 select throws_ok($$ insert into public.posts (author_id, kind, body, status) values ('a0000000-0000-0000-0000-000000000001', 'avance', 'x', 'hidden') $$, '42501', null, 'el estado de moderación no se escribe');
 
 select is(tests.dml_count($$ update public.posts set body = 'Día 12: sonidos nuevos' where body = 'Día 12: agregué sonidos' $$), 1::bigint, 'ana edita su avance');
-select throws_ok($$ update public.posts set kind = 'hito' where body = 'Salió la v0.1' $$, '42501', null, 'el tipo no cambia después de publicar');
-select throws_ok($$ update public.posts set game_id = '11111111-1111-1111-1111-111111111102' where body = 'Salió la v0.1' $$, '42501', null, 'ni el juego vinculado');
+select lives_ok($$ update public.posts set kind = 'hito' where body = 'Salió la v0.1' $$, 'el tipo se puede cambiar');
+select lives_ok($$ update public.posts set kind = 'avance' where body = 'Salió la v0.1' $$, 'y volver a cambiar');
+select throws_ok($$ update public.posts set game_id = '11111111-1111-1111-1111-111111111102' where body = 'Salió la v0.1' $$, 'P0001', 'game_not_owned', 'pero el juego vinculado tiene que ser propio');
+select throws_ok($$ update public.posts set kind = 'nuevo_juego', game_id = null where body = 'Salió la v0.1' $$, '23514', null, 'y un lanzamiento no puede quedarse sin su juego');
+select throws_ok($$ update public.posts set author_id = 'b0000000-0000-0000-0000-000000000002' where body = 'Salió la v0.1' $$, '42501', null, 'el autor nunca cambia');
 select throws_ok($$ update public.posts set like_count = 1000 where body = 'Salió la v0.1' $$, '42501', null, 'ni los contadores');
 select throws_ok($$ update public.posts set status = 'removed' where body = 'Salió la v0.1' $$, '42501', null, 'ni el estado');
 

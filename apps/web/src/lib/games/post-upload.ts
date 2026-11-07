@@ -5,13 +5,13 @@ export type PostUploadResult =
   | { ok: false; error: PostErrorKey; field?: string };
 
 /**
- * Sends a new update (text and files) to the server and reports the upload progress of the request body. It uses XMLHttpRequest
+ * Sends a new or edited update (text and files) to the server and reports the upload progress of the request body. It uses XMLHttpRequest
  * because `fetch` cannot tell how much of a body has been sent. Anything unexpected in the answer is a generic error.
  */
-export function submitPost(form: FormData, onProgress: (fraction: number) => void): Promise<PostUploadResult> {
+export function submitPost(form: FormData, onProgress: (fraction: number) => void, target: { method: "POST" | "PUT"; url: string } = { method: "POST", url: "/api/posts" }): Promise<PostUploadResult> {
   return new Promise((resolve) => {
     const request = new XMLHttpRequest();
-    request.open("POST", "/api/posts");
+    request.open(target.method, target.url);
     request.responseType = "json";
     request.upload.onprogress = (event) => {
       if (event.lengthComputable) onProgress(event.loaded / event.total);

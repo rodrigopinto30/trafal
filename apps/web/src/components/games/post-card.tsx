@@ -45,7 +45,7 @@ export async function PostCard({ post, now, showGame = true, viewer }: PostCardP
         </div>
         {viewer?.userId === post.author_id ? (
           <div className="ml-auto">
-            <PostOwnerMenu postId={post.id} kind={post.kind} body={post.body} highlight={post.highlight} />
+            <PostOwnerMenu postId={post.id} />
           </div>
         ) : null}
       </header>

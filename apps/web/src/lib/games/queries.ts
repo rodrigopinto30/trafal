@@ -276,3 +276,28 @@ export async function listReadyVersions(gameId: string): Promise<PublicVersion[]
     .order("number", { ascending: false });
   return data ?? [];
 }
+
+export type EditablePost = {
+  id: string;
+  updated_at: string;
+  kind: PostKind;
+  body: string;
+  highlight: string | null;
+  game: { id: string; title: string } | null;
+  media: { id: string; kind: PostMediaKind; path: string; alt_text: string }[];
+};
+
+/** An update the person wrote and may edit (a moderated one cannot be edited), with its game and files in order. */
+export async function findOwnPostForEdit(postId: string, authorId: string): Promise<EditablePost | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("posts")
+    .select("id, updated_at, kind, body, highlight, game:games!posts_game_id_fkey(id, title), media:post_media(id, kind, path, alt_text, position)")
+    .eq("id", postId)
+    .eq("author_id", authorId)
+    .eq("status", "published")
+    .maybeSingle();
+  if (!data) return null;
+  const media = [...data.media].sort((a, b) => a.position - b.position).map(({ id, kind, path, alt_text }) => ({ id, kind: kind as PostMediaKind, path, alt_text }));
+  return { id: data.id, updated_at: data.updated_at, kind: data.kind as PostKind, body: data.body, highlight: data.highlight, game: data.game, media };
+}

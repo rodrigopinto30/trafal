@@ -24,6 +24,7 @@ export const POST_ERROR_KEYS = [
   "fileDimensions",
   "fileTypeMismatch",
   "altTooLong",
+  "invalidMedia",
   "requestTooLarge",
   "accountRestricted",
   "unauthenticated",
@@ -68,12 +69,5 @@ export const altTextSchema = z
   .string()
   .transform(sanitizeLine)
   .refine((value) => charLength(value) <= POST_MEDIA_MAX_ALT, "altTooLong");
-
-/** Editing an update: its text and (for a milestone) its highlight. The kind and the game never change after publishing. */
-export const editPostSchema = z.object({
-  id: z.uuid("notFound"),
-  body,
-  highlight: highlight.optional().default(""),
-});
 
 export const postIdSchema = z.uuid("notFound");
