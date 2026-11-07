@@ -72,6 +72,9 @@ export async function MobileAccount() {
           <Link href={`/u/${profile.username}`} className={itemClass}>
             {t("myProfile")}
           </Link>
+          <Link href="/saved" className={itemClass}>
+            {t("saved")}
+          </Link>
           <Link href="/settings/profile" className={itemClass}>
             {t("settings")}
           </Link>

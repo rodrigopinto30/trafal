@@ -30,6 +30,11 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Página pública del perfil**: avatar, nombre, @usuario, bio, ubicación, motores y géneros; contadores de seguidores, seguidos, juegos y avances; pestañas con **tus juegos** y **tus avances**. Si te falta la foto o los géneros, te aparece un aviso para terminar el perfil.
 - **Seguir y dejar de seguir** a otras personas con respuesta inmediata y contador actualizado. Las listas de seguidores y seguidos muestran avatar, nombre y bio. Quien no tiene cuenta, al tocar «Seguir» pasa por el login y vuelve al perfil.
 
+### Guardados
+
+**Hoy**
+- **Guardados** (menú de la cuenta): los juegos y los avances que guardaste, del más reciente al más viejo, solo visibles para vos. Desde ahí se quitan los avances guardados; si un juego o un avance se oculta o se borra, deja de aparecer.
+
 ### Configuración
 
 **Hoy**
@@ -49,6 +54,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 **Hoy**
 - **Página de cada juego** (`/games/<id>`), abierta a cualquier persona, sin cuenta:
   - portada, título, creador, etiquetas de género y motor, insignias «Primer juego» y «Funciona en celular», y contadores de partidas, me gusta y comentarios;
+  - **me gusta y guardar** (también en cada avance): responden al instante y el contador es el real; quien no tiene cuenta pasa por el login y vuelve al mismo lugar. Los me gusta y los guardados son privados: el público ve solo los contadores;
   - **Sobre este juego** (descripción corta) y **Cómo se juega** (controles), más hasta 8 etiquetas;
   - tarjeta del creador con acceso a su perfil;
   - los **avances** de ese juego y los **comentarios** con sus respuestas;

@@ -4,13 +4,19 @@ import { Badge, type badgeVariants } from "@/components/ui/badge";
 import { Link } from "@/i18n/link";
 import { getLocale, getTranslations } from "@/i18n/server";
 import { formatRelativeTime } from "@/lib/format";
+import type { MyReactions } from "@/lib/games/reaction-queries";
 import type { PostKind, PostSummary } from "@/lib/games/types";
+import { ReactionButtons } from "./reaction-buttons";
 import type { VariantProps } from "class-variance-authority";
+
+/** What the card needs to let the person like and save: whether they have an account, where to log in, and their own marks. */
+export type PostViewer = { signedIn: boolean; loginHref: string; mine: MyReactions };
 
 type PostCardProps = {
   post: PostSummary;
   now: Date;
   showGame?: boolean;
+  viewer?: PostViewer;
 };
 
 const KIND_VARIANTS: Record<PostKind, NonNullable<VariantProps<typeof badgeVariants>["variant"]>> = {
@@ -20,7 +26,7 @@ const KIND_VARIANTS: Record<PostKind, NonNullable<VariantProps<typeof badgeVaria
   hito: "violet",
 };
 
-export async function PostCard({ post, now, showGame = true }: PostCardProps) {
+export async function PostCard({ post, now, showGame = true, viewer }: PostCardProps) {
   const [t, tPosts, locale] = await Promise.all([getTranslations("games"), getTranslations("posts"), getLocale()]);
 
   return (
@@ -53,11 +59,25 @@ export async function PostCard({ post, now, showGame = true }: PostCardProps) {
           <span />
         )}
         <span className="flex items-center gap-3">
-          <span className="flex items-center gap-1">
-            <HeartIcon aria-hidden="true" className="size-3.5 text-coral" />
-            {post.like_count}
-            <span className="sr-only">{t("likes", { count: post.like_count })}</span>
-          </span>
+          {viewer ? (
+            <ReactionButtons
+              target="post"
+              id={post.id}
+              likeCount={post.like_count}
+              initialLiked={viewer.mine.liked.has(post.id)}
+              initialSaved={viewer.mine.saved.has(post.id)}
+              signedIn={viewer.signedIn}
+              loginHref={viewer.loginHref}
+              locale={locale}
+              compact
+            />
+          ) : (
+            <span className="flex items-center gap-1">
+              <HeartIcon aria-hidden="true" className="size-3.5 text-coral" />
+              {post.like_count}
+              <span className="sr-only">{t("likes", { count: post.like_count })}</span>
+            </span>
+          )}
           <span className="flex items-center gap-1">
             <MessageCircleIcon aria-hidden="true" className="size-3.5" />
             {post.comment_count}

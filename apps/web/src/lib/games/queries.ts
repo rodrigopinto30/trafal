@@ -127,6 +127,24 @@ export async function listLatestPosts(limit: number): Promise<PostSummary[]> {
   return (data ?? []).filter(hasAuthor).map(toPost);
 }
 
+/** Published games by id, in the order of the ids (the order a list was built in). Hidden or removed ones are left out. */
+export async function listGamesByIds(ids: string[]): Promise<GameSummary[]> {
+  if (ids.length === 0) return [];
+  const supabase = await createClient();
+  const { data } = await supabase.from("games").select(GAME_COLUMNS).eq("status", "published").in("id", ids);
+  const byId = new Map((data ?? []).filter(hasOwner).map((game) => [game.id, game]));
+  return ids.flatMap((id) => byId.get(id) ?? []);
+}
+
+/** Published posts by id, in the order of the ids. Hidden or removed ones are left out. */
+export async function listPostsByIds(ids: string[]): Promise<PostSummary[]> {
+  if (ids.length === 0) return [];
+  const supabase = await createClient();
+  const { data } = await supabase.from("posts").select(POST_COLUMNS).eq("status", "published").in("id", ids);
+  const byId = new Map((data ?? []).filter(hasAuthor).map(toPost).map((post) => [post.id, post]));
+  return ids.flatMap((id) => byId.get(id) ?? []);
+}
+
 export async function listPostsByGame(gameId: string): Promise<PostSummary[]> {
   const supabase = await createClient();
   const { data } = await supabase

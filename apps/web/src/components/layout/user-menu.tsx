@@ -39,6 +39,9 @@ export function UserMenu({ username, displayName, avatarPath }: { username: stri
           <Link href={`/u/${username}`}>{t("myProfile")}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
+          <Link href="/saved">{t("saved")}</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
           <Link href="/settings/profile">{t("settings")}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

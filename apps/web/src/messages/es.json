@@ -37,7 +37,8 @@
     "myProfile": "Mi perfil",
     "settings": "Configuración",
     "completeProfile": "Completar perfil",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "saved": "Guardados"
   },
   "footer": {
     "tagline": "La red social para publicar videojuegos que se juegan en el navegador y compartir cómo se hacen.",
@@ -681,5 +682,26 @@
     "unexpectedTitle": "Algo salió mal",
     "unexpectedText": "Tuvimos un problema inesperado. Probá de nuevo; si sigue, avisanos.",
     "retry": "Reintentar"
+  },
+  "reactions": {
+    "like": "Me gusta",
+    "save": "Guardar",
+    "saved": "Guardado",
+    "loginToLike": "Iniciá sesión para dar me gusta",
+    "loginToSave": "Iniciá sesión para guardar",
+    "errors": {
+      "unauthenticated": "Iniciá sesión para hacer esto.",
+      "restricted": "Tu cuenta no puede hacer esto por ahora.",
+      "generic": "No pudimos hacerlo. Probá de nuevo."
+    }
+  },
+  "saved": {
+    "title": "Guardados",
+    "subtitle": "Los juegos y los avances que guardaste. Solo los ves vos.",
+    "gamesTitle": "Juegos",
+    "postsTitle": "Avances",
+    "emptyGames": "Todavía no guardaste ningún juego.",
+    "emptyPosts": "Todavía no guardaste ningún avance.",
+    "explore": "Explorar juegos"
   }
 }

@@ -20,6 +20,7 @@ const PAGES: readonly Target[] = [
   { name: "terminos", path: "/legal/terms" },
   { name: "no-encontrado", path: "/pagina-que-no-existe" },
   { name: "subir-juego", path: "/games/new", login: true },
+  { name: "guardados", path: "/saved", login: true },
   { name: "configuracion-perfil", path: "/settings/profile", login: true },
   { name: "configuracion-preferencias", path: "/settings/preferences", login: true },
 ];
