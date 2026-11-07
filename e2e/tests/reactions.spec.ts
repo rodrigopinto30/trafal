@@ -58,6 +58,7 @@ test("me gusta en un juego: sube el contador, queda al recargar y se puede sacar
 
   await reloaded.click();
   await expect(reloaded).toHaveAttribute("aria-pressed", "false");
+  await expect(reloaded).toBeEnabled();
   await expect.poll(() => likeCount(reloaded)).toBe(before);
 });
 
@@ -82,6 +83,7 @@ test("guardar un juego y un avance: aparecen en «Guardados» y salen al quitarl
 
   await posts.getByRole("button", { name: "Guardar" }).first().click();
   await expect(posts.getByRole("button", { name: "Guardar" }).first()).toHaveAttribute("aria-pressed", "false");
+  await expect(posts.getByRole("button", { name: "Guardar" }).first()).toBeEnabled();
 
   await gotoReady(page, "/saved");
   await expect(page.getByRole("region", { name: "Avances" }).getByText("Todavía no guardaste ningún avance.")).toBeVisible();
@@ -90,6 +92,7 @@ test("guardar un juego y un avance: aparecen en «Guardados» y salen al quitarl
   await gotoReady(page, GAME);
   await page.getByRole("button", { name: "Guardar" }).first().click();
   await expect(page.getByRole("button", { name: "Guardar" }).first()).toHaveAttribute("aria-pressed", "false");
+  await expect(page.getByRole("button", { name: "Guardar" }).first()).toBeEnabled();
   await gotoReady(page, "/saved");
   await expect(page.getByRole("region", { name: "Juegos" }).getByText("Todavía no guardaste ningún juego.")).toBeVisible();
 });
@@ -110,6 +113,7 @@ test("me gusta en un avance, desde la página del juego y desde el perfil de qui
   await expect(sameOnProfile).toHaveAttribute("aria-pressed", "true");
   await sameOnProfile.click();
   await expect(sameOnProfile).toHaveAttribute("aria-pressed", "false");
+  await expect(sameOnProfile).toBeEnabled();
   await expect.poll(() => likeCount(sameOnProfile)).toBe(before);
 });
 

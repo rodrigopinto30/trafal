@@ -38,6 +38,14 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Editar todo lo propio**: desde el menú del avance se abre una pantalla con el mismo formulario donde cambia **el tipo, el juego, el texto, el dato destacado y los archivos** (quitar, agregar, reordenar con flechas y cambiar la descripción). Se guarda todo junto o nada: si algo falla, el avance queda como estaba. **Borrar** elimina el avance con sus me gusta, comentarios y archivos. Nadie más ve esas opciones, y la base tampoco se lo permite.
 - Los avances se ven en el perfil, en la página del juego y en «Guardados», con sus imágenes, GIF y videos (los videos no se descargan hasta que apretás play).
 
+### Comentarios
+
+**Hoy**
+- **Comentar un juego** (sección «Comentarios» de su página) y **un avance** (cada avance tiene su propia página, `/posts/<id>`, a la que lleva su contador de comentarios). Hasta 1000 caracteres y una etiqueta opcional: **Me gustó** o **Sugerencia**.
+- **Responder** a un comentario, en **un solo nivel** (no se responde a una respuesta) y sin etiqueta. Quien no tiene cuenta ve la invitación a iniciar sesión y vuelve al mismo lugar.
+- **Editar y borrar lo propio**: el texto y la etiqueta se pueden cambiar mientras el comentario esté publicado (si moderación lo oculta, deja de poder tocarlo), y se puede borrar con sus respuestas. Nadie edita ni borra comentarios ajenos; la base tampoco se lo permite.
+- Los contadores de comentarios de juegos y avances son los reales (los mantiene la base).
+
 ### Guardados
 
 **Hoy**

@@ -205,6 +205,18 @@ Migraciones nuevas: `20261107000100_post_media_rules.sql` y `20261107000200_edit
 | **La edición manda la lista final de archivos** (`PUT /api/posts/<id>`, multipart) | El servidor no se fía de lo que dice el navegador sobre archivos ya guardados. | Los archivos que se quedan viajan por id y el servidor arma sus datos desde la base (solo toma la descripción del navegador); los nuevos se inspeccionan igual que al publicar. Primero se suben los nuevos, después la base cambia todo, y recién entonces se borran los que ya no están; si la base falla, se borran los recién subidos. |
 | **Borrar es borrar** (no «ocultar») | La persona pidió borrarlo. Los reportes ya guardan una copia del contenido como evidencia. | Se leen las rutas de los archivos, se borra la fila (caen en cascada me gusta, guardados, comentarios y archivos de la base) y recién después se borran los objetos del almacenamiento. |
 
+## Comentarios (2026-11-07)
+
+Migración nueva: `20261107000300_comment_rules.sql`. La tabla `comments`, su RLS, sus triggers y los contadores ya existían desde la Fase 1.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Un comentario solo se edita mientras está publicado** | La política de `UPDATE` nunca miraba el estado: quien había sido moderado podía reescribir lo que dijo. | La política exige `status = 'published'` en `USING` y `WITH CHECK`. Borrar lo propio sigue permitido (los reportes guardan una copia del contenido como evidencia). |
+| **Una respuesta solo contesta un comentario publicado** | Responder a uno oculto reviviría la conversación. | El trigger `comments_before_write` devuelve `parent_not_found` si el comentario padre no existe o no está publicado. Se mantienen: un solo nivel, mismo juego o avance, sin etiqueta ni pregunta en una respuesta. |
+| **Cada avance tiene su propia página** (`/posts/<id>`) | Los comentarios de un avance necesitan un lugar, y un enlace compartible (el feed y «compartir» lo van a usar). | El contador de comentarios de cada tarjeta de avance es un enlace a esa página (`#comments`). Los comentarios de un juego siguen en la página del juego. |
+| **Tres Server Actions con el mismo patrón que el resto** (`addCommentAction`, `updateCommentAction`, `deleteCommentAction`) | Argumentos por Zod, y la base decide quién puede qué. | La acción comprueba que el destino sea visible para la persona (si no, `notFound`) y traduce los errores de la base (`reply_depth_exceeded`, `parent_not_found`…) a mensajes en es/en. |
+| **Botones de editar y borrar solo para el autor, pero es cortesía** | La seguridad no está en la interfaz. | Se muestran con `viewer.userId === comment.author_id`; `14-comments.test.sql` prueba que nadie más puede. Borrar un comentario con respuestas se las lleva (`ON DELETE CASCADE`), y el diálogo lo avisa. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.

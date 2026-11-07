@@ -290,7 +290,8 @@
       "current": "Current version",
       "published": "Published {when}",
       "noChangelog": "No details for this version."
-    }
+    },
+    "noCommentsSignedIn": "There are no comments yet. Be the first to leave one!"
   },
   "gamePlayer": {
     "play": "Play for free",
@@ -793,6 +794,50 @@
       "moveAfter": "Move {name} later",
       "cancel": "Cancel",
       "fileNumber": "File {number}"
+    }
+  },
+  "comments": {
+    "title": "Comments",
+    "placeholder": "Write your comment…",
+    "bodyLabel": "Your comment",
+    "bodyCount": "{count} of {max}",
+    "label": "Type of comment",
+    "labels": {
+      "none": "Comment",
+      "liked": "Liked it",
+      "suggestion": "Suggestion"
+    },
+    "submit": "Comment",
+    "reply": "Reply",
+    "replyTo": "Reply to {name}",
+    "replySubmit": "Reply",
+    "cancel": "Cancel",
+    "posted": "Comment posted",
+    "replied": "Reply posted",
+    "loginToComment": "Log in to comment",
+    "loginToReply": "Log in to reply",
+    "edited": "edited",
+    "actions": "Comment options",
+    "edit": "Edit",
+    "delete": "Delete",
+    "editTitle": "Edit comment",
+    "save": "Save changes",
+    "saved": "Changes saved",
+    "deleteTitle": "Delete this comment?",
+    "deleteText": "It is deleted for good, with its replies.",
+    "deleteReplyText": "It is deleted for good.",
+    "confirmDelete": "Delete",
+    "deleted": "Comment deleted",
+    "errors": {
+      "bodyRequired": "Write something to comment.",
+      "bodyTooLong": "The comment is too long (up to 1000 characters).",
+      "invalidLabel": "Pick a valid label.",
+      "replyNotAllowed": "Replies carry no label and cannot be answered.",
+      "parentNotFound": "The comment you want to reply to is no longer available.",
+      "notFound": "We could not find that to comment on.",
+      "accountRestricted": "Your account cannot comment right now.",
+      "unauthenticated": "Log in to comment.",
+      "generic": "We could not save the comment. Try again."
     }
   }
 }

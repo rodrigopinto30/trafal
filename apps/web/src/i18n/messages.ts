@@ -32,6 +32,7 @@ export const CLIENT_NAMESPACES = [
   "gameVersions",
   "reactions",
   "postForm",
+  "comments",
   "errors",
 ] as const satisfies readonly Namespace[];
 
