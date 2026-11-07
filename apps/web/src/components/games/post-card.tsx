@@ -87,11 +87,11 @@ export async function PostCard({ post, now, showGame = true, viewer }: PostCardP
               <span className="sr-only">{t("likes", { count: post.like_count })}</span>
             </span>
           )}
-          <span className="flex items-center gap-1">
+          <Link href={`/posts/${post.id}#comments`} className="inline-flex min-h-11 items-center gap-1 rounded-lg px-1 hover:text-cyan hover:underline">
             <MessageCircleIcon aria-hidden="true" className="size-3.5" />
             {post.comment_count}
             <span className="sr-only">{t("comments", { count: post.comment_count })}</span>
-          </span>
+          </Link>
         </span>
       </footer>
     </article>

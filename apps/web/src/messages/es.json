@@ -290,7 +290,8 @@
       "current": "Versión actual",
       "published": "Publicada {when}",
       "noChangelog": "Sin detalles de esta versión."
-    }
+    },
+    "noCommentsSignedIn": "Todavía no hay comentarios. ¡Sé la primera persona en dejar uno!"
   },
   "gamePlayer": {
     "play": "Jugar gratis",
@@ -793,6 +794,50 @@
       "moveAfter": "Mover {name} después",
       "cancel": "Cancelar",
       "fileNumber": "Archivo {number}"
+    }
+  },
+  "comments": {
+    "title": "Comentarios",
+    "placeholder": "Escribí tu comentario…",
+    "bodyLabel": "Tu comentario",
+    "bodyCount": "{count} de {max}",
+    "label": "Tipo de comentario",
+    "labels": {
+      "none": "Comentario",
+      "liked": "Me gustó",
+      "suggestion": "Sugerencia"
+    },
+    "submit": "Comentar",
+    "reply": "Responder",
+    "replyTo": "Respuesta para {name}",
+    "replySubmit": "Responder",
+    "cancel": "Cancelar",
+    "posted": "Comentario publicado",
+    "replied": "Respuesta publicada",
+    "loginToComment": "Iniciá sesión para comentar",
+    "loginToReply": "Iniciá sesión para responder",
+    "edited": "editado",
+    "actions": "Opciones del comentario",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "editTitle": "Editar comentario",
+    "save": "Guardar cambios",
+    "saved": "Cambios guardados",
+    "deleteTitle": "¿Eliminar este comentario?",
+    "deleteText": "Se borra para siempre, junto con sus respuestas.",
+    "deleteReplyText": "Se borra para siempre.",
+    "confirmDelete": "Eliminar",
+    "deleted": "Comentario eliminado",
+    "errors": {
+      "bodyRequired": "Escribí algo para comentar.",
+      "bodyTooLong": "El comentario es demasiado largo (hasta 1000 caracteres).",
+      "invalidLabel": "Elegí una etiqueta válida.",
+      "replyNotAllowed": "Las respuestas no llevan etiqueta ni se responden entre sí.",
+      "parentNotFound": "El comentario que querés responder ya no está disponible.",
+      "notFound": "No encontramos eso para comentar.",
+      "accountRestricted": "Tu cuenta no puede comentar por ahora.",
+      "unauthenticated": "Iniciá sesión para comentar.",
+      "generic": "No pudimos guardar el comentario. Probá de nuevo."
     }
   }
 }

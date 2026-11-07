@@ -2,7 +2,8 @@ import { MessageCircleIcon, PlayIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { UserAvatar } from "@/components/brand/user-avatar";
-import { CommentList } from "@/components/games/comment-list";
+import { CommentForm } from "@/components/games/comment-form";
+import { CommentList, type CommentViewer } from "@/components/games/comment-list";
 import { GamePlayerShell } from "@/components/games/game-player-shell";
 import { JoinCard } from "@/components/games/join-card";
 import { PostCard } from "@/components/games/post-card";
@@ -62,6 +63,7 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
     : [NO_REACTIONS, NO_REACTIONS];
   const loginHref = `/login?next=${encodeURIComponent(`/games/${game.public_id}`)}`;
   const viewer = { signedIn: Boolean(user), userId: user?.id, loginHref, mine: myPosts };
+  const commentViewer: CommentViewer = { signedIn: Boolean(user), userId: user?.id, loginHref, target: "game", targetId: game.id };
   const now = new Date();
   const threads = groupComments(comments);
   const { owner } = game;
@@ -179,8 +181,13 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
             <h2 id="comments" className="font-display text-2xl font-bold">
               {t("commentsTitle")}
             </h2>
-            <div className="mt-4">
-              {threads.length > 0 ? <CommentList threads={threads} now={now} /> : <p className="text-text-2">{t("noComments")}</p>}
+            <div className="mt-4 grid gap-6">
+              <CommentForm target="game" id={game.id} signedIn={Boolean(user)} loginHref={loginHref} />
+              {threads.length > 0 ? (
+                <CommentList threads={threads} now={now} viewer={commentViewer} />
+              ) : (
+                <p className="text-text-2">{user ? t("noCommentsSignedIn") : t("noComments")}</p>
+              )}
             </div>
           </section>
         </div>

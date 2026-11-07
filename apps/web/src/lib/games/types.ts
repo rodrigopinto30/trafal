@@ -70,6 +70,8 @@ export type CommentLabel = "liked" | "suggestion";
 
 export type CommentSummary = {
   id: string;
+  author_id: string;
+  updated_at: string;
   parent_id: string | null;
   body: string;
   label: CommentLabel | null;

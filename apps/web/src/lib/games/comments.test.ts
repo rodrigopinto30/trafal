@@ -5,6 +5,8 @@ import type { CommentSummary } from "./types";
 function comment(id: string, createdAt: string, parentId: string | null = null): CommentSummary {
   return {
     id,
+    author_id: "author",
+    updated_at: createdAt,
     parent_id: parentId,
     body: id,
     label: null,
