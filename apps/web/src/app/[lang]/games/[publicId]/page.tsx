@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { UserAvatar } from "@/components/brand/user-avatar";
 import { CommentForm } from "@/components/games/comment-form";
 import { CommentList, type CommentViewer } from "@/components/games/comment-list";
+import { CreatorQuestions } from "@/components/games/creator-questions";
 import { GamePlayerShell } from "@/components/games/game-player-shell";
 import { JoinCard } from "@/components/games/join-card";
 import { PostCard } from "@/components/games/post-card";
@@ -17,7 +18,7 @@ import { getLocale, getTranslations } from "@/i18n/server";
 import { getAuthUser } from "@/lib/auth/dal";
 import { formatCompactNumber } from "@/lib/format";
 import { groupComments } from "@/lib/games/comments";
-import { findGameByPublicId, listCommentsByGame, listPostsByGame, listReadyVersions } from "@/lib/games/queries";
+import { findGameByPublicId, listCommentsByGame, listPostsByGame, listQuestionsByGame, listReadyVersions } from "@/lib/games/queries";
 import { listMyReactions, type MyReactions } from "@/lib/games/reaction-queries";
 import { parsePublicIdParam } from "@/lib/validation/common";
 
@@ -47,7 +48,7 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
   const game = await findGameByPublicId(publicId);
   if (!game) notFound();
 
-  const [t, tPosts, tGenres, tEngines, locale, posts, comments, versions, user] = await Promise.all([
+  const [t, tPosts, tGenres, tEngines, locale, posts, comments, questions, versions, user] = await Promise.all([
     getTranslations("games"),
     getTranslations("posts"),
     getTranslations("genres"),
@@ -55,6 +56,7 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
     getLocale(),
     listPostsByGame(game.id),
     listCommentsByGame(game.id),
+    listQuestionsByGame(game.id),
     listReadyVersions(game.id),
     getAuthUser(),
   ]);
@@ -63,9 +65,11 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
     : [NO_REACTIONS, NO_REACTIONS];
   const loginHref = `/login?next=${encodeURIComponent(`/games/${game.public_id}`)}`;
   const viewer = { signedIn: Boolean(user), userId: user?.id, loginHref, mine: myPosts };
-  const commentViewer: CommentViewer = { signedIn: Boolean(user), userId: user?.id, loginHref, target: "game", targetId: game.id };
+  const commentViewer: CommentViewer = { signedIn: Boolean(user), userId: user?.id, isTargetOwner: user?.id === game.owner_id, loginHref, target: "game", targetId: game.id };
   const now = new Date();
-  const threads = groupComments(comments);
+  const allThreads = groupComments(comments);
+  const threads = allThreads.filter((thread) => thread.comment.question_id === null);
+  const answers = allThreads.filter((thread) => thread.comment.question_id !== null);
   const { owner } = game;
 
   return (
@@ -176,6 +180,8 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
               <p className="mt-3 text-text-2">{t("noDevlogs")}</p>
             )}
           </section>
+
+          <CreatorQuestions questions={questions} answers={answers} creatorName={owner.display_name} now={now} viewer={commentViewer} />
 
           <section aria-labelledby="comments">
             <h2 id="comments" className="font-display text-2xl font-bold">

@@ -217,6 +217,18 @@ Migración nueva: `20261107000300_comment_rules.sql`. La tabla `comments`, su RL
 | **Tres Server Actions con el mismo patrón que el resto** (`addCommentAction`, `updateCommentAction`, `deleteCommentAction`) | Argumentos por Zod, y la base decide quién puede qué. | La acción comprueba que el destino sea visible para la persona (si no, `notFound`) y traduce los errores de la base (`reply_depth_exceeded`, `parent_not_found`…) a mensajes en es/en. |
 | **Botones de editar y borrar solo para el autor, pero es cortesía** | La seguridad no está en la interfaz. | Se muestran con `viewer.userId === comment.author_id`; `14-comments.test.sql` prueba que nadie más puede. Borrar un comentario con respuestas se las lleva (`ON DELETE CASCADE`), y el diálogo lo avisa. |
 
+## Preguntas del creador y «Me sirvió» (2026-11-07)
+
+Migración nueva: `20261107000400_comment_helpful.sql`. Las preguntas (`game_questions`), las respuestas (`comments.question_id`, una por persona y pregunta) y la columna `is_helpful` ya existían desde la Fase 1.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Marcar «Me sirvió» es una función** (`set_comment_helpful`, `SECURITY DEFINER`) y no un permiso de columna | Solo el dueño del juego o el autor del avance puede marcar, y nunca su propio comentario: una política de columna no puede expresar eso. | La función exige sesión y cuenta activa, un comentario **publicado** y de **primer nivel** de otra persona, sobre un juego o avance **publicado** del que quien llama es dueño. `is_helpful` sigue sin permiso de `UPDATE` directo. Errores: `not_owner` (42501), `own_comment`, `reply_cannot_be_helpful`, `comment_not_found`. |
+| **Marcar no es editar**: `updated_at` solo se mueve si cambian el texto o la etiqueta | Si marcar tocara la fecha, el aviso «(editado)» aparecería en cualquier comentario que el creador encontró útil. | El trigger `comments_touch_updated_at` pasó a `BEFORE UPDATE OF body, label`. `15-comment-helpful.test.sql` lo comprueba fijando la fecha en 2020 y marcando. |
+| **Las respuestas a una pregunta son comentarios del juego con `question_id`**, no una tabla aparte | Heredan todo lo ya resuelto: editar, borrar, responder, moderar y el contador. | En la página se separan de los comentarios generales (`question_id` nulo) y se muestran bajo su pregunta. Una persona responde una vez por pregunta (índice único, que la interfaz traduce a «Ya respondiste»); si borra su respuesta puede responder de nuevo. |
+| **El creador no responde sus propias preguntas** | Las preguntas son para escuchar a la gente. | La interfaz le muestra «Estas son tus preguntas» y no el formulario; la base no lo impide (podría comentar el juego normalmente). |
+| **Las preguntas no se editan después de crear el juego** (todavía) | Fuera de este alcance: la base ya permite al dueño cambiarlas, falta la pantalla. | Anotado en limitaciones. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.
@@ -233,3 +245,4 @@ Migración nueva: `20261107000300_comment_rules.sql`. La tabla `comments`, su RL
 - **Cookies entre juegos**: cada juego tiene su propio origen (`<id>.<dominio de juegos>`), así que `localStorage`, IndexedDB y las cookies de cada uno están separados. Pero un juego **puede poner una cookie con `Domain=<dominio de juegos>`** que verían los demás juegos del mismo dominio (en local con `games.localhost` no se nota). Para producción hay que registrar el dominio de juegos en la **Public Suffix List** (como `github.io`), así el navegador rechaza esas cookies; hasta entonces no hay nada sensible en ese dominio (el sitio vive en otro dominio y nunca le llega una cookie).
 
 - **Avances**: los videos MP4 y los GIF no se transcodifican ni se les saca la metadata (un MP4 de un celular puede traer la ubicación en sus cajas `udta`); tampoco se limpian los WebP. No hay tope de publicaciones por minuto ni por día (límites de uso: Fase 5). Borrar una **cuenta** borra sus avances en la base pero no sus archivos del almacenamiento (igual que el avatar: se resuelve junto con el borrado de cuentas, Fase 5). Un fallo del almacenamiento al borrar un avance deja un archivo huérfano.
+- **Preguntas del creador**: se escriben solo al subir el juego; no hay todavía una pantalla para cambiarlas, agregarlas o borrarlas después (la base ya lo permite al dueño).

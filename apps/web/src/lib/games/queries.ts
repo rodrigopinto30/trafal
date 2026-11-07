@@ -12,6 +12,7 @@ import type {
   PostKind,
   PostMediaKind,
   PostSummary,
+  QuestionSummary,
 } from "./types";
 
 const GAME_COLUMNS =
@@ -24,7 +25,7 @@ const POST_COLUMNS =
   "id, kind, body, highlight, created_at, like_count, comment_count, author_id, author:profiles!posts_author_id_fkey(username, display_name, avatar_path), game:games!posts_game_id_fkey(public_id, title), media:post_media(id, kind, path, mime, width, height, alt_text, position)" as const;
 
 const COMMENT_COLUMNS =
-  "id, author_id, updated_at, parent_id, body, label, is_helpful, created_at, author:profiles!comments_author_id_fkey(username, display_name, avatar_path)" as const;
+  "id, question_id, author_id, updated_at, parent_id, body, label, is_helpful, created_at, author:profiles!comments_author_id_fkey(username, display_name, avatar_path)" as const;
 
 const FEATURED_COLUMNS =
   "quote, game:games!featured_games_game_id_fkey(id, public_id, title, short_description, genre_id, engine_id, tags, cover_path, works_on_mobile, is_first_game, display_ratio, play_count, like_count, comment_count, published_at, status, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path))" as const;
@@ -181,6 +182,13 @@ export async function listCommentsByGame(gameId: string): Promise<CommentSummary
     .eq("status", "published")
     .order("created_at", { ascending: false });
   return (data ?? []).filter(hasAuthor).map((row) => ({ ...row, label: row.label as CommentSummary["label"] }));
+}
+
+/** The questions the creator of a game asks the people who play it, in the order they were written. */
+export async function listQuestionsByGame(gameId: string): Promise<QuestionSummary[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("game_questions").select("id, position, question").eq("game_id", gameId).order("position");
+  return data ?? [];
 }
 
 /** Published comments on an update, newest first (replies are grouped under their comment by `groupComments`). */

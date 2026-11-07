@@ -632,6 +632,9 @@ isOneToOne: false
 "set_active_version":
 { Args: { "p_version_id": string }; Returns: undefined
                            },
+"set_comment_helpful":
+{ Args: { "p_comment_id": string,"p_helpful": boolean }; Returns: undefined
+                           },
 "start_play":
 { Args: { "p_device": string,"p_public_id": string,"p_session_id": string }; Returns: undefined
                            },

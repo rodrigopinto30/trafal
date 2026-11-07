@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import es from "@/messages/es.json";
-import { COMMENT_BODY_MAX, COMMENT_ERROR_KEYS, commentIdSchema, editCommentSchema, newCommentSchema } from "./comment";
+import { COMMENT_BODY_MAX, COMMENT_ERROR_KEYS, commentIdSchema, editCommentSchema, helpfulSchema, newCommentSchema } from "./comment";
 
 const ID = "11111111-1111-4111-8111-111111111101";
 const OTHER = "22222222-2222-4222-8222-222222222202";
@@ -13,6 +13,7 @@ describe("newCommentSchema", () => {
       target: "game",
       id: ID,
       parentId: null,
+      questionId: null,
       label: null,
       body: "Muy lindo juego\n\nsaludos",
     });
@@ -38,6 +39,14 @@ describe("newCommentSchema", () => {
     expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, parentId: "nope", body: "x" }))).toBe("parentNotFound");
   });
 
+  it("an answer to a creator's question is a comment on a game, with no label and no parent", () => {
+    expect(newCommentSchema.parse({ target: "game", id: ID, questionId: OTHER, body: "sí, se entiende" }).questionId).toBe(OTHER);
+    expect(messageOf(newCommentSchema.safeParse({ target: "post", id: ID, questionId: OTHER, body: "x" }))).toBe("replyNotAllowed");
+    expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, questionId: OTHER, label: "liked", body: "x" }))).toBe("replyNotAllowed");
+    expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, questionId: OTHER, parentId: ID, body: "x" }))).toBe("replyNotAllowed");
+    expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, questionId: "nope", body: "x" }))).toBe("notFound");
+  });
+
   it("only real targets and ids", () => {
     expect(messageOf(newCommentSchema.safeParse({ target: "user", id: ID, body: "x" }))).toBe("notFound");
     expect(messageOf(newCommentSchema.safeParse({ target: "game", id: "1 or 1=1", body: "x" }))).toBe("notFound");
@@ -45,6 +54,16 @@ describe("newCommentSchema", () => {
 
   it.each([[null], ["text"], [42], [[]]])("rejects %j as a whole", (input) => {
     expect(newCommentSchema.safeParse(input).success).toBe(false);
+  });
+});
+
+describe("helpfulSchema", () => {
+  it("needs a real comment id and a yes or no", () => {
+    expect(helpfulSchema.parse({ id: ID, helpful: true })).toEqual({ id: ID, helpful: true });
+    expect(helpfulSchema.parse({ id: ID, helpful: false }).helpful).toBe(false);
+    expect(helpfulSchema.safeParse({ id: ID, helpful: "yes" }).success).toBe(false);
+    expect(helpfulSchema.safeParse({ id: ID }).success).toBe(false);
+    expect(helpfulSchema.safeParse({ id: "x", helpful: true }).success).toBe(false);
   });
 });
 

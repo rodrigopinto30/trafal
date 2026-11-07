@@ -1,5 +1,5 @@
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
-import { uploadGameZip } from "./helpers/game";
+import { uploadGameZip, unpublishGame } from "./helpers/game";
 import { lettersOnly, registerAccount, uniqueSuffix } from "./helpers/session";
 import { playableGameZip } from "./helpers/zip";
 
@@ -40,7 +40,11 @@ test.beforeAll(async ({ browser }, testInfo) => {
 });
 
 test.afterAll(async () => {
-  await ownerContext?.close();
+  try {
+    if (publicId) await unpublishGame(owner, publicId);
+  } finally {
+    await ownerContext?.close();
+  }
 });
 
 test("se sube una versión nueva: queda en revisión y la gente sigue jugando la actual", async ({ request }) => {

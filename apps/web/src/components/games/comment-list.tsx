@@ -10,7 +10,7 @@ import type { CommentSummary } from "@/lib/games/types";
 import type { CommentTarget } from "@/lib/validation/comment";
 
 /** Who is looking and where the comments live: what the actions on each comment need. */
-export type CommentViewer = { signedIn: boolean; userId?: string; loginHref: string; target: CommentTarget; targetId: string };
+export type CommentViewer = { signedIn: boolean; userId?: string; isTargetOwner: boolean; loginHref: string; target: CommentTarget; targetId: string };
 
 type CommentListProps = {
   threads: CommentThread[];
@@ -58,6 +58,8 @@ async function CommentBody({ comment, now, viewer, isReply }: { comment: Comment
           authorName={comment.author.display_name}
           isReply={isReply}
           isOwn={viewer.userId === comment.author_id}
+          canMarkHelpful={viewer.isTargetOwner && !isReply && viewer.userId !== comment.author_id}
+          helpful={comment.is_helpful}
           target={viewer.target}
           targetId={viewer.targetId}
           signedIn={viewer.signedIn}

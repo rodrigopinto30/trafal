@@ -37,7 +37,7 @@ async function PostContent({ params }: { params: PageProps<"/[lang]/posts/[postI
   const mine = user ? await listMyReactions("post", [post.id]) : { liked: new Set<string>(), saved: new Set<string>() };
   const loginHref = `/login?next=${encodeURIComponent(`/posts/${post.id}`)}`;
   const viewer = { signedIn: Boolean(user), userId: user?.id, loginHref, mine };
-  const commentViewer: CommentViewer = { signedIn: Boolean(user), userId: user?.id, loginHref, target: "post", targetId: post.id };
+  const commentViewer: CommentViewer = { signedIn: Boolean(user), userId: user?.id, isTargetOwner: user?.id === post.author_id, loginHref, target: "post", targetId: post.id };
   const now = new Date();
   const threads = groupComments(comments);
 

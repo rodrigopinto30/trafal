@@ -17,6 +17,7 @@ type Props = {
   target: CommentTarget;
   id: string;
   parentId?: string;
+  questionId?: string;
   replyToName?: string;
   signedIn: boolean;
   loginHref: string;
@@ -32,11 +33,13 @@ function isErrorKey(value: string): value is CommentErrorKey {
  * Form to comment on a game or an update, or to reply to a comment (a reply has no label). Someone without an account is invited
  * to log in and comes back to the same page. The text is checked again by the server and the database has the last word.
  */
-export function CommentForm({ target, id, parentId, replyToName, signedIn, loginHref, onDone, autoFocus = false }: Props) {
+export function CommentForm({ target, id, parentId, questionId, replyToName, signedIn, loginHref, onDone, autoFocus = false }: Props) {
   const t = useTranslations("comments");
   const router = useRouter();
   const isReply = parentId !== undefined;
-  const fieldId = `comment-${isReply ? parentId : `${target}-${id}`}`;
+  const isAnswer = questionId !== undefined;
+  const withoutLabel = isReply || isAnswer;
+  const fieldId = `comment-${isReply ? parentId : isAnswer ? questionId : `${target}-${id}`}`;
   const [body, setBody] = useState("");
   const [label, setLabel] = useState("");
   const [error, setError] = useState<string | undefined>();
@@ -55,11 +58,11 @@ export function CommentForm({ target, id, parentId, replyToName, signedIn, login
     if (pending) return;
     setError(undefined);
     startTransition(async () => {
-      const result = await addCommentAction({ target, id, parentId: parentId ?? null, label: isReply ? "" : label, body });
+      const result = await addCommentAction({ target, id, parentId: parentId ?? null, questionId: questionId ?? null, label: withoutLabel ? "" : label, body });
       if (result.ok) {
         setBody("");
         setLabel("");
-        toast.success(isReply ? t("replied") : t("posted"));
+        toast.success(isReply ? t("replied") : isAnswer ? t("answered") : t("posted"));
         router.refresh();
         onDone?.();
         return;
@@ -71,11 +74,11 @@ export function CommentForm({ target, id, parentId, replyToName, signedIn, login
   return (
     <form onSubmit={submit} noValidate className="grid gap-3">
       {error ? <FormMessage>{error}</FormMessage> : null}
-      <Field id={fieldId} label={replyToName ? t("replyTo", { name: replyToName }) : t("bodyLabel")} hint={t("bodyCount", { count: Array.from(body).length, max: COMMENT_BODY_MAX })} error={undefined}>
-        {(control) => <Textarea {...control} value={body} rows={isReply ? 3 : 4} placeholder={t("placeholder")} autoFocus={autoFocus} disabled={pending} onChange={(event) => setBody(event.target.value)} />}
+      <Field id={fieldId} label={replyToName ? t("replyTo", { name: replyToName }) : isAnswer ? t("answerLabel") : t("bodyLabel")} hint={t("bodyCount", { count: Array.from(body).length, max: COMMENT_BODY_MAX })} error={undefined}>
+        {(control) => <Textarea {...control} value={body} rows={withoutLabel ? 3 : 4} placeholder={t("placeholder")} autoFocus={autoFocus} disabled={pending} onChange={(event) => setBody(event.target.value)} />}
       </Field>
       <div className="flex flex-wrap items-end gap-3">
-        {isReply ? null : (
+        {withoutLabel ? null : (
           <Field id={`${fieldId}-label`} label={t("label")} className="min-w-48">
             {(control) => (
               <NativeSelect {...control} value={label} disabled={pending} onChange={(event) => setLabel(event.target.value)}>
@@ -90,7 +93,7 @@ export function CommentForm({ target, id, parentId, replyToName, signedIn, login
           </Field>
         )}
         <Button type="submit" disabled={pending}>
-          {isReply ? t("replySubmit") : t("submit")}
+          {isReply ? t("replySubmit") : isAnswer ? t("answerSubmit") : t("submit")}
         </Button>
         {onDone ? (
           <Button type="button" variant="ghost" onClick={onDone} disabled={pending}>
