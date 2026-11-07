@@ -1,4 +1,4 @@
-import { HeartIcon, MessageCircleIcon, PlayIcon } from "lucide-react";
+import { MessageCircleIcon, PlayIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { UserAvatar } from "@/components/brand/user-avatar";
@@ -6,6 +6,7 @@ import { CommentList } from "@/components/games/comment-list";
 import { GamePlayerShell } from "@/components/games/game-player-shell";
 import { JoinCard } from "@/components/games/join-card";
 import { PostCard } from "@/components/games/post-card";
+import { ReactionButtons } from "@/components/games/reaction-buttons";
 import { VersionList } from "@/components/games/version-list";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,10 @@ import { getAuthUser } from "@/lib/auth/dal";
 import { formatCompactNumber } from "@/lib/format";
 import { groupComments } from "@/lib/games/comments";
 import { findGameByPublicId, listCommentsByGame, listPostsByGame, listReadyVersions } from "@/lib/games/queries";
+import { listMyReactions, type MyReactions } from "@/lib/games/reaction-queries";
 import { parsePublicIdParam } from "@/lib/validation/common";
+
+const NO_REACTIONS: MyReactions = { liked: new Set(), saved: new Set() };
 
 type GamePageProps = PageProps<"/[lang]/games/[publicId]">;
 
@@ -52,6 +56,11 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
     listReadyVersions(game.id),
     getAuthUser(),
   ]);
+  const [myGame, myPosts] = user
+    ? await Promise.all([listMyReactions("game", [game.id]), listMyReactions("post", posts.map((post) => post.id))])
+    : [NO_REACTIONS, NO_REACTIONS];
+  const loginHref = `/login?next=${encodeURIComponent(`/games/${game.public_id}`)}`;
+  const viewer = { signedIn: Boolean(user), loginHref, mine: myPosts };
   const now = new Date();
   const threads = groupComments(comments);
   const { owner } = game;
@@ -97,15 +106,20 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
             <span className="sr-only">{t("plays", { count: game.play_count })}</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <HeartIcon aria-hidden="true" className="size-4 text-coral" />
-            {formatCompactNumber(locale, game.like_count)}
-            <span className="sr-only">{t("likes", { count: game.like_count })}</span>
-          </span>
-          <span className="flex items-center gap-1.5">
             <MessageCircleIcon aria-hidden="true" className="size-4" />
             {comments.length}
             <span className="sr-only">{t("comments", { count: comments.length })}</span>
           </span>
+          <ReactionButtons
+            target="game"
+            id={game.id}
+            likeCount={game.like_count}
+            initialLiked={myGame.liked.has(game.id)}
+            initialSaved={myGame.saved.has(game.id)}
+            signedIn={Boolean(user)}
+            loginHref={loginHref}
+            locale={locale}
+          />
         </div>
       </header>
 
@@ -145,7 +159,7 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
             {posts.length > 0 ? (
               <div className="mt-4 grid gap-4">
                 {posts.map((post) => (
-                  <PostCard key={post.id} post={post} now={now} showGame={false} />
+                  <PostCard key={post.id} post={post} now={now} showGame={false} viewer={viewer} />
                 ))}
               </div>
             ) : (

@@ -37,7 +37,8 @@
     "myProfile": "My profile",
     "settings": "Settings",
     "completeProfile": "Finish profile",
-    "logout": "Log out"
+    "logout": "Log out",
+    "saved": "Saved"
   },
   "footer": {
     "tagline": "The social network for publishing browser games and sharing how they're made.",
@@ -681,5 +682,26 @@
     "unexpectedTitle": "Something went wrong",
     "unexpectedText": "We hit an unexpected problem. Try again; if it keeps happening, let us know.",
     "retry": "Try again"
+  },
+  "reactions": {
+    "like": "Like",
+    "save": "Save",
+    "saved": "Saved",
+    "loginToLike": "Log in to like",
+    "loginToSave": "Log in to save",
+    "errors": {
+      "unauthenticated": "Log in to do this.",
+      "restricted": "Your account can't do this right now.",
+      "generic": "We couldn't do that. Try again."
+    }
+  },
+  "saved": {
+    "title": "Saved",
+    "subtitle": "The games and updates you saved. Only you can see them.",
+    "gamesTitle": "Games",
+    "postsTitle": "Updates",
+    "emptyGames": "You haven't saved any games yet.",
+    "emptyPosts": "You haven't saved any updates yet.",
+    "explore": "Explore games"
   }
 }

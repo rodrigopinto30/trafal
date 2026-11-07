@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
 import { getTranslations } from "@/i18n/server";
 import { PROFILE_COLUMNS, getAuthUser } from "@/lib/auth/dal";
+import { listMyReactions } from "@/lib/games/reaction-queries";
 import { listGamesByOwner, listOwnUnpublishedGames, listPostsByAuthor, type OwnGame } from "@/lib/games/queries";
 import { createClient } from "@/lib/supabase/server";
 import { parseUsernameParam } from "@/lib/validation/common";
@@ -49,6 +50,8 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
   const isOwn = me?.id === profile.id;
   const unpublished = isOwn ? await listOwnUnpublishedGames(profile.id) : [];
   const now = new Date();
+  const mine = me ? await listMyReactions("post", posts.map((post) => post.id)) : { liked: new Set<string>(), saved: new Set<string>() };
+  const viewer = { signedIn: Boolean(me), loginHref: `/login?next=${encodeURIComponent(`/u/${profile.username}`)}`, mine };
 
   let isFollowing = false;
   if (me && !isOwn) {
@@ -89,7 +92,7 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
           posts.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2">
               {posts.map((post) => (
-                <PostCard key={post.id} post={post} now={now} />
+                <PostCard key={post.id} post={post} now={now} viewer={viewer} />
               ))}
             </div>
           ) : (
