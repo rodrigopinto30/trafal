@@ -17,7 +17,7 @@ const GAME_COLUMNS =
   "id, public_id, title, short_description, genre_id, engine_id, tags, cover_path, works_on_mobile, is_first_game, display_ratio, play_count, like_count, comment_count, published_at, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
 
 const GAME_DETAIL_COLUMNS =
-  "id, public_id, title, short_description, genre_id, engine_id, tags, cover_path, works_on_mobile, is_first_game, display_ratio, play_count, like_count, comment_count, published_at, controls, save_count, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
+  "id, public_id, title, short_description, genre_id, engine_id, tags, cover_path, works_on_mobile, is_first_game, display_ratio, play_count, like_count, comment_count, published_at, controls, save_count, active_version_id, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
 
 const POST_COLUMNS =
   "id, kind, body, highlight, created_at, like_count, comment_count, author:profiles!posts_author_id_fkey(username, display_name, avatar_path), game:games!posts_game_id_fkey(public_id, title)" as const;
@@ -192,6 +192,7 @@ export type OwnGameVersion = {
   status: string;
   error_code: string | null;
   error_params: unknown;
+  changelog: string;
   declared_size_bytes: number | null;
   created_at: string;
 };
@@ -212,7 +213,7 @@ export async function listVersionsOfGame(gameId: string): Promise<OwnGameVersion
   const supabase = await createClient();
   const { data } = await supabase
     .from("game_versions")
-    .select("id, number, label, status, error_code, error_params, declared_size_bytes, created_at")
+    .select("id, number, label, status, error_code, error_params, changelog, declared_size_bytes, created_at")
     .eq("game_id", gameId)
     .order("number", { ascending: false });
   return data ?? [];
@@ -238,4 +239,18 @@ export async function findGameDelivery(publicId: string): Promise<GameDelivery |
   const { data } = await supabase.rpc("game_delivery", { p_public_id: publicId });
   const row = data?.[0];
   return row && row.state === "published" ? { needsIsolation: row.needs_isolation } : null;
+}
+
+export type PublicVersion = { id: string; number: number; label: string; changelog: string; processed_at: string | null };
+
+/** The ready versions of a published game, newest first: what its «Versions» section shows (anyone can read them). */
+export async function listReadyVersions(gameId: string): Promise<PublicVersion[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("game_versions")
+    .select("id, number, label, changelog, processed_at")
+    .eq("game_id", gameId)
+    .eq("status", "ready")
+    .order("number", { ascending: false });
+  return data ?? [];
 }

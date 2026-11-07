@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AutoRefresh } from "@/components/games/auto-refresh";
+import { NewVersionForm } from "@/components/games/new-version-form";
 import { PublishControls } from "@/components/games/publish-controls";
+import { VersionControls } from "@/components/games/version-controls";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
@@ -45,8 +47,9 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
   const game = await findOwnGame(publicId, user.id);
   if (!game) notFound();
 
-  const [t, tErrors, locale, versions] = await Promise.all([
+  const [t, tVersions, tErrors, locale, versions] = await Promise.all([
     getTranslations("gameManage"),
+    getTranslations("gameVersions"),
     getTranslations("uploadErrors"),
     getLocale(),
     listVersionsOfGame(game.id),
@@ -77,9 +80,12 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
       </header>
 
       <section aria-labelledby="versions-title" className="grid gap-4 rounded-[28px] border border-white/8 bg-card p-6 sm:p-8">
-        <h2 id="versions-title" className="font-display text-xl font-bold">
-          {t("versionsTitle")}
-        </h2>
+        <div>
+          <h2 id="versions-title" className="font-display text-xl font-bold">
+            {t("versionsTitle")}
+          </h2>
+          <p className="mt-1 text-sm text-text-2">{t("versionsHint")}</p>
+        </div>
         <ul className="grid gap-4">
           {versions.map((version) => {
             const status: VersionStatus = isVersionStatus(version.status) ? version.status : "error";
@@ -90,6 +96,7 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
                   <StatusBadge tone={VERSION_TONE[status]} live={status === "uploading" || status === "processing"}>
                     {t(`versionStatus.${status}`)}
                   </StatusBadge>
+                  {version.id === game.active_version_id ? <StatusBadge tone="neutral">{t("activeBadge")}</StatusBadge> : null}
                 </div>
                 <p className="text-sm text-text-2" role={status === "error" ? "alert" : undefined}>
                   {t(`versionText.${status}`)}
@@ -101,12 +108,37 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
                       : t("unknownError")}
                   </p>
                 ) : null}
+                {version.changelog ? (
+                  <p className="text-sm whitespace-pre-line text-text-2">
+                    <span className="font-semibold text-text">{t("changelogLabel")}: </span>
+                    {version.changelog}
+                  </p>
+                ) : null}
                 {version.declared_size_bytes ? <p className="text-xs text-text-3">{t("size", { size: formatBytes(locale, version.declared_size_bytes) })}</p> : null}
+                <VersionControls
+                  versionId={version.id}
+                  label={version.label}
+                  changelog={version.changelog}
+                  canActivate={status === "ready" && version.id !== game.active_version_id}
+                />
               </li>
             );
           })}
         </ul>
       </section>
+
+      {gameStatus === "draft" || gameStatus === "published" ? (
+        <section aria-labelledby="new-version-title" className="grid gap-4 rounded-[28px] border border-white/8 bg-card p-6 sm:p-8">
+          <div>
+            <h2 id="new-version-title" className="font-display text-xl font-bold">
+              {tVersions("newTitle")}
+            </h2>
+            <p className="mt-1 text-sm text-text-2">{tVersions("newHelp")}</p>
+            <p className="mt-1 text-sm text-text-3">{t("newVersionHint")}</p>
+          </div>
+          <NewVersionForm gameId={game.id} />
+        </section>
+      ) : null}
 
       <div className="flex flex-wrap gap-3">
         <Button asChild variant="outline" size="lg">

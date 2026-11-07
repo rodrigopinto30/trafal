@@ -626,6 +626,9 @@ isOneToOne: false
               "id": string,"rank": number
             }[]
                            },
+"set_active_version":
+{ Args: { "p_version_id": string }; Returns: undefined
+                           },
 "start_play":
 { Args: { "p_device": string,"p_public_id": string,"p_session_id": string }; Returns: undefined
                            },

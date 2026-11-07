@@ -283,6 +283,12 @@
       "text": "Creá tu cuenta gratis para dar me gusta, comentar y seguir a {name}.",
       "signup": "Crear mi cuenta",
       "login": "Ya tengo cuenta"
+    },
+    "versions": {
+      "title": "Versiones",
+      "current": "Versión actual",
+      "published": "Publicada {when}",
+      "noChangelog": "Sin detalles de esta versión."
     }
   },
   "gamePlayer": {
@@ -443,6 +449,46 @@
     "errors": {
       "notReady": "Todavía no hay una versión lista para publicar.",
       "generic": "No pudimos cambiar el estado del juego. Probá de nuevo."
+    },
+    "activeBadge": "En uso",
+    "versionsHint": "La versión «en uso» es la que juega la gente. Las demás quedan guardadas.",
+    "changelogLabel": "Qué cambió",
+    "noChangelog": "Sin detalles.",
+    "newVersionHint": "Hasta que la nueva versión pase la revisión, la gente sigue jugando la actual."
+  },
+  "gameVersions": {
+    "newTitle": "Subir una versión nueva",
+    "newHelp": "Subí un .zip nuevo con los cambios. Cuando pase la revisión, vos elegís si querés usarla.",
+    "label": "Nombre de la versión (opcional)",
+    "labelHint": "Por ejemplo v0.2. Si lo dejás vacío se llama como su número.",
+    "changelog": "Qué cambió (opcional)",
+    "changelogHint": "Hasta 2000 caracteres. Se muestra en la página del juego.",
+    "submit": "Subir versión",
+    "uploaded": "¡Listo! La versión quedó en revisión.",
+    "edit": "Editar",
+    "editAria": "Editar la versión {label}",
+    "editTitle": "Editar la versión",
+    "editHelp": "Cambiá el nombre y contá qué trae esta versión.",
+    "editLabel": "Nombre",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "activate": "Usar esta versión",
+    "activating": "Cambiando…",
+    "errors": {
+      "invalidLabel": "El nombre tiene que tener entre 1 y 24 caracteres.",
+      "labelTooLong": "El nombre puede tener hasta 24 caracteres.",
+      "changelogTooLong": "Lo que cambió puede tener hasta 2000 caracteres.",
+      "zipRequired": "Elegí el archivo .zip de la versión.",
+      "zipNotZip": "El archivo tiene que ser un .zip.",
+      "zipTooLarge": "El .zip pesa demasiado: el máximo es 200 MB.",
+      "dailyLimit": "Llegaste al límite de 5 subidas por día. Probá de nuevo mañana.",
+      "gameNotFound": "No encontramos ese juego.",
+      "versionNotFound": "No encontramos esa versión.",
+      "versionNotReady": "Esa versión todavía no pasó la revisión, así que no se puede usar.",
+      "accountRestricted": "Tu cuenta no puede hacer cambios por ahora.",
+      "unauthenticated": "Iniciá sesión para continuar.",
+      "storage": "No pudimos preparar la subida. Probá de nuevo en un rato.",
+      "generic": "Algo salió mal. Probá de nuevo."
     }
   },
   "search": {

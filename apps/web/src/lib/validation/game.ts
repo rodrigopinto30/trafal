@@ -116,3 +116,50 @@ export const zipDeclarationSchema = z.object({
 export const uuidSchema = z.uuid();
 
 export const gameVisibilitySchema = z.object({ gameId: z.uuid(), status: z.enum(["draft", "published"]) });
+
+export const VERSION_LABEL_MAX = 24;
+export const VERSION_CHANGELOG_MAX = 2000;
+
+/** Error keys of the version forms (namespace «gameVersions.errors»). */
+export const VERSION_ERROR_KEYS = [
+  "invalidLabel",
+  "labelTooLong",
+  "changelogTooLong",
+  "zipRequired",
+  "zipNotZip",
+  "zipTooLarge",
+  "dailyLimit",
+  "gameNotFound",
+  "versionNotFound",
+  "versionNotReady",
+  "accountRestricted",
+  "unauthenticated",
+  "storage",
+  "generic",
+] as const;
+export type VersionErrorKey = (typeof VERSION_ERROR_KEYS)[number];
+
+const changelogSchema = z
+  .string()
+  .transform(sanitizeMultiline)
+  .refine((value) => charLength(value) <= VERSION_CHANGELOG_MAX, "changelogTooLong");
+
+/** Details of a NEW version: the label is optional (the database names it v<number>). */
+export const newVersionSchema = z.object({
+  gameId: z.uuid("generic"),
+  label: z
+    .string()
+    .transform(sanitizeLine)
+    .refine((value) => charLength(value) <= VERSION_LABEL_MAX, "labelTooLong"),
+  changelog: changelogSchema,
+});
+
+/** Edit of an existing version: the label cannot be empty. */
+export const editVersionSchema = z.object({
+  versionId: z.uuid("generic"),
+  label: z
+    .string()
+    .transform(sanitizeLine)
+    .refine((value) => charLength(value) >= 1 && charLength(value) <= VERSION_LABEL_MAX, "invalidLabel"),
+  changelog: changelogSchema,
+});

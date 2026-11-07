@@ -6,6 +6,7 @@ import { CommentList } from "@/components/games/comment-list";
 import { GamePlayerShell } from "@/components/games/game-player-shell";
 import { JoinCard } from "@/components/games/join-card";
 import { PostCard } from "@/components/games/post-card";
+import { VersionList } from "@/components/games/version-list";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,7 +15,7 @@ import { getLocale, getTranslations } from "@/i18n/server";
 import { getAuthUser } from "@/lib/auth/dal";
 import { formatCompactNumber } from "@/lib/format";
 import { groupComments } from "@/lib/games/comments";
-import { findGameByPublicId, listCommentsByGame, listPostsByGame } from "@/lib/games/queries";
+import { findGameByPublicId, listCommentsByGame, listPostsByGame, listReadyVersions } from "@/lib/games/queries";
 import { parsePublicIdParam } from "@/lib/validation/common";
 
 type GamePageProps = PageProps<"/[lang]/games/[publicId]">;
@@ -41,13 +42,14 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
   const game = await findGameByPublicId(publicId);
   if (!game) notFound();
 
-  const [t, tGenres, tEngines, locale, posts, comments, user] = await Promise.all([
+  const [t, tGenres, tEngines, locale, posts, comments, versions, user] = await Promise.all([
     getTranslations("games"),
     getTranslations("genres"),
     getTranslations("engines"),
     getLocale(),
     listPostsByGame(game.id),
     listCommentsByGame(game.id),
+    listReadyVersions(game.id),
     getAuthUser(),
   ]);
   const now = new Date();
@@ -133,6 +135,8 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
               <p className="mt-3 whitespace-pre-line text-text-2">{game.controls}</p>
             </section>
           ) : null}
+
+          {versions.length > 0 ? <VersionList versions={versions} activeVersionId={game.active_version_id} /> : null}
 
           <section aria-labelledby="devlogs">
             <h2 id="devlogs" className="font-display text-2xl font-bold">

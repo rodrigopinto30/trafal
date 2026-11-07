@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
+import { UploadProgress } from "@/components/games/upload-progress";
 import { SettingsSection } from "@/components/settings/settings-section";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useLocale, useTranslations } from "@/i18n/client";
 import { localizePath } from "@/i18n/path";
 import { formatBytes } from "@/lib/format";
-import { confirmUploadAction, createGameAction, renewUploadUrlAction } from "@/lib/games/upload-actions";
+import { createGameAction } from "@/lib/games/upload-actions";
 import {
   CONTROLS_MAX,
   DESCRIPTION_MAX,
@@ -24,11 +25,10 @@ import {
   TITLE_MAX,
   looksLikeZip,
 } from "@/lib/games/upload-rules";
-import { putZip } from "@/lib/games/zip-upload";
+import { useZipUpload } from "@/lib/games/use-zip-upload";
 import { ENGINE_IDS, GENRE_IDS } from "@/lib/profile/catalog";
 
 type Phase = "idle" | "creating" | "uploading" | "confirming" | "done";
-type CreatedVersion = { versionId: string; publicId: string; uploadUrl: string };
 
 const IMAGE_TYPES = "image/png,image/jpeg,image/webp";
 const ZIP_TYPES = ".zip,application/zip,application/x-zip-compressed";
@@ -46,19 +46,28 @@ export function NewGameForm() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const zipRef = useRef<HTMLInputElement>(null);
-  const [phase, setPhase] = useState<Phase>("idle");
-  const [percent, setPercent] = useState(0);
+  const publicIdRef = useRef<string | null>(null);
+  const [creating, setCreating] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [message, setMessage] = useState<string | undefined>();
-  const [created, setCreated] = useState<CreatedVersion | null>(null);
-  const [canRetry, setCanRetry] = useState(false);
+  const [formMessage, setFormMessage] = useState<string | undefined>();
   const [zipInfo, setZipInfo] = useState<string | null>(null);
 
+  const upload = useZipUpload({
+    locale,
+    uploadFailedMessage: t("uploadFailed"),
+    genericErrorMessage: t("errors.generic"),
+    onUploaded: () => router.push(localizePath(locale, `/games/${publicIdRef.current}/manage`)),
+  });
+  const phase: Phase = creating ? "creating" : upload.phase;
   const busy = phase !== "idle";
+  const created = upload.pending;
+  const canRetry = upload.canRetry;
+  const percent = upload.percent;
+  const message = formMessage ?? upload.message;
 
   function showErrors(errors: Record<string, string>, general?: string) {
     setFieldErrors(errors);
-    setMessage(general);
+    setFormMessage(general);
     requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
   }
 
@@ -68,28 +77,6 @@ export function NewGameForm() {
     if (file.size > MAX_ZIP_BYTES) return t("errors.zipTooLarge");
     if (file.size === 0) return t("errors.zipRequired");
     return null;
-  }
-
-  async function uploadAndConfirm(created: CreatedVersion, file: File) {
-    setPhase("uploading");
-    setPercent(0);
-    try {
-      await putZip(created.uploadUrl, file, (fraction) => setPercent(Math.round(fraction * 100)));
-    } catch {
-      setPhase("idle");
-      setCanRetry(true);
-      setMessage(t("uploadFailed"));
-      return;
-    }
-    setPhase("confirming");
-    const confirmed = await confirmUploadAction(created.versionId, locale);
-    if (!confirmed.ok) {
-      setPhase("idle");
-      setMessage(confirmed.message);
-      return;
-    }
-    setPhase("done");
-    router.push(localizePath(locale, `/games/${created.publicId}/manage`));
   }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -107,35 +94,22 @@ export function NewGameForm() {
     data.set("zipSize", String(file.size));
     data.set("lang", locale);
 
-    setMessage(undefined);
+    setFormMessage(undefined);
     setFieldErrors({});
-    setCanRetry(false);
-    setPhase("creating");
+    setCreating(true);
     const result = await createGameAction(data);
+    setCreating(false);
     if (!result.ok) {
-      setPhase("idle");
       showErrors(result.fieldErrors, result.message);
       return;
     }
-    const version = { versionId: result.versionId, publicId: result.publicId, uploadUrl: result.uploadUrl };
-    setCreated(version);
-    await uploadAndConfirm(version, file);
+    publicIdRef.current = result.publicId;
+    await upload.run({ versionId: result.versionId, uploadUrl: result.uploadUrl }, file);
   }
 
   async function retryUpload() {
     const file = zipRef.current?.files?.[0];
-    if (!created || !file) return;
-    setMessage(undefined);
-    setCanRetry(false);
-    const renewed = await renewUploadUrlAction(created.versionId, locale);
-    if (!renewed.ok || !renewed.uploadUrl) {
-      setCanRetry(true);
-      setMessage(renewed.ok ? t("errors.generic") : renewed.message);
-      return;
-    }
-    const version = { ...created, uploadUrl: renewed.uploadUrl };
-    setCreated(version);
-    await uploadAndConfirm(version, file);
+    if (file) await upload.retry(file);
   }
 
   const stepText =
@@ -276,14 +250,7 @@ export function NewGameForm() {
       </fieldset>
 
       <div className="grid gap-3">
-        {stepText ? (
-          <div role="status" aria-live="polite" className="grid gap-2">
-            <p className="text-sm font-semibold text-text-2">{stepText}</p>
-            {phase === "uploading" ? (
-              <progress aria-label={t("progressLabel")} value={percent} max={100} className="h-2 w-full overflow-hidden rounded-full [&::-moz-progress-bar]:bg-cyan [&::-webkit-progress-bar]:bg-white/10 [&::-webkit-progress-value]:bg-cyan" />
-            ) : null}
-          </div>
-        ) : null}
+        <UploadProgress phase={phase} percent={percent} stepText={stepText} progressLabel={t("progressLabel")} />
         <div className="flex flex-wrap gap-3">
           {canRetry ? (
             <Button type="button" size="lg" onClick={retryUpload}>
