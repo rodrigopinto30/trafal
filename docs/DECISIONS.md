@@ -168,6 +168,15 @@ Migración nueva: `20261106000500_game_versions.sql`.
 | **La página pública lista solo las versiones listas** | Las que están subiendo, en revisión o con errores son asunto del creador. | La política de lectura de la tabla ya lo garantizaba; la sección marca la versión actual y muestra cuándo estuvo lista y qué cambió. |
 | **El servidor de juegos sirve la versión activa**: al cambiarla, el cambio llega en pocos segundos | Ya consultaba `game_delivery` con un recuerdo de 10 s. | `game-versions.spec.ts` lo comprueba pidiendo el script del juego al servidor antes y después de cambiar. |
 
+## Juego malicioso de prueba (2026-11-07)
+
+Sin migración. Cambio en el servidor de juegos (`apps/gateway/src/handler.ts`) y prueba nueva `e2e/tests/game-malicious.spec.ts`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Se prueba la defensa con un juego hostil de verdad**, subido y publicado por el camino normal | El criterio de la Fase 2 es que un juego no pueda tocar nada del sitio; solo se sabe atacando. El escáner del worker es una heurística (rechaza `top.location` escrito literal) y el juego de la prueba lo esquiva a propósito: la barrera real es el marco, la CSP y el servidor de juegos. | El juego corre ~30 ataques con una persona **con sesión** jugándolo: leer cookies y almacenamiento del sitio, `top`/`parent`, `document.domain`, navegar la ventana de arriba, popups, formularios, enlaces `_top`, descargas, `fetch`/XHR/beacon/imagen/WebSocket/marco hacia el sitio, la API y otro juego, service worker, cámara, ubicación y portapapeles. La prueba exige que ninguno funcione, que ningún pedido con la marca llegue a respuesta (todos mueren por CSP), que no haya popups ni descargas, que la página no cambie de URL y que el navegador no mande ninguna cookie al dominio de juegos. |
+| **El servidor de juegos no entrega scripts de service worker** (`Sec-Fetch-Dest: serviceworker` → 403) | La prueba encontró que un juego **sí podía registrar un service worker** en su propio dominio (`worker-src 'self'` lo permite, y los workers comunes hacen falta). Un service worker sobrevive a que el juego se oculte o se reemplace y sigue respondiendo por su origen. | Los workers normales (`worker`, `sharedworker`, `blob:`) siguen andando; solo se corta el de tipo service worker. Un juego no se instala nunca como app que el creador pueda dejar corriendo tras bajarlo. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.
@@ -181,3 +190,4 @@ Migración nueva: `20261106000500_game_versions.sql`.
 - **Reproductor**: los juegos de ejemplo del seed tienen versiones «listas» pero no archivos: al jugarlos el marco muestra «Not found». Un Godot con hilos (`needs_isolation`) no se puede jugar todavía (hace falta la ruta de pantalla completa con COOP/COEP). El creador no puede probar un borrador. El conteo de partidas se puede inflar abriendo muchas sesiones: los límites de uso son de la Fase 5.
 - **Worker**: no hay un tope de tiempo por versión (solo el de 10 minutos tras el cual otro worker puede retomarla) ni un límite de egreso de red del contenedor; y los archivos publicados todavía no se sirven: falta el gateway y el reproductor.
 - **Sin selector de idioma**, quien no tiene cuenta solo puede cambiarlo con el idioma de su navegador o escribiendo `/en` en la URL (es lo que se pidió).
+- **Cookies entre juegos**: cada juego tiene su propio origen (`<id>.<dominio de juegos>`), así que `localStorage`, IndexedDB y las cookies de cada uno están separados. Pero un juego **puede poner una cookie con `Domain=<dominio de juegos>`** que verían los demás juegos del mismo dominio (en local con `games.localhost` no se nota). Para producción hay que registrar el dominio de juegos en la **Public Suffix List** (como `github.io`), así el navegador rechaza esas cookies; hasta entonces no hay nada sensible en ese dominio (el sitio vive en otro dominio y nunca le llega una cookie).

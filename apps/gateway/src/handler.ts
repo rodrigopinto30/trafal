@@ -8,6 +8,7 @@ import type { GameStorage, ObjectMeta } from "./storage.ts";
 export type GatewayDependencies = { config: GatewayConfig; delivery: DeliveryLookup; storage: GameStorage };
 
 const HTML_ALLOWED_DESTINATIONS = new Set(["iframe", "empty"]);
+const SERVICE_WORKER_DESTINATION = "serviceworker";
 
 function text(config: GatewayConfig, status: number, body: string, extra: Record<string, string> = {}, head = false): Response {
   const headers = securityHeaders(config);
@@ -47,11 +48,15 @@ function deliveryHeaders(config: GatewayConfig, meta: ObjectMeta, etag: string |
  *
  * HTML is only served inside a frame of Trafal (Sec-Fetch-Dest: iframe) or to the game's own scripts (empty): opening a game
  * URL directly sends the person to the game's page on Trafal, so a game can never pose as a page of its own to phish.
+ * Service worker scripts are never served (Sec-Fetch-Dest: serviceworker): a worker would outlive the game being hidden or
+ * replaced and keep answering for its origin.
  */
 export function createGatewayHandler({ config, delivery, storage }: GatewayDependencies) {
   return async function handle(request: Request): Promise<Response> {
     const head = request.method === "HEAD";
     if (request.method !== "GET" && !head) return text(config, 405, "Method not allowed", { Allow: "GET, HEAD" });
+
+    if (request.headers.get("sec-fetch-dest") === SERVICE_WORKER_DESTINATION) return text(config, 403, "Service workers are not allowed", {}, head);
 
     const url = new URL(request.url);
     const publicId = publicIdFromHost(request.headers.get("host") ?? url.host, config.gamesDomain);
