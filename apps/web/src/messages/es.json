@@ -291,7 +291,12 @@
       "published": "Publicada {when}",
       "noChangelog": "Sin detalles de esta versión."
     },
-    "noCommentsSignedIn": "Todavía no hay comentarios. ¡Sé la primera persona en dejar uno!"
+    "noCommentsSignedIn": "Todavía no hay comentarios. ¡Sé la primera persona en dejar uno!",
+    "questionsTitle": "Preguntas del creador",
+    "questionsHint": "{name} quiere saber tu opinión sobre estas cosas.",
+    "answersCount": "{count, plural, =0 {Sin respuestas todavía} one {# respuesta} other {# respuestas}}",
+    "alreadyAnswered": "Ya respondiste esta pregunta: tu respuesta aparece abajo y la podés editar.",
+    "ownQuestions": "Estas son tus preguntas: las respuestas de la gente aparecen abajo."
   },
   "gamePlayer": {
     "play": "Jugar gratis",
@@ -837,7 +842,15 @@
       "notFound": "No encontramos eso para comentar.",
       "accountRestricted": "Tu cuenta no puede comentar por ahora.",
       "unauthenticated": "Iniciá sesión para comentar.",
-      "generic": "No pudimos guardar el comentario. Probá de nuevo."
-    }
+      "generic": "No pudimos guardar el comentario. Probá de nuevo.",
+      "alreadyAnswered": "Ya respondiste esta pregunta. Podés editar tu respuesta.",
+      "notOwner": "Solo quien creó el juego o el avance puede marcar un comentario.",
+      "helpfulNotAllowed": "Este comentario no se puede marcar."
+    },
+    "answerLabel": "Tu respuesta",
+    "answerSubmit": "Responder la pregunta",
+    "answered": "Respuesta publicada",
+    "helpful": "Me sirvió",
+    "helpfulOn": "Marcado: me sirvió"
   }
 }

@@ -291,7 +291,12 @@
       "published": "Published {when}",
       "noChangelog": "No details for this version."
     },
-    "noCommentsSignedIn": "There are no comments yet. Be the first to leave one!"
+    "noCommentsSignedIn": "There are no comments yet. Be the first to leave one!",
+    "questionsTitle": "Questions from the creator",
+    "questionsHint": "{name} wants your opinion on these things.",
+    "answersCount": "{count, plural, =0 {No answers yet} one {# answer} other {# answers}}",
+    "alreadyAnswered": "You already answered this question: your answer is below and you can edit it.",
+    "ownQuestions": "These are your questions: people's answers show up below."
   },
   "gamePlayer": {
     "play": "Play for free",
@@ -837,7 +842,15 @@
       "notFound": "We could not find that to comment on.",
       "accountRestricted": "Your account cannot comment right now.",
       "unauthenticated": "Log in to comment.",
-      "generic": "We could not save the comment. Try again."
-    }
+      "generic": "We could not save the comment. Try again.",
+      "alreadyAnswered": "You already answered this question. You can edit your answer.",
+      "notOwner": "Only the creator of the game or the update can mark a comment.",
+      "helpfulNotAllowed": "This comment cannot be marked."
+    },
+    "answerLabel": "Your answer",
+    "answerSubmit": "Answer the question",
+    "answered": "Answer posted",
+    "helpful": "This helped",
+    "helpfulOn": "Marked: this helped"
   }
 }

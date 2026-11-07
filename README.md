@@ -46,6 +46,12 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Editar y borrar lo propio**: el texto y la etiqueta se pueden cambiar mientras el comentario esté publicado (si moderación lo oculta, deja de poder tocarlo), y se puede borrar con sus respuestas. Nadie edita ni borra comentarios ajenos; la base tampoco se lo permite.
 - Los contadores de comentarios de juegos y avances son los reales (los mantiene la base).
 
+### Preguntas del creador y «Me sirvió»
+
+**Hoy**
+- **Preguntas del creador**: las hasta 3 preguntas que se escriben al subir un juego aparecen en su página, en «Preguntas del creador», cada una con sus respuestas. Cualquier persona con cuenta responde cada pregunta **una sola vez** (y puede editar o borrar su respuesta); el creador no responde las suyas. Las respuestas no se mezclan con los comentarios generales y se les puede responder como a cualquier comentario.
+- **«Me sirvió»**: quien creó el juego (o escribió el avance) marca los comentarios y respuestas de otras personas que le ayudaron; se ve una insignia «Le sirvió al creador» y se puede quitar. No se marcan los comentarios propios ni las respuestas a un comentario, y nadie más ve el botón: la base tampoco lo permite.
+
 ### Guardados
 
 **Hoy**

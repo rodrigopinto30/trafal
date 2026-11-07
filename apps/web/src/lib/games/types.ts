@@ -68,8 +68,15 @@ export type PostSummary = {
 
 export type CommentLabel = "liked" | "suggestion";
 
+export type QuestionSummary = {
+  id: string;
+  position: number;
+  question: string;
+};
+
 export type CommentSummary = {
   id: string;
+  question_id: string | null;
   author_id: string;
   updated_at: string;
   parent_id: string | null;

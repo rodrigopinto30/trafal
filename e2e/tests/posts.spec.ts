@@ -1,5 +1,5 @@
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
-import { uploadGameZip } from "./helpers/game";
+import { uploadGameZip, unpublishGame } from "./helpers/game";
 import { makePng } from "./helpers/images";
 import { makeGif, makeMp4 } from "./helpers/post-media";
 import { gotoReady, lettersOnly, loginAndWait, registerAccount, uniqueSuffix } from "./helpers/session";
@@ -49,7 +49,11 @@ test.beforeAll(async ({ browser }, testInfo) => {
 });
 
 test.afterAll(async () => {
-  await context?.close();
+  try {
+    if (publicId) await unpublishGame(author, publicId);
+  } finally {
+    await context?.close();
+  }
 });
 
 test("quien no tiene sesión que entra a publicar pasa por el login y vuelve", async ({ browser }, testInfo) => {

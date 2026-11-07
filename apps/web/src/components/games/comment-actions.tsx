@@ -11,7 +11,7 @@ import { FormMessage } from "@/components/ui/form-message";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslations } from "@/i18n/client";
-import { deleteCommentAction, updateCommentAction } from "@/lib/games/comment-actions";
+import { deleteCommentAction, setCommentHelpfulAction, updateCommentAction } from "@/lib/games/comment-actions";
 import { COMMENT_BODY_MAX, COMMENT_ERROR_KEYS, COMMENT_LABELS, type CommentErrorKey, type CommentTarget } from "@/lib/validation/comment";
 
 type Props = {
@@ -21,6 +21,8 @@ type Props = {
   authorName: string;
   isReply: boolean;
   isOwn: boolean;
+  canMarkHelpful: boolean;
+  helpful: boolean;
   target: CommentTarget;
   targetId: string;
   signedIn: boolean;
@@ -35,7 +37,7 @@ function isErrorKey(value: string): value is CommentErrorKey {
  * What a person can do with a comment: reply to it (only top-level comments get replies) and, when it is theirs, edit it or
  * delete it. Everything is enforced by the database; hiding the buttons from other people is a courtesy.
  */
-export function CommentActions({ commentId, body, label, authorName, isReply, isOwn, target, targetId, signedIn, loginHref }: Props) {
+export function CommentActions({ commentId, body, label, authorName, isReply, isOwn, canMarkHelpful, helpful, target, targetId, signedIn, loginHref }: Props) {
   const t = useTranslations("comments");
   const tc = useTranslations("common");
   const router = useRouter();
@@ -70,6 +72,17 @@ export function CommentActions({ commentId, body, label, authorName, isReply, is
     });
   }
 
+  function toggleHelpful() {
+    startTransition(async () => {
+      const result = await setCommentHelpfulAction({ id: commentId, helpful: !helpful });
+      if (result.ok) {
+        router.refresh();
+        return;
+      }
+      toast.error(describe(result.error));
+    });
+  }
+
   function remove() {
     setMessage(undefined);
     startTransition(async () => {
@@ -92,6 +105,11 @@ export function CommentActions({ commentId, body, label, authorName, isReply, is
             {t("reply")}
           </Button>
         )}
+        {canMarkHelpful ? (
+          <Button type="button" variant={helpful ? "outline" : "ghost"} aria-pressed={helpful} disabled={pending} onClick={toggleHelpful}>
+            {helpful ? t("helpfulOn") : t("helpful")}
+          </Button>
+        ) : null}
         {isOwn ? (
           <>
             <Button type="button" variant="ghost" onClick={() => setDialog("edit")}>
