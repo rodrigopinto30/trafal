@@ -541,7 +541,13 @@
       "pide_feedback": "Pide feedback",
       "hito": "Hito"
     },
-    "inGame": "En {title}"
+    "inGame": "En {title}",
+    "publish": "Publicar un avance",
+    "mediaLabel": "Archivos del avance",
+    "imageFallback": "Imagen del avance",
+    "gifFallback": "GIF del avance",
+    "videoLabel": "Video del avance",
+    "videoUnsupported": "Tu navegador no puede reproducir este video."
   },
   "settings": {
     "title": "Configuración",
@@ -703,5 +709,80 @@
     "emptyGames": "Todavía no guardaste ningún juego.",
     "emptyPosts": "Todavía no guardaste ningún avance.",
     "explore": "Explorar juegos"
+  },
+  "postForm": {
+    "title": "Publicar un avance",
+    "subtitle": "Contale a la comunidad cómo viene tu juego: mostrá una captura, un GIF o un video corto.",
+    "kinds": {
+      "avance": "Avance",
+      "nuevo_juego": "Nuevo juego",
+      "pide_feedback": "Pide feedback",
+      "hito": "Hito"
+    },
+    "kindHints": {
+      "avance": "Algo que cambió o que probaste.",
+      "nuevo_juego": "Presentá un juego que ya está publicado.",
+      "pide_feedback": "Pedí opiniones sobre algo puntual.",
+      "hito": "Celebrá un número: partidas, comentarios, una meta."
+    },
+    "fields": {
+      "kind": "Tipo de publicación",
+      "game": "Juego",
+      "gamePlaceholder": "Ninguno (un avance general)",
+      "gameHint": "Solo podés elegir juegos tuyos que ya estén publicados.",
+      "highlight": "Dato destacado",
+      "highlightHint": "Hasta 12 caracteres. Por ejemplo: 100 o 1k.",
+      "body": "Qué querés contar",
+      "bodyCount": "{count} de {max}",
+      "files": "Imágenes, GIF o video",
+      "filesHint": "Hasta {max} archivos. Imágenes (PNG, JPG o WebP) de hasta {image}, GIF de hasta {gif} y videos MP4 de hasta {video}.",
+      "alt": "Descripción de {name} (opcional)",
+      "altHint": "Ayuda a quien no puede verlo."
+    },
+    "addFiles": "Elegir archivos",
+    "remove": "Quitar {name}",
+    "selected": "Archivos elegidos",
+    "submit": "Publicar",
+    "publishing": "Publicando… {percent} %",
+    "processing": "Revisando y guardando tus archivos…",
+    "published": "¡Avance publicado!",
+    "progressLabel": "Progreso de la publicación",
+    "errors": {
+      "invalidKind": "Elegí un tipo de publicación.",
+      "bodyRequired": "Escribí algo para publicar.",
+      "bodyTooLong": "El texto es demasiado largo (hasta 2000 caracteres).",
+      "highlightTooLong": "El dato destacado puede tener hasta 12 caracteres.",
+      "highlightNotAllowed": "El dato destacado es solo para los hitos.",
+      "gameRequired": "Un «Nuevo juego» tiene que llevar el juego que presentás.",
+      "invalidGame": "Ese juego no existe, no es tuyo o todavía no está publicado.",
+      "tooManyFiles": "Podés adjuntar hasta 4 archivos.",
+      "fileInvalid": "Uno de los archivos no es una imagen PNG, JPG o WebP, un GIF ni un video MP4 válido.",
+      "fileTooLarge": "Uno de los archivos pesa demasiado.",
+      "fileAnimated": "Las imágenes animadas van como GIF: usá un archivo .gif.",
+      "fileDimensions": "Uno de los archivos es demasiado grande en píxeles o dura demasiados cuadros.",
+      "fileTypeMismatch": "El contenido de uno de los archivos no coincide con su tipo.",
+      "altTooLong": "Cada descripción puede tener hasta 200 caracteres.",
+      "requestTooLarge": "Los archivos juntos pesan demasiado.",
+      "accountRestricted": "Tu cuenta no puede publicar por ahora.",
+      "unauthenticated": "Iniciá sesión para publicar.",
+      "notFound": "No encontramos ese avance.",
+      "storage": "No pudimos guardar los archivos. Probá de nuevo en un rato.",
+      "generic": "No pudimos publicar el avance. Probá de nuevo."
+    },
+    "manage": {
+      "menu": "Opciones del avance",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "editTitle": "Editar avance",
+      "editHelp": "Podés cambiar el texto. El tipo, el juego y los archivos no se cambian.",
+      "save": "Guardar cambios",
+      "cancel": "Cancelar",
+      "saved": "Cambios guardados",
+      "deleteTitle": "¿Eliminar este avance?",
+      "deleteText": "Se borra con sus me gusta, comentarios y archivos. No se puede deshacer.",
+      "confirmDelete": "Eliminar",
+      "deleted": "Avance eliminado"
+    },
+    "detailsTitle": "Tu avance"
   }
 }

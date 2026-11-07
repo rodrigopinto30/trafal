@@ -10,6 +10,7 @@ import type {
   GameReference,
   GameSummary,
   PostKind,
+  PostMediaKind,
   PostSummary,
 } from "./types";
 
@@ -17,10 +18,10 @@ const GAME_COLUMNS =
   "id, public_id, title, short_description, genre_id, engine_id, tags, cover_path, works_on_mobile, is_first_game, display_ratio, play_count, like_count, comment_count, published_at, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
 
 const GAME_DETAIL_COLUMNS =
-  "id, public_id, title, short_description, genre_id, engine_id, tags, cover_path, works_on_mobile, is_first_game, display_ratio, play_count, like_count, comment_count, published_at, controls, save_count, active_version_id, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
+  "id, public_id, title, short_description, genre_id, engine_id, tags, cover_path, works_on_mobile, is_first_game, display_ratio, play_count, like_count, comment_count, published_at, controls, save_count, active_version_id, owner_id, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
 
 const POST_COLUMNS =
-  "id, kind, body, highlight, created_at, like_count, comment_count, author:profiles!posts_author_id_fkey(username, display_name, avatar_path), game:games!posts_game_id_fkey(public_id, title)" as const;
+  "id, kind, body, highlight, created_at, like_count, comment_count, author_id, author:profiles!posts_author_id_fkey(username, display_name, avatar_path), game:games!posts_game_id_fkey(public_id, title), media:post_media(id, kind, path, mime, width, height, alt_text, position)" as const;
 
 const COMMENT_COLUMNS =
   "id, parent_id, body, label, is_helpful, created_at, author:profiles!comments_author_id_fkey(username, display_name, avatar_path)" as const;
@@ -46,10 +47,13 @@ function toPost(row: {
   created_at: string;
   like_count: number;
   comment_count: number;
+  author_id: string;
   author: Creator;
   game: GameReference | null;
+  media: { id: string; kind: string; path: string; mime: string; width: number | null; height: number | null; alt_text: string; position: number }[];
 }): PostSummary {
-  return { ...row, kind: row.kind as PostKind };
+  const media = [...row.media].sort((a, b) => a.position - b.position).map((item) => ({ ...item, kind: item.kind as PostMediaKind }));
+  return { ...row, kind: row.kind as PostKind, media };
 }
 
 export async function listPublishedGames(): Promise<GameSummary[]> {

@@ -541,7 +541,13 @@
       "pide_feedback": "Wants feedback",
       "hito": "Milestone"
     },
-    "inGame": "In {title}"
+    "inGame": "In {title}",
+    "publish": "Post an update",
+    "mediaLabel": "Update files",
+    "imageFallback": "Image of the update",
+    "gifFallback": "GIF of the update",
+    "videoLabel": "Video of the update",
+    "videoUnsupported": "Your browser cannot play this video."
   },
   "settings": {
     "title": "Settings",
@@ -703,5 +709,80 @@
     "emptyGames": "You haven't saved any games yet.",
     "emptyPosts": "You haven't saved any updates yet.",
     "explore": "Explore games"
+  },
+  "postForm": {
+    "title": "Post an update",
+    "subtitle": "Tell the community how your game is going: share a screenshot, a GIF or a short video.",
+    "kinds": {
+      "avance": "Update",
+      "nuevo_juego": "New game",
+      "pide_feedback": "Asking for feedback",
+      "hito": "Milestone"
+    },
+    "kindHints": {
+      "avance": "Something that changed or that you tried.",
+      "nuevo_juego": "Introduce a game that is already published.",
+      "pide_feedback": "Ask for opinions on something specific.",
+      "hito": "Celebrate a number: plays, comments, a goal."
+    },
+    "fields": {
+      "kind": "Type of post",
+      "game": "Game",
+      "gamePlaceholder": "None (a general update)",
+      "gameHint": "You can only pick your own games that are already published.",
+      "highlight": "Highlight",
+      "highlightHint": "Up to 12 characters. For example: 100 or 1k.",
+      "body": "What do you want to share",
+      "bodyCount": "{count} of {max}",
+      "files": "Images, GIFs or video",
+      "filesHint": "Up to {max} files. Images (PNG, JPG or WebP) up to {image}, GIFs up to {gif} and MP4 videos up to {video}.",
+      "alt": "Description of {name} (optional)",
+      "altHint": "It helps people who cannot see it."
+    },
+    "addFiles": "Choose files",
+    "remove": "Remove {name}",
+    "selected": "Chosen files",
+    "submit": "Post",
+    "publishing": "Posting… {percent}%",
+    "processing": "Checking and saving your files…",
+    "published": "Update posted!",
+    "progressLabel": "Posting progress",
+    "errors": {
+      "invalidKind": "Pick a type of post.",
+      "bodyRequired": "Write something to post.",
+      "bodyTooLong": "The text is too long (up to 2000 characters).",
+      "highlightTooLong": "The highlight can have up to 12 characters.",
+      "highlightNotAllowed": "The highlight is only for milestones.",
+      "gameRequired": "A “New game” has to carry the game you are introducing.",
+      "invalidGame": "That game does not exist, is not yours or is not published yet.",
+      "tooManyFiles": "You can attach up to 4 files.",
+      "fileInvalid": "One of the files is not a valid PNG, JPG or WebP image, GIF or MP4 video.",
+      "fileTooLarge": "One of the files is too big.",
+      "fileAnimated": "Animated images go as GIF: use a .gif file.",
+      "fileDimensions": "One of the files is too large in pixels or has too many frames.",
+      "fileTypeMismatch": "The content of one of the files does not match its type.",
+      "altTooLong": "Each description can have up to 200 characters.",
+      "requestTooLarge": "The files together are too big.",
+      "accountRestricted": "Your account cannot post right now.",
+      "unauthenticated": "Log in to post.",
+      "notFound": "We could not find that update.",
+      "storage": "We could not save the files. Try again in a while.",
+      "generic": "We could not post the update. Try again."
+    },
+    "manage": {
+      "menu": "Update options",
+      "edit": "Edit",
+      "delete": "Delete",
+      "editTitle": "Edit update",
+      "editHelp": "You can change the text. The type, the game and the files stay as they are.",
+      "save": "Save changes",
+      "cancel": "Cancel",
+      "saved": "Changes saved",
+      "deleteTitle": "Delete this update?",
+      "deleteText": "It is deleted with its likes, comments and files. This cannot be undone.",
+      "confirmDelete": "Delete",
+      "deleted": "Update deleted"
+    },
+    "detailsTitle": "Your update"
   }
 }

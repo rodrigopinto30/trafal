@@ -71,12 +71,12 @@ update public.posts set status = 'published' where body = 'Salió la v0.1';
 
 -- =================================================================== ARCHIVOS DE UN AVANCE
 select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
-select lives_ok($$ insert into public.post_media (post_id, kind, path, mime, bytes, width, height, alt_text, position) select id, 'image', 'media/a/1.webp', 'image/webp', 120000, 800, 450, 'Captura del nivel 2', 1 from public.posts where body = 'Salió la v0.1' $$, 'ana adjunta una imagen');
-select throws_ok($$ insert into public.post_media (post_id, kind, path, mime, bytes, position) select id, 'video', 'media/a/2.mp4', 'video/mp4', 20971521, 2 from public.posts where body = 'Salió la v0.1' $$, '23514', null, 'más de 20 MB');
-select throws_ok($$ insert into public.post_media (post_id, kind, path, mime, bytes, position) select id, 'image', 'media/a/3.html', 'text/html', 100, 2 from public.posts where body = 'Salió la v0.1' $$, '23514', null, 'tipo de archivo no permitido');
-select throws_ok($$ insert into public.post_media (post_id, kind, path, mime, bytes, position) select id, 'image', 'media/a/5.png', 'image/png', 100, 5 from public.posts where body = 'Salió la v0.1' $$, '23514', null, 'máximo 4 archivos');
+select lives_ok($$ insert into public.post_media (post_id, kind, path, mime, bytes, width, height, alt_text, position) select id, 'image', 'posts/' || id || '/' || repeat('a', 32) || '.webp', 'image/webp', 120000, 800, 450, 'Captura del nivel 2', 1 from public.posts where body = 'Salió la v0.1' $$, 'ana adjunta una imagen');
+select throws_ok($$ insert into public.post_media (post_id, kind, path, mime, bytes, position) select id, 'video', 'posts/' || id || '/' || repeat('2', 32) || '.mp4', 'video/mp4', 20971521, 2 from public.posts where body = 'Salió la v0.1' $$, '23514', null, 'más de 20 MB');
+select throws_ok($$ insert into public.post_media (post_id, kind, path, mime, bytes, position) select id, 'image', 'posts/' || id || '/' || repeat('3', 32) || '.html', 'text/html', 100, 2 from public.posts where body = 'Salió la v0.1' $$, '23514', null, 'tipo de archivo no permitido');
+select throws_ok($$ insert into public.post_media (post_id, kind, path, mime, bytes, position) select id, 'image', 'posts/' || id || '/' || repeat('5', 32) || '.png', 'image/png', 100, 5 from public.posts where body = 'Salió la v0.1' $$, '23514', null, 'máximo 4 archivos');
 select tests.authenticate_as('b0000000-0000-0000-0000-000000000002');
-select throws_ok($$ insert into public.post_media (post_id, kind, path, mime, bytes, position) select id, 'image', 'media/b/1.png', 'image/png', 100, 2 from public.posts where body = 'Salió la v0.1' $$, '42501', null, 'bruno NO adjunta archivos al avance de ana');
+select throws_ok($$ insert into public.post_media (post_id, kind, path, mime, bytes, position) select id, 'image', 'posts/' || id || '/' || repeat('b', 32) || '.png', 'image/png', 100, 2 from public.posts where body = 'Salió la v0.1' $$, '42501', null, 'bruno NO adjunta archivos al avance de ana');
 select is(tests.dml_count($$ delete from public.post_media $$), 0::bigint, 'ni borra los de ana');
 select tests.authenticate_as_anon();
 select is((select count(*) from public.post_media), 1::bigint, 'el público ve los archivos de un avance publicado');

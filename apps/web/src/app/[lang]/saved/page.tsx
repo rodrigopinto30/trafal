@@ -32,7 +32,7 @@ async function SavedContent() {
   const { user } = await requireProfile("/saved");
   const [t, games, posts] = await Promise.all([getTranslations("saved"), listSavedGames(user.id), listSavedPosts(user.id)]);
   const mine = await listMyReactions("post", posts.map((post) => post.id));
-  const viewer = { signedIn: true, loginHref: "/login?next=%2Fsaved", mine };
+  const viewer = { signedIn: true, userId: user.id, loginHref: "/login?next=%2Fsaved", mine };
   const now = new Date();
 
   return (
