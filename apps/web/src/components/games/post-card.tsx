@@ -6,11 +6,13 @@ import { getLocale, getTranslations } from "@/i18n/server";
 import { formatRelativeTime } from "@/lib/format";
 import type { MyReactions } from "@/lib/games/reaction-queries";
 import type { PostKind, PostSummary } from "@/lib/games/types";
+import { PostMedia } from "./post-media";
+import { PostOwnerMenu } from "./post-owner-menu";
 import { ReactionButtons } from "./reaction-buttons";
 import type { VariantProps } from "class-variance-authority";
 
 /** What the card needs to let the person like and save: whether they have an account, where to log in, and their own marks. */
-export type PostViewer = { signedIn: boolean; loginHref: string; mine: MyReactions };
+export type PostViewer = { signedIn: boolean; userId?: string; loginHref: string; mine: MyReactions };
 
 type PostCardProps = {
   post: PostSummary;
@@ -41,6 +43,11 @@ export async function PostCard({ post, now, showGame = true, viewer }: PostCardP
             {formatRelativeTime(locale, post.created_at, now)}
           </time>
         </div>
+        {viewer?.userId === post.author_id ? (
+          <div className="ml-auto">
+            <PostOwnerMenu postId={post.id} />
+          </div>
+        ) : null}
       </header>
 
       <div className="flex flex-wrap gap-2">
@@ -49,6 +56,8 @@ export async function PostCard({ post, now, showGame = true, viewer }: PostCardP
       </div>
 
       <p className="whitespace-pre-line text-text-2">{post.body}</p>
+
+      <PostMedia media={post.media} />
 
       <footer className="mt-auto flex flex-wrap items-center justify-between gap-x-4 text-sm text-text-3">
         {showGame && post.game ? (

@@ -46,8 +46,9 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
   const game = await findGameByPublicId(publicId);
   if (!game) notFound();
 
-  const [t, tGenres, tEngines, locale, posts, comments, versions, user] = await Promise.all([
+  const [t, tPosts, tGenres, tEngines, locale, posts, comments, versions, user] = await Promise.all([
     getTranslations("games"),
+    getTranslations("posts"),
     getTranslations("genres"),
     getTranslations("engines"),
     getLocale(),
@@ -60,7 +61,7 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
     ? await Promise.all([listMyReactions("game", [game.id]), listMyReactions("post", posts.map((post) => post.id))])
     : [NO_REACTIONS, NO_REACTIONS];
   const loginHref = `/login?next=${encodeURIComponent(`/games/${game.public_id}`)}`;
-  const viewer = { signedIn: Boolean(user), loginHref, mine: myPosts };
+  const viewer = { signedIn: Boolean(user), userId: user?.id, loginHref, mine: myPosts };
   const now = new Date();
   const threads = groupComments(comments);
   const { owner } = game;
@@ -153,9 +154,16 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
           {versions.length > 0 ? <VersionList versions={versions} activeVersionId={game.active_version_id} /> : null}
 
           <section aria-labelledby="devlogs">
-            <h2 id="devlogs" className="font-display text-2xl font-bold">
-              {t("devlogsTitle")}
-            </h2>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 id="devlogs" className="font-display text-2xl font-bold">
+                {t("devlogsTitle")}
+              </h2>
+              {user?.id === game.owner_id ? (
+                <Button asChild variant="outline">
+                  <Link href={`/posts/new?game=${game.public_id}`}>{tPosts("publish")}</Link>
+                </Button>
+              ) : null}
+            </div>
             {posts.length > 0 ? (
               <div className="mt-4 grid gap-4">
                 {posts.map((post) => (

@@ -41,8 +41,9 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
   if (!data) notFound();
   const profile: ProfileRow = data;
 
-  const [t, me, games, posts] = await Promise.all([
+  const [t, tPosts, me, games, posts] = await Promise.all([
     getTranslations("profile"),
+    getTranslations("posts"),
     getAuthUser(),
     listGamesByOwner(profile.id),
     listPostsByAuthor(profile.id),
@@ -51,7 +52,7 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
   const unpublished = isOwn ? await listOwnUnpublishedGames(profile.id) : [];
   const now = new Date();
   const mine = me ? await listMyReactions("post", posts.map((post) => post.id)) : { liked: new Set<string>(), saved: new Set<string>() };
-  const viewer = { signedIn: Boolean(me), loginHref: `/login?next=${encodeURIComponent(`/u/${profile.username}`)}`, mine };
+  const viewer = { signedIn: Boolean(me), userId: me?.id, loginHref: `/login?next=${encodeURIComponent(`/u/${profile.username}`)}`, mine };
 
   let isFollowing = false;
   if (me && !isOwn) {
@@ -65,9 +66,14 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
   }
 
   const action = isOwn ? (
-    <Button asChild variant="outline" size="lg">
-      <Link href="/settings/profile">{t("edit")}</Link>
-    </Button>
+    <div className="flex flex-wrap gap-3">
+      <Button asChild size="lg">
+        <Link href="/posts/new">{tPosts("publish")}</Link>
+      </Button>
+      <Button asChild variant="outline" size="lg">
+        <Link href="/settings/profile">{t("edit")}</Link>
+      </Button>
+    </div>
   ) : (
     <FollowButton targetId={profile.id} username={profile.username} initialFollowing={isFollowing} signedIn={Boolean(me)} />
   );
@@ -96,7 +102,7 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
               ))}
             </div>
           ) : (
-            <EmptyState text={isOwn ? t("empty.postsOwn") : t("empty.postsOther")} />
+            <EmptyState text={isOwn ? t("empty.postsOwn") : t("empty.postsOther")} cta={isOwn ? { href: "/posts/new", label: tPosts("publish") } : undefined} />
           )
         }
       />

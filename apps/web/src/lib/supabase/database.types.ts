@@ -613,6 +613,9 @@ isOneToOne: false
               "quarantine_key": string,"version_id": string,"version_number": number
             }[]
                            },
+"edit_post":
+{ Args: { "p_body": string,"p_game_id": string,"p_highlight": string,"p_kind": string,"p_media": Json,"p_post_id": string }; Returns: undefined
+                           },
 "game_delivery":
 { Args: { "p_public_id": string }; Returns: {
               "entry_path": string,"needs_isolation": boolean,"state": string,"version_number": number

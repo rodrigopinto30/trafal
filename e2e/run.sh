@@ -12,7 +12,7 @@ curl -fsS -o /dev/null http://localhost:3000/ || { echo "La web no responde en h
 # Al terminar (pase o falle) se borran las cuentas «e2e_*» y los mails de prueba que crearon los tests.
 cleanup() {
   if [ -x .tools/supabase ] && docker ps --format '{{.Names}}' | grep -qx supabase_db_trafal; then
-    # Files of the games the tests uploaded (zips in quarantine, covers, screenshots and published files): they are not
+    # Files the tests uploaded (game zips in quarantine, covers, screenshots, update files and published game files): they are not
     # deleted with the account. Only objects that actually exist are listed (removing a missing one aborts the whole command),
     # and the published files go by folder, one per game. Never `rm -r` on a bucket itself: it would delete the bucket.
     docker exec supabase_db_trafal psql -U postgres -At -c "
@@ -25,9 +25,12 @@ cleanup() {
       union all
       select 'ss:///media/' || o.name from storage.objects o
         where o.bucket_id = 'media'
-          and (o.name in (select cover_path from mine where cover_path is not null)
-               or split_part(o.name, '/', 2) in (select id::text from mine))
-          and split_part(o.name, '/', 1) in ('covers', 'screenshots')" 2>/dev/null | xargs -r .tools/supabase --experimental --yes storage rm >/dev/null 2>&1 || true
+          and ((o.name in (select cover_path from mine where cover_path is not null)
+                or split_part(o.name, '/', 2) in (select id::text from mine))
+               and split_part(o.name, '/', 1) in ('covers', 'screenshots')
+               or split_part(o.name, '/', 1) = 'posts'
+               and split_part(o.name, '/', 2) in (
+                 select p.id::text from public.posts p join auth.users u on u.id = p.author_id where u.email like 'e2e\_%@trafal.test'))" 2>/dev/null | xargs -r .tools/supabase --experimental --yes storage rm >/dev/null 2>&1 || true
     docker exec supabase_db_trafal psql -U postgres -At -c "
       select distinct 'ss:///games/' || split_part(o.name, '/', 1) from storage.objects o
         where o.bucket_id = 'games'

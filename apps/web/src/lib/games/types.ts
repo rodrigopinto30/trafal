@@ -29,6 +29,7 @@ export type GameDetail = GameSummary & {
   controls: string;
   save_count: number;
   active_version_id: string | null;
+  owner_id: string;
 };
 
 export type GameReference = {
@@ -38,6 +39,19 @@ export type GameReference = {
 
 export type PostKind = "avance" | "nuevo_juego" | "pide_feedback" | "hito";
 
+export type PostMediaKind = "image" | "gif" | "video";
+
+export type PostMediaItem = {
+  id: string;
+  kind: PostMediaKind;
+  path: string;
+  mime: string;
+  width: number | null;
+  height: number | null;
+  alt_text: string;
+  position: number;
+};
+
 export type PostSummary = {
   id: string;
   kind: PostKind;
@@ -46,8 +60,10 @@ export type PostSummary = {
   created_at: string;
   like_count: number;
   comment_count: number;
+  author_id: string;
   author: Creator;
   game: GameReference | null;
+  media: PostMediaItem[];
 };
 
 export type CommentLabel = "liked" | "suggestion";
