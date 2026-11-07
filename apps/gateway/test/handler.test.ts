@@ -96,6 +96,15 @@ describe("HTML is only for frames of Trafal", () => {
     await expectSecure(response);
   });
 
+  it("never serves a service worker script, even an existing one", async () => {
+    for (const path of ["/", "/game.js"]) {
+      const response = await handle(request(HOST, path, { headers: { "sec-fetch-dest": "serviceworker" } }));
+      expect(response.status).toBe(403);
+      await expectSecure(response);
+    }
+    expect(storage.gets).toEqual([]);
+  });
+
   it("lets the game's own scripts fetch HTML (destination «empty»)", async () => {
     expect((await handle(request(HOST, "/levels/", { headers: { "sec-fetch-dest": "empty" } }))).status).toBe(200);
   });
