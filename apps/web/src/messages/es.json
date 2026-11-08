@@ -98,7 +98,8 @@
       },
       "devlogs": {
         "title": "Novedades de los creadores",
-        "subtitle": "Avances, hitos y pedidos de feedback de quienes están haciendo sus juegos."
+        "subtitle": "Avances, hitos y pedidos de feedback de quienes están haciendo sus juegos.",
+        "more": "Ver todos los avances"
       }
     },
     "howLabel": "CÓMO FUNCIONA",
@@ -666,10 +667,6 @@
       "title": "Explorar juegos",
       "description": "Acá vas a poder buscar juegos, filtrar por género y motor, ordenar por tendencia y tocar «Sorprendeme»."
     },
-    "community": {
-      "title": "Comunidad",
-      "description": "El feed con los avances de la gente que está haciendo juegos: devlogs, nuevos juegos y pedidos de feedback."
-    },
     "creators": {
       "title": "Creadores",
       "description": "Descubrí a quienes están empezando y seguilos para no perderte nada de lo que publican."
@@ -852,5 +849,36 @@
     "answered": "Respuesta publicada",
     "helpful": "Me sirvió",
     "helpfulOn": "Marcado: me sirvió"
+  },
+  "feed": {
+    "title": "Comunidad",
+    "subtitle": "Los avances de la gente que está haciendo juegos: devlogs, juegos nuevos, pedidos de feedback y metas cumplidas.",
+    "kindsLabel": "Filtrar por tipo",
+    "kinds": {
+      "all": "Todo",
+      "avance": "Avances",
+      "nuevo_juego": "Juegos nuevos",
+      "pide_feedback": "Piden feedback",
+      "hito": "Hitos"
+    },
+    "scopesLabel": "Qué ver",
+    "scopes": {
+      "all": "Toda la comunidad",
+      "following": "A quienes seguís"
+    },
+    "empty": {
+      "all": "Todavía no hay publicaciones.",
+      "kind": "Todavía no hay publicaciones de este tipo.",
+      "following": "Todavía no hay publicaciones de la gente que seguís. Seguí a quienes crean juegos desde sus perfiles para verlas acá.",
+      "explore": "Explorar juegos"
+    },
+    "older": "Ver más antiguas",
+    "backToStart": "Volver al principio",
+    "publish": "Publicar un avance"
+  },
+  "share": {
+    "label": "Compartir",
+    "copied": "Enlace copiado",
+    "failed": "No pudimos copiar el enlace. Copialo desde la barra del navegador."
   }
 }

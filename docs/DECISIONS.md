@@ -229,6 +229,18 @@ Migración nueva: `20261107000400_comment_helpful.sql`. Las preguntas (`game_que
 | **El creador no responde sus propias preguntas** | Las preguntas son para escuchar a la gente. | La interfaz le muestra «Estas son tus preguntas» y no el formulario; la base no lo impide (podría comentar el juego normalmente). |
 | **Las preguntas no se editan después de crear el juego** (todavía) | Fuera de este alcance: la base ya permite al dueño cambiarlas, falta la pantalla. | Anotado en limitaciones. |
 
+## Feed y compartir (2026-11-08)
+
+Sin migración: se usan `posts`, `follows` y sus políticas de lectura.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **La vista del feed vive en la dirección** (`/feed?kind=…&scope=…&before=…`) y los filtros son enlaces | Se puede compartir, funciona el botón de atrás y no hace falta JavaScript. | Los valores raros (tipo o fecha inventados, inyecciones) caen al valor por defecto por Zod (`parseFeedQuery`); `feedHref` deja afuera lo que es por defecto para que los enlaces sean cortos. |
+| **Paginación por fecha** (`before` = fecha de la última publicación vista), no por número de página | Si alguien publica mientras se lee, un número de página repetiría o saltearía publicaciones. | Se piden 13 y se muestran 12: si hay una más, hay otra página. Dos publicaciones con la misma fecha exacta podrían quedar en el borde (improbable; el feed no es un registro). |
+| **«A quienes seguís» solo con cuenta, y en la base** | Un feed sin seguir a nadie sirve poco, y el grafo de seguidos ya existe. | Se leen los seguidos de la persona (`follows`, solo los suyos) y se filtra por autor; sin seguidos, vacío con una explicación. Para quien no tiene cuenta el parámetro `scope` se ignora. |
+| **Compartir copia o abre el menú del dispositivo; no cuenta compartidos** | Contar exigiría una función que cualquiera (incluso sin cuenta) pudiera llamar: se inflaría con facilidad. | `share_count` queda sin escribir hasta que existan los límites de uso (Fase 5). El enlace usa `NEXT_PUBLIC_SITE_URL` y el idioma de la persona; cancelar el menú nativo no es un error. |
+| **La portada sigue sin botones en los avances** | Está cacheada y no conoce a quien la mira. | Lleva al feed con «Ver todos los avances», donde sí están. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.

@@ -8,6 +8,7 @@ import { CreatorQuestions } from "@/components/games/creator-questions";
 import { GamePlayerShell } from "@/components/games/game-player-shell";
 import { JoinCard } from "@/components/games/join-card";
 import { PostCard } from "@/components/games/post-card";
+import { ShareButton } from "@/components/games/share-button";
 import { ReactionButtons } from "@/components/games/reaction-buttons";
 import { VersionList } from "@/components/games/version-list";
 import { Badge } from "@/components/ui/badge";
@@ -127,6 +128,7 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
             loginHref={loginHref}
             locale={locale}
           />
+          <ShareButton path={`/games/${game.public_id}`} title={game.title} />
         </div>
       </header>
 

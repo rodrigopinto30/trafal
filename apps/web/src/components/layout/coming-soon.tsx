@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/link";
 import { getTranslations } from "@/i18n/server";
 
-type Section = "explore" | "community" | "creators" | "upload";
+type Section = "explore" | "creators" | "upload";
 
 /** Pantalla provisoria de una sección que se construye en una fase posterior. */
 export async function ComingSoon({ section }: { section: Section }) {
