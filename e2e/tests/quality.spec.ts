@@ -13,6 +13,8 @@ const PAGES: readonly Target[] = [
   { name: "forgot", path: "/forgot-password" },
   { name: "perfil", path: "/u/valen_makes" },
   { name: "juego", path: "/games/orbita" },
+  { name: "comunidad", path: "/feed" },
+  { name: "comunidad-con-cuenta", path: "/feed?scope=following", login: true },
   { name: "seguidores", path: "/u/mateo_g/followers" },
   { name: "explorar", path: "/explore" },
   { name: "explorar-resultados", path: "/explore?q=orbita" },

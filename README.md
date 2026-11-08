@@ -46,6 +46,13 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Editar y borrar lo propio**: el texto y la etiqueta se pueden cambiar mientras el comentario esté publicado (si moderación lo oculta, deja de poder tocarlo), y se puede borrar con sus respuestas. Nadie edita ni borra comentarios ajenos; la base tampoco se lo permite.
 - Los contadores de comentarios de juegos y avances son los reales (los mantiene la base).
 
+### Comunidad y compartir
+
+**Hoy**
+- **Comunidad** (`/feed`, abierta a cualquier persona): los avances de la gente que hace juegos, del más nuevo al más viejo, de a 12, con **filtros por tipo** (todo, avances, juegos nuevos, piden feedback, hitos) y «Ver más antiguas». Con cuenta se suma **«A quienes seguís»**, que muestra solo lo de las personas que seguís. La vista vive en la dirección: se puede compartir y funciona el botón de atrás; una dirección con valores raros vuelve al feed completo.
+- **Compartir** (en cada avance y en cada juego): abre el menú de compartir del dispositivo si lo tiene y, si no, copia el enlace público (con el idioma que estás leyendo) y lo avisa.
+- La portada lleva al feed con «Ver todos los avances».
+
 ### Preguntas del creador y «Me sirvió»
 
 **Hoy**

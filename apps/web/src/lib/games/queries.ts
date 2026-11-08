@@ -184,6 +184,33 @@ export async function listCommentsByGame(gameId: string): Promise<CommentSummary
   return (data ?? []).filter(hasAuthor).map((row) => ({ ...row, label: row.label as CommentSummary["label"] }));
 }
 
+export type FeedPage = { posts: PostSummary[]; nextBefore: string | null };
+
+/**
+ * One page of the feed: published updates, newest first, optionally of one kind and optionally only from the people the given
+ * person follows. `before` is the date of the last update already seen, so each page starts where the previous one ended.
+ */
+export async function listFeed({ kind, followerId, before, limit }: { kind: string; followerId: string | null; before: string | null; limit: number }): Promise<FeedPage> {
+  const supabase = await createClient();
+  let authorIds: string[] | null = null;
+  if (followerId) {
+    const { data } = await supabase.from("follows").select("followee_id").eq("follower_id", followerId);
+    authorIds = (data ?? []).map((row) => row.followee_id);
+    if (authorIds.length === 0) return { posts: [], nextBefore: null };
+  }
+
+  let query = supabase.from("posts").select(POST_COLUMNS).eq("status", "published").order("created_at", { ascending: false }).limit(limit + 1);
+  if (kind !== "all") query = query.eq("kind", kind);
+  if (before) query = query.lt("created_at", before);
+  if (authorIds) query = query.in("author_id", authorIds);
+
+  const { data } = await query;
+  const rows = (data ?? []).filter(hasAuthor).map(toPost);
+  const posts = rows.slice(0, limit);
+  const last = posts.at(-1);
+  return { posts, nextBefore: rows.length > limit && last ? last.created_at : null };
+}
+
 /** The questions the creator of a game asks the people who play it, in the order they were written. */
 export async function listQuestionsByGame(gameId: string): Promise<QuestionSummary[]> {
   const supabase = await createClient();

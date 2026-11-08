@@ -3,6 +3,8 @@ import { CommunityQuote } from "@/components/games/community-quote";
 import { GameShelf } from "@/components/games/game-shelf";
 import { JoinCard } from "@/components/games/join-card";
 import { PostCard } from "@/components/games/post-card";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/link";
 import { ShowcaseSection } from "@/components/games/showcase-section";
 import { GenreIcon } from "@/components/profile/genre-icon";
 import { getTranslations } from "@/i18n/server";
@@ -86,6 +88,9 @@ export async function LandingGames() {
               <PostCard key={post.id} post={post} now={now} />
             ))}
           </div>
+          <Button asChild variant="outline" size="lg" className="mt-6">
+            <Link href="/feed">{t("sections.devlogs.more")}</Link>
+          </Button>
         </ShowcaseSection>
       ) : null}
     </>

@@ -7,6 +7,7 @@ import { formatRelativeTime } from "@/lib/format";
 import type { MyReactions } from "@/lib/games/reaction-queries";
 import type { PostKind, PostSummary } from "@/lib/games/types";
 import { PostMedia } from "./post-media";
+import { ShareButton } from "./share-button";
 import { PostOwnerMenu } from "./post-owner-menu";
 import { ReactionButtons } from "./reaction-buttons";
 import type { VariantProps } from "class-variance-authority";
@@ -87,6 +88,7 @@ export async function PostCard({ post, now, showGame = true, viewer }: PostCardP
               <span className="sr-only">{t("likes", { count: post.like_count })}</span>
             </span>
           )}
+          <ShareButton path={`/posts/${post.id}`} title={post.body.slice(0, 80)} />
           <Link href={`/posts/${post.id}#comments`} className="inline-flex min-h-11 items-center gap-1 rounded-lg px-1 hover:text-cyan hover:underline">
             <MessageCircleIcon aria-hidden="true" className="size-3.5" />
             {post.comment_count}

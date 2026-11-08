@@ -98,7 +98,8 @@
       },
       "devlogs": {
         "title": "News from the creators",
-        "subtitle": "Updates, milestones and feedback requests from people making their games."
+        "subtitle": "Updates, milestones and feedback requests from people making their games.",
+        "more": "See all updates"
       }
     },
     "howLabel": "HOW IT WORKS",
@@ -666,10 +667,6 @@
       "title": "Explore games",
       "description": "Here you'll search games, filter by genre and engine, sort by trending and hit “Surprise me”."
     },
-    "community": {
-      "title": "Community",
-      "description": "The feed with progress from people making games: devlogs, new games and feedback requests."
-    },
     "creators": {
       "title": "Creators",
       "description": "Discover people just getting started and follow them so you don't miss anything they publish."
@@ -852,5 +849,36 @@
     "answered": "Answer posted",
     "helpful": "This helped",
     "helpfulOn": "Marked: this helped"
+  },
+  "feed": {
+    "title": "Community",
+    "subtitle": "Updates from people making games: devlogs, new games, requests for feedback and goals reached.",
+    "kindsLabel": "Filter by type",
+    "kinds": {
+      "all": "Everything",
+      "avance": "Updates",
+      "nuevo_juego": "New games",
+      "pide_feedback": "Asking for feedback",
+      "hito": "Milestones"
+    },
+    "scopesLabel": "What to see",
+    "scopes": {
+      "all": "The whole community",
+      "following": "People you follow"
+    },
+    "empty": {
+      "all": "There are no posts yet.",
+      "kind": "There are no posts of this type yet.",
+      "following": "There are no posts yet from the people you follow. Follow people who make games from their profiles to see them here.",
+      "explore": "Explore games"
+    },
+    "older": "See older posts",
+    "backToStart": "Back to the start",
+    "publish": "Post an update"
+  },
+  "share": {
+    "label": "Share",
+    "copied": "Link copied",
+    "failed": "We could not copy the link. Copy it from the address bar."
   }
 }
