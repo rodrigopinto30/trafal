@@ -17,6 +17,8 @@ const SEE_ALL = "see-all";
 type Props = {
   variant: "hero" | "page";
   defaultValue?: string;
+  /** Filters of the explore page to keep when the text changes, as a query string without «?» (for example «genre=puzzle&sort=plays»). */
+  keep?: string;
 };
 
 type Option = { kind: "game"; game: GameSuggestion } | { kind: typeof SEE_ALL };
@@ -31,7 +33,7 @@ function nextActive(current: number, step: 1 | -1, count: number): number {
  * Buscador de juegos con sugerencias en vivo (patrón combobox: flechas, Enter y Escape; un lector de pantalla oye cuántas
  * sugerencias hay). Sin JavaScript sigue funcionando: es un formulario GET a /explore.
  */
-export function GameSearch({ variant, defaultValue = "" }: Props) {
+export function GameSearch({ variant, defaultValue = "", keep = "" }: Props) {
   const t = useTranslations("search");
   const locale = useLocale();
   const router = useRouter();
@@ -65,7 +67,8 @@ export function GameSearch({ variant, defaultValue = "" }: Props) {
 
   function goToResults(text: string | null) {
     setOpen(false);
-    const path = text ? `/explore?q=${encodeURIComponent(text)}` : "/explore";
+    const params = [text ? `q=${encodeURIComponent(text)}` : "", keep].filter(Boolean).join("&");
+    const path = params ? `/explore?${params}` : "/explore";
     router.push(localizePath(locale, path));
   }
 
@@ -108,6 +111,9 @@ export function GameSearch({ variant, defaultValue = "" }: Props) {
       }}
     >
       <form role="search" aria-label={t("label")} action={localizePath(locale, "/explore")} method="get" onSubmit={onSubmit}>
+        {Array.from(new URLSearchParams(keep)).map(([name, content]) => (
+          <input key={name} type="hidden" name={name} value={content} />
+        ))}
         <label htmlFor={`${ids}-input`} className="sr-only">
           {t("label")}
         </label>

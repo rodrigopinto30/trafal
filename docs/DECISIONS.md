@@ -241,6 +241,20 @@ Sin migración: se usan `posts`, `follows` y sus políticas de lectura.
 | **Compartir copia o abre el menú del dispositivo; no cuenta compartidos** | Contar exigiría una función que cualquiera (incluso sin cuenta) pudiera llamar: se inflaría con facilidad. | `share_count` queda sin escribir hasta que existan los límites de uso (Fase 5). El enlace usa `NEXT_PUBLIC_SITE_URL` y el idioma de la persona; cancelar el menú nativo no es un error. |
 | **La portada sigue sin botones en los avances** | Está cacheada y no conoce a quien la mira. | Lleva al feed con «Ver todos los avances», donde sí están. |
 
+## Explorar con filtros y orden (2026-11-08)
+
+Migración nueva: `20261108000100_explore_games.sql`. Se usa el índice de búsqueda de `games` (`search_doc`) que ya existía.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Una sola función hace todo** (`explore_games(texto, género, motor, solo_celular, orden, límite, desde)`) y devuelve ids con el total | Filtrar, ordenar y contar en la base evita traer todos los juegos para recortarlos en la app, y el total permite paginar. | La app carga los juegos por id respetando ese orden (como en las sugerencias). Los topes (48 por página, 10 000 de desplazamiento) y los valores por defecto los pone la función, no solo la interfaz. |
+| **`SECURITY DEFINER`, con `published` filtrado a mano** | «En tendencia» cuenta filas de `plays`, que solo leen los admins. | La función solo devuelve ids de juegos publicados y conteos: nunca quién jugó, cuándo ni desde qué. `16-explore.test.sql` comprueba que ni los borradores propios aparecen y que `plays` sigue ilegible. |
+| **«Tendencia» = partidas de los últimos 7 días**; a igual cantidad, más me gusta y luego más nuevo | Es fácil de explicar y de probar; un puntaje que mezcle me gusta, comentarios y guardados sería opaco. | Un juego sin partidas recientes queda detrás de uno con alguna. Cuenta inicios de partida, que ya no guardan IP. |
+| **«Más relevantes» solo existe con un texto**; sin texto es lo mismo que «más nuevos» | Sin búsqueda no hay nada que ordenar por parecido. | El orden por defecto es «más relevantes» cuando hay texto y «más nuevos» cuando no; `defaultSort` lo decide en un solo lugar (la base y la interfaz coinciden). |
+| **Todo en la dirección y validado** (`parseExploreQuery`/`exploreHref`) | Compartir, atrás, y que nada de lo que venga de afuera llegue a la consulta. | Géneros y motores se comparan con el catálogo, el orden con la lista, la página es un entero entre 1 y 400; lo demás vuelve al valor por defecto. El texto llega a la base ya limpio y, como en `search_games`, solo conserva letras y números (nunca un operador de búsqueda). |
+| **El formulario arma la dirección corta con un envoltorio de cliente** (`ExploreForm`) | Un formulario GET manda todos los campos, incluso vacíos o por defecto (`?genre=arcade&engine=&sort=recent`). | Al enviarse pasa por el mismo analizador y navega a la dirección limpia. La pantalla no se promete sin JavaScript: su contenido llega por streaming (`Suspense`), que lo necesita. |
+| **Paginación por número de página** (`?page=N`) | Al explorar no importa que un juego nuevo corra una página; no es un registro. | Pasarse de la última página muestra «Esa página no existe» con un enlace a la primera. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.

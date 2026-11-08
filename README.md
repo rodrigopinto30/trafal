@@ -46,6 +46,13 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Editar y borrar lo propio**: el texto y la etiqueta se pueden cambiar mientras el comentario esté publicado (si moderación lo oculta, deja de poder tocarlo), y se puede borrar con sus respuestas. Nadie edita ni borra comentarios ajenos; la base tampoco se lo permite.
 - Los contadores de comentarios de juegos y avances son los reales (los mantiene la base).
 
+### Explorar
+
+**Hoy**
+- **Explorar** (`/explore`): la búsqueda de texto de siempre más **filtros por género, por motor y «solo los que funcionan en celular»**, y **orden** por más nuevos, **en tendencia** (más partidas en los últimos 7 días; a igual cantidad, más me gusta), más jugados y, cuando buscaste algo, más relevantes. Muestra la cantidad total de juegos que coinciden y pasa de a **24 por página**.
+- Todo queda en la dirección (`/explore?q=…&genre=…&engine=…&mobile=1&sort=…&page=…`): se puede compartir y funciona el botón de atrás. Los enlaces salen cortos (sin parámetros vacíos ni por defecto), cambiar un filtro vuelve a la primera página, buscar otro texto **conserva los filtros** y cualquier valor raro en la dirección se ignora.
+- Solo aparecen juegos publicados: la base lo garantiza, también para quien tiene cuenta.
+
 ### Comunidad y compartir
 
 **Hoy**
@@ -130,7 +137,6 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Tarjetas de juego** con portada, título, descripción, género, motor, creador, partidas y me gusta. Toda la tarjeta lleva a la página del juego. En celular, cada fila se desliza con el dedo.
 
 **Próximamente**
-- **Explorar** con búsqueda de texto (en español e inglés, sin importar las tildes) y filtros por género, motor y «funciona en celular», con orden por recientes, tendencia o más jugados.
 - **Sorprendeme**: un juego al azar.
 - **Creadores**: una página para descubrir a quienes están empezando.
 - **Primer juego de la semana** elegido por el equipo.

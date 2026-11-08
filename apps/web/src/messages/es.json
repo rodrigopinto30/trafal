@@ -517,7 +517,29 @@
     "emptyText": "Probá con otra palabra, con un género (plataformas, terror, puzzle) o con el nombre de un motor.",
     "showAll": "Ver todos los juegos",
     "resultsTitle": "Resultados de la búsqueda",
-    "gamesTitle": "Juegos"
+    "gamesTitle": "Juegos",
+    "filtersLabel": "Filtros",
+    "genre": "Género",
+    "genreAll": "Todos los géneros",
+    "engine": "Motor",
+    "engineAll": "Todos los motores",
+    "mobileOnly": "Solo los que funcionan en celular",
+    "sort": "Ordenar por",
+    "sorts": {
+      "recent": "Más nuevos",
+      "trending": "En tendencia",
+      "plays": "Más jugados",
+      "relevance": "Más relevantes"
+    },
+    "apply": "Aplicar",
+    "clear": "Quitar filtros",
+    "pagination": "Páginas de resultados",
+    "pageOf": "Página {page} de {pages}",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "emptyFilteredTitle": "No hay juegos con esos filtros",
+    "emptyFilteredText": "Probá con menos filtros, con otro orden o con otra palabra.",
+    "pageEmpty": "Esa página no existe: volvé a la primera."
   },
   "uploadErrors": {
     "NOT_A_ZIP": "Ese archivo no es un .zip válido. Comprimí la carpeta de tu juego en un .zip y volvé a subirlo.",

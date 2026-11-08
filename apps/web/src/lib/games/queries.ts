@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import type { ExploreQuery } from "@/lib/validation/explore";
 import type {
   CommentSummary,
   CommunityHighlight,
@@ -209,6 +210,24 @@ export async function listFeed({ kind, followerId, before, limit }: { kind: stri
   const posts = rows.slice(0, limit);
   const last = posts.at(-1);
   return { posts, nextBefore: rows.length > limit && last ? last.created_at : null };
+}
+
+export type ExplorePage = { games: GameSummary[]; total: number };
+
+/** One page of the explore list: the database filters, orders and counts; the games come back by id in that same order. */
+export async function exploreGames(query: ExploreQuery, limit: number): Promise<ExplorePage> {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("explore_games", {
+    p_query: query.q ?? undefined,
+    p_genre: query.genre ?? undefined,
+    p_engine: query.engine ?? undefined,
+    p_mobile_only: query.mobile,
+    p_sort: query.sort,
+    p_limit: limit,
+    p_offset: (query.page - 1) * limit,
+  });
+  const rows = data ?? [];
+  return { games: await listGamesByIds(rows.map((row) => row.id)), total: Number(rows[0]?.total ?? 0) };
 }
 
 /** The questions the creator of a game asks the people who play it, in the order they were written. */
