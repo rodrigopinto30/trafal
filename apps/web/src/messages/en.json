@@ -517,7 +517,29 @@
     "emptyText": "Try another word, a genre (platformer, horror, puzzle) or an engine name.",
     "showAll": "See all games",
     "resultsTitle": "Search results",
-    "gamesTitle": "Games"
+    "gamesTitle": "Games",
+    "filtersLabel": "Filters",
+    "genre": "Genre",
+    "genreAll": "All genres",
+    "engine": "Engine",
+    "engineAll": "All engines",
+    "mobileOnly": "Only games that work on mobile",
+    "sort": "Sort by",
+    "sorts": {
+      "recent": "Newest",
+      "trending": "Trending",
+      "plays": "Most played",
+      "relevance": "Most relevant"
+    },
+    "apply": "Apply",
+    "clear": "Clear filters",
+    "pagination": "Result pages",
+    "pageOf": "Page {page} of {pages}",
+    "prev": "Previous",
+    "next": "Next",
+    "emptyFilteredTitle": "No games match those filters",
+    "emptyFilteredText": "Try fewer filters, another order or another word.",
+    "pageEmpty": "That page does not exist: go back to the first one."
   },
   "uploadErrors": {
     "NOT_A_ZIP": "That file isn't a valid .zip. Compress your game's folder into a .zip and upload it again.",
