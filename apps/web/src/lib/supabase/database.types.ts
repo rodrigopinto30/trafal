@@ -583,7 +583,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "complete_onboarding":
+            "clear_featured_game":
+{ Args: { "p_week_start"?: string }; Returns: boolean
+                           },
+"complete_onboarding":
 { Args: { "p_accept_terms": boolean,"p_age_confirmed": boolean,"p_display_name": string,"p_locale"?: string,"p_terms_version": string,"p_username": string }; Returns: {
               "avatar_path": string | null,
 "bio": string,
@@ -647,6 +650,9 @@ isOneToOne: false
                            },
 "set_comment_helpful":
 { Args: { "p_comment_id": string,"p_helpful": boolean }; Returns: undefined
+                           },
+"set_featured_game":
+{ Args: { "p_game_id": string,"p_quote"?: string,"p_week_start"?: string }; Returns: string
                            },
 "start_play":
 { Args: { "p_device": string,"p_public_id": string,"p_session_id": string }; Returns: undefined

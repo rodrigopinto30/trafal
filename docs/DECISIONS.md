@@ -279,6 +279,19 @@ Migración nueva: `20261108000300_explore_creators.sql`. No hace falta tabla nue
 | **Explorar y Creadores van en el menú de arriba**, junto a Comunidad y Subir juego | Eran páginas completas a las que solo se llegaba por el pie de página: lo que la Fase 4 busca es que descubrir sea fácil. Se eligió dejar el menú con solo cuatro secciones (antes dos). | `nav-config.ts` tiene los cuatro enlaces (en celular van dentro de la hamburguesa); la sección queda marcada también al filtrar o buscar dentro de ella. |
 | **`FilterForm` único para Explorar y Creadores** | El mismo problema (un formulario GET que manda parámetros vacíos) se resuelve una vez. | Recibe `kind` y arma la dirección corta con el analizador de cada pantalla. |
 
+## Elegir el juego de la semana (2026-11-09)
+
+Migraciones nuevas: `20261108000400_featured_game.sql` y `20261108000500_featured_trigger_guard.sql`. La tabla `featured_games`, su trigger y `moderation_log` ya existían desde la Fase 1.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Dos funciones y ninguna escritura directa**: `set_featured_game(juego, semana, frase)` y `clear_featured_game(semana)` | Elegir lo que ve toda la comunidad es una acción de moderación: tiene que ser de un admin y dejar rastro. Un permiso de tabla no puede exigir ni lo uno ni lo otro. | Ambas exigen un admin con cuenta activa (`private.is_admin()`: una cuenta suspendida no puede) y escriben una línea en `moderation_log` (`feature_game`, `replace_featured_game`, `unfeature_game`). Ni un admin escribe `featured_games` ni edita o borra el registro. |
+| **Solo la semana actual o una que viene (hasta 8 semanas)**, y siempre un lunes | Lo pasado es historia, y dejar elegido con tiempo es útil; la semana arranca un lunes (lo exige la tabla). | `week_not_monday`, `week_in_the_past` y `week_too_far`. Elegir de nuevo la misma semana la reemplaza. |
+| **Qué se puede elegir lo decide el trigger de la tabla**: un juego publicado marcado como primer juego, y una sola vez en la vida | Es la regla de producto («primer juego»), y vive en la base. | `featured_requires_published_first_game` y `game_already_featured` (unicidad de `game_id`). Un intento fallido no deja nada en el registro. |
+| **El trigger solo revalida cuando cambia el juego** (migración `…0500`) | Al borrar la cuenta del admin que eligió, la base pone `chosen_by` en nulo y eso disparaba la validación, que fallaba si el juego se estaba borrando en el mismo momento. | Borrar una cuenta de admin conserva la elección (sin «quién eligió») y su línea del registro. |
+| **La portada muestra la elección de esta semana o, si no hay, la última anterior; nunca una de una semana futura** | Elegir con anticipación no tiene que cambiar la portada de hoy. | `findFeaturedGame` filtra `week_start <= lunes de hoy` (`weekStartOf`, en UTC como la base). |
+| **Sin pantalla todavía: `tools/featured-game.sh`** | El panel de administración es de la Fase 5; pero la función exige una sesión de admin, así que desde el editor de SQL no se puede llamar. | El script entra con el email y la contraseña del admin (los pide o los toma de `ADMIN_EMAIL`/`ADMIN_PASSWORD`) y llama a las funciones por la API: `show`, `set <id público> [--week …] [--quote …]` y `clear [--week …]`. Sirve igual para producción con `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY`. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.

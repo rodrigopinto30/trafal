@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { CreatorsQuery } from "@/lib/validation/creators";
+import { weekStartOf } from "./featured";
 import type { ExploreQuery } from "@/lib/validation/explore";
 import type {
   CommentSummary,
@@ -109,11 +110,13 @@ export const findGameByPublicId = cache(async (publicId: string): Promise<GameDe
   return data && hasOwner(data) ? data : null;
 });
 
+/** The first game of the week: this week's pick or, if this week has none yet, the latest one before it. A pick chosen ahead for a coming week stays hidden until its week starts. */
 export async function findFeaturedGame(): Promise<FeaturedGame | null> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("featured_games")
     .select(FEATURED_COLUMNS)
+    .lte("week_start", weekStartOf(new Date()))
     .order("week_start", { ascending: false })
     .limit(1)
     .maybeSingle();

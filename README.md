@@ -55,6 +55,13 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 - **Sorprendeme**: un botón (en la portada, en Explorar y en la página de cada juego) que te lleva a un **juego publicado al azar**, con la misma chance para todos (sin favorecer a los más jugados) y sin repetir el juego en el que estás. Es un enlace común: funciona sin JavaScript y cada vez elige de nuevo.
 
+### Primer juego de la semana
+
+**Hoy**
+- **El primer juego de la semana** (el banner grande de la portada, con una frase) lo **elige el equipo**: solo un administrador, solo entre los juegos **publicados** que su creador marcó como **primer juego**, y cada juego puede ser el de la semana **una sola vez**. Se puede dejar elegido con hasta 8 semanas de anticipación (no se muestra hasta que empieza su semana) y volver a elegir la misma semana lo reemplaza. Si una semana no tiene elegido, la portada muestra el último.
+- Cada elección o cambio **queda en el registro de moderación**, que solo se agrega (nadie lo edita ni lo borra, ni siquiera un administrador): quién, qué y cuándo.
+- Todavía no hay pantalla: se elige con `tools/featured-game.sh` (ver abajo); el panel de administración llega en la Fase 5.
+
 ### Creadores
 
 **Hoy**
@@ -146,7 +153,6 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Tarjetas de juego** con portada, título, descripción, género, motor, creador, partidas y me gusta. Toda la tarjeta lleva a la página del juego. En celular, cada fila se desliza con el dedo.
 
 **Próximamente**
-- **Primer juego de la semana** elegido por el equipo.
 
 ### Moderación y confianza
 
