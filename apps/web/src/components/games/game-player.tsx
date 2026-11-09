@@ -9,7 +9,7 @@ import { useTranslations } from "@/i18n/client";
 import { classifyDevice } from "@/lib/games/device";
 import { parseDisplayRatio } from "@/lib/games/ratio";
 import type { GameDetail } from "@/lib/games/types";
-import { createClient } from "@/lib/supabase/client";
+import { loadBrowserClient } from "@/lib/supabase/load-client";
 
 const HEARTBEAT_MS = 30_000;
 const FRAME_SANDBOX = "allow-scripts allow-same-origin allow-pointer-lock allow-modals";
@@ -57,10 +57,10 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn }: Props) 
 
   useEffect(() => {
     if (!playing) return;
-    const supabase = createClient();
     const timer = setInterval(() => {
       if (document.visibilityState !== "visible" || !sessionId.current) return;
-      fireAndForget(supabase.rpc("play_heartbeat", { p_public_id: game.public_id, p_session_id: sessionId.current }));
+      const session = sessionId.current;
+      fireAndForget(loadBrowserClient().then((supabase) => supabase.rpc("play_heartbeat", { p_public_id: game.public_id, p_session_id: session })));
     }, HEARTBEAT_MS);
     return () => clearInterval(timer);
   }, [playing, game.public_id]);
@@ -79,7 +79,8 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn }: Props) 
     setLoaded(false);
     setPlaying(true);
     const device = classifyDevice({ innerWidth: window.innerWidth, coarsePointer: window.matchMedia("(pointer: coarse)").matches });
-    fireAndForget(createClient().rpc("start_play", { p_public_id: game.public_id, p_session_id: sessionId.current, p_device: device }));
+    const session = sessionId.current;
+    fireAndForget(loadBrowserClient().then((supabase) => supabase.rpc("start_play", { p_public_id: game.public_id, p_session_id: session, p_device: device })));
   }
 
   function restart() {

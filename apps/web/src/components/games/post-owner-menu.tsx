@@ -11,7 +11,7 @@ import { FormMessage } from "@/components/ui/form-message";
 import { useTranslations } from "@/i18n/client";
 import { Link } from "@/i18n/link";
 import { deletePostAction } from "@/lib/games/post-actions";
-import { POST_ERROR_KEYS, type PostErrorKey } from "@/lib/validation/post";
+import { POST_ERROR_KEYS, type PostErrorKey } from "@/lib/validation/post-rules";
 
 function isErrorKey(value: string): value is PostErrorKey {
   return (POST_ERROR_KEYS as readonly string[]).includes(value);

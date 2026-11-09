@@ -12,7 +12,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslations } from "@/i18n/client";
 import { deleteCommentAction, setCommentHelpfulAction, updateCommentAction } from "@/lib/games/comment-actions";
-import { COMMENT_BODY_MAX, COMMENT_ERROR_KEYS, COMMENT_LABELS, type CommentErrorKey, type CommentTarget } from "@/lib/validation/comment";
+import { COMMENT_BODY_MAX, COMMENT_ERROR_KEYS, COMMENT_LABELS, type CommentErrorKey, type CommentTarget } from "@/lib/validation/comment-rules";
 
 type Props = {
   commentId: string;

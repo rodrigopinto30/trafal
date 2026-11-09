@@ -306,6 +306,21 @@ Sin migración.
 | **Datos estructurados con `schema.org`** y serializados a mano (`serializeStructuredData`) | Los buscadores muestran más (videojuego gratis en el navegador, persona, publicación) y el texto de una persona va dentro de un `<script>`. | Se escapan `<`, `>`, `&` y los separadores de línea Unicode, así que ni `</script>` en una bio puede cerrar la etiqueta (probado en unitarios y en `e2e` con una cuenta real). |
 | **El sitemap lista juegos, creadores y avances publicados, en los dos idiomas, con las traducciones** | Es lo que ayuda a descubrir las páginas profundas. | Máximo 5000 de cada clase por ahora (un archivo admite 50 000 direcciones y cada una va dos veces); pasado eso hay que dividirlo con `generateSitemaps`. Se lee como cualquier visitante (solo datos públicos). |
 
+## Rendimiento y Lighthouse (2026-11-09)
+
+Sin migración. Herramienta: `tools/lighthouse.sh` (ver `docs/DESARROLLO.md`).
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Se mide contra la versión de producción**, con una dirección «pública» de mentira (`trafal.example`, que Chrome resuelve a `127.0.0.1`) | En desarrollo los números no significan nada; y con `localhost` el sitio se cierra por completo a los buscadores (`robots.txt`), así que el SEO se mediría mal. | `tools/lighthouse.sh` compila la imagen `prod`, la levanta en `:3100`, corre Lighthouse (celular: la medición exigente; escritorio) con la mediana de 3 corridas y deja los informes en `lighthouse-reports/`. |
+| **El mínimo (85 de rendimiento en celular) se exige en la portada y en la página de un juego**; las demás se miden y se informan | Son las páginas del criterio de la fase. `/feed` depende de los datos: una imagen de 500 KB al principio de la lista pesa más que todo el JavaScript. | La herramienta falla si una página exigida baja de 85 y avisa de las demás (`GATED`). |
+| **Zod no viaja al navegador** | Pesaba ~31 KiB comprimidos en todas las páginas, solo porque los componentes de cliente importaban constantes de módulos que también traían los esquemas. | Las constantes y tipos que usa la interfaz viven en `*-rules.ts` (sin Zod) y los módulos de validación las reexportan; `parseSearchQuery`, `parseExploreQuery` y `parseCreatorsQuery` no usan Zod. |
+| **El cliente de Supabase del navegador se carga la primera vez que se usa** (`loadBrowserClient`) | Eran ~71 KiB comprimidos en la página de cada juego, y solo se usan al tocar «Jugar» y al comprobar un @usuario. | Esa parte sale del JavaScript inicial. |
+| **Los textos que viajan al navegador son por pantalla** (`BASE_CLIENT_NAMESPACES` + `<ExtraMessages>`) | Todas las páginas cargaban 27 KB de textos de formularios (dos veces en el HTML por la renderización parcial). | La base son 8 namespaces (< 10 KB); cada pantalla pide los suyos. En desarrollo, un componente que usa un namespace que su pantalla no pidió **lanza un error claro**, y un test recorre el código y exige que todo `useTranslations("x")` de cliente esté en la lista. |
+| **Los metadatos siempre llegan en el `<head>`** (`htmlLimitedBots: /.*/`) | Con el modo por defecto de Next, un cliente que no está en su lista de buscadores recibe la descripción y las tarjetas más tarde, dentro del cuerpo: Lighthouse marcaba «sin meta description» en juegos y perfiles. | El costo es que el `<head>` espera los datos de la página (ya se piden igual: `cache` de React los comparte); el tiempo hasta el primer byte quedó igual de bajo (~15 ms). |
+| **Los esqueletos de las páginas con datos son altos** (`min-h-svh`) | Al llegar el contenido, el pie de página (visible bajo un esqueleto corto) saltaba: CLS de 0,18 en la página del juego. | CLS 0 en todas las páginas. |
+| **La primera imagen de una página se pide con prioridad** (`eagerMedia`: `loading=eager` y `fetchPriority=high` solo en la primera) y el resto sigue perezoso | Una imagen perezosa por encima de la línea de flote espera a que el navegador la descubra: 5 s de demora en el feed. | Lo hace el feed (primera tarjeta) y la página de un avance. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.
@@ -323,3 +338,5 @@ Sin migración.
 
 - **Avances**: los videos MP4 y los GIF no se transcodifican ni se les saca la metadata (un MP4 de un celular puede traer la ubicación en sus cajas `udta`); tampoco se limpian los WebP. No hay tope de publicaciones por minuto ni por día (límites de uso: Fase 5). Borrar una **cuenta** borra sus avances en la base pero no sus archivos del almacenamiento (igual que el avatar: se resuelve junto con el borrado de cuentas, Fase 5). Un fallo del almacenamiento al borrar un avance deja un archivo huérfano.
 - **Preguntas del creador**: se escriben solo al subir el juego; no hay todavía una pantalla para cambiarlas, agregarlas o borrarlas después (la base ya lo permite al dueño).
+- **Rendimiento del feed**: las imágenes de los avances se sirven tal como se subieron (hasta 5 MB). Con una imagen grande al principio de la lista, el rendimiento en celular baja de 85 (es una limitación de los datos, no del código). La solución es generar variantes reducidas al subir (o usar el optimizador de imágenes de Next con el dominio público de R2); queda para una pieza aparte.
+- **Lighthouse en local**: la categoría «buenas prácticas» marca 79 porque se mide por HTTP (no hay HTTPS en la prueba); en producción con HTTPS no aplica.

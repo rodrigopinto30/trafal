@@ -1,4 +1,5 @@
 import { Suspense, type ReactNode } from "react";
+import { ExtraMessages } from "@/components/i18n/extra-messages";
 import { SettingsNav } from "@/components/settings/settings-nav";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getTranslations } from "@/i18n/server";
@@ -16,10 +17,12 @@ export default async function SettingsLayout({ children }: { children: ReactNode
         <h1 className="font-display text-[clamp(28px,5vw,40px)] leading-tight font-bold text-glow-violet">{t("title")}</h1>
         <p className="mt-1 text-text-2">{t("subtitle")}</p>
       </header>
-      <Suspense fallback={<Skeleton aria-hidden="true" className="h-[54px] w-[330px] max-w-full rounded-full" />}>
-        <SettingsNav />
-      </Suspense>
-      <div className="mt-8">{children}</div>
+      <ExtraMessages namespaces={["settings", "genres", "engines"]}>
+        <Suspense fallback={<Skeleton aria-hidden="true" className="h-[54px] w-[330px] max-w-full rounded-full" />}>
+          <SettingsNav />
+        </Suspense>
+        <div className="mt-8">{children}</div>
+      </ExtraMessages>
     </div>
   );
 }

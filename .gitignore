@@ -43,3 +43,6 @@ __pycache__/
 .ruff_cache/
 .mypy_cache/
 .pytest_cache/
+
+# informes de Lighthouse (tools/lighthouse.sh)
+lighthouse-reports/

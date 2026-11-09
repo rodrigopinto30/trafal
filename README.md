@@ -46,6 +46,11 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Editar y borrar lo propio**: el texto y la etiqueta se pueden cambiar mientras el comentario esté publicado (si moderación lo oculta, deja de poder tocarlo), y se puede borrar con sus respuestas. Nadie edita ni borra comentarios ajenos; la base tampoco se lo permite.
 - Los contadores de comentarios de juegos y avances son los reales (los mantiene la base).
 
+### Rendimiento
+
+**Hoy**
+- Se **mide** con Lighthouse sobre la versión de producción (`tools/lighthouse.sh`): en celular, la portada y la página de un juego dan **93 y 87** de rendimiento (el mínimo exigido es 85); en escritorio, 95–100; accesibilidad y SEO, 100, y sin saltos de diseño (CLS 0). Para lograrlo, el navegador descarga menos: ni Zod ni el cliente de base de datos viajan en las páginas públicas, y cada pantalla recibe solo los textos que usa.
+
 ### Buscadores y redes sociales
 
 **Hoy**

@@ -14,6 +14,7 @@ import { formatBytes } from "@/lib/format";
 import { findOwnGame, listVersionsOfGame } from "@/lib/games/queries";
 import { isUploadErrorCode, uploadErrorParams } from "@/lib/games/upload-error";
 import { parsePublicIdParam } from "@/lib/validation/common";
+import { ExtraMessages } from "@/components/i18n/extra-messages";
 
 type ManagePageProps = PageProps<"/[lang]/games/[publicId]/manage">;
 
@@ -25,9 +26,11 @@ export async function generateMetadata() {
 export default function ManageGamePage({ params }: ManagePageProps) {
   return (
     <div className="mx-auto w-full max-w-[960px] px-5 pt-[clamp(32px,5vw,56px)]">
-      <Suspense fallback={<Skeleton className="h-[360px] rounded-[28px]" />}>
-        <ManageContent params={params} />
-      </Suspense>
+      <ExtraMessages namespaces={["gameForm", "gameVersions"]}>
+        <Suspense fallback={<Skeleton className="h-[360px] rounded-[28px]" />}>
+          <ManageContent params={params} />
+        </Suspense>
+      </ExtraMessages>
     </div>
   );
 }

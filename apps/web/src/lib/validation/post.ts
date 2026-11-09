@@ -2,37 +2,9 @@ import { z } from "zod";
 import { POST_MEDIA_MAX_ALT } from "@/lib/media/post-media";
 import { charLength, sanitizeLine, sanitizeMultiline } from "./text";
 
-export const POST_KINDS = ["avance", "nuevo_juego", "pide_feedback", "hito"] as const;
-export type PostKindValue = (typeof POST_KINDS)[number];
-
-export const POST_BODY_MAX = 2000;
-export const POST_HIGHLIGHT_MAX = 12;
-
-/** Error keys of the «publish an update» form (namespace «postForm.errors»). */
-export const POST_ERROR_KEYS = [
-  "invalidKind",
-  "bodyRequired",
-  "bodyTooLong",
-  "highlightTooLong",
-  "highlightNotAllowed",
-  "gameRequired",
-  "invalidGame",
-  "tooManyFiles",
-  "fileInvalid",
-  "fileTooLarge",
-  "fileAnimated",
-  "fileDimensions",
-  "fileTypeMismatch",
-  "altTooLong",
-  "invalidMedia",
-  "requestTooLarge",
-  "accountRestricted",
-  "unauthenticated",
-  "notFound",
-  "storage",
-  "generic",
-] as const;
-export type PostErrorKey = (typeof POST_ERROR_KEYS)[number];
+import { POST_KINDS, POST_BODY_MAX, POST_HIGHLIGHT_MAX } from "./post-rules";
+export { POST_KINDS, POST_BODY_MAX, POST_HIGHLIGHT_MAX, POST_ERROR_KEYS } from "./post-rules";
+export type { PostKindValue, PostErrorKey } from "./post-rules";
 
 const body = z
   .string("bodyRequired")

@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { ENGINE_IDS, GENRE_IDS } from "@/lib/profile/catalog";
 import { parseSearchQuery } from "./search";
 
@@ -19,7 +18,10 @@ export type ExploreQuery = {
 
 type RawExplore = { q?: string; genre?: string; engine?: string; mobile?: string; sort?: string; page?: string };
 
-const page = z.coerce.number().int().min(1).max(EXPLORE_MAX_PAGE).catch(1);
+function parsePage(value: string | undefined): number {
+  const page = value !== undefined && /^[0-9]{1,6}$/.test(value) ? Number(value) : 1;
+  return page >= 1 && page <= EXPLORE_MAX_PAGE ? page : 1;
+}
 
 /** The order a person gets without choosing one: the best match when they searched for something, the newest otherwise. */
 export function defaultSort(q: string | null): ExploreSort {
@@ -40,7 +42,7 @@ export function parseExploreQuery(raw: RawExplore): ExploreQuery {
     engine: ENGINE_IDS.find((id) => id === raw.engine) ?? null,
     mobile: raw.mobile === "1",
     sort: sort === undefined || (sort === "relevance" && !q) ? defaultSort(q) : sort,
-    page: page.parse(raw.page),
+    page: parsePage(raw.page),
   };
 }
 

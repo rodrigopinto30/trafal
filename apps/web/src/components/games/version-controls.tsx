@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocale, useTranslations } from "@/i18n/client";
 import { activateVersionAction, updateVersionAction } from "@/lib/games/version-actions";
-import { VERSION_CHANGELOG_MAX, VERSION_LABEL_MAX } from "@/lib/validation/game";
+import { VERSION_CHANGELOG_MAX, VERSION_LABEL_MAX } from "@/lib/validation/game-rules";
 
 type Props = {
   versionId: string;
