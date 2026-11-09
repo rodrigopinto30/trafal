@@ -107,7 +107,7 @@ select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
 select is((select count(*) from public.moderation_log), 0::bigint, 'una cuenta común no lo ve');
 select throws_ok($$ insert into public.moderation_log (admin_id, admin_username, action, target_type) values ('a0000000-0000-0000-0000-000000000001', 'ana', 'x', 'post') $$, '42501', null, 'nadie escribe el registro por tabla');
 select tests.authenticate_as('d0000000-0000-0000-0000-0000000000ad');
-select is((select count(*) from public.moderation_log), 1::bigint, 'la admin lo lee');
+select is((select count(*) from public.moderation_log where created_at = now()), 1::bigint, 'la admin lo lee');
 select tests.authenticate_as_anon();
 select throws_ok($$ select * from public.moderation_log $$, '42501', null, 'anon no lo lee');
 

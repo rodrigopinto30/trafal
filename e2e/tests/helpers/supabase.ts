@@ -43,3 +43,31 @@ export async function publicGame(publicId: string, columns = "play_count,status"
   const rows = (await response.json()) as Record<string, unknown>[];
   return rows[0] ?? null;
 }
+
+/** Signs in a seeded account straight against Supabase Auth and returns its access token (so a test can call the API as that person). */
+export async function accessTokenOf(email: string, password: string): Promise<string> {
+  const response = await fetch(`${API}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: { apikey: publishableKey(), "content-type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  if (!response.ok) throw new Error(`No se pudo entrar como ${email}: ${response.status}`);
+  return ((await response.json()) as { access_token: string }).access_token;
+}
+
+/** Calls a database function through the REST API, as the given person (or as a visitor with no token). */
+export async function callRpc(name: string, args: Record<string, unknown>, token?: string): Promise<{ status: number; body: unknown }> {
+  const response = await fetch(`${API}/rest/v1/rpc/${name}`, {
+    method: "POST",
+    headers: { apikey: publishableKey(), "content-type": "application/json", ...(token ? { authorization: `Bearer ${token}` } : {}) },
+    body: JSON.stringify(args),
+  });
+  return { status: response.status, body: await response.json().catch(() => null) };
+}
+
+/** The id of a published game, read like any visitor would. */
+export async function gameIdOf(publicId: string): Promise<string> {
+  const row = await publicGame(publicId, "id");
+  if (!row) throw new Error(`No existe el juego ${publicId}`);
+  return String(row.id);
+}
