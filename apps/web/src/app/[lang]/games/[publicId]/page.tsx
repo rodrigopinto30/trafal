@@ -23,6 +23,10 @@ import { groupComments } from "@/lib/games/comments";
 import { findGameByPublicId, listCommentsByGame, listPostsByGame, listQuestionsByGame, listReadyVersions } from "@/lib/games/queries";
 import { listMyReactions, type MyReactions } from "@/lib/games/reaction-queries";
 import { parsePublicIdParam } from "@/lib/validation/common";
+import { JsonLd } from "@/components/seo/json-ld";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { excerpt } from "@/lib/seo/site";
+import { gameData } from "@/lib/seo/structured-data";
 
 const NO_REACTIONS: MyReactions = { liked: new Set(), saved: new Set() };
 
@@ -31,7 +35,9 @@ type GamePageProps = PageProps<"/[lang]/games/[publicId]">;
 export async function generateMetadata({ params }: GamePageProps) {
   const publicId = parsePublicIdParam((await params).publicId);
   const game = publicId ? await findGameByPublicId(publicId) : null;
-  return game ? { title: game.title, description: game.short_description } : {};
+  if (!game) return {};
+  const locale = await getLocale();
+  return pageMetadata({ title: game.title, description: excerpt(game.short_description, 160), path: `/games/${game.public_id}`, locale });
 }
 
 export default function GamePage({ params }: GamePageProps) {
@@ -76,6 +82,7 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
 
   return (
     <div className="grid gap-10">
+      <JsonLd data={gameData({ ...game, genre: game.genre_id, owner }, locale)} />
       <GamePlayerShell game={game} />
 
       <header className="grid gap-4">

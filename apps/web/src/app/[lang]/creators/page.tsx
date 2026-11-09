@@ -4,11 +4,13 @@ import { CreatorsFilters } from "@/components/search/creators-filters";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
-import { getTranslations } from "@/i18n/server";
+import { getLocale, getTranslations } from "@/i18n/server";
 import { getAuthUser } from "@/lib/auth/dal";
 import { exploreCreators, listFollowedAmong } from "@/lib/games/queries";
 import { firstParam } from "@/lib/validation/common";
 import { CREATORS_PAGE_SIZE, creatorsHref, hasCreatorFilters, parseCreatorsQuery } from "@/lib/validation/creators";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { NoIndex } from "@/components/seo/no-index";
 
 type RawParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -18,8 +20,8 @@ async function readQuery(searchParams: RawParams) {
 }
 
 export async function generateMetadata() {
-  const t = await getTranslations("creators");
-  return { title: t("title"), description: t("subtitle") };
+  const [t, locale] = await Promise.all([getTranslations("creators"), getLocale()]);
+  return pageMetadata({ title: t("title"), description: t("subtitle"), path: "/creators", locale });
 }
 
 export default async function CreatorsPage({ searchParams }: { searchParams: RawParams }) {
@@ -50,10 +52,12 @@ async function Results({ searchParams }: { searchParams: RawParams }) {
   const { creators, total } = await exploreCreators(query, CREATORS_PAGE_SIZE);
   const pages = Math.max(1, Math.ceil(total / CREATORS_PAGE_SIZE));
   const following = user ? await listFollowedAmong(user.id, creators.map((creator) => creator.id)) : new Set<string>();
+  const variant = creatorsHref(query) !== "/creators" ? <NoIndex /> : null;
 
   if (creators.length === 0) {
     return (
       <section aria-labelledby="results-title" className="rounded-3xl border border-dashed border-white/20 px-6 py-12 text-center">
+        {variant}
         <h2 id="results-title" className="font-display text-xl font-bold">
           {query.page > 1 ? t("pageEmpty") : t("emptyTitle")}
         </h2>
@@ -69,6 +73,7 @@ async function Results({ searchParams }: { searchParams: RawParams }) {
 
   return (
     <section aria-labelledby="results-title" className="grid gap-5">
+      {variant}
       <h2 id="results-title" className="sr-only">
         {t("listLabel")}
       </h2>

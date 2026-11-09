@@ -13,7 +13,7 @@ import { firstParam, parseLoginError, parseNextPath } from "@/lib/validation/com
 
 export async function generateMetadata() {
   const t = await getTranslations("auth");
-  return { title: t("login.title") };
+  return { title: t("login.title"), robots: { index: false, follow: true } };
 }
 
 export default async function LoginPage({ searchParams }: PageProps<"/[lang]/login">) {

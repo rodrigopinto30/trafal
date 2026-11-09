@@ -257,7 +257,8 @@
     "completeText": "Sumá una foto y elegí los géneros de juegos que te gustan para que la comunidad te conozca.",
     "completeCta": "Completar mi perfil",
     "ownDraftsTitle": "Tus juegos en preparación",
-    "manageGame": "Ver estado"
+    "manageGame": "Ver estado",
+    "seoDescription": "Perfil de {name} en Trafal: sus juegos que se juegan en el navegador y sus avances."
   },
   "games": {
     "play": "Jugar gratis",
@@ -922,5 +923,14 @@
     "next": "Siguiente",
     "pageEmpty": "Esa página no existe: volvé a la primera.",
     "listLabel": "Creadores"
+  },
+  "og": {
+    "tagline": "Publicá tu juego. Sumá jugadores.",
+    "playFree": "Jugá gratis en el navegador",
+    "byAuthor": "de {name}",
+    "games": "{count, plural, one {# juego} other {# juegos}}",
+    "followers": "{count, plural, one {# seguidor} other {# seguidores}}",
+    "update": "Avance",
+    "alt": "Tarjeta de Trafal"
   }
 }

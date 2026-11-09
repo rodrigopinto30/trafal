@@ -4,7 +4,7 @@ import { getTranslations } from "@/i18n/server";
 
 export async function generateMetadata() {
   const t = await getTranslations("auth");
-  return { title: t("forgot.title") };
+  return { title: t("forgot.title"), robots: { index: false, follow: true } };
 }
 
 export default async function ForgotPasswordPage() {

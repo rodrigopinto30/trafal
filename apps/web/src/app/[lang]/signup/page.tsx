@@ -12,7 +12,7 @@ import { publicEnv } from "@/lib/env";
 
 export async function generateMetadata() {
   const t = await getTranslations("auth");
-  return { title: t("signup.title") };
+  return { title: t("signup.title"), robots: { index: false, follow: true } };
 }
 
 export default async function SignupPage() {

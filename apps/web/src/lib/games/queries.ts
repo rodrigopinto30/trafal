@@ -234,6 +234,15 @@ export async function exploreGames(query: ExploreQuery, limit: number): Promise<
   return { games: await listGamesByIds(rows.map((row) => row.id)), total: Number(rows[0]?.total ?? 0) };
 }
 
+export type ProfileSeo = { username: string; display_name: string; bio: string; city: string | null; country: string | null; created_at: string };
+
+/** What the search engines and the social cards need to know about a profile (shared by the page and its metadata within one request). */
+export const findProfileSeo = cache(async (username: string): Promise<ProfileSeo | null> => {
+  const supabase = await createClient();
+  const { data } = await supabase.from("profiles").select("username, display_name, bio, city, country, created_at").eq("username", username).maybeSingle();
+  return data;
+});
+
 export type CreatorCard = {
   id: string;
   username: string;

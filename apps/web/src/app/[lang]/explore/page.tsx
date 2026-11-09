@@ -6,10 +6,12 @@ import { GameSearch } from "@/components/search/game-search";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
-import { getTranslations } from "@/i18n/server";
+import { getLocale, getTranslations } from "@/i18n/server";
 import { exploreGames } from "@/lib/games/queries";
 import { firstParam } from "@/lib/validation/common";
 import { EXPLORE_PAGE_SIZE, exploreHref, hasFilters, parseExploreQuery } from "@/lib/validation/explore";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { NoIndex } from "@/components/seo/no-index";
 
 type RawParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -26,8 +28,8 @@ async function readQuery(searchParams: RawParams) {
 }
 
 export async function generateMetadata() {
-  const t = await getTranslations("explore");
-  return { title: t("title") };
+  const [t, locale] = await Promise.all([getTranslations("explore"), getLocale()]);
+  return pageMetadata({ title: t("title"), description: t("subtitleAll"), path: "/explore", locale });
 }
 
 export default async function ExplorePage({ searchParams }: { searchParams: RawParams }) {
@@ -68,11 +70,13 @@ async function Results({ searchParams }: { searchParams: RawParams }) {
   const [t, query] = await Promise.all([getTranslations("explore"), readQuery(searchParams)]);
   const { games, total } = await exploreGames(query, EXPLORE_PAGE_SIZE);
   const pages = Math.max(1, Math.ceil(total / EXPLORE_PAGE_SIZE));
+  const variant = exploreHref(query) !== "/explore" ? <NoIndex /> : null;
 
   if (games.length === 0) {
     const narrowed = hasFilters(query);
     return (
       <section aria-labelledby="results-title" className="rounded-3xl border border-dashed border-white/20 px-6 py-12 text-center">
+        {variant}
         <h2 id="results-title" className="font-display text-xl font-bold">
           {query.page > 1 ? t("pageEmpty") : query.q ? t("emptyTitle", { query: query.q }) : narrowed ? t("emptyFilteredTitle") : t("subtitleAll")}
         </h2>
@@ -86,6 +90,7 @@ async function Results({ searchParams }: { searchParams: RawParams }) {
 
   return (
     <section aria-labelledby="results-title" className="grid gap-5">
+      {variant}
       <div>
         <h2 id="results-title" className="font-display text-xl font-bold">
           {query.q ? t("subtitleResults", { query: query.q }) : t("subtitleAll")}

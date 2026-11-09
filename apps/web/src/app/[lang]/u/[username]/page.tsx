@@ -8,16 +8,29 @@ import { ProfileTabs } from "@/components/profile/profile-tabs";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
-import { getTranslations } from "@/i18n/server";
+import { getLocale, getTranslations } from "@/i18n/server";
 import { PROFILE_COLUMNS, getAuthUser } from "@/lib/auth/dal";
 import { listMyReactions } from "@/lib/games/reaction-queries";
-import { listGamesByOwner, listOwnUnpublishedGames, listPostsByAuthor, type OwnGame } from "@/lib/games/queries";
+import { findProfileSeo, listGamesByOwner, listOwnUnpublishedGames, listPostsByAuthor, type OwnGame } from "@/lib/games/queries";
 import { createClient } from "@/lib/supabase/server";
 import { parseUsernameParam } from "@/lib/validation/common";
+import { JsonLd } from "@/components/seo/json-ld";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { excerpt } from "@/lib/seo/site";
+import { personData } from "@/lib/seo/structured-data";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/u/[username]">) {
-  const { username } = await params;
-  return { title: `@${parseUsernameParam(username) ?? ""}` };
+  const username = parseUsernameParam((await params).username);
+  const profile = username ? await findProfileSeo(username) : null;
+  if (!profile) return { title: `@${username ?? ""}` };
+  const [t, locale] = await Promise.all([getTranslations("profile"), getLocale()]);
+  return pageMetadata({
+    title: `${profile.display_name} (@${profile.username})`,
+    description: profile.bio ? excerpt(profile.bio, 160) : t("seoDescription", { name: profile.display_name }),
+    path: `/u/${profile.username}`,
+    locale,
+    type: "profile",
+  });
 }
 
 export default function ProfilePage({ params }: PageProps<"/[lang]/u/[username]">) {
@@ -41,9 +54,10 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
   if (!data) notFound();
   const profile: ProfileRow = data;
 
-  const [t, tPosts, me, games, posts] = await Promise.all([
+  const [t, tPosts, locale, me, games, posts] = await Promise.all([
     getTranslations("profile"),
     getTranslations("posts"),
+    getLocale(),
     getAuthUser(),
     listGamesByOwner(profile.id),
     listPostsByAuthor(profile.id),
@@ -83,6 +97,7 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
 
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-8">
+      <JsonLd data={personData(profile, locale)} />
       <ProfileHeader profile={profile} gamesCount={games.length} postsCount={posts.length} action={action} />
       {incomplete ? <CompleteProfileCard title={t("completeTitle")} text={t("completeText")} cta={t("completeCta")} /> : null}
       {unpublished.length > 0 ? <UnpublishedGames title={t("ownDraftsTitle")} cta={t("manageGame")} games={unpublished} /> : null}

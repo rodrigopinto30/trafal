@@ -257,7 +257,8 @@
     "completeText": "Add a photo and pick the game genres you like so the community can get to know you.",
     "completeCta": "Finish my profile",
     "ownDraftsTitle": "Your games in progress",
-    "manageGame": "View status"
+    "manageGame": "View status",
+    "seoDescription": "{name}'s profile on Trafal: their browser games and their updates."
   },
   "games": {
     "play": "Play for free",
@@ -922,5 +923,14 @@
     "next": "Next",
     "pageEmpty": "That page does not exist: go back to the first one.",
     "listLabel": "Creators"
+  },
+  "og": {
+    "tagline": "Publish your game. Get players.",
+    "playFree": "Play free in the browser",
+    "byAuthor": "by {name}",
+    "games": "{count, plural, one {# game} other {# games}}",
+    "followers": "{count, plural, one {# follower} other {# followers}}",
+    "update": "Update",
+    "alt": "Trafal card"
   }
 }
