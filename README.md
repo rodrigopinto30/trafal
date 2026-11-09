@@ -161,7 +161,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Hoy**
 - **Estética oscura con neón moderado e inspiración retro/pixel**: tipografías Oxanium, Space Grotesk y Pixelify Sans, botones en forma de píldora, barra de navegación flotante con borde neón y un fondo con aurora y píxeles flotantes que se apagan en celular y si pedís menos movimiento.
-- **Menú superior mínimo**: el nombre de la app, «Subir juego» y «Comunidad», y tu cuenta (Mi perfil, Configuración, Cerrar sesión). En celular se abre con una hamburguesa.
+- **Menú superior mínimo**: el nombre de la app, «Explorar», «Creadores», «Comunidad» y «Subir juego», y tu cuenta (Mi perfil, Configuración, Cerrar sesión). En celular se abre con una hamburguesa.
 - **Cursor propio**: flecha pixelada, y la manita en todo lo que se puede apretar.
 - **Hecho para celular primero**, desde pantallas de 360 px, sin scroll horizontal y con botón para volver arriba.
 - **Accesible**: contraste de texto de al menos 4,5:1, objetivos táctiles de al menos 44 px, uso completo con teclado, enlace «Saltar al contenido», etiquetas y errores conectados para lectores de pantalla, y una auditoría automática WCAG 2.2 AA sobre las pantallas principales.
