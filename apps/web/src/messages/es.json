@@ -902,5 +902,9 @@
     "label": "Compartir",
     "copied": "Enlace copiado",
     "failed": "No pudimos copiar el enlace. Copialo desde la barra del navegador."
+  },
+  "surprise": {
+    "label": "Sorprendeme",
+    "hint": "Te llevamos a un juego al azar"
   }
 }

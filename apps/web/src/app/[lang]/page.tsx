@@ -1,6 +1,7 @@
 import { ArrowRightIcon } from "lucide-react";
 import { Suspense } from "react";
 import { LandingGames } from "@/components/home/landing-games";
+import { SurpriseButton } from "@/components/games/surprise-button";
 import { LandingSkeleton } from "@/components/home/landing-skeleton";
 import { GameSearch } from "@/components/search/game-search";
 import { Badge } from "@/components/ui/badge";
@@ -44,6 +45,7 @@ export default async function HomePage() {
           <Button size="lg" variant="outline" asChild>
             <Link href="/games/new">{t("ctaUpload")}</Link>
           </Button>
+          <SurpriseButton size="lg" />
         </div>
       </section>
 

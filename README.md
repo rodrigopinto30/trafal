@@ -53,6 +53,8 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - Todo queda en la dirección (`/explore?q=…&genre=…&engine=…&mobile=1&sort=…&page=…`): se puede compartir y funciona el botón de atrás. Los enlaces salen cortos (sin parámetros vacíos ni por defecto), cambiar un filtro vuelve a la primera página, buscar otro texto **conserva los filtros** y cualquier valor raro en la dirección se ignora.
 - Solo aparecen juegos publicados: la base lo garantiza, también para quien tiene cuenta.
 
+- **Sorprendeme**: un botón (en la portada, en Explorar y en la página de cada juego) que te lleva a un **juego publicado al azar**, con la misma chance para todos (sin favorecer a los más jugados) y sin repetir el juego en el que estás. Es un enlace común: funciona sin JavaScript y cada vez elige de nuevo.
+
 ### Comunidad y compartir
 
 **Hoy**
@@ -137,7 +139,6 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Tarjetas de juego** con portada, título, descripción, género, motor, creador, partidas y me gusta. Toda la tarjeta lleva a la página del juego. En celular, cada fila se desliza con el dedo.
 
 **Próximamente**
-- **Sorprendeme**: un juego al azar.
 - **Creadores**: una página para descubrir a quienes están empezando.
 - **Primer juego de la semana** elegido por el equipo.
 

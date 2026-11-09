@@ -255,6 +255,16 @@ Migración nueva: `20261108000100_explore_games.sql`. Se usa el índice de búsq
 | **El formulario arma la dirección corta con un envoltorio de cliente** (`ExploreForm`) | Un formulario GET manda todos los campos, incluso vacíos o por defecto (`?genre=arcade&engine=&sort=recent`). | Al enviarse pasa por el mismo analizador y navega a la dirección limpia. La pantalla no se promete sin JavaScript: su contenido llega por streaming (`Suspense`), que lo necesita. |
 | **Paginación por número de página** (`?page=N`) | Al explorar no importa que un juego nuevo corra una página; no es un registro. | Pasarse de la última página muestra «Esa página no existe» con un enlace a la primera. |
 
+## Sorprendeme (2026-11-09)
+
+Migración nueva: `20261108000200_random_game.sql`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **El azar es parejo entre todos los juegos publicados** | Si pesara por partidas, «Sorprendeme» mostraría siempre lo ya popular; la idea es darles su turno a los creadores nuevos. | `random_game(excluir)` ordena por `random()`. Con miles de juegos habría que cambiar el método (hoy es lineal en la cantidad de juegos); `17-random-game.test.sql` comprueba que el más jugado no tiene más chance (cerca de un tercio). |
+| **Función `SECURITY INVOKER`, con `published` filtrado a mano** | No necesita permisos de más: la RLS de `games` ya manda, y esa política también deja ver los borradores propios. | Ni siquiera el creador recibe su borrador. Si el juego a excluir es el único publicado, vuelve ese mismo (no hay otra cosa para mostrar); sin juegos publicados, no devuelve nada y se va a Explorar. |
+| **Una ruta que redirige** (`GET /api/surprise?lang=…&exclude=…`) y el botón es un enlace común (`<a>`, no el `Link` del router) | Sin JavaScript también funciona, y el router no debe precargarlo: cada visita tiene que elegir de nuevo. | La redirección es 307 y `Cache-Control: no-store`. El idioma y el juego a excluir pasan por Zod (`parseSurpriseParams`); lo que no cuadra se ignora. Solo responde a GET. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.
