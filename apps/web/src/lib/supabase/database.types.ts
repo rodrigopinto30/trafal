@@ -634,11 +634,17 @@ isOneToOne: false
               "entry_path": string,"needs_isolation": boolean,"state": string,"version_number": number
             }[]
                            },
+"moderate_content":
+{ Args: { "p_action": string,"p_reason": string,"p_target_id": string,"p_target_type": string }; Returns: undefined
+                           },
 "play_heartbeat":
 { Args: { "p_public_id": string,"p_session_id": string }; Returns: undefined
                            },
 "random_game":
 { Args: { "p_exclude"?: string }; Returns: string
+                           },
+"resolve_report":
+{ Args: { "p_note"?: string,"p_outcome": string,"p_report_id": string }; Returns: undefined
                            },
 "search_games":
 { Args: { "p_limit"?: number,"p_query": string }; Returns: {
@@ -656,6 +662,9 @@ isOneToOne: false
                            },
 "start_play":
 { Args: { "p_device": string,"p_public_id": string,"p_session_id": string }; Returns: undefined
+                           },
+"take_report":
+{ Args: { "p_report_id": string }; Returns: undefined
                            },
 "username_available":
 { Args: { "p_username": string }; Returns: boolean

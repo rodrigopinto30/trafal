@@ -73,7 +73,16 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 **Hoy**
 - **El primer juego de la semana** (el banner grande de la portada, con una frase) lo **elige el equipo**: solo un administrador, solo entre los juegos **publicados** que su creador marcó como **primer juego**, y cada juego puede ser el de la semana **una sola vez**. Se puede dejar elegido con hasta 8 semanas de anticipación (no se muestra hasta que empieza su semana) y volver a elegir la misma semana lo reemplaza. Si una semana no tiene elegido, la portada muestra el último.
 - Cada elección o cambio **queda en el registro de moderación**, que solo se agrega (nadie lo edita ni lo borra, ni siquiera un administrador): quién, qué y cuándo.
-- Todavía no hay pantalla: se elige con `tools/featured-game.sh` (ver abajo); el panel de administración llega en la Fase 5.
+- Se elige desde **Administración → Juego de la semana** (o con `tools/featured-game.sh`, ver abajo).
+
+### Administración
+
+**Hoy**
+- Los administradores ven **Administración** en el menú de la cuenta (`/admin`). Para cualquier otra persona esa dirección no existe, y no figura en los buscadores.
+- **Reportes**: una cola con cada reporte y su evidencia (qué se reportó tal como estaba al reportar, el motivo, lo que escribió quien reportó, el estado actual del contenido y un enlace). Se filtra por abiertos, en revisión y resueltos. Un administrador puede **tomar** el reporte, **descartarlo**, **marcarlo como resuelto** o **ocultar el contenido y resolver**; un contenido oculto se puede **restaurar**.
+- **Solo se modera ocultando o restaurando** (juegos, avances y comentarios): nada se borra ni se edita. Ocultar o restaurar exige un motivo, que lee la autoría del contenido en sus avisos.
+- **Registro**: toda acción queda anotada (quién, qué, sobre qué, por qué y cuándo) en un registro que solo se agrega.
+- **Juego de la semana**: elegir, ver lo que viene y sacar elecciones.
 
 ### Creadores
 
