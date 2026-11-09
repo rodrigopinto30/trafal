@@ -4,17 +4,17 @@ import { mediaUrl } from "@/lib/media/url";
 import { cn } from "@/lib/utils";
 
 /**
- * Files of an update: pictures and GIFs as images, videos with controls and no autoplay (nothing downloads until someone
+ * Files of an update: pictures and GIFs as images (lazy, except the first one when the card is at the top of a page: `eager`), videos with controls and no autoplay (nothing downloads until someone
  * presses play). Each one keeps its own proportions so the page does not jump while it loads. One file fills the width; two or
  * more go in a grid.
  */
-export async function PostMedia({ media }: { media: PostMediaItem[] }) {
+export async function PostMedia({ media, eager = false }: { media: PostMediaItem[]; eager?: boolean }) {
   if (media.length === 0) return null;
   const t = await getTranslations("posts");
 
   return (
     <ul aria-label={t("mediaLabel")} className={cn("grid gap-2", media.length > 1 && "sm:grid-cols-2")}>
-      {media.map((item) => {
+      {media.map((item, index) => {
         const url = mediaUrl(item.path);
         if (!url) return null;
         const ratio = item.width && item.height ? { aspectRatio: `${item.width} / ${item.height}` } : undefined;
@@ -30,7 +30,8 @@ export async function PostMedia({ media }: { media: PostMediaItem[] }) {
                 alt={item.alt_text || (item.kind === "gif" ? t("gifFallback") : t("imageFallback"))}
                 width={item.width ?? undefined}
                 height={item.height ?? undefined}
-                loading="lazy"
+                loading={eager && index === 0 ? "eager" : "lazy"}
+                fetchPriority={eager && index === 0 ? "high" : undefined}
                 decoding="async"
                 style={ratio}
                 className="max-h-[420px] w-full object-contain"

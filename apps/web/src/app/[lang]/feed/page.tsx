@@ -63,8 +63,8 @@ async function FeedContent({ searchParams }: { searchParams: PageProps<"/[lang]/
 
       {page.posts.length > 0 ? (
         <div className="grid gap-4 md:grid-cols-2">
-          {page.posts.map((post) => (
-            <PostCard key={post.id} post={post} now={now} viewer={viewer} />
+          {page.posts.map((post, index) => (
+            <PostCard key={post.id} post={post} now={now} viewer={viewer} eagerMedia={index === 0} />
           ))}
         </div>
       ) : (
@@ -98,7 +98,7 @@ async function FeedContent({ searchParams }: { searchParams: PageProps<"/[lang]/
 
 function FeedSkeleton() {
   return (
-    <div className="grid gap-4 md:grid-cols-2" aria-hidden="true">
+    <div className="grid min-h-svh content-start gap-4 md:grid-cols-2" aria-hidden="true">
       <Skeleton className="h-52 rounded-3xl" />
       <Skeleton className="h-52 rounded-3xl" />
       <Skeleton className="h-52 rounded-3xl" />

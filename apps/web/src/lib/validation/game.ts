@@ -117,8 +117,8 @@ export const uuidSchema = z.uuid();
 
 export const gameVisibilitySchema = z.object({ gameId: z.uuid(), status: z.enum(["draft", "published"]) });
 
-export const VERSION_LABEL_MAX = 24;
-export const VERSION_CHANGELOG_MAX = 2000;
+import { VERSION_CHANGELOG_MAX, VERSION_LABEL_MAX } from "./game-rules";
+export { VERSION_CHANGELOG_MAX, VERSION_LABEL_MAX } from "./game-rules";
 
 /** Error keys of the version forms (namespace «gameVersions.errors»). */
 export const VERSION_ERROR_KEYS = [

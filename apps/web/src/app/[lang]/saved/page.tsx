@@ -72,7 +72,7 @@ async function SavedContent() {
 
 function SavedSkeleton() {
   return (
-    <div className="grid gap-8" aria-hidden="true">
+    <div className="grid min-h-svh content-start gap-8" aria-hidden="true">
       <Skeleton className="h-64 rounded-3xl" />
       <Skeleton className="h-40 rounded-3xl" />
     </div>

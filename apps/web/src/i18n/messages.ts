@@ -12,33 +12,30 @@ export function getMessagesFor(locale: Locale): Messages {
 }
 
 /**
- * Namespaces que viajan al navegador. Los componentes de cliente solo pueden usar estos; el resto
- * de los textos se resuelve en el servidor y no suma peso al JS. Si un componente de cliente necesita
- * un namespace nuevo, se agrega acá.
+ * Namespaces que viajan al navegador en TODAS las páginas (el resto de los textos se resuelve en el servidor y no suma peso).
+ * Los demás los pide cada página con <ExtraMessages>: así una pantalla pública no carga los textos de los formularios.
+ * Un componente de cliente solo puede usar los de acá o los que su página pidió.
  */
+export const BASE_CLIENT_NAMESPACES = ["common", "nav", "errors", "search", "profile", "reactions", "share", "postForm"] as const satisfies readonly Namespace[];
+
+/** Todos los namespaces que algún componente de cliente puede necesitar (los de la base más los que piden algunas páginas). */
 export const CLIENT_NAMESPACES = [
-  "common",
-  "nav",
+  ...BASE_CLIENT_NAMESPACES,
   "auth",
   "onboarding",
-  "profile",
   "settings",
   "engines",
   "genres",
-  "search",
-  "uploadErrors",
   "gameForm",
   "gamePlayer",
   "gameVersions",
-  "reactions",
-  "postForm",
   "comments",
-  "share",
-  "errors",
 ] as const satisfies readonly Namespace[];
 
-export function pickClientMessages(messages: Messages): Partial<Messages> {
+export type ClientNamespace = (typeof CLIENT_NAMESPACES)[number];
+
+export function pickClientMessages(messages: Messages, namespaces: readonly ClientNamespace[] = BASE_CLIENT_NAMESPACES): Partial<Messages> {
   const picked: Record<string, unknown> = {};
-  for (const namespace of CLIENT_NAMESPACES) picked[namespace] = messages[namespace];
+  for (const namespace of namespaces) picked[namespace] = messages[namespace];
   return picked as Partial<Messages>;
 }

@@ -27,6 +27,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { excerpt } from "@/lib/seo/site";
 import { gameData } from "@/lib/seo/structured-data";
+import { ExtraMessages } from "@/components/i18n/extra-messages";
 
 const NO_REACTIONS: MyReactions = { liked: new Set(), saved: new Set() };
 
@@ -43,9 +44,11 @@ export async function generateMetadata({ params }: GamePageProps) {
 export default function GamePage({ params }: GamePageProps) {
   return (
     <div className="mx-auto max-w-[960px] px-5 pt-[clamp(24px,5vw,48px)]">
-      <Suspense fallback={<GamePageSkeleton />}>
-        <GameContent params={params} />
-      </Suspense>
+      <ExtraMessages namespaces={["gamePlayer", "comments"]}>
+        <Suspense fallback={<GamePageSkeleton />}>
+          <GameContent params={params} />
+        </Suspense>
+      </ExtraMessages>
     </div>
   );
 }
@@ -242,7 +245,7 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
 
 function GamePageSkeleton() {
   return (
-    <div className="grid gap-8" aria-hidden="true">
+    <div className="grid min-h-svh content-start gap-8" aria-hidden="true">
       <Skeleton className="mx-auto aspect-video w-full rounded-[28px]" />
       <Skeleton className="h-12 w-2/3" />
       <Skeleton className="h-40" />

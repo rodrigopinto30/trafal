@@ -104,7 +104,10 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
       <ProfileTabs
         gamesPanel={
           games.length > 0 ? (
-            <GameShelf games={games} columns={3} />
+            <>
+              <h2 className="sr-only">{t("tabs.games")}</h2>
+              <GameShelf games={games} columns={3} />
+            </>
           ) : (
             <EmptyState text={isOwn ? t("empty.gamesOwn") : t("empty.gamesOther")} cta={isOwn ? { href: "/games/new", label: t("empty.cta") } : undefined} />
           )
@@ -172,7 +175,7 @@ function EmptyState({ text, cta }: { text: string; cta?: { href: string; label: 
 
 function ProfileSkeleton() {
   return (
-    <div className="grid gap-8" aria-hidden="true">
+    <div className="grid min-h-svh content-start gap-8" aria-hidden="true">
       <Skeleton className="h-[300px] rounded-[28px] sm:h-[260px]" />
       <Skeleton className="h-12 w-72 rounded-full" />
       <Skeleton className="h-40" />

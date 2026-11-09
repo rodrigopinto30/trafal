@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { ENGINE_IDS, GENRE_IDS } from "@/lib/profile/catalog";
 import { parseSearchQuery } from "./search";
 
@@ -18,7 +17,10 @@ export type CreatorsQuery = {
 
 type RawCreators = { q?: string; engine?: string; genre?: string; sort?: string; page?: string };
 
-const page = z.coerce.number().int().min(1).max(CREATORS_MAX_PAGE).catch(1);
+function parsePage(value: string | undefined): number {
+  const page = value !== undefined && /^[0-9]{1,6}$/.test(value) ? Number(value) : 1;
+  return page >= 1 && page <= CREATORS_MAX_PAGE ? page : 1;
+}
 
 /** The order a person gets without choosing one: the newest members first, because Trafal is for people who are just starting out. */
 export const DEFAULT_CREATORS_SORT: CreatorsSort = "newest";
@@ -30,7 +32,7 @@ export function parseCreatorsQuery(raw: RawCreators): CreatorsQuery {
     engine: ENGINE_IDS.find((id) => id === raw.engine) ?? null,
     genre: GENRE_IDS.find((id) => id === raw.genre) ?? null,
     sort: CREATORS_SORTS.find((candidate) => candidate === raw.sort) ?? DEFAULT_CREATORS_SORT,
-    page: page.parse(raw.page),
+    page: parsePage(raw.page),
   };
 }
 

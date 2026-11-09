@@ -18,7 +18,7 @@ import { localizePath } from "@/i18n/path";
 import { formatBytes } from "@/lib/format";
 import { submitPost } from "@/lib/games/post-upload";
 import { POST_MEDIA_KINDS, POST_MEDIA_MAX_ALT, POST_MEDIA_MAX_FILES, POST_MEDIA_MIMES } from "@/lib/media/post-media";
-import { POST_BODY_MAX, POST_ERROR_KEYS, POST_HIGHLIGHT_MAX, POST_KINDS, type PostErrorKey, type PostKindValue } from "@/lib/validation/post";
+import { POST_BODY_MAX, POST_ERROR_KEYS, POST_HIGHLIGHT_MAX, POST_KINDS, type PostErrorKey, type PostKindValue } from "@/lib/validation/post-rules";
 
 type GameOption = { id: string; title: string };
 

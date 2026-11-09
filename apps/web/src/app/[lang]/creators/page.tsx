@@ -112,7 +112,7 @@ async function Results({ searchParams }: { searchParams: RawParams }) {
 
 function ResultsSkeleton() {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
+    <div className="grid min-h-svh content-start gap-4 md:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
       {Array.from({ length: 3 }, (_, index) => (
         <Skeleton key={index} className="h-56 rounded-3xl" />
       ))}

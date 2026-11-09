@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useTranslations } from "@/i18n/client";
 import { Link } from "@/i18n/link";
 import { addCommentAction } from "@/lib/games/comment-actions";
-import { COMMENT_BODY_MAX, COMMENT_ERROR_KEYS, COMMENT_LABELS, type CommentErrorKey, type CommentTarget } from "@/lib/validation/comment";
+import { COMMENT_BODY_MAX, COMMENT_ERROR_KEYS, COMMENT_LABELS, type CommentErrorKey, type CommentTarget } from "@/lib/validation/comment-rules";
 
 type Props = {
   target: CommentTarget;

@@ -1,7 +1,9 @@
+import { ExtraMessages } from "@/components/i18n/extra-messages";
+import type { ClientNamespace } from "@/i18n/messages";
 import type { ReactNode } from "react";
 
-/** Marco común de las pantallas de acceso: tarjeta centrada con borde neón. */
-export function AuthShell({ title, subtitle, children }: { title: string; subtitle?: string; children: ReactNode }) {
+/** Marco común de las pantallas de acceso: tarjeta centrada con borde neón. Pide al navegador los textos de sus formularios (`namespaces`). */
+export function AuthShell({ title, subtitle, children, namespaces = ["auth"] }: { title: string; subtitle?: string; children: ReactNode; namespaces?: readonly ClientNamespace[] }) {
   return (
     <section className="mx-auto w-full max-w-[480px] px-5 pt-[clamp(28px,6vw,64px)]">
       <div className="rounded-[28px] bg-nav-border p-px shadow-[0_0_30px_rgb(139_92_255/0.3),0_0_70px_rgb(46_230_255/0.1)]">
@@ -10,7 +12,7 @@ export function AuthShell({ title, subtitle, children }: { title: string; subtit
             <h1 className="font-display text-[clamp(28px,5vw,34px)] leading-tight font-bold text-glow-violet">{title}</h1>
             {subtitle ? <p className="mt-2 text-text-2">{subtitle}</p> : null}
           </header>
-          {children}
+          <ExtraMessages namespaces={namespaces}>{children}</ExtraMessages>
         </div>
       </div>
     </section>

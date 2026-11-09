@@ -12,7 +12,7 @@ import { Link } from "@/i18n/link";
 import { MIN_AGE } from "@/lib/auth/terms";
 import { initialFormState } from "@/lib/forms";
 import { onboardingAction } from "@/lib/profile/actions";
-import { createClient } from "@/lib/supabase/client";
+import { loadBrowserClient } from "@/lib/supabase/load-client";
 import { USERNAME_MAX, checkUsernameFormat, normalizeUsername, suggestUsernames, usernameProblem } from "@/lib/username";
 import { cn } from "@/lib/utils";
 
@@ -43,7 +43,7 @@ export function OnboardingForm({ next, defaultDisplayName, askConsent }: Props) 
     if (!normalized || checkUsernameFormat(normalized) !== "ok") return;
     let cancelled = false;
     const timer = setTimeout(async () => {
-      const supabase = createClient();
+      const supabase = await loadBrowserClient();
       const { data, error } = await supabase.rpc("username_available", { p_username: normalized });
       if (cancelled || error) return;
       if (data === true) {

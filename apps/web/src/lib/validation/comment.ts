@@ -1,28 +1,9 @@
 import { z } from "zod";
 import { charLength, sanitizeMultiline } from "./text";
 
-export const COMMENT_BODY_MAX = 1000;
-export const COMMENT_LABELS = ["liked", "suggestion"] as const;
-export const COMMENT_TARGETS = ["game", "post"] as const;
-export type CommentLabelValue = (typeof COMMENT_LABELS)[number];
-export type CommentTarget = (typeof COMMENT_TARGETS)[number];
-
-/** Error keys of the comment forms (namespace «comments.errors»). */
-export const COMMENT_ERROR_KEYS = [
-  "bodyRequired",
-  "bodyTooLong",
-  "invalidLabel",
-  "replyNotAllowed",
-  "parentNotFound",
-  "alreadyAnswered",
-  "notOwner",
-  "helpfulNotAllowed",
-  "notFound",
-  "accountRestricted",
-  "unauthenticated",
-  "generic",
-] as const;
-export type CommentErrorKey = (typeof COMMENT_ERROR_KEYS)[number];
+import { COMMENT_BODY_MAX, COMMENT_LABELS, COMMENT_TARGETS } from "./comment-rules";
+export { COMMENT_BODY_MAX, COMMENT_LABELS, COMMENT_TARGETS, COMMENT_ERROR_KEYS } from "./comment-rules";
+export type { CommentLabelValue, CommentTarget, CommentErrorKey } from "./comment-rules";
 
 const body = z
   .string("bodyRequired")

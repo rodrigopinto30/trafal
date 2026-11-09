@@ -1,14 +1,9 @@
 import { z } from "zod";
 import { charLength, sanitizeMultiline } from "./text";
 
-export const REPORT_REASONS = ["broken", "inappropriate", "spam", "abuse", "copyright", "other"] as const;
-export type ReportReason = (typeof REPORT_REASONS)[number];
-
-export const REPORT_DETAIL_MAX = 1000;
-
-/** Error keys of the report form (namespace «gamePlayer.report.errors»). */
-export const REPORT_ERROR_KEYS = ["invalidReason", "detailTooLong", "alreadyReported", "unauthenticated", "accountRestricted", "generic"] as const;
-export type ReportErrorKey = (typeof REPORT_ERROR_KEYS)[number];
+import { REPORT_REASONS, REPORT_DETAIL_MAX } from "./report-rules";
+export { REPORT_REASONS, REPORT_DETAIL_MAX, REPORT_ERROR_KEYS } from "./report-rules";
+export type { ReportReason, ReportErrorKey } from "./report-rules";
 
 export const reportGameSchema = z.object({
   gameId: z.uuid("generic"),

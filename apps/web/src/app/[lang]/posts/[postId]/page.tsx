@@ -14,6 +14,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { excerpt } from "@/lib/seo/site";
 import { postData } from "@/lib/seo/structured-data";
+import { ExtraMessages } from "@/components/i18n/extra-messages";
 
 export async function generateMetadata({ params }: PageProps<"/[lang]/posts/[postId]">) {
   const id = postIdSchema.safeParse((await params).postId);
@@ -33,9 +34,11 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/posts/[pos
 export default function PostPage({ params }: PageProps<"/[lang]/posts/[postId]">) {
   return (
     <div className="mx-auto max-w-[760px] px-5 pt-[clamp(24px,5vw,48px)]">
-      <Suspense fallback={<Skeleton className="h-80 rounded-3xl" />}>
-        <PostContent params={params} />
-      </Suspense>
+      <ExtraMessages namespaces={["comments"]}>
+        <Suspense fallback={<Skeleton className="h-80 min-h-svh rounded-3xl" />}>
+          <PostContent params={params} />
+        </Suspense>
+      </ExtraMessages>
     </div>
   );
 }
@@ -57,7 +60,7 @@ async function PostContent({ params }: { params: PageProps<"/[lang]/posts/[postI
   return (
     <div className="grid gap-8">
       <JsonLd data={postData(post, locale)} />
-      <PostCard post={post} now={now} viewer={viewer} />
+      <PostCard post={post} now={now} viewer={viewer} eagerMedia />
       <section aria-labelledby="comments" className="scroll-mt-28">
         <h2 id="comments" className="font-display text-2xl font-bold">
           {t("title")}

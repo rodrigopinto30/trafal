@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useLocale, useTranslations } from "@/i18n/client";
 import { Link } from "@/i18n/link";
 import { reportGameAction } from "@/lib/games/report-actions";
-import { REPORT_DETAIL_MAX, REPORT_REASONS } from "@/lib/validation/report";
+import { REPORT_DETAIL_MAX, REPORT_REASONS } from "@/lib/validation/report-rules";
 
 type Props = { gameId: string; publicId: string; signedIn: boolean };
 

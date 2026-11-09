@@ -13,7 +13,7 @@ import { formatBytes } from "@/lib/format";
 import { MAX_ZIP_BYTES, looksLikeZip } from "@/lib/games/upload-rules";
 import { useZipUpload } from "@/lib/games/use-zip-upload";
 import { createVersionAction } from "@/lib/games/version-actions";
-import { VERSION_CHANGELOG_MAX, VERSION_LABEL_MAX } from "@/lib/validation/game";
+import { VERSION_CHANGELOG_MAX, VERSION_LABEL_MAX } from "@/lib/validation/game-rules";
 
 const ZIP_TYPES = ".zip,application/zip,application/x-zip-compressed";
 

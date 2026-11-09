@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   reactStrictMode: true,
   poweredByHeader: false,
+  htmlLimitedBots: /.*/,
   // Año del copyright del footer, fijado al compilar (leer la fecha en cada render no es compatible con el caparazón estático).
   env: { NEXT_PUBLIC_BUILD_YEAR: String(new Date().getFullYear()) },
   // Imagen de producción mínima (docker/web.Dockerfile, target "prod"). En un monorepo hay que

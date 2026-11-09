@@ -20,6 +20,7 @@ type PostCardProps = {
   now: Date;
   showGame?: boolean;
   viewer?: PostViewer;
+  eagerMedia?: boolean;
 };
 
 const KIND_VARIANTS: Record<PostKind, NonNullable<VariantProps<typeof badgeVariants>["variant"]>> = {
@@ -29,7 +30,7 @@ const KIND_VARIANTS: Record<PostKind, NonNullable<VariantProps<typeof badgeVaria
   hito: "violet",
 };
 
-export async function PostCard({ post, now, showGame = true, viewer }: PostCardProps) {
+export async function PostCard({ post, now, showGame = true, viewer, eagerMedia = false }: PostCardProps) {
   const [t, tPosts, locale] = await Promise.all([getTranslations("games"), getTranslations("posts"), getLocale()]);
 
   return (
@@ -58,7 +59,7 @@ export async function PostCard({ post, now, showGame = true, viewer }: PostCardP
 
       <p className="whitespace-pre-line text-text-2">{post.body}</p>
 
-      <PostMedia media={post.media} />
+      <PostMedia media={post.media} eager={eagerMedia} />
 
       <footer className="mt-auto flex flex-wrap items-center justify-between gap-x-4 text-sm text-text-3">
         {showGame && post.game ? (

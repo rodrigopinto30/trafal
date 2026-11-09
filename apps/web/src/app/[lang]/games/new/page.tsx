@@ -3,6 +3,7 @@ import { NewGameForm } from "@/components/games/new-game-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getTranslations } from "@/i18n/server";
 import { requireProfile } from "@/lib/auth/dal";
+import { ExtraMessages } from "@/components/i18n/extra-messages";
 
 export async function generateMetadata() {
   const t = await getTranslations("gameForm");
@@ -26,5 +27,9 @@ export default async function NewGamePage() {
 
 async function NewGameContent() {
   await requireProfile("/games/new");
-  return <NewGameForm />;
+  return (
+    <ExtraMessages namespaces={["gameForm", "genres", "engines"]}>
+      <NewGameForm />
+    </ExtraMessages>
+  );
 }
