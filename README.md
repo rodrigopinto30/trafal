@@ -46,6 +46,14 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Editar y borrar lo propio**: el texto y la etiqueta se pueden cambiar mientras el comentario esté publicado (si moderación lo oculta, deja de poder tocarlo), y se puede borrar con sus respuestas. Nadie edita ni borra comentarios ajenos; la base tampoco se lo permite.
 - Los contadores de comentarios de juegos y avances son los reales (los mantiene la base).
 
+### Buscadores y redes sociales
+
+**Hoy**
+- **Cada página dice quién es**: título, descripción, **dirección canónica** (siempre la limpia: una vista filtrada de Explorar, Comunidad o Creadores apunta a la base y pide no figurar), **su versión en el otro idioma** (`hreflang`, con el español como predeterminado) y las tarjetas de **Open Graph** y de **Twitter**. Las pantallas de acceso, las listas de seguidores y las páginas que no existen piden no figurar.
+- **Imagen para compartir** en la portada, en cada juego, en cada perfil y en cada avance (1200 × 630, con los colores de Trafal, el nombre, quién lo hizo y, en los juegos, «Jugá gratis en el navegador»), en el idioma de la página. Lo que escribe una persona solo se dibuja como texto, recortado.
+- **Datos estructurados** para los buscadores: el sitio con su buscador, cada juego como videojuego (gratis, en el navegador, con quién lo hizo y cuántas partidas lleva), cada perfil como persona y cada avance como publicación. Nada de lo que escribe una persona puede cerrar la etiqueta que los contiene.
+- **`robots.txt` y `sitemap.xml`**: el sitemap lista las páginas fijas, todos los juegos publicados, los creadores y los avances, cada uno en los dos idiomas y con sus traducciones. `robots.txt` deja afuera las zonas privadas (cuenta, formularios, administración del juego) y las rutas técnicas. **Un sitio que no es público (localhost, `.local`, `.test`) se cierra por completo**: no se indexa una copia de prueba por error; en producción hay que poner el dominio real en `SITE_URL`.
+
 ### Explorar
 
 **Hoy**

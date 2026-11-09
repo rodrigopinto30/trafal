@@ -4,16 +4,18 @@ import { PostCard } from "@/components/games/post-card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
-import { getTranslations } from "@/i18n/server";
+import { getLocale, getTranslations } from "@/i18n/server";
 import { getAuthUser } from "@/lib/auth/dal";
 import { listFeed } from "@/lib/games/queries";
 import { listMyReactions } from "@/lib/games/reaction-queries";
 import { firstParam } from "@/lib/validation/common";
 import { FEED_PAGE_SIZE, feedHref, parseFeedQuery } from "@/lib/validation/feed";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { NoIndex } from "@/components/seo/no-index";
 
 export async function generateMetadata() {
-  const t = await getTranslations("feed");
-  return { title: t("title"), description: t("subtitle") };
+  const [t, locale] = await Promise.all([getTranslations("feed"), getLocale()]);
+  return pageMetadata({ title: t("title"), description: t("subtitle"), path: "/feed", locale });
 }
 
 export default async function FeedPage({ searchParams }: PageProps<"/[lang]/feed">) {
@@ -49,6 +51,7 @@ async function FeedContent({ searchParams }: { searchParams: PageProps<"/[lang]/
 
   return (
     <>
+      {here !== "/feed" ? <NoIndex /> : null}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <FeedFilters query={effective} signedIn={Boolean(user)} />
         {user ? (

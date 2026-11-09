@@ -9,7 +9,7 @@ import { getAuthUser } from "@/lib/auth/dal";
 
 export async function generateMetadata() {
   const t = await getTranslations("auth");
-  return { title: t("reset.title") };
+  return { title: t("reset.title"), robots: { index: false, follow: true } };
 }
 
 export default async function ResetPasswordPage() {

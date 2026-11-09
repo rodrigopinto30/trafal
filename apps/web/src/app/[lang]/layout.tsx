@@ -45,7 +45,6 @@ export async function generateMetadata(): Promise<Metadata> {
       description: t("description"),
       locale: locale === "es" ? "es_AR" : "en_US",
     },
-    alternates: { languages: { es: "/", en: "/en" } },
   };
 }
 

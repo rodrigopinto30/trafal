@@ -13,7 +13,7 @@ const PAGE_SIZE = 60;
 export async function generateMetadata({ params }: PageProps<"/[lang]/u/[username]/followers">) {
   const { username } = await params;
   const t = await getTranslations("profile");
-  return { title: t("followersTitle", { username: parseUsernameParam(username) ?? "" }) };
+  return { title: t("followersTitle", { username: parseUsernameParam(username) ?? "" }), robots: { index: false, follow: true } };
 }
 
 export default function Page({ params }: PageProps<"/[lang]/u/[username]/followers">) {

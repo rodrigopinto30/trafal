@@ -7,10 +7,18 @@ import { GameSearch } from "@/components/search/game-search";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/link";
-import { getTranslations } from "@/i18n/server";
+import { getLocale, getTranslations } from "@/i18n/server";
+import { JsonLd } from "@/components/seo/json-ld";
+import { pageMetadata } from "@/lib/seo/metadata";
+import { webSiteData } from "@/lib/seo/structured-data";
+
+export async function generateMetadata() {
+  const [t, locale] = await Promise.all([getTranslations("meta"), getLocale()]);
+  return pageMetadata({ title: t("defaultTitle"), description: t("description"), path: "/", locale, titleIsComplete: true });
+}
 
 export default async function HomePage() {
-  const t = await getTranslations("home");
+  const [t, tMeta, locale] = await Promise.all([getTranslations("home"), getTranslations("meta"), getLocale()]);
 
   const steps = [
     { n: "01", key: "upload", bg: "bg-brand-diag" },
@@ -20,6 +28,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={webSiteData(locale, tMeta("description"))} />
       <section className="mx-auto max-w-[980px] px-5 pt-[clamp(40px,6vw,72px)] text-center">
         <span className="inline-flex items-center gap-2.5 rounded-full border border-violet/35 bg-violet/14 py-1.5 pr-3.5 pl-2 text-sm text-[#dcd3ff]">
           <Badge variant="violet">{t("badge")}</Badge>

@@ -55,6 +55,6 @@ export const config = {
   // Todo menos archivos estáticos, /auth (rutas de confirmación, sin idioma) y /api.
   // Ojo: NO se excluyen rutas por extensión, porque hay @usuarios con punto (/u/agus.codes).
   matcher: [
-    "/((?!_next/|cursors/|auth/|api/|icon\\.svg|apple-icon|robots\\.txt|sitemap\\.xml|manifest\\.webmanifest|opengraph-image|twitter-image).*)",
+    "/((?!_next/|cursors/|auth/|api/|icon\\.svg|apple-icon|robots\\.txt|sitemap\\.xml|manifest\\.webmanifest).*)",
   ],
 };
