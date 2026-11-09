@@ -902,5 +902,9 @@
     "label": "Share",
     "copied": "Link copied",
     "failed": "We could not copy the link. Copy it from the address bar."
+  },
+  "surprise": {
+    "label": "Surprise me",
+    "hint": "We take you to a random game"
   }
 }

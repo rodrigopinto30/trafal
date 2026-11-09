@@ -9,6 +9,7 @@ import { GamePlayerShell } from "@/components/games/game-player-shell";
 import { JoinCard } from "@/components/games/join-card";
 import { PostCard } from "@/components/games/post-card";
 import { ShareButton } from "@/components/games/share-button";
+import { SurpriseButton } from "@/components/games/surprise-button";
 import { ReactionButtons } from "@/components/games/reaction-buttons";
 import { VersionList } from "@/components/games/version-list";
 import { Badge } from "@/components/ui/badge";
@@ -129,6 +130,7 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
             locale={locale}
           />
           <ShareButton path={`/games/${game.public_id}`} title={game.title} />
+          <SurpriseButton exclude={game.public_id} variant="ghost" />
         </div>
       </header>
 

@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { GameShelf } from "@/components/games/game-shelf";
+import { SurpriseButton } from "@/components/games/surprise-button";
 import { ExploreFilters } from "@/components/search/explore-filters";
 import { GameSearch } from "@/components/search/game-search";
 import { Button } from "@/components/ui/button";
@@ -34,7 +35,10 @@ export default async function ExplorePage({ searchParams }: { searchParams: RawP
   return (
     <div className="mx-auto grid max-w-[1200px] grid-cols-[minmax(0,1fr)] gap-8 px-5 pt-[clamp(32px,5vw,56px)]">
       <header className="grid gap-5">
-        <h1 className="font-display text-[clamp(30px,5vw,44px)] leading-[1.1] font-bold text-glow-violet">{t("title")}</h1>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h1 className="font-display text-[clamp(30px,5vw,44px)] leading-[1.1] font-bold text-glow-violet">{t("title")}</h1>
+          <SurpriseButton />
+        </div>
         <Suspense fallback={<Skeleton className="h-14 w-full max-w-[640px] rounded-full" />}>
           <SearchBar searchParams={searchParams} />
         </Suspense>

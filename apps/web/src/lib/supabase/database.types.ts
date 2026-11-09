@@ -629,6 +629,9 @@ isOneToOne: false
 "play_heartbeat":
 { Args: { "p_public_id": string,"p_session_id": string }; Returns: undefined
                            },
+"random_game":
+{ Args: { "p_exclude"?: string }; Returns: string
+                           },
 "search_games":
 { Args: { "p_limit"?: number,"p_query": string }; Returns: {
               "id": string,"rank": number
