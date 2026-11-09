@@ -14,6 +14,8 @@ const PAGES: readonly Target[] = [
   { name: "perfil", path: "/u/valen_makes" },
   { name: "juego", path: "/games/orbita" },
   { name: "comunidad", path: "/feed" },
+  { name: "creadores", path: "/creators" },
+  { name: "creadores-filtrado", path: "/creators?q=pixels&engine=pico8&sort=followers" },
   { name: "comunidad-con-cuenta", path: "/feed?scope=following", login: true },
   { name: "seguidores", path: "/u/mateo_g/followers" },
   { name: "explorar", path: "/explore" },

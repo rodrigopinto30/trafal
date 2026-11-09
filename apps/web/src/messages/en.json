@@ -26,6 +26,7 @@
     "label": "Main",
     "mobileLabel": "Mobile menu",
     "home": "Go to the Trafal home page",
+    "explore": "Explore",
     "community": "Community",
     "creators": "Creators",
     "upload": "Upload game",
@@ -681,23 +682,6 @@
     "idle": "Idle",
     "other": "Other"
   },
-  "comingSoon": {
-    "badge": "UNDER CONSTRUCTION",
-    "text": "We're finishing this part of Trafal. Come back soon.",
-    "backHome": "Back to home",
-    "explore": {
-      "title": "Explore games",
-      "description": "Here you'll search games, filter by genre and engine, sort by trending and hit “Surprise me”."
-    },
-    "creators": {
-      "title": "Creators",
-      "description": "Discover people just getting started and follow them so you don't miss anything they publish."
-    },
-    "upload": {
-      "title": "Upload a game",
-      "description": "Upload the .zip of your web build and in minutes it plays on desktop and mobile."
-    }
-  },
   "legal": {
     "draftTitle": "Document being drafted",
     "draftText": "We're finishing this document. It will be published before launch.",
@@ -906,5 +890,37 @@
   "surprise": {
     "label": "Surprise me",
     "hint": "We take you to a random game"
+  },
+  "creators": {
+    "title": "Creators",
+    "subtitle": "Meet the people making games for the browser, follow them and don't miss what they publish.",
+    "searchLabel": "Search creators",
+    "searchPlaceholder": "Search by name or @username",
+    "filtersLabel": "Search and filter creators",
+    "engine": "Engine they use",
+    "engineAll": "All engines",
+    "genre": "Genre they like",
+    "genreAll": "All genres",
+    "sort": "Sort by",
+    "sorts": {
+      "newest": "Newest",
+      "followers": "Most followed",
+      "games": "Most games"
+    },
+    "apply": "Apply",
+    "clear": "Clear filters",
+    "count": "{count, plural, one {# creator} other {# creators}}",
+    "games": "{count, plural, one {# game} other {# games}}",
+    "followers": "{count, plural, one {# follower} other {# followers}}",
+    "viewProfile": "View {name}'s profile",
+    "emptyTitle": "We found no creators for that search",
+    "emptyText": "Try another name, fewer filters or another order.",
+    "showAll": "See all creators",
+    "pagination": "Creator pages",
+    "pageOf": "Page {page} of {pages}",
+    "prev": "Previous",
+    "next": "Next",
+    "pageEmpty": "That page does not exist: go back to the first one.",
+    "listLabel": "Creators"
   }
 }

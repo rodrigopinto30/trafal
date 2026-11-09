@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ExploreForm } from "@/components/search/explore-form";
+import { FilterForm } from "@/components/search/filter-form";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
@@ -19,7 +19,7 @@ export async function ExploreFilters({ query }: { query: ExploreQuery }) {
   const sorts = EXPLORE_SORTS.filter((sort) => sort !== "relevance" || query.q);
 
   return (
-    <ExploreForm label={t("filtersLabel")} action={localizePath(locale, "/explore")}>
+    <FilterForm kind="explore" label={t("filtersLabel")} action={localizePath(locale, "/explore")}>
       {query.q ? <input type="hidden" name="q" value={query.q} /> : null}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Field id="explore-genre" label={t("genre")}>
@@ -72,6 +72,6 @@ export async function ExploreFilters({ query }: { query: ExploreQuery }) {
           </Button>
         ) : null}
       </div>
-    </ExploreForm>
+    </FilterForm>
   );
 }

@@ -1,6 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import type { CreatorsQuery } from "@/lib/validation/creators";
 import type { ExploreQuery } from "@/lib/validation/explore";
 import type {
   CommentSummary,
@@ -228,6 +229,55 @@ export async function exploreGames(query: ExploreQuery, limit: number): Promise<
   });
   const rows = data ?? [];
   return { games: await listGamesByIds(rows.map((row) => row.id)), total: Number(rows[0]?.total ?? 0) };
+}
+
+export type CreatorCard = {
+  id: string;
+  username: string;
+  display_name: string;
+  avatar_path: string | null;
+  bio: string;
+  city: string | null;
+  country: string | null;
+  engines: string[];
+  favorite_genres: string[];
+  followers_count: number;
+  games_count: number;
+};
+
+export type CreatorsPage = { creators: CreatorCard[]; total: number };
+
+/** One page of the creators directory: the database filters, orders and counts; the profiles come back by id in that same order. */
+export async function exploreCreators(query: CreatorsQuery, limit: number): Promise<CreatorsPage> {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("explore_creators", {
+    p_query: query.q ?? undefined,
+    p_engine: query.engine ?? undefined,
+    p_genre: query.genre ?? undefined,
+    p_sort: query.sort,
+    p_limit: limit,
+    p_offset: (query.page - 1) * limit,
+  });
+  const rows = data ?? [];
+  if (rows.length === 0) return { creators: [], total: 0 };
+
+  const ids = rows.map((row) => row.id);
+  const [profiles, games] = await Promise.all([
+    supabase.from("profiles").select("id, username, display_name, avatar_path, bio, city, country, engines, favorite_genres, followers_count").in("id", ids),
+    supabase.from("games").select("owner_id").eq("status", "published").in("owner_id", ids),
+  ]);
+  const gamesBy = new Map<string, number>();
+  for (const game of games.data ?? []) gamesBy.set(game.owner_id, (gamesBy.get(game.owner_id) ?? 0) + 1);
+  const byId = new Map((profiles.data ?? []).map((profile) => [profile.id, { ...profile, games_count: gamesBy.get(profile.id) ?? 0 }]));
+  return { creators: ids.flatMap((id) => byId.get(id) ?? []), total: Number(rows[0]?.total ?? 0) };
+}
+
+/** Which of these people the signed-in person follows (the database only shows them their own follows). */
+export async function listFollowedAmong(followerId: string, ids: string[]): Promise<ReadonlySet<string>> {
+  if (ids.length === 0) return new Set();
+  const supabase = await createClient();
+  const { data } = await supabase.from("follows").select("followee_id").eq("follower_id", followerId).in("followee_id", ids);
+  return new Set((data ?? []).map((row) => row.followee_id));
 }
 
 /** The questions the creator of a game asks the people who play it, in the order they were written. */
