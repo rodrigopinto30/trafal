@@ -265,6 +265,19 @@ Migración nueva: `20261108000200_random_game.sql`.
 | **Función `SECURITY INVOKER`, con `published` filtrado a mano** | No necesita permisos de más: la RLS de `games` ya manda, y esa política también deja ver los borradores propios. | Ni siquiera el creador recibe su borrador. Si el juego a excluir es el único publicado, vuelve ese mismo (no hay otra cosa para mostrar); sin juegos publicados, no devuelve nada y se va a Explorar. |
 | **Una ruta que redirige** (`GET /api/surprise?lang=…&exclude=…`) y el botón es un enlace común (`<a>`, no el `Link` del router) | Sin JavaScript también funciona, y el router no debe precargarlo: cada visita tiene que elegir de nuevo. | La redirección es 307 y `Cache-Control: no-store`. El idioma y el juego a excluir pasan por Zod (`parseSurpriseParams`); lo que no cuadra se ignora. Solo responde a GET. |
 
+## Creadores (2026-11-09)
+
+Migración nueva: `20261108000300_explore_creators.sql`. No hace falta tabla nueva: se usan `profiles` (públicos), `games` y `follows`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Solo aparece quien tiene al menos un juego publicado** | «Creadores» es un directorio de quienes hacen juegos; alguien que solo juega no es creador todavía, y una cuenta sin nada que mostrar no ayuda a descubrir. | Si moderación oculta el único juego de alguien, deja de figurar (`18-explore-creators.test.sql`). Quien nunca publicó se encuentra por su perfil, no por el directorio. |
+| **Una función hace todo** (`explore_creators`, `SECURITY INVOKER`) y devuelve ids con el total | Igual que en Explorar: filtrar, ordenar y contar en la base, y la app carga los perfiles por id respetando el orden. | Corre con los permisos de quien llama: los perfiles son públicos y los juegos se filtran por `published`. Los topes y los valores por defecto los pone la función. |
+| **Orden por defecto: los más nuevos** | Trafal es para quienes recién empiezan; ordenar por seguidores le daría siempre la vitrina a los más conocidos. | «Más seguidos» y «Con más juegos» existen y desempatan entre sí; un orden desconocido es el de por defecto. |
+| **El texto busca por comienzo de palabra** en el nombre y en el @usuario (el punto y el guion bajo cuentan como separadores) | «ru» tiene que encontrar «Ruiz» pero no «Bruno»; y «eli pix» tiene que encontrar `eli.pixels`. | De lo que se escribe solo sobreviven letras y números (nunca un comodín ni un operador de búsqueda: `%` no es un comodín). Cada palabra tiene que coincidir. |
+| **Los filtros usan lo que dice el perfil**: motor = los que usa, género = los que le gustan (`favorite_genres`) | Es lo que la persona eligió contar de sí; no se infiere de sus juegos. | Quien no completó esos datos no sale al filtrar por ellos (sí sale sin filtros). |
+| **`FilterForm` único para Explorar y Creadores** | El mismo problema (un formulario GET que manda parámetros vacíos) se resuelve una vez. | Recibe `kind` y arma la dirección corta con el analizador de cada pantalla. |
+
 ## Limitaciones conocidas
 
 - **Perfil inexistente → HTTP 200 con `noindex`** (no 404): el contenido llega por streaming y el status ya se envió. Es inherente a Cache Components; el buscador no lo indexa.

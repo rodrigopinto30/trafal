@@ -55,6 +55,13 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 - **Sorprendeme**: un botón (en la portada, en Explorar y en la página de cada juego) que te lleva a un **juego publicado al azar**, con la misma chance para todos (sin favorecer a los más jugados) y sin repetir el juego en el que estás. Es un enlace común: funciona sin JavaScript y cada vez elige de nuevo.
 
+### Creadores
+
+**Hoy**
+- **Creadores** (`/creators`, abierta a cualquier persona): un directorio de **quienes tienen al menos un juego publicado** (quien solo juega todavía no es creador), con foto, nombre, @usuario, ubicación, bio, motores que usan, cantidad de juegos y de seguidores, y un botón para **seguir** desde la misma tarjeta. Quien no tiene cuenta pasa por el inicio de sesión y vuelve.
+- **Buscar** por nombre o @usuario (sin importar tildes ni mayúsculas; cada palabra tiene que empezar una palabra del nombre o del @usuario), **filtrar** por el motor que usan y por el género que les gusta, y **ordenar** por más nuevos (el orden por defecto: Trafal es para quienes recién empiezan), más seguidos o con más juegos. De a 12 por página.
+- La vista vive en la dirección (`/creators?q=…&engine=…&genre=…&sort=…&page=…`), con los mismos cuidados que Explorar: enlaces cortos, valores raros ignorados y páginas que no existen explicadas.
+
 ### Comunidad y compartir
 
 **Hoy**
@@ -139,7 +146,6 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Tarjetas de juego** con portada, título, descripción, género, motor, creador, partidas y me gusta. Toda la tarjeta lleva a la página del juego. En celular, cada fila se desliza con el dedo.
 
 **Próximamente**
-- **Creadores**: una página para descubrir a quienes están empezando.
 - **Primer juego de la semana** elegido por el equipo.
 
 ### Moderación y confianza

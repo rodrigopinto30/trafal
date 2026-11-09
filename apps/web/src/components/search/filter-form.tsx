@@ -4,16 +4,17 @@ import { useRouter } from "next/navigation";
 import type { FormEvent, ReactNode } from "react";
 import { useLocale } from "@/i18n/client";
 import { localizePath } from "@/i18n/path";
+import { creatorsHref, parseCreatorsQuery } from "@/lib/validation/creators";
 import { exploreHref, parseExploreQuery } from "@/lib/validation/explore";
 
-type Props = { label: string; action: string; children: ReactNode };
+type Props = { kind: "explore" | "creators"; label: string; action: string; children: ReactNode };
 
 /**
- * The form of the explore filters. It is a normal GET form (it has an address and fields), but when it is sent it builds the
+ * The form of the filters of the explore and creators pages. It is a normal GET form (it has an address and fields), but when it is sent it builds the
  * address from the checked values instead of the raw fields, so a link never carries empty or default parameters
  * («/explore?genre=arcade», not «/explore?genre=arcade&engine=&sort=recent») and any change starts again from the first page.
  */
-export function ExploreForm({ label, action, children }: Props) {
+export function FilterForm({ kind, label, action, children }: Props) {
   const router = useRouter();
   const locale = useLocale();
 
@@ -24,8 +25,9 @@ export function ExploreForm({ label, action, children }: Props) {
       const value = data.get(name);
       return typeof value === "string" ? value : undefined;
     };
-    const query = parseExploreQuery({ q: text("q"), genre: text("genre"), engine: text("engine"), mobile: text("mobile"), sort: text("sort") });
-    router.push(localizePath(locale, exploreHref(query)));
+    const raw = { q: text("q"), genre: text("genre"), engine: text("engine"), sort: text("sort") };
+    const href = kind === "creators" ? creatorsHref(parseCreatorsQuery(raw)) : exploreHref(parseExploreQuery({ ...raw, mobile: text("mobile") }));
+    router.push(localizePath(locale, href));
   }
 
   return (

@@ -616,6 +616,11 @@ isOneToOne: false
 "edit_post":
 { Args: { "p_body": string,"p_game_id": string,"p_highlight": string,"p_kind": string,"p_media": Json,"p_post_id": string }; Returns: undefined
                            },
+"explore_creators":
+{ Args: { "p_engine"?: string,"p_genre"?: string,"p_limit"?: number,"p_offset"?: number,"p_query"?: string,"p_sort"?: string }; Returns: {
+              "id": string,"total": number
+            }[]
+                           },
 "explore_games":
 { Args: { "p_engine"?: string,"p_genre"?: string,"p_limit"?: number,"p_mobile_only"?: boolean,"p_offset"?: number,"p_query"?: string,"p_sort"?: string }; Returns: {
               "id": string,"total": number

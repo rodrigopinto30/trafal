@@ -681,23 +681,6 @@
     "idle": "Incremental",
     "other": "Otro"
   },
-  "comingSoon": {
-    "badge": "EN CONSTRUCCIÓN",
-    "text": "Estamos terminando esta parte de Trafal. Volvé pronto.",
-    "backHome": "Volver al inicio",
-    "explore": {
-      "title": "Explorar juegos",
-      "description": "Acá vas a poder buscar juegos, filtrar por género y motor, ordenar por tendencia y tocar «Sorprendeme»."
-    },
-    "creators": {
-      "title": "Creadores",
-      "description": "Descubrí a quienes están empezando y seguilos para no perderte nada de lo que publican."
-    },
-    "upload": {
-      "title": "Subir un juego",
-      "description": "Subí el .zip de tu build web y en minutos se juega en PC y celular."
-    }
-  },
   "legal": {
     "draftTitle": "Documento en redacción",
     "draftText": "Estamos terminando de redactar este documento. Va a estar publicado antes del lanzamiento.",
@@ -906,5 +889,37 @@
   "surprise": {
     "label": "Sorprendeme",
     "hint": "Te llevamos a un juego al azar"
+  },
+  "creators": {
+    "title": "Creadores",
+    "subtitle": "Conocé a quienes están haciendo juegos para el navegador, seguilos y no te pierdas lo que publican.",
+    "searchLabel": "Buscar creadores",
+    "searchPlaceholder": "Buscá por nombre o @usuario",
+    "filtersLabel": "Buscar y filtrar creadores",
+    "engine": "Motor que usan",
+    "engineAll": "Todos los motores",
+    "genre": "Género que les gusta",
+    "genreAll": "Todos los géneros",
+    "sort": "Ordenar por",
+    "sorts": {
+      "newest": "Más nuevos",
+      "followers": "Más seguidos",
+      "games": "Con más juegos"
+    },
+    "apply": "Aplicar",
+    "clear": "Quitar filtros",
+    "count": "{count, plural, one {# creador} other {# creadores}}",
+    "games": "{count, plural, one {# juego} other {# juegos}}",
+    "followers": "{count, plural, one {# seguidor} other {# seguidores}}",
+    "viewProfile": "Ver el perfil de {name}",
+    "emptyTitle": "No encontramos creadores con esa búsqueda",
+    "emptyText": "Probá con otro nombre, con menos filtros o con otro orden.",
+    "showAll": "Ver todos los creadores",
+    "pagination": "Páginas de creadores",
+    "pageOf": "Página {page} de {pages}",
+    "prev": "Anterior",
+    "next": "Siguiente",
+    "pageEmpty": "Esa página no existe: volvé a la primera.",
+    "listLabel": "Creadores"
   }
 }
