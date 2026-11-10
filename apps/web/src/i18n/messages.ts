@@ -16,7 +16,7 @@ export function getMessagesFor(locale: Locale): Messages {
  * Los demás los pide cada página con <ExtraMessages>: así una pantalla pública no carga los textos de los formularios.
  * Un componente de cliente solo puede usar los de acá o los que su página pidió.
  */
-export const BASE_CLIENT_NAMESPACES = ["common", "nav", "errors", "search", "profile", "reactions", "share", "postForm"] as const satisfies readonly Namespace[];
+export const BASE_CLIENT_NAMESPACES = ["common", "nav", "errors", "search", "profile", "reactions", "share", "postForm", "report"] as const satisfies readonly Namespace[];
 
 /** Todos los namespaces que algún componente de cliente puede necesitar (los de la base más los que piden algunas páginas). */
 export const CLIENT_NAMESPACES = [

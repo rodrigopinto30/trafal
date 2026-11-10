@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { GameShelf } from "@/components/games/game-shelf";
 import { PostCard } from "@/components/games/post-card";
 import { FollowButton } from "@/components/profile/follow-button";
+import { ReportDialog } from "@/components/reports/report-dialog";
 import { ProfileHeader, type ProfileRow } from "@/components/profile/profile-header";
 import { ProfileTabs } from "@/components/profile/profile-tabs";
 import { Button } from "@/components/ui/button";
@@ -89,7 +90,10 @@ async function ProfileContent({ params }: { params: PageProps<"/[lang]/u/[userna
       </Button>
     </div>
   ) : (
-    <FollowButton targetId={profile.id} username={profile.username} initialFollowing={isFollowing} signedIn={Boolean(me)} />
+    <div className="flex flex-wrap items-center gap-2">
+      <FollowButton targetId={profile.id} username={profile.username} initialFollowing={isFollowing} signedIn={Boolean(me)} />
+      <ReportDialog targetType="profile" targetId={profile.id} signedIn={Boolean(me)} loginHref={viewer.loginHref} display="icon" />
+    </div>
   );
 
   // Solo a la propia persona, y solo mientras le falte algo: la invitación a terminar el perfil.

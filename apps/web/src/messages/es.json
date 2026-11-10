@@ -313,36 +313,53 @@
     "unavailableTitle": "Este juego todavía no se puede jugar",
     "unavailableText": "No encontramos los archivos del juego. Si es tuyo, revisá su estado desde tu perfil.",
     "isolationTitle": "Este juego necesita funciones que todavía no ofrecemos",
-    "isolationText": "Usa una tecnología (hilos de WebAssembly) que el reproductor todavía no soporta. Estamos trabajando en eso.",
-    "report": {
-      "button": "Reportar",
-      "title": "Reportar este juego",
-      "help": "Contanos qué pasa. El equipo lo va a mirar y, si el problema es que no funciona, también le llega a quien lo creó.",
-      "loginHelp": "Para reportar tenés que iniciar sesión: así evitamos reportes falsos o repetidos.",
-      "login": "Iniciar sesión",
-      "reason": "Motivo",
-      "reasonPlaceholder": "Elegí un motivo",
-      "reasons": {
-        "broken": "No funciona",
-        "inappropriate": "Contenido inapropiado",
-        "spam": "Spam o engaño",
-        "abuse": "Acoso o abuso",
-        "copyright": "Derechos de autor",
-        "other": "Otro"
-      },
-      "detail": "Detalles (opcional)",
-      "detailHint": "Hasta 1000 caracteres.",
-      "submit": "Enviar reporte",
-      "sending": "Enviando…",
-      "sent": "¡Gracias! Recibimos tu reporte y lo vamos a revisar.",
-      "errors": {
-        "invalidReason": "Elegí un motivo de la lista.",
-        "detailTooLong": "Los detalles pueden tener hasta 1000 caracteres.",
-        "alreadyReported": "Ya reportaste este juego y tu reporte sigue abierto.",
-        "unauthenticated": "Iniciá sesión para reportar.",
-        "accountRestricted": "Tu cuenta no puede reportar por ahora.",
-        "generic": "No pudimos enviar el reporte. Probá de nuevo."
-      }
+    "isolationText": "Usa una tecnología (hilos de WebAssembly) que el reproductor todavía no soporta. Estamos trabajando en eso."
+  },
+  "report": {
+    "button": "Reportar",
+    "titles": {
+      "game": "Reportar este juego",
+      "post": "Reportar este avance",
+      "comment": "Reportar este comentario",
+      "profile": "Reportar este perfil"
+    },
+    "buttons": {
+      "game": "Reportar el juego",
+      "post": "Reportar el avance",
+      "comment": "Reportar el comentario",
+      "profile": "Reportar el perfil"
+    },
+    "help": {
+      "game": "Contanos qué pasa. El equipo lo va a mirar y, si el problema es que no funciona, también le llega a quien lo creó.",
+      "post": "Contanos qué pasa con este avance. El equipo lo va a mirar.",
+      "comment": "Contanos qué pasa con este comentario. El equipo lo va a mirar.",
+      "profile": "Contanos qué pasa con este perfil. El equipo lo va a mirar."
+    },
+    "loginHelp": "Para reportar tenés que iniciar sesión: así evitamos reportes falsos o repetidos.",
+    "login": "Iniciar sesión",
+    "reason": "Motivo",
+    "reasonPlaceholder": "Elegí un motivo",
+    "reasons": {
+      "broken": "No funciona",
+      "inappropriate": "Contenido inapropiado",
+      "spam": "Spam o engaño",
+      "abuse": "Acoso o abuso",
+      "copyright": "Derechos de autor",
+      "other": "Otro"
+    },
+    "detail": "Detalles (opcional)",
+    "detailHint": "Hasta 1000 caracteres.",
+    "submit": "Enviar reporte",
+    "sending": "Enviando…",
+    "sent": "¡Gracias! Recibimos tu reporte y lo vamos a revisar.",
+    "errors": {
+      "invalidReason": "Elegí un motivo de la lista.",
+      "detailTooLong": "Los detalles pueden tener hasta 1000 caracteres.",
+      "alreadyReported": "Ya reportaste esto y tu reporte sigue abierto.",
+      "unauthenticated": "Iniciá sesión para reportar.",
+      "accountRestricted": "Tu cuenta no puede reportar por ahora.",
+      "generic": "No pudimos enviar el reporte. Probá de nuevo.",
+      "targetNotFound": "Eso ya no está disponible para reportar."
     }
   },
   "gameForm": {

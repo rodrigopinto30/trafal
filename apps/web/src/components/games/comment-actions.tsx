@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { CommentForm } from "@/components/games/comment-form";
+import { ReportDialog } from "@/components/reports/report-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
@@ -119,7 +120,9 @@ export function CommentActions({ commentId, body, label, authorName, isReply, is
               {t("delete")}
             </Button>
           </>
-        ) : null}
+        ) : (
+          <ReportDialog targetType="comment" targetId={commentId} signedIn={signedIn} loginHref={loginHref} />
+        )}
       </div>
 
       {replying ? (
