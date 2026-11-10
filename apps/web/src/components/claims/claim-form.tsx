@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { CaptchaField, captchaEnabled } from "@/components/security/captcha-field";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field } from "@/components/ui/field";
@@ -18,6 +19,7 @@ export function ClaimForm({ example }: { example: string }) {
   const t = useTranslations("claims");
   const locale = useLocale();
   const [state, formAction, pending] = useActionState(submitCopyrightClaimAction, initialFormState);
+  const [captchaReady, setCaptchaReady] = useState(!captchaEnabled);
   const errors = state.fieldErrors ?? {};
   const values = state.values ?? {};
   const statementsError = errors.statementGoodFaith ?? errors.statementAccuracy;
@@ -86,7 +88,9 @@ export function ClaimForm({ example }: { example: string }) {
         {(control) => <Input {...control} name="signature" autoComplete="off" maxLength={CLAIM_SIGNATURE_MAX} required defaultValue={values.signature ?? ""} />}
       </Field>
 
-      <Button type="submit" size="lg" disabled={pending}>
+      <CaptchaField resetKey={state} onReadyChange={setCaptchaReady} />
+
+      <Button type="submit" size="lg" disabled={pending || !captchaReady}>
         {pending ? t("submitting") : t("submit")}
       </Button>
     </form>

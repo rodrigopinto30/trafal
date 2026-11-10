@@ -21,6 +21,9 @@ services:
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY}
       SUPABASE_INTERNAL_URL: http://supabase_kong_trafal:8000
       NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: ${GOOGLE_AUTH_ENABLED:-false}
+      # Captcha de Cloudflare Turnstile (opcional en local). La clave del sitio es pública; la secreta la ve SOLO el servidor.
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY:-}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
       # Almacenamiento de imágenes (S3 compatible: en producción, Cloudflare R2). Las credenciales las ve SOLO el servidor;
       # el navegador únicamente conoce la URL pública de lectura (NEXT_PUBLIC_MEDIA_URL).
       S3_ENDPOINT: ${S3_ENDPOINT}

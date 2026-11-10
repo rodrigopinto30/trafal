@@ -28,3 +28,9 @@ describe("onboardingErrorCode", () => {
     expect(onboardingErrorCode(null)).toBe("generic");
   });
 });
+
+describe("authErrorKey and the captcha", () => {
+  it("tells a failed captcha apart", () => {
+    expect(authErrorKey({ code: "captcha_failed", status: 400 })).toBe("captchaFailed");
+  });
+});

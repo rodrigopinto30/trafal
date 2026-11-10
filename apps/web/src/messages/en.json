@@ -20,6 +20,11 @@
     "languageName": {
       "es": "Español",
       "en": "English"
+    },
+    "captcha": {
+      "label": "Security check",
+      "loading": "Checking that you are a person…",
+      "error": "We couldn't load the security check. Check your connection, turn off content blockers for this site and reload the page."
     }
   },
   "nav": {
@@ -183,7 +188,8 @@
       "rateLimited": "Too many attempts in a row. Wait a few minutes and try again.",
       "linkExpired": "That link has expired or was already used. Ask for a new one.",
       "oauthFailed": "We couldn't log you in with Google. Try again or use your email.",
-      "generic": "We couldn't complete that. Please try again in a few seconds."
+      "generic": "We couldn't complete that. Please try again in a few seconds.",
+      "captchaFailed": "We couldn't check that you are a person. Wait for the check to finish and try again."
     }
   },
   "onboarding": {
@@ -1334,7 +1340,9 @@
       "statementsRequired": "You have to tick both statements.",
       "signatureRequired": "Type your full name as the signature.",
       "tooManyClaims": "We got too many claims from this email or from the site in a short time. Try again later.",
-      "generic": "We couldn't send the claim. Try again."
+      "generic": "We couldn't send the claim. Try again.",
+      "captchaFailed": "We couldn't check that you are a person. Wait for the check to finish and try again.",
+      "captchaUnavailable": "The security check is not available right now. Try again in a while."
     }
   }
 }

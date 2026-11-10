@@ -20,6 +20,11 @@
     "languageName": {
       "es": "Español",
       "en": "English"
+    },
+    "captcha": {
+      "label": "Verificación de seguridad",
+      "loading": "Verificando que sos una persona…",
+      "error": "No pudimos cargar la verificación de seguridad. Revisá tu conexión, desactivá los bloqueadores de contenido para este sitio y recargá la página."
     }
   },
   "nav": {
@@ -183,7 +188,8 @@
       "rateLimited": "Hiciste muchos intentos seguidos. Esperá unos minutos y probá de nuevo.",
       "linkExpired": "Ese link venció o ya se usó. Pedí uno nuevo.",
       "oauthFailed": "No pudimos iniciar sesión con Google. Probá de nuevo o usá tu email.",
-      "generic": "No pudimos completar la acción. Probá de nuevo en unos segundos."
+      "generic": "No pudimos completar la acción. Probá de nuevo en unos segundos.",
+      "captchaFailed": "No pudimos comprobar que sos una persona. Esperá a que termine la verificación y probá de nuevo."
     }
   },
   "onboarding": {
@@ -1334,7 +1340,9 @@
       "statementsRequired": "Tenés que marcar las dos declaraciones.",
       "signatureRequired": "Escribí tu nombre completo como firma.",
       "tooManyClaims": "Recibimos demasiados reclamos de este email o del sitio en poco tiempo. Probá de nuevo más tarde.",
-      "generic": "No pudimos enviar el reclamo. Probá de nuevo."
+      "generic": "No pudimos enviar el reclamo. Probá de nuevo.",
+      "captchaFailed": "No pudimos comprobar que sos una persona. Esperá a que termine la verificación y probá de nuevo.",
+      "captchaUnavailable": "La verificación de seguridad no está disponible ahora. Probá de nuevo en un rato."
     }
   }
 }

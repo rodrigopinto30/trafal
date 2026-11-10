@@ -374,6 +374,20 @@ Migración nueva: `20261110000700_copyright_claims.sql`. La tabla y sus permisos
 | **No se manda ningún email a quien reclama** | El sitio solo avisa dentro del sitio (decisión de la fase). | Se le da un número de referencia al enviar; el equipo lo contacta por el email que dejó. |
 | **Los botones «Tomar» tienen su propio estado de «en curso»** | Compartir el de «Confirmar» dejaba el campo del motivo deshabilitado mientras la pantalla se refrescaba. | Se arregló también en `ReportActions`. |
 
+## Captcha con Cloudflare Turnstile (2026-11-10)
+
+Sin migraciones. Variables nuevas: `TURNSTILE_SITE_KEY` (pública) y `TURNSTILE_SECRET_KEY` (solo del servidor).
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Turnstile**, no reCAPTCHA | Casi nunca pide nada a la persona, no usa cookies de seguimiento y ya estamos en Cloudflare (R2). | El control se carga solo en las dos pantallas que lo usan (`CaptchaField` agrega el script de Cloudflare al abrirlas): ninguna otra página paga ese peso. |
+| **Falla cerrado**: un sitio público sin la clave secreta, o un Cloudflare inalcanzable (5 s de espera), rechazan el formulario y lo registran | Un captcha que se apaga solo cuando falla no protege. | Se distingue `missing` / `failed` / `unavailable` / `misconfigured`; la persona ve «verificación no disponible» o «no pudimos comprobar que sos una persona». |
+| **En local, sin claves, no hay captcha** (`captchaRequired` = hay clave secreta o el sitio es público, según `isPublicSite`) | Que desarrollar y correr las pruebas no dependa de Cloudflare ni de internet. | El estado «sin claves» solo existe en un sitio que no es público. |
+| **El registro lo comprueba Supabase Auth** (se le pasa `captchaToken`), **no la aplicación** | Cada respuesta del captcha sirve una vez: comprobarla en los dos lugares la gastaría. Y la comprobación en la aplicación se saltea llamando a `/auth/v1/signup` directo. | En producción hay que activar el captcha en Supabase con la misma clave secreta (ver `docs/DESARROLLO.md`). Sin eso, el registro no está protegido por captcha. |
+| **El formulario de reclamos lo comprueba el servidor** (`verifyTurnstile`) | `submit_copyright_claim` es una función de la base: no tiene dónde comprobar un captcha. | Limitación conocida: alguien que llame a la función directamente se saltea el captcha; siguen valiendo los topes de la base (3 por día por email, 60 por hora). |
+| **El botón de enviar espera a la respuesta y el control se reinicia tras cada intento** | La respuesta sirve una vez; sin reiniciar, el segundo intento (por un error de validación) siempre fallaría. | `CaptchaField` recibe un `resetKey` (el resultado de la acción) y avisa al formulario si está listo. |
+| **La prueba con Cloudflare es opcional** (`E2E_TURNSTILE=pass\|fail`) | Habla con Cloudflare de verdad (el navegador y el servidor): no debe romper el `check.sh` de quien no tiene internet o claves. | Con las claves de prueba publicadas por Cloudflare se corre a mano; se verificó en los dos modos. |
+
 ## SEO y tarjetas para compartir (2026-11-09)
 
 Sin migración.
@@ -421,5 +435,6 @@ Sin migración. Herramienta: `tools/lighthouse.sh` (ver `docs/DESARROLLO.md`).
 - **Avances**: los videos MP4 y los GIF no se transcodifican ni se les saca la metadata (un MP4 de un celular puede traer la ubicación en sus cajas `udta`); tampoco se limpian los WebP. No hay tope de publicaciones por minuto ni por día (límites de uso: Fase 5). Borrar una **cuenta** borra sus avances en la base pero no sus archivos del almacenamiento (igual que el avatar: se resuelve junto con el borrado de cuentas, Fase 5). Un fallo del almacenamiento al borrar un avance deja un archivo huérfano.
 - **Preguntas del creador**: se escriben solo al subir el juego; no hay todavía una pantalla para cambiarlas, agregarlas o borrarlas después (la base ya lo permite al dueño).
 - **Rendimiento del feed**: las imágenes de los avances se sirven tal como se subieron (hasta 5 MB). Con una imagen grande al principio de la lista, el rendimiento en celular baja de 85 (es una limitación de los datos, no del código). La solución es generar variantes reducidas al subir (o usar el optimizador de imágenes de Next con el dominio público de R2); queda para una pieza aparte.
+- **Captcha**: sin activar el captcha en la configuración de Supabase (producción), el registro no queda protegido contra llamadas directas a la API; el formulario de reclamos se comprueba solo en el servidor de la aplicación.
 - **Reclamos de derechos de autor**: no hay contranotificación (que la autoría responda al reclamo y pida restaurar) ni aviso por email a quien reclama; los textos legales del formulario son un borrador hasta la pieza de documentos legales.
 - **Lighthouse en local**: la categoría «buenas prácticas» marca 79 porque se mide por HTTP (no hay HTTPS en la prueba); en producción con HTTPS no aplica.
