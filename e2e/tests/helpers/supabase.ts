@@ -71,3 +71,12 @@ export async function gameIdOf(publicId: string): Promise<string> {
   if (!row) throw new Error(`No existe el juego ${publicId}`);
   return String(row.id);
 }
+
+/** Puts back a comment that a test left hidden (found by its exact text), moderating as the given admin. Does nothing if it is published. */
+export async function restoreCommentByBody(body: string, adminToken: string): Promise<void> {
+  const response = await fetch(`${API}/rest/v1/comments?body=eq.${encodeURIComponent(body)}&status=eq.hidden&select=id`, {
+    headers: { apikey: publishableKey(), authorization: `Bearer ${adminToken}` },
+  });
+  const rows = (await response.json()) as { id: string }[];
+  for (const row of rows) await callRpc("moderate_content", { p_target_type: "comment", p_target_id: row.id, p_action: "restore", p_reason: "Limpieza de la prueba" }, adminToken);
+}

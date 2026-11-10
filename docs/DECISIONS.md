@@ -304,6 +304,17 @@ Migración nueva: `20261109000100_admin_moderation.sql`. `reports`, `notificatio
 | **`/admin` no existe para quien no es admin** | No hay que revelar que el panel está ahí. | `requireAdmin` manda al login a los visitantes y responde «no encontrado» al resto; la vista no se indexa. La base vuelve a comprobarlo en cada función. |
 | **El panel es una vista de las funciones de la base, con pantallas por dirección** | La seguridad no está en la interfaz. | Filtros y páginas (`?status=`, `?before=`) en la dirección, validados con Zod; el cliente no importa Zod (`admin-rules.ts`). |
 
+## Reportar avances, comentarios y perfiles (2026-11-10)
+
+Migración nueva: `20261110000100_report_published_only.sql`. La tabla `reports` y su trigger ya admitían los cuatro tipos desde la Fase 1.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Un solo diálogo y una sola acción para los cuatro tipos** (`ReportDialog`, `reportContentAction`) | Eran el mismo formulario con otro texto. | El botón de juego, avance (ícono en la tarjeta), comentario y perfil (ícono junto a «Seguir») comparten código; los textos viven en el namespace `report`, que viaja en todas las páginas (`BASE_CLIENT_NAMESPACES`). |
+| **Los motivos dependen del tipo** (`REPORT_REASONS_BY_TARGET`): «No funciona» solo para juegos, «Derechos de autor» no para comentarios ni perfiles | Un motivo que no tiene sentido confunde a quien reporta y ensucia la cola. | Lo valida el esquema (Zod); la base acepta todos los motivos. |
+| **Solo se reporta lo publicado** (trigger de la base) | El reporte guarda una copia del texto que lee quien reportó (`reports_select`): reportar algo oculto, dado de baja o en borrador, cuyo id alguien conocía, le entregaría ese texto. | `report_target_not_found`, que la interfaz muestra como «Eso ya no está disponible para reportar». |
+| **No se bloquea reportar lo propio en la base; la interfaz no ofrece el botón** | No daña a nadie (solo llena la cola de quien lo hace) y evita una regla que complica a los tests que usan una sola cuenta. | Las tarjetas de avances y comentarios y el perfil propio no muestran el botón. |
+
 ## SEO y tarjetas para compartir (2026-11-09)
 
 Sin migración.

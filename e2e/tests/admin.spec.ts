@@ -58,7 +58,7 @@ test("una persona común no ve el panel ni el enlace, y un visitante va a inicia
 
 test("el reporte de un juego llega a la cola y queda a la vista con su evidencia", async () => {
   await gotoReady(page, `/games/${GAME}`);
-  await page.getByRole("button", { name: "Reportar" }).click();
+  await page.getByRole("button", { name: "Reportar", exact: true }).first().click();
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("Motivo").selectOption("spam");
   await dialog.getByLabel(/Detalles/).fill(tag);

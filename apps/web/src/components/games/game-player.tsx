@@ -3,7 +3,7 @@
 import { MaximizeIcon, MinimizeIcon, PlayIcon, RotateCcwIcon, Volume2Icon, XIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { GameCover } from "@/components/games/game-cover";
-import { ReportGameDialog } from "@/components/games/report-game-dialog";
+import { ReportDialog } from "@/components/reports/report-dialog";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "@/i18n/client";
 import { classifyDevice } from "@/lib/games/device";
@@ -192,7 +192,7 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn }: Props) 
             </Button>
           </>
         ) : null}
-        <ReportGameDialog gameId={game.id} publicId={game.public_id} signedIn={signedIn} />
+        <ReportDialog targetType="game" targetId={game.id} signedIn={signedIn} loginHref={`/login?next=${encodeURIComponent(`/games/${game.public_id}`)}`} />
       </div>
     </div>
   );

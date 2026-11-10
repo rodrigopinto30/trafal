@@ -109,7 +109,7 @@ test("reportar: quien no tiene cuenta debe iniciar sesión; quien la tiene repor
   await owner.getByRole("button", { name: "Reportar" }).click();
   await owner.getByRole("dialog").getByLabel("Motivo").selectOption("spam");
   await owner.getByRole("dialog").getByRole("button", { name: "Enviar reporte" }).click();
-  await expect(owner.getByText("Ya reportaste este juego")).toBeVisible();
+  await expect(owner.getByText("Ya reportaste esto")).toBeVisible();
 });
 
 test("el gateway responde con cabeceras estrictas y solo sirve HTML dentro de un marco", async ({ page, request }) => {

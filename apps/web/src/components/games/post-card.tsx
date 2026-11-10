@@ -6,6 +6,7 @@ import { getLocale, getTranslations } from "@/i18n/server";
 import { formatRelativeTime } from "@/lib/format";
 import type { MyReactions } from "@/lib/games/reaction-queries";
 import type { PostKind, PostSummary } from "@/lib/games/types";
+import { ReportDialog } from "@/components/reports/report-dialog";
 import { PostMedia } from "./post-media";
 import { ShareButton } from "./share-button";
 import { PostOwnerMenu } from "./post-owner-menu";
@@ -48,6 +49,10 @@ export async function PostCard({ post, now, showGame = true, viewer, eagerMedia 
         {viewer?.userId === post.author_id ? (
           <div className="ml-auto">
             <PostOwnerMenu postId={post.id} />
+          </div>
+        ) : viewer ? (
+          <div className="ml-auto">
+            <ReportDialog targetType="post" targetId={post.id} signedIn={viewer.signedIn} loginHref={viewer.loginHref} display="icon" />
           </div>
         ) : null}
       </header>
