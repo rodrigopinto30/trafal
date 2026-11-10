@@ -39,7 +39,8 @@
     "settings": "Settings",
     "completeProfile": "Finish profile",
     "logout": "Log out",
-    "saved": "Saved"
+    "saved": "Saved",
+    "admin": "Administration"
   },
   "footer": {
     "tagline": "The social network for publishing browser games and sharing how they're made.",
@@ -932,5 +933,175 @@
     "followers": "{count, plural, one {# follower} other {# followers}}",
     "update": "Update",
     "alt": "Trafal card"
+  },
+  "admin": {
+    "title": "Administration",
+    "subtitle": "Community reports, the moderation log and the game of the week. Everything you do here is signed in the log.",
+    "navLabel": "Administration sections",
+    "tabs": {
+      "reports": "Reports",
+      "log": "Log",
+      "featured": "Game of the week"
+    },
+    "filtersLabel": "State of the reports",
+    "filters": {
+      "open": "Open",
+      "reviewing": "In review",
+      "resolved": "Resolved"
+    },
+    "reports": {
+      "title": "Reports",
+      "empty": {
+        "open": "There are no open reports. A good moment for a break.",
+        "reviewing": "There are no reports in review.",
+        "resolved": "No report has been resolved yet."
+      },
+      "targets": {
+        "game": "Game",
+        "post": "Update",
+        "comment": "Comment",
+        "profile": "Profile"
+      },
+      "reasons": {
+        "spam": "Spam",
+        "abuse": "Harassment or abuse",
+        "inappropriate": "Inappropriate content",
+        "copyright": "Copyright",
+        "broken": "Does not work",
+        "other": "Other"
+      },
+      "status": {
+        "open": "Open",
+        "reviewing": "In review",
+        "actioned": "Resolved",
+        "dismissed": "Dismissed"
+      },
+      "targetStatus": {
+        "published": "Published",
+        "hidden": "Hidden",
+        "removed": "Taken down",
+        "draft": "Draft"
+      },
+      "by": "Reported by @{username}",
+      "at": "{date}",
+      "detail": "What they wrote",
+      "noDetail": "They added no details.",
+      "whatWasReported": "What was reported",
+      "unavailable": "It is no longer available.",
+      "viewTarget": "View",
+      "resolvedBy": "Resolved by @{username}",
+      "note": "Note",
+      "olderResolved": "See more reports",
+      "older": "See older",
+      "backToStart": "Back to the start",
+      "take": "Take",
+      "dismiss": "Dismiss",
+      "hide": "Hide and resolve",
+      "markHandled": "Mark as resolved",
+      "restore": "Restore content",
+      "dialog": {
+        "dismissTitle": "Dismiss the report",
+        "dismissText": "The content stays as it is. You can leave an internal note.",
+        "handledTitle": "Mark as resolved",
+        "handledText": "Use it when you already dealt with it some other way (for example, you talked to the person). You can leave an internal note.",
+        "hideTitle": "Hide the content and resolve",
+        "hideText": "The content stops being visible to everyone and its author is told, with this reason. It can be restored.",
+        "restoreTitle": "Restore the content",
+        "restoreText": "The content is visible again and its author is told, with this reason.",
+        "noteLabel": "Internal note (optional)",
+        "reasonLabel": "Reason (shown to the person)",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "count": "{count} of {max}"
+      },
+      "done": {
+        "taken": "Report taken",
+        "dismissed": "Report dismissed",
+        "handled": "Report resolved",
+        "hidden": "Content hidden and report resolved",
+        "restored": "Content restored"
+      }
+    },
+    "log": {
+      "title": "Moderation log",
+      "subtitle": "Every action of an administrator, newest first. It is append-only: nobody can edit or delete it.",
+      "empty": "No actions have been logged yet.",
+      "when": "When",
+      "admin": "Who",
+      "action": "What",
+      "target": "About",
+      "reason": "Reason",
+      "noReason": "—",
+      "older": "See older",
+      "backToStart": "Back to the start",
+      "actions": {
+        "hide_game": "Hid a game",
+        "restore_game": "Restored a game",
+        "hide_post": "Hid an update",
+        "restore_post": "Restored an update",
+        "hide_comment": "Hid a comment",
+        "restore_comment": "Restored a comment",
+        "take_report": "Took a report",
+        "dismiss_report": "Dismissed a report",
+        "action_report": "Resolved a report",
+        "feature_game": "Chose the game of the week",
+        "replace_featured_game": "Changed the game of the week",
+        "unfeature_game": "Took off the game of the week"
+      },
+      "targets": {
+        "game": "game",
+        "post": "update",
+        "comment": "comment",
+        "report": "report",
+        "featured": "game of the week",
+        "profile": "profile",
+        "claim": "claim"
+      }
+    },
+    "featured": {
+      "title": "Game of the week",
+      "subtitle": "The banner of the landing page. Only a published game that its creator marked as their first game can be chosen, and each game can be the game of the week only once.",
+      "upcomingTitle": "This week and the coming ones",
+      "previousTitle": "Latest earlier pick",
+      "previousHint": "The landing page shows it while the current week has none chosen.",
+      "empty": "Nothing is chosen for this week or the coming ones.",
+      "weekOf": "Week of {date}",
+      "current": "This week",
+      "noQuote": "No quote",
+      "clear": "Take off",
+      "cleared": "Pick taken off",
+      "chosen": "Game chosen",
+      "formTitle": "Choose a game",
+      "game": "Game",
+      "gamePlaceholder": "Choose a game…",
+      "gameOption": "{title} — by {owner}",
+      "week": "Week",
+      "weekOption": "Week of {date}",
+      "weekCurrent": "Week of {date} (this one)",
+      "quote": "Quote (optional)",
+      "quoteHint": "Up to 280 characters. It shows on the banner.",
+      "submit": "Choose",
+      "noEligible": "There are no games that can be chosen: there has to be a published first game that has never been the game of the week."
+    },
+    "errors": {
+      "notAdmin": "Your account cannot do this.",
+      "unauthenticated": "Log in to continue.",
+      "reportNotFound": "We could not find that report.",
+      "reportNotOpen": "Somebody else already took this report.",
+      "reportAlreadyResolved": "This report was already resolved.",
+      "reasonRequired": "Write the reason (up to 1000 characters).",
+      "noteTooLong": "The note is too long (up to 1000 characters).",
+      "targetNotFound": "That content no longer exists.",
+      "invalidStatus": "That content is not in a state where this can be done.",
+      "cannotHideProfile": "A profile is not hidden: suspensions are for that.",
+      "weekNotMonday": "The week has to start on a Monday.",
+      "weekInThePast": "A week that has already passed cannot be chosen.",
+      "weekTooFar": "You can only choose up to 8 weeks ahead.",
+      "notEligible": "That game cannot be chosen: it has to be published and be its creator's first game.",
+      "alreadyFeatured": "That game has already been the game of the week.",
+      "quoteTooLong": "The quote can have up to 280 characters.",
+      "invalidInput": "Something you sent is not valid. Reload the page and try again.",
+      "generic": "We could not do that. Try again."
+    }
   }
 }

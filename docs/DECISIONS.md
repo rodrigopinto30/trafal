@@ -292,6 +292,18 @@ Migraciones nuevas: `20261108000400_featured_game.sql` y `20261108000500_feature
 | **La portada muestra la elección de esta semana o, si no hay, la última anterior; nunca una de una semana futura** | Elegir con anticipación no tiene que cambiar la portada de hoy. | `findFeaturedGame` filtra `week_start <= lunes de hoy` (`weekStartOf`, en UTC como la base). |
 | **Sin pantalla todavía: `tools/featured-game.sh`** | El panel de administración es de la Fase 5; pero la función exige una sesión de admin, así que desde el editor de SQL no se puede llamar. | El script entra con el email y la contraseña del admin (los pide o los toma de `ADMIN_EMAIL`/`ADMIN_PASSWORD`) y llama a las funciones por la API: `show`, `set <id público> [--week …] [--quote …]` y `clear [--week …]`. Sirve igual para producción con `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY`. |
 
+## Panel de administración (2026-11-09)
+
+Migración nueva: `20261109000100_admin_moderation.sql`. `reports`, `notifications` y `moderation_log` ya existían desde la Fase 1.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Los administradores moderan solo por tres funciones**: `take_report`, `resolve_report` y `moderate_content` | Moderar es una acción que tiene que ser de un administrador y dejar rastro; un permiso de tabla no puede exigir ni lo uno ni lo otro. | Las tres exigen un admin con cuenta activa (`private.require_admin`) y escriben en `moderation_log`. Ningún admin escribe `reports`, `games`, `posts` ni `comments` directamente. |
+| **Moderar es ocultar o restaurar, nunca borrar ni editar** | Es reversible: un error de moderación se arregla restaurando. | `hide` solo desde «publicado» y `restore` solo desde «oculto»; un perfil se reporta pero no se oculta desde acá. |
+| **Todo ocultar o restaurar lleva un motivo y la autoría lo recibe** | Quien publicó tiene que saber qué pasó y por qué. | Motivo de 1 a 1000 caracteres (`reason_required`); se crea un aviso `moderation` sin actor, con la acción, el tipo y el motivo. |
+| **`/admin` no existe para quien no es admin** | No hay que revelar que el panel está ahí. | `requireAdmin` manda al login a los visitantes y responde «no encontrado» al resto; la vista no se indexa. La base vuelve a comprobarlo en cada función. |
+| **El panel es una vista de las funciones de la base, con pantallas por dirección** | La seguridad no está en la interfaz. | Filtros y páginas (`?status=`, `?before=`) en la dirección, validados con Zod; el cliente no importa Zod (`admin-rules.ts`). |
+
 ## SEO y tarjetas para compartir (2026-11-09)
 
 Sin migración.

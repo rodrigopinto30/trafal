@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/link";
 import { getLocale, getTranslations } from "@/i18n/server";
-import { getAuthUser, getMyProfile } from "@/lib/auth/dal";
+import { getAuthUser, getIsAdmin, getMyProfile } from "@/lib/auth/dal";
 import { signOutAction } from "@/lib/auth/actions";
 import { UserAvatar } from "@/components/brand/user-avatar";
 import { UserMenu } from "./user-menu";
@@ -9,7 +9,7 @@ import { UserMenu } from "./user-menu";
 /** Zona de la cuenta en la barra (escritorio). Lee la sesión: va SIEMPRE dentro de un <Suspense>. */
 export async function NavUser() {
   const t = await getTranslations("nav");
-  const [user, profile] = await Promise.all([getAuthUser(), getMyProfile()]);
+  const [user, profile, isAdmin] = await Promise.all([getAuthUser(), getMyProfile(), getIsAdmin()]);
 
   if (!user) {
     return (
@@ -33,14 +33,14 @@ export async function NavUser() {
     );
   }
 
-  return <UserMenu username={profile.username} displayName={profile.display_name} avatarPath={profile.avatar_path} />;
+  return <UserMenu username={profile.username} displayName={profile.display_name} avatarPath={profile.avatar_path} isAdmin={isAdmin} />;
 }
 
 /** Zona de la cuenta dentro del menú móvil. */
 export async function MobileAccount() {
   const t = await getTranslations("nav");
   const locale = await getLocale();
-  const [user, profile] = await Promise.all([getAuthUser(), getMyProfile()]);
+  const [user, profile, isAdmin] = await Promise.all([getAuthUser(), getMyProfile(), getIsAdmin()]);
 
   const itemClass =
     "flex h-[50px] w-full items-center gap-3 rounded-xl px-[18px] text-left text-lg font-semibold text-text-2 transition-colors hover:bg-white/5 hover:text-white";
@@ -78,6 +78,11 @@ export async function MobileAccount() {
           <Link href="/settings/profile" className={itemClass}>
             {t("settings")}
           </Link>
+          {isAdmin ? (
+            <Link href="/admin" className={itemClass}>
+              {t("admin")}
+            </Link>
+          ) : null}
         </>
       ) : (
         <Link href="/onboarding" className={itemClass}>

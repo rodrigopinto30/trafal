@@ -1,0 +1,56 @@
+import { z } from "zod";
+import { charLength, sanitizeMultiline, sanitizeLine } from "./text";
+import { FEATURED_QUOTE_MAX, MODERATION_ACTIONS, MODERATION_NOTE_MAX, MODERATION_TARGETS, REPORT_OUTCOMES, REPORT_STATUS_FILTERS, type ReportStatusFilter } from "./admin-rules";
+
+export * from "./admin-rules";
+
+const note = z
+  .string()
+  .transform(sanitizeMultiline)
+  .refine((value) => charLength(value) <= MODERATION_NOTE_MAX, "noteTooLong");
+
+export const takeReportSchema = z.object({ reportId: z.uuid("invalidInput") });
+
+export const resolveReportSchema = z.object({
+  reportId: z.uuid("invalidInput"),
+  outcome: z.enum(REPORT_OUTCOMES, "invalidInput"),
+  note: note.optional().default(""),
+});
+
+export const moderateContentSchema = z.object({
+  targetType: z.enum(MODERATION_TARGETS, "invalidInput"),
+  targetId: z.uuid("invalidInput"),
+  action: z.enum(MODERATION_ACTIONS, "invalidInput"),
+  reason: note,
+});
+
+const week = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "invalidInput")
+  .refine((value) => !Number.isNaN(Date.parse(`${value}T00:00:00Z`)), "invalidInput")
+  .or(z.literal(""))
+  .transform((value) => (value === "" ? null : value));
+
+export const setFeaturedSchema = z.object({
+  gameId: z.uuid("invalidInput"),
+  week: week.optional().default(null),
+  quote: z
+    .string()
+    .transform(sanitizeLine)
+    .refine((value) => charLength(value) <= FEATURED_QUOTE_MAX, "quoteTooLong")
+    .optional()
+    .default(""),
+});
+
+export const clearFeaturedSchema = z.object({ week: week.optional().default(null) });
+
+/** The filter of the reports queue from the address: anything else is «open». */
+export function parseReportStatusFilter(value: unknown): ReportStatusFilter {
+  return REPORT_STATUS_FILTERS.find((candidate) => candidate === value) ?? "open";
+}
+
+/** The cursor of a page of the lists (the date of the last item seen), or null. */
+export function parseBefore(value: unknown): string | null {
+  const result = z.iso.datetime({ offset: true }).safeParse(value);
+  return result.success ? result.data : null;
+}

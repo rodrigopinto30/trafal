@@ -3,7 +3,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { mkdirSync } from "node:fs";
 import { loginAndWait } from "./helpers/session";
 
-type Target = { name: string; path: string; /** Pantallas que piden sesión: se entra con una cuenta de prueba que estos tests solo LEEN. */ login?: true };
+type Target = { name: string; path: string; /** Pantallas que piden sesión: se entra con una cuenta de prueba que estos tests solo LEEN. */ login?: true | "admin" };
 
 const PAGES: readonly Target[] = [
   { name: "inicio", path: "/" },
@@ -29,12 +29,17 @@ const PAGES: readonly Target[] = [
   { name: "publicar-avance", path: "/posts/new", login: true },
   { name: "configuracion-perfil", path: "/settings/profile", login: true },
   { name: "configuracion-preferencias", path: "/settings/preferences", login: true },
+  { name: "admin-reportes", path: "/admin", login: "admin" },
+  { name: "admin-reportes-resueltos", path: "/admin?status=resolved", login: "admin" },
+  { name: "admin-registro", path: "/admin/log", login: "admin" },
+  { name: "admin-juego-de-la-semana", path: "/admin/featured", login: "admin" },
 ];
 
 mkdirSync("screenshots", { recursive: true });
 
 async function open(page: Page, target: Target) {
-  if (target.login) await loginAndWait(page, "mateo@trafal.test", "trafal123");
+  if (target.login === "admin") await loginAndWait(page, "admin@trafal.test", "trafal123");
+  else if (target.login) await loginAndWait(page, "mateo@trafal.test", "trafal123");
   await page.goto(target.path);
 }
 

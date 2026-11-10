@@ -1,7 +1,7 @@
 import "server-only";
 import type { User } from "@supabase/supabase-js";
 import { cache } from "react";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getLocale } from "@/i18n/server";
 import { localizePath } from "@/i18n/path";
 import { createClient } from "@/lib/supabase/server";
@@ -29,6 +29,23 @@ export const getMyProfile = cache(async () => {
   const { data } = await supabase.from("profiles").select(PROFILE_COLUMNS).eq("id", user.id).maybeSingle();
   return data;
 });
+
+/** ¿La persona con sesión es admin (y su cuenta está activa)? Lo decide la base; esto solo lo pregunta para mostrar u ocultar la interfaz. */
+export const getIsAdmin = cache(async (): Promise<boolean> => {
+  const user = await getAuthUser();
+  if (!user) return false;
+  const supabase = await createClient();
+  const { data } = await supabase.from("profile_private").select("role, status, suspended_until").eq("id", user.id).maybeSingle();
+  if (data?.role !== "admin") return false;
+  return data.status === "active" || (data.suspended_until !== null && Date.parse(data.suspended_until) <= Date.now());
+});
+
+/** Para las pantallas de administración: sin sesión → login; sin ser admin → 404 (no se anuncia que existen). */
+export async function requireAdmin(returnTo: string): Promise<User> {
+  const user = await requireUser(returnTo);
+  if (!(await getIsAdmin())) notFound();
+  return user;
+}
 
 /** Para páginas que exigen sesión: si no hay, manda a iniciar sesión y vuelve después a `returnTo`. */
 export async function requireUser(returnTo: string): Promise<User> {

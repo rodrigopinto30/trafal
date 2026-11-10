@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 /** Menú de la cuenta (avatar → mi perfil, configuración, cerrar sesión). */
-export function UserMenu({ username, displayName, avatarPath }: { username: string; displayName: string; avatarPath: string | null }) {
+export function UserMenu({ username, displayName, avatarPath, isAdmin }: { username: string; displayName: string; avatarPath: string | null; isAdmin: boolean }) {
   const t = useTranslations("nav");
   const locale = useLocale();
 
@@ -44,6 +44,11 @@ export function UserMenu({ username, displayName, avatarPath }: { username: stri
         <DropdownMenuItem asChild>
           <Link href="/settings/profile">{t("settings")}</Link>
         </DropdownMenuItem>
+        {isAdmin ? (
+          <DropdownMenuItem asChild>
+            <Link href="/admin">{t("admin")}</Link>
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuSeparator />
         <form action={signOutAction}>
           <input type="hidden" name="lang" value={locale} />

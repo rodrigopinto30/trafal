@@ -39,7 +39,8 @@
     "settings": "Configuración",
     "completeProfile": "Completar perfil",
     "logout": "Cerrar sesión",
-    "saved": "Guardados"
+    "saved": "Guardados",
+    "admin": "Administración"
   },
   "footer": {
     "tagline": "La red social para publicar videojuegos que se juegan en el navegador y compartir cómo se hacen.",
@@ -932,5 +933,175 @@
     "followers": "{count, plural, one {# seguidor} other {# seguidores}}",
     "update": "Avance",
     "alt": "Tarjeta de Trafal"
+  },
+  "admin": {
+    "title": "Administración",
+    "subtitle": "Reportes de la comunidad, registro de moderación y juego de la semana. Todo lo que hacés acá queda firmado en el registro.",
+    "navLabel": "Secciones de la administración",
+    "tabs": {
+      "reports": "Reportes",
+      "log": "Registro",
+      "featured": "Juego de la semana"
+    },
+    "filtersLabel": "Estado de los reportes",
+    "filters": {
+      "open": "Abiertos",
+      "reviewing": "En revisión",
+      "resolved": "Resueltos"
+    },
+    "reports": {
+      "title": "Reportes",
+      "empty": {
+        "open": "No hay reportes abiertos. Buen momento para tomar un mate.",
+        "reviewing": "No hay reportes en revisión.",
+        "resolved": "Todavía no se resolvió ningún reporte."
+      },
+      "targets": {
+        "game": "Juego",
+        "post": "Avance",
+        "comment": "Comentario",
+        "profile": "Perfil"
+      },
+      "reasons": {
+        "spam": "Spam",
+        "abuse": "Acoso o abuso",
+        "inappropriate": "Contenido inapropiado",
+        "copyright": "Derechos de autor",
+        "broken": "No funciona",
+        "other": "Otro"
+      },
+      "status": {
+        "open": "Abierto",
+        "reviewing": "En revisión",
+        "actioned": "Resuelto",
+        "dismissed": "Descartado"
+      },
+      "targetStatus": {
+        "published": "Publicado",
+        "hidden": "Oculto",
+        "removed": "Dado de baja",
+        "draft": "Borrador"
+      },
+      "by": "Reportó @{username}",
+      "at": "{date}",
+      "detail": "Lo que escribió",
+      "noDetail": "No agregó detalles.",
+      "whatWasReported": "Lo que se reportó",
+      "unavailable": "Ya no está disponible.",
+      "viewTarget": "Ver",
+      "resolvedBy": "Resuelto por @{username}",
+      "note": "Nota",
+      "olderResolved": "Ver más reportes",
+      "older": "Ver más antiguos",
+      "backToStart": "Volver al principio",
+      "take": "Tomar",
+      "dismiss": "Descartar",
+      "hide": "Ocultar y resolver",
+      "markHandled": "Marcar como resuelto",
+      "restore": "Restaurar contenido",
+      "dialog": {
+        "dismissTitle": "Descartar el reporte",
+        "dismissText": "El contenido se queda como está. Podés dejar una nota interna.",
+        "handledTitle": "Marcar como resuelto",
+        "handledText": "Usalo cuando ya resolviste el tema por otro lado (por ejemplo, hablaste con la persona). Podés dejar una nota interna.",
+        "hideTitle": "Ocultar el contenido y resolver",
+        "hideText": "El contenido deja de verse para todo el mundo y se le avisa a su autoría con este motivo. Se puede restaurar.",
+        "restoreTitle": "Restaurar el contenido",
+        "restoreText": "El contenido vuelve a verse y se le avisa a su autoría con este motivo.",
+        "noteLabel": "Nota interna (opcional)",
+        "reasonLabel": "Motivo (se le muestra a la persona)",
+        "confirm": "Confirmar",
+        "cancel": "Cancelar",
+        "count": "{count} de {max}"
+      },
+      "done": {
+        "taken": "Reporte tomado",
+        "dismissed": "Reporte descartado",
+        "handled": "Reporte resuelto",
+        "hidden": "Contenido oculto y reporte resuelto",
+        "restored": "Contenido restaurado"
+      }
+    },
+    "log": {
+      "title": "Registro de moderación",
+      "subtitle": "Cada acción de un administrador, de la más nueva a la más vieja. Solo se agrega: nadie lo puede editar ni borrar.",
+      "empty": "Todavía no hay acciones registradas.",
+      "when": "Cuándo",
+      "admin": "Quién",
+      "action": "Qué",
+      "target": "Sobre",
+      "reason": "Motivo",
+      "noReason": "—",
+      "older": "Ver más antiguas",
+      "backToStart": "Volver al principio",
+      "actions": {
+        "hide_game": "Ocultó un juego",
+        "restore_game": "Restauró un juego",
+        "hide_post": "Ocultó un avance",
+        "restore_post": "Restauró un avance",
+        "hide_comment": "Ocultó un comentario",
+        "restore_comment": "Restauró un comentario",
+        "take_report": "Tomó un reporte",
+        "dismiss_report": "Descartó un reporte",
+        "action_report": "Resolvió un reporte",
+        "feature_game": "Eligió el juego de la semana",
+        "replace_featured_game": "Cambió el juego de la semana",
+        "unfeature_game": "Sacó el juego de la semana"
+      },
+      "targets": {
+        "game": "juego",
+        "post": "avance",
+        "comment": "comentario",
+        "report": "reporte",
+        "featured": "juego de la semana",
+        "profile": "perfil",
+        "claim": "reclamo"
+      }
+    },
+    "featured": {
+      "title": "Juego de la semana",
+      "subtitle": "El banner de la portada. Solo se puede elegir un juego publicado que su creador marcó como primer juego, y cada juego puede ser el de la semana una sola vez.",
+      "upcomingTitle": "Esta semana y las que vienen",
+      "previousTitle": "Última elección anterior",
+      "previousHint": "La portada la muestra mientras la semana actual no tenga una elegida.",
+      "empty": "No hay nada elegido para esta semana ni para las que vienen.",
+      "weekOf": "Semana del {date}",
+      "current": "Esta semana",
+      "noQuote": "Sin frase",
+      "clear": "Sacar",
+      "cleared": "Elección sacada",
+      "chosen": "Juego elegido",
+      "formTitle": "Elegir un juego",
+      "game": "Juego",
+      "gamePlaceholder": "Elegí un juego…",
+      "gameOption": "{title} — de {owner}",
+      "week": "Semana",
+      "weekOption": "Semana del {date}",
+      "weekCurrent": "Semana del {date} (esta)",
+      "quote": "Frase (opcional)",
+      "quoteHint": "Hasta 280 caracteres. Se muestra en el banner.",
+      "submit": "Elegir",
+      "noEligible": "No hay juegos que se puedan elegir: tiene que haber un primer juego publicado que nunca haya sido el de la semana."
+    },
+    "errors": {
+      "notAdmin": "Tu cuenta no puede hacer esto.",
+      "unauthenticated": "Iniciá sesión para continuar.",
+      "reportNotFound": "No encontramos ese reporte.",
+      "reportNotOpen": "Alguien más ya tomó este reporte.",
+      "reportAlreadyResolved": "Este reporte ya estaba resuelto.",
+      "reasonRequired": "Escribí el motivo (hasta 1000 caracteres).",
+      "noteTooLong": "La nota es demasiado larga (hasta 1000 caracteres).",
+      "targetNotFound": "Ese contenido ya no existe.",
+      "invalidStatus": "Ese contenido no está en un estado en el que se pueda hacer eso.",
+      "cannotHideProfile": "Un perfil no se oculta: para eso están las suspensiones.",
+      "weekNotMonday": "La semana tiene que empezar un lunes.",
+      "weekInThePast": "No se puede elegir una semana que ya pasó.",
+      "weekTooFar": "Solo se puede elegir hasta con 8 semanas de anticipación.",
+      "notEligible": "Ese juego no se puede elegir: tiene que estar publicado y ser el primer juego de su creador.",
+      "alreadyFeatured": "Ese juego ya fue el de la semana alguna vez.",
+      "quoteTooLong": "La frase puede tener hasta 280 caracteres.",
+      "invalidInput": "Algo de lo que mandaste no es válido. Recargá la página e intentá de nuevo.",
+      "generic": "No pudimos hacerlo. Probá de nuevo."
+    }
   }
 }
