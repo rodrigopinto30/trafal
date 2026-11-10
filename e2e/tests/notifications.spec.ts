@@ -81,10 +81,16 @@ test("se avisa de un me gusta y de un seguidor, y cada aviso dice quién, qué y
   await expect(item(creator, `${actorName} empezó a seguirte`)).toBeVisible();
 });
 
-test("abrir un aviso lo marca como leído y lleva a lo que pasó", async () => {
+test("abrir un aviso de comentario lleva al comentario, lo centra y lo resalta unos segundos", async () => {
   await gotoReady(creator, "/notifications");
   await item(creator, `${actorName} comentó en Órbita`).getByRole("link", { name: `${actorName} comentó en Órbita` }).click();
-  await expect(creator).toHaveURL(/\/games\/orbita$/);
+  await expect(creator).toHaveURL(/\/games\/orbita#comment-[0-9a-f-]{36}$/);
+
+  const target = creator.locator('article[id^="comment-"]').filter({ hasText: `Qué lindo juego ${suffix}` });
+  await expect(target).toHaveAttribute("data-highlighted", "true");
+  await expect(target).toBeInViewport({ ratio: 1 });
+  await expect(target).not.toHaveAttribute("data-highlighted", "true", { timeout: 10_000 });
+
   await gotoReady(creator, "/notifications");
   await expect(item(creator, `${actorName} comentó en Órbita`).getByText("Sin leer")).toHaveCount(0);
 });

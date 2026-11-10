@@ -25,7 +25,7 @@ async function CommentBody({ comment, now, viewer, isReply }: { comment: Comment
   const edited = Date.parse(comment.updated_at) - Date.parse(comment.created_at) > EDITED_AFTER_MS;
 
   return (
-    <article className="flex gap-3">
+    <article id={`comment-${comment.id}`} className="flex scroll-mt-28 gap-3 rounded-2xl">
       <UserAvatar username={comment.author.username} displayName={comment.author.display_name} avatarPath={comment.author.avatar_path} size="md" alt="" className="mt-1" />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">

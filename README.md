@@ -89,7 +89,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Hoy**
 - Una **campanita** en la barra (solo con cuenta) con cuántos avisos hay sin leer. Se actualiza **sola** mientras la página está abierta: si alguien comenta o te sigue, el número sube al instante.
-- La pantalla **Notificaciones** (`/notifications`) lista los avisos, de más nuevo a más viejo (20 por página). Cada uno dice quién, qué y dónde; al abrirlo se marca como leído y lleva a lo que pasó. Se puede **marcar como leído**, **quitar**, o **marcar todos como leídos**.
+- La pantalla **Notificaciones** (`/notifications`) lista los avisos, de más nuevo a más viejo (20 por página). Cada uno dice quién, qué y dónde; al abrirlo se marca como leído y lleva a lo que pasó: si es sobre un comentario, **te deja en ese comentario** (lo centra en la pantalla) y lo **resalta unos segundos**. Se puede **marcar como leído**, **quitar**, o **marcar todos como leídos**.
 - Se avisa de: un **comentario** en tu juego o avance; una **respuesta** a tu comentario; un **me gusta** en tu juego o avance (una vez por persona); un **seguidor** nuevo (una vez por persona); que el creador marcó tu comentario como **«Me sirvió»** (una vez por comentario); que una **versión** que subiste quedó lista o fue rechazada; y las decisiones de **moderación** sobre tu contenido o tu cuenta (con el motivo).
 - Nadie recibe avisos de lo que hace él mismo. Solo dentro del sitio: no se manda nada por email.
 

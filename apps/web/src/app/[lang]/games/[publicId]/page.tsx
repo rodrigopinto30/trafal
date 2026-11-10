@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { UserAvatar } from "@/components/brand/user-avatar";
 import { CommentForm } from "@/components/games/comment-form";
+import { CommentHighlight } from "@/components/games/comment-highlight";
 import { CommentList, type CommentViewer } from "@/components/games/comment-list";
 import { CreatorQuestions } from "@/components/games/creator-questions";
 import { GamePlayerShell } from "@/components/games/game-player-shell";
@@ -198,6 +199,7 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
           <CreatorQuestions questions={questions} answers={answers} creatorName={owner.display_name} now={now} viewer={commentViewer} />
 
           <section aria-labelledby="comments">
+            <CommentHighlight />
             <h2 id="comments" className="font-display text-2xl font-bold">
               {t("commentsTitle")}
             </h2>

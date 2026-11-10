@@ -17,6 +17,16 @@ describe("notificationHref", () => {
     expect(notificationHref({ ...base, type: "like" })).toBeNull();
   });
 
+  it("lands on the comment itself when the notification is about one", () => {
+    const comment = { id: "c1", body: "x", post_id: null, game: null };
+    for (const type of ["comment", "reply", "helpful"] as const) {
+      expect(notificationHref({ ...base, type, game: { public_id: "orbita", title: "Órbita" }, comment })).toBe("/games/orbita#comment-c1");
+      expect(notificationHref({ ...base, type, post: { id: "p1", body: "x" }, comment })).toBe("/posts/p1#comment-c1");
+    }
+    expect(notificationHref({ ...base, type: "comment", game: { public_id: "orbita", title: "Órbita" } })).toBe("/games/orbita");
+    expect(notificationHref({ ...base, type: "like", game: { public_id: "orbita", title: "Órbita" }, comment })).toBe("/games/orbita");
+  });
+
   it("leads the upload results to the management of the game", () => {
     for (const type of ["version_ready", "version_error"] as const) {
       expect(notificationHref({ ...base, type, game: { public_id: "orbita", title: "Órbita" } })).toBe("/games/orbita/manage");
@@ -24,8 +34,8 @@ describe("notificationHref", () => {
   });
 
   it("leads a moderated comment to where it lives, and account notices nowhere", () => {
-    expect(notificationHref({ ...base, type: "moderation", data: { target_type: "comment" }, comment: { body: "x", post_id: null, game: { public_id: "orbita" } } })).toBe("/games/orbita");
-    expect(notificationHref({ ...base, type: "moderation", data: { target_type: "comment" }, comment: { body: "x", post_id: "p1", game: null } })).toBe("/posts/p1");
+    expect(notificationHref({ ...base, type: "moderation", data: { target_type: "comment" }, comment: { id: "c1", body: "x", post_id: null, game: { public_id: "orbita" } } })).toBe("/games/orbita#comment-c1");
+    expect(notificationHref({ ...base, type: "moderation", data: { target_type: "comment" }, comment: { id: "c1", body: "x", post_id: "p1", game: null } })).toBe("/posts/p1#comment-c1");
     expect(notificationHref({ ...base, type: "moderation", data: { target_type: "game" }, game: { public_id: "orbita", title: "Órbita" } })).toBe("/games/orbita");
     expect(notificationHref({ ...base, type: "moderation", data: { action: "suspend", target_type: "profile" } })).toBeNull();
   });

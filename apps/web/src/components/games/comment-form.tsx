@@ -39,7 +39,7 @@ export function CommentForm({ target, id, parentId, questionId, replyToName, sig
   const isReply = parentId !== undefined;
   const isAnswer = questionId !== undefined;
   const withoutLabel = isReply || isAnswer;
-  const fieldId = `comment-${isReply ? parentId : isAnswer ? questionId : `${target}-${id}`}`;
+  const fieldId = `comment-field-${isReply ? parentId : isAnswer ? questionId : `${target}-${id}`}`;
   const [body, setBody] = useState("");
   const [label, setLabel] = useState("");
   const [error, setError] = useState<string | undefined>();

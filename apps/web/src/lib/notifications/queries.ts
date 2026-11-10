@@ -14,12 +14,12 @@ export type NotificationItem = {
   actor: { username: string; display_name: string } | null;
   game: { public_id: string; title: string } | null;
   post: { id: string; body: string } | null;
-  comment: { body: string; post_id: string | null; game: { public_id: string } | null } | null;
+  comment: { id: string; body: string; post_id: string | null; game: { public_id: string } | null } | null;
   version: { label: string } | null;
 };
 
 const SELECT =
-  "id, type, read_at, created_at, data, actor:profiles!notifications_actor_id_fkey(username, display_name), game:games!notifications_game_id_fkey(public_id, title), post:posts!notifications_post_id_fkey(id, body), comment:comments!notifications_comment_id_fkey(body, post_id, game:games!comments_game_id_fkey(public_id)), version:game_versions!notifications_version_id_fkey(label)";
+  "id, type, read_at, created_at, data, actor:profiles!notifications_actor_id_fkey(username, display_name), game:games!notifications_game_id_fkey(public_id, title), post:posts!notifications_post_id_fkey(id, body), comment:comments!notifications_comment_id_fkey(id, body, post_id, game:games!comments_game_id_fkey(public_id)), version:game_versions!notifications_version_id_fkey(label)";
 
 /** How many notifications the signed-in person has not read (the number on the bell). Zero without a session: the database only shows their own. */
 export async function countUnreadNotifications(): Promise<number> {
