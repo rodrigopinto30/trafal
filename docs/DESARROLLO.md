@@ -36,6 +36,7 @@ Lo único que necesitás instalado es **Docker** (con Compose v2) y unos 4 GB de
 ./check.sh --e2e          # además, pruebas de punta a punta con Playwright (~2 min)
 ./pnpm test               # solo los tests unitarios
 tools/worker-check.sh     # solo el worker de Python (ruff, mypy estricto, pytest), en Docker
+tools/check-media-headers.sh <url>   # comprueba que el dominio público de medios sirva nosniff (ver «Medios en producción»)
 tools/validate-zip.sh juego.zip   # valida un zip con las reglas de subida y muestra el resultado en JSON
 tools/lighthouse.sh               # Lighthouse (rendimiento, accesibilidad, buenas prácticas, SEO) de la versión de producción; --mobile, --pages "/ /explore", --runs 5, --keep
 docker compose logs -f worker      # qué está haciendo el worker de juegos (qué versión toma, qué rechaza y por qué)
@@ -81,6 +82,17 @@ Las claves y URLs de Supabase **no** se configuran a mano: `start.sh` las lee de
 1. En el panel de Cloudflare → **Turnstile** creá un widget con el dominio del sitio; te da una **clave del sitio** y una **clave secreta**. Pegalas en `.env` (`TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY`) y reiniciá la web.
 2. **En producción, además**, activá el captcha en Supabase (Authentication → Attack Protection → *Enable CAPTCHA protection*, proveedor Turnstile, con la **misma clave secreta**): así el registro queda protegido también contra llamadas directas a la API. En local, para probarlo: `[auth.captcha]` en `supabase/config.toml` (`enabled = true`, `provider = "turnstile"`, `secret = "env(…)"`).
 3. **Probarlo en local sin cuenta**: Cloudflare publica claves de prueba. Sitio `1x00000000000000000000AA` con secreta `1x0000000000000000000000000000000AA` (siempre pasa) o `2x0000000000000000000000000000000AA` (la comprobación del servidor siempre falla). Con ellas, `E2E_TURNSTILE=pass ./e2e/run.sh tests/turnstile.spec.ts` (o `=fail`, con la otra secreta) corre la prueba que habla con Cloudflare de verdad; sin esa variable se saltea.
+
+### Medios en producción (R2): `nosniff`
+
+Las imágenes y los videos que sube la gente se sirven desde el dominio público del bucket de medios (`MEDIA_PUBLIC_URL`). Ese dominio tiene que responder `X-Content-Type-Options: nosniff`: sin esa cabecera, un navegador puede «adivinar» el tipo de un archivo y tratar como otra cosa uno que tiene forma de imagen. R2 no deja fijar cabeceras de respuesta por objeto, así que se pone con una regla de Cloudflare (una vez, al montar el dominio):
+
+1. Cloudflare → el dominio de medios → **Rules → Transform Rules → Modify Response Header → Create rule**.
+2. Condición: *Hostname* **equals** el dominio de medios (por ejemplo `media.tu-dominio.com`).
+3. Acciones, las dos con *Set static*: `X-Content-Type-Options` = `nosniff` (obligatoria) y `Content-Security-Policy` = `default-src 'none'; sandbox` (recomendada: si algún archivo se abriera como documento, no podría ejecutar nada). La CSP no afecta a las imágenes y videos que Trafal muestra: se aplica solo a lo que se abre directo desde ese dominio.
+4. Comprobarlo con un archivo real: `tools/check-media-headers.sh https://media.tu-dominio.com/avatars/<id>/<archivo>.webp`. Sale con error si falta `nosniff`, si el tipo no es de imagen o video, o si no responde 200, y avisa si falta la CSP.
+
+En local no hace falta: Supabase Storage no manda `nosniff` y `tools/check-media-headers.sh` (sin argumentos, prueba la última foto de la base local) lo marca como faltante; es esperable.
 
 ## Cómo está armado
 

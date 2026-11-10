@@ -416,6 +416,17 @@ Sin migraciones: los textos viven en `lib/legal/content/{es,en}.ts` (datos estru
 | **`{minAge}` sale de `MIN_AGE`** | La edad mínima vive en un solo lugar. | Los términos y la privacidad nunca contradicen al registro. |
 | **Se subió `TERMS_VERSION`** | Cambió el texto que se acepta. | Quien se registre queda con la versión nueva. No hay todavía un flujo que pida aceptar de nuevo a las cuentas existentes. |
 
+## Medios en producción: `nosniff` (2026-11-10)
+
+Sin migraciones ni cambios en la aplicación: es configuración de Cloudflare más una herramienta que la comprueba.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **`nosniff` se pone con una regla de transformación de Cloudflare** sobre el dominio de medios | R2 no permite fijar cabeceras de respuesta por objeto, y el dominio público del bucket no las agrega solo. | Se configura una vez al montar el dominio (pasos en `docs/DESARROLLO.md`). Hasta que se haga, la defensa son las comprobaciones de la subida (`inspectImage` y `post-media`: formato real, nada pegado) y que todo se sube con su `Content-Type` real. |
+| **Además se recomienda `Content-Security-Policy: default-src 'none'; sandbox`** en ese dominio | Si un archivo llegara a abrirse como documento, no podría ejecutar nada. | Solo afecta a lo que se abre directo desde el dominio de medios; no a las imágenes y videos que Trafal muestra en sus páginas. |
+| **`tools/check-media-headers.sh` comprueba un archivo real** en vez de confiar en la configuración | Una regla mal escrita (otro hostname, otra condición) no da ningún error y deja el sitio sin protección. | Sale con error si falta `nosniff`, el `Content-Type` no es de imagen o video, o no responde 200; la CSP solo avisa. Se corre a mano después de montar o cambiar el dominio. |
+| **No se agrega a `check.sh`** | Local no manda `nosniff` (Supabase Storage) y no hay un dominio de producción al que apuntar. | La herramienta sin argumentos prueba la última foto local y marca la falta: es esperable. |
+
 ## SEO y tarjetas para compartir (2026-11-09)
 
 Sin migración.
@@ -452,7 +463,6 @@ Sin migración. Herramienta: `tools/lighthouse.sh` (ver `docs/DESARROLLO.md`).
 - **Fuentes**: se bajan de Google Fonts al compilar/arrancar (`next/font/google`) y se sirven desde nuestro dominio.
 - **Supabase local** publica puertos en todas las interfaces y Studio no tiene contraseña: solo para desarrollo.
 - **Fotos de perfil**: el servidor valida pero **no recodifica** la imagen (una recodificación con `sharp` sacaría metadatos EXIF de archivos hechos a mano; el flujo normal ya los pierde al pasar por el canvas). No hay tope de subidas por minuto (lo cubre la Fase 5, junto con el resto de los límites). Dos subidas simultáneas pueden dejar un archivo huérfano.
-- **En producción**: el dominio público de R2 tiene que servir `X-Content-Type-Options: nosniff` (regla de transformación de Cloudflare) para que un archivo con forma de imagen nunca se interprete como otra cosa.
 - **Subidas interrumpidas**: una versión que quedó en «Subiendo» (la persona cerró la página) no se limpia sola todavía, y su archivo parcial en cuarentena expira por la regla de ciclo de vida del bucket (24 h en producción).
 - **Reproductor**: los juegos de ejemplo del seed tienen versiones «listas» pero no archivos: al jugarlos el marco muestra «Not found». Un Godot con hilos (`needs_isolation`) no se puede jugar todavía (hace falta la ruta de pantalla completa con COOP/COEP). El creador no puede probar un borrador. El conteo de partidas se puede inflar abriendo muchas sesiones: los límites de uso son de la Fase 5.
 - **Worker**: no hay un tope de tiempo por versión (solo el de 10 minutos tras el cual otro worker puede retomarla) ni un límite de egreso de red del contenedor; y los archivos publicados todavía no se sirven: falta el gateway y el reproductor.
@@ -463,6 +473,7 @@ Sin migración. Herramienta: `tools/lighthouse.sh` (ver `docs/DESARROLLO.md`).
 - **Preguntas del creador**: se escriben solo al subir el juego; no hay todavía una pantalla para cambiarlas, agregarlas o borrarlas después (la base ya lo permite al dueño).
 - **Rendimiento del feed**: las imágenes de los avances se sirven tal como se subieron (hasta 5 MB). Con una imagen grande al principio de la lista, el rendimiento en celular baja de 85 (es una limitación de los datos, no del código). La solución es generar variantes reducidas al subir (o usar el optimizador de imágenes de Next con el dominio público de R2); queda para una pieza aparte.
 - **Captcha**: sin activar el captcha en la configuración de Supabase (producción), el registro no queda protegido contra llamadas directas a la API; el formulario de reclamos se comprueba solo en el servidor de la aplicación.
+- **Medios en producción**: nada en el repositorio obliga a que la regla de Cloudflare exista; solo se comprueba a mano con `tools/check-media-headers.sh`. Si se cambia el dominio de medios, hay que repetir la regla y la comprobación.
 - **Documentos legales**: son un borrador sin revisión legal; hacen falta el titular, el email de contacto y la jurisdicción. No hay un flujo para pedir aceptar de nuevo los términos a las cuentas que ya existen, ni un trámite de apelación o de contranotificación formal (los textos mandan a escribir al email de contacto). Las páginas no se pueden descargar ni imprimir con un formato propio.
 - **Eliminar la cuenta**: no se pide la contraseña ni hay un período de gracia para arrepentirse (la sesión abierta alcanza, más el @usuario escrito); si el almacenamiento falla después de borrar la cuenta, quedan archivos huérfanos que solo se ven en el registro del servidor. No se avisa por email que la cuenta se eliminó, ni se ofrece descargar los datos antes. Lo que otras personas comentaron en tus juegos o respondieron a tus comentarios se borra con ellos.
 - **Reclamos de derechos de autor**: no hay contranotificación (que la autoría responda al reclamo y pida restaurar) ni aviso por email a quien reclama; los textos legales son un borrador hasta que los revise un abogado.
