@@ -750,8 +750,11 @@
     "other": "Otro"
   },
   "legal": {
-    "draftTitle": "Documento en redacción",
-    "draftText": "Estamos terminando de redactar este documento. Va a estar publicado antes del lanzamiento.",
+    "draftBadge": "Borrador sujeto a revisión legal",
+    "draftNotice": "Este documento es un borrador: todavía no lo revisó un abogado y puede cambiar antes del lanzamiento.",
+    "updated": "Última actualización: {date}",
+    "contents": "Contenido",
+    "operatorMissing": "Faltan los datos del titular del sitio (nombre, email de contacto y jurisdicción). Se cargan en la configuración del sitio.",
     "terms": "Términos y condiciones",
     "privacy": "Política de privacidad",
     "guidelines": "Normas de la comunidad",

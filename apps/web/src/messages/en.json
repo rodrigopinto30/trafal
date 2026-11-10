@@ -750,8 +750,11 @@
     "other": "Other"
   },
   "legal": {
-    "draftTitle": "Document being drafted",
-    "draftText": "We're finishing this document. It will be published before launch.",
+    "draftBadge": "Draft pending legal review",
+    "draftNotice": "This document is a draft: a lawyer has not reviewed it yet and it may change before launch.",
+    "updated": "Last updated: {date}",
+    "contents": "Contents",
+    "operatorMissing": "The site operator's details are missing (name, contact email and jurisdiction). They are set in the site configuration.",
     "terms": "Terms and conditions",
     "privacy": "Privacy policy",
     "guidelines": "Community guidelines",

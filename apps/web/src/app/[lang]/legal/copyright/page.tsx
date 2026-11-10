@@ -1,20 +1,19 @@
-import { LegalDraft } from "@/components/layout/legal-draft";
+import { LegalDocument } from "@/components/legal/legal-document";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/link";
-import { getLocale, getTranslations } from "@/i18n/server";
-import { pageMetadata } from "@/lib/seo/metadata";
+import { getTranslations } from "@/i18n/server";
+import { legalMetadata } from "@/lib/legal/metadata";
 
 export async function generateMetadata() {
-  const [t, locale] = await Promise.all([getTranslations("legal"), getLocale()]);
-  return pageMetadata({ title: t("copyright"), description: t("draftText"), path: "/legal/copyright", locale });
+  return legalMetadata("copyright", "/legal/copyright");
 }
 
 export default async function Page() {
   const t = await getTranslations("claims");
   return (
     <>
-      <LegalDraft document="copyright" />
-      <div className="mx-auto max-w-[760px] px-5 pt-6">
+      <LegalDocument id="copyright" />
+      <div className="mx-auto max-w-[760px] px-5 pb-8">
         <Button asChild size="lg">
           <Link href="/legal/copyright/claim">{t("linkFromLegal")}</Link>
         </Button>

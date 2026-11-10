@@ -131,6 +131,13 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - Se conserva lo que el sitio necesita para su seguridad: el registro de moderación y los reclamos de derechos de autor sobre tu contenido (sin tu cuenta).
 - Las cuentas de administración no se pueden eliminar desde acá (primero hay que quitarles el rol), para que el sitio nunca se quede sin administración por un clic.
 
+### Documentos legales
+
+**Hoy**
+- Los cuatro documentos están escritos, en español y en inglés: **Términos y condiciones**, **Política de privacidad**, **Normas de la comunidad** y **Derechos de autor** (`/legal/...`, enlazados desde el pie y desde el registro). Cada uno tiene su fecha de última actualización y un **índice** que lleva a cada sección.
+- Dicen lo que Trafal hace de verdad: qué datos se guardan (y que no se vende nada ni hay publicidad ni analítica de terceros), cómo funcionan la moderación, las suspensiones y los reclamos, que se puede eliminar la cuenta, y que cada juego corre aislado y bajo responsabilidad de quien juega.
+- **Son un borrador**: cada página lo avisa con una marca visible hasta que un abogado los revise. Los datos del titular (nombre, email de contacto y jurisdicción) salen de `LEGAL_OPERATOR_NAME`, `LEGAL_CONTACT_EMAIL` y `LEGAL_JURISDICTION`; si faltan, el texto muestra un hueco «a completar» y un aviso, nunca un valor inventado.
+
 ### Creadores
 
 **Hoy**
@@ -228,10 +235,10 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Próximamente** (el modelo de datos ya está preparado)
 - **Reportes** de juegos, avances, comentarios y perfiles, con copia del contenido como evidencia.
-- **Reclamos de derechos de autor** (hecho: ver «Reclamos de derechos de autor»); falta el captcha del formulario y el texto legal definitivo.
+- **Reclamos de derechos de autor** (hecho: ver «Reclamos de derechos de autor»).
 - **Panel de administración** donde cada acción de moderación queda registrada en un historial que nadie puede editar ni borrar.
 - **Suspensiones** (hecho: ver «Administración» y «Suspensiones»): temporales o hasta que se levanten; una cuenta suspendida no puede escribir. Falta que la persona pueda apelar.
-- **Eliminar la cuenta** (hecho: ver «Eliminar la cuenta»), **límites de uso** (hecho: ver «Límites de uso»), **captcha** (hecho: ver «Captcha») y páginas legales definitivas (Términos, Privacidad, Normas de la comunidad y Derechos de autor).
+- **Eliminar la cuenta** (hecho: ver «Eliminar la cuenta»), **límites de uso** (hecho: ver «Límites de uso»), **captcha** (hecho: ver «Captcha») y **documentos legales** (hecho como borrador: ver «Documentos legales»). Falta la revisión legal y cargar los datos del titular.
 
 ### Diseño y accesibilidad
 

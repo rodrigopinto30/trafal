@@ -13,4 +13,8 @@ export const publicEnv = {
   mediaUrl: process.env.NEXT_PUBLIC_MEDIA_URL ?? "",
   /** Origin of the games domain without the game id (http://games.localhost:4000): each game lives at <public_id>.<that host>. */
   gamesBaseUrl: process.env.NEXT_PUBLIC_GAMES_BASE_URL ?? "",
+  /** Who runs the site, as the legal texts name them (they are public text). Empty: the texts show a visible gap. */
+  legalOperatorName: process.env.NEXT_PUBLIC_LEGAL_OPERATOR_NAME ?? "",
+  legalContactEmail: process.env.NEXT_PUBLIC_LEGAL_CONTACT_EMAIL ?? "",
+  legalJurisdiction: process.env.NEXT_PUBLIC_LEGAL_JURISDICTION ?? "",
 } as const;

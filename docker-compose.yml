@@ -23,6 +23,9 @@ services:
       NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: ${GOOGLE_AUTH_ENABLED:-false}
       # Captcha de Cloudflare Turnstile (opcional en local). La clave del sitio es pública; la secreta la ve SOLO el servidor.
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY:-}
+      NEXT_PUBLIC_LEGAL_OPERATOR_NAME: ${LEGAL_OPERATOR_NAME:-}
+      NEXT_PUBLIC_LEGAL_CONTACT_EMAIL: ${LEGAL_CONTACT_EMAIL:-}
+      NEXT_PUBLIC_LEGAL_JURISDICTION: ${LEGAL_JURISDICTION:-}
       TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
       # Almacenamiento de imágenes (S3 compatible: en producción, Cloudflare R2). Las credenciales las ve SOLO el servidor;
       # el navegador únicamente conoce la URL pública de lectura (NEXT_PUBLIC_MEDIA_URL).

@@ -403,6 +403,19 @@ Migración nueva: `20261110000800_account_deletion.sql`. Las claves foráneas en
 | **Se conserva `moderation_log` y los reclamos de derechos de autor** | El registro es de auditoría (sin clave foránea a propósito) y un reclamo es de quien reclamó, no de la cuenta. | El reclamo queda sin el juego al que apuntaba (`game_id` pasa a nulo); guarda las direcciones que la persona escribió. |
 | **La web necesita acceso al bucket de juegos** (`S3_BUCKET_GAMES`) | Los archivos publicados están ahí. | En producción el token de R2 de la web necesita listar y borrar objetos en el bucket de juegos (ver `.env.example`). |
 
+## Documentos legales (2026-11-10)
+
+Sin migraciones: los textos viven en `lib/legal/content/{es,en}.ts` (datos estructurados: secciones con párrafos y listas) y los muestra `components/legal/legal-document.tsx`. `TERMS_VERSION` pasó a `2026-11-10`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Los textos son datos en el código, no mensajes de i18n** | Son largos, con estructura (secciones, listas) y los revisa alguien que no toca la interfaz. | Un test exige que es y en tengan las mismas secciones, en el mismo orden y con la misma forma, ids únicos como anclas y que el español use voseo. Cambiar un texto es cambiar un archivo. |
+| **Son un borrador marcado** (`LEGAL_DRAFT` en `lib/legal/status.ts`) | Los redactó el equipo de desarrollo a partir de lo que el producto hace; no sustituyen la revisión de un abogado. | Cada página muestra «Borrador sujeto a revisión legal» hasta que se ponga `LEGAL_DRAFT = false`. |
+| **Los datos del titular no se inventan**: `{operator}`, `{email}`, `{jurisdiction}` salen de `LEGAL_OPERATOR_NAME`, `LEGAL_CONTACT_EMAIL` y `LEGAL_JURISDICTION` | No sabemos quién será el titular ni la jurisdicción. | Si falta alguno aparece «[…: a completar]» y un aviso en la página. Son variables públicas de **compilación** (como `SITE_URL`): cambiarlas pide volver a compilar. |
+| **El texto describe el producto real** | Una política de privacidad que promete lo que no se hace es peor que ninguna. | Se verificó contra el código y la base: no hay analítica ni publicidad; las cookies son la de sesión y la del idioma; las partidas guardan juego, versión, dispositivo, sesión de página y segundos (sin IP); el registro de moderación y los reclamos se conservan al eliminar la cuenta. Si el producto cambia, hay que cambiar el texto. |
+| **`{minAge}` sale de `MIN_AGE`** | La edad mínima vive en un solo lugar. | Los términos y la privacidad nunca contradicen al registro. |
+| **Se subió `TERMS_VERSION`** | Cambió el texto que se acepta. | Quien se registre queda con la versión nueva. No hay todavía un flujo que pida aceptar de nuevo a las cuentas existentes. |
+
 ## SEO y tarjetas para compartir (2026-11-09)
 
 Sin migración.
@@ -450,6 +463,7 @@ Sin migración. Herramienta: `tools/lighthouse.sh` (ver `docs/DESARROLLO.md`).
 - **Preguntas del creador**: se escriben solo al subir el juego; no hay todavía una pantalla para cambiarlas, agregarlas o borrarlas después (la base ya lo permite al dueño).
 - **Rendimiento del feed**: las imágenes de los avances se sirven tal como se subieron (hasta 5 MB). Con una imagen grande al principio de la lista, el rendimiento en celular baja de 85 (es una limitación de los datos, no del código). La solución es generar variantes reducidas al subir (o usar el optimizador de imágenes de Next con el dominio público de R2); queda para una pieza aparte.
 - **Captcha**: sin activar el captcha en la configuración de Supabase (producción), el registro no queda protegido contra llamadas directas a la API; el formulario de reclamos se comprueba solo en el servidor de la aplicación.
+- **Documentos legales**: son un borrador sin revisión legal; hacen falta el titular, el email de contacto y la jurisdicción. No hay un flujo para pedir aceptar de nuevo los términos a las cuentas que ya existen, ni un trámite de apelación o de contranotificación formal (los textos mandan a escribir al email de contacto). Las páginas no se pueden descargar ni imprimir con un formato propio.
 - **Eliminar la cuenta**: no se pide la contraseña ni hay un período de gracia para arrepentirse (la sesión abierta alcanza, más el @usuario escrito); si el almacenamiento falla después de borrar la cuenta, quedan archivos huérfanos que solo se ven en el registro del servidor. No se avisa por email que la cuenta se eliminó, ni se ofrece descargar los datos antes. Lo que otras personas comentaron en tus juegos o respondieron a tus comentarios se borra con ellos.
-- **Reclamos de derechos de autor**: no hay contranotificación (que la autoría responda al reclamo y pida restaurar) ni aviso por email a quien reclama; los textos legales del formulario son un borrador hasta la pieza de documentos legales.
+- **Reclamos de derechos de autor**: no hay contranotificación (que la autoría responda al reclamo y pida restaurar) ni aviso por email a quien reclama; los textos legales son un borrador hasta que los revise un abogado.
 - **Lighthouse en local**: la categoría «buenas prácticas» marca 79 porque se mide por HTTP (no hay HTTPS en la prueba); en producción con HTTPS no aplica.
