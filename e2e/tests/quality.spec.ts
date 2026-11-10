@@ -31,6 +31,8 @@ const PAGES: readonly Target[] = [
   { name: "configuracion-preferencias", path: "/settings/preferences", login: true },
   { name: "admin-reportes", path: "/admin", login: "admin" },
   { name: "admin-reportes-resueltos", path: "/admin?status=resolved", login: "admin" },
+  { name: "admin-cuentas", path: "/admin/accounts", login: "admin" },
+  { name: "admin-cuentas-busqueda", path: "/admin/accounts?q=valen&filter=suspended", login: "admin" },
   { name: "admin-registro", path: "/admin/log", login: "admin" },
   { name: "admin-juego-de-la-semana", path: "/admin/featured", login: "admin" },
 ];

@@ -30,14 +30,28 @@ export const getMyProfile = cache(async () => {
   return data;
 });
 
+/** El estado privado de la cuenta con sesión (rol y suspensión). Se pide una sola vez por pedido: lo usan el menú, el aviso de suspensión y el panel. */
+const getMyAccountState = cache(async () => {
+  const user = await getAuthUser();
+  if (!user) return null;
+  const supabase = await createClient();
+  const { data } = await supabase.from("profile_private").select("role, status, suspended_until, suspension_reason").eq("id", user.id).maybeSingle();
+  return data;
+});
+
 /** ¿La persona con sesión es admin (y su cuenta está activa)? Lo decide la base; esto solo lo pregunta para mostrar u ocultar la interfaz. */
 export const getIsAdmin = cache(async (): Promise<boolean> => {
-  const user = await getAuthUser();
-  if (!user) return false;
-  const supabase = await createClient();
-  const { data } = await supabase.from("profile_private").select("role, status, suspended_until").eq("id", user.id).maybeSingle();
+  const data = await getMyAccountState();
   if (data?.role !== "admin") return false;
   return data.status === "active" || (data.suspended_until !== null && Date.parse(data.suspended_until) <= Date.now());
+});
+
+/** La suspensión vigente de la cuenta con sesión (con su motivo y hasta cuándo), o null si puede escribir. La lee la propia persona: la base se lo deja ver. */
+export const getMySuspension = cache(async (): Promise<{ reason: string | null; until: string | null } | null> => {
+  const data = await getMyAccountState();
+  if (data?.status !== "suspended") return null;
+  if (data.suspended_until !== null && Date.parse(data.suspended_until) <= Date.now()) return null;
+  return { reason: data.suspension_reason, until: data.suspended_until };
 });
 
 /** Para las pantallas de administración: sin sesión → login; sin ser admin → 404 (no se anuncia que existen). */

@@ -17,7 +17,7 @@ Postgres (vía Supabase). El esquema completo del MVP está desde la Fase 1: **2
 |---|---|---|
 | `engines`, `genres` | Catálogos (ids estables; los nombres viven en i18n). 9 motores y 17 géneros | Solo migraciones |
 | `profiles` | Perfil público: @usuario (inmutable en el MVP), nombre, bio, ciudad, país, motores, géneros favoritos, ruta de la foto, contadores | Alta: `complete_onboarding`. Edición: dueño, solo 7 columnas |
-| `profile_private` | Rol, suspensión, términos aceptados, idioma | El dueño solo cambia `locale`; el resto, funciones |
+| `profile_private` | Rol, suspensión, términos aceptados, idioma | El dueño solo cambia `locale`; el resto, funciones (`suspend_account` y `lift_suspension` para la suspensión, con registro) |
 | `follows` | Quién sigue a quién (grafo público) | Cada persona, solo sus filas |
 | `games` | Ficha del juego, versión activa, estado, contadores, `search_doc` (texto de búsqueda) | Dueño (borrador ⇄ publicado); moderación: funciones |
 | `game_screenshots`, `game_questions` | Capturas y hasta 3 preguntas de feedback | Dueño del juego |

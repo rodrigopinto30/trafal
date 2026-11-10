@@ -958,7 +958,8 @@
     "tabs": {
       "reports": "Reports",
       "log": "Log",
-      "featured": "Game of the week"
+      "featured": "Game of the week",
+      "accounts": "Accounts"
     },
     "filtersLabel": "State of the reports",
     "filters": {
@@ -1063,7 +1064,9 @@
         "action_report": "Resolved a report",
         "feature_game": "Chose the game of the week",
         "replace_featured_game": "Changed the game of the week",
-        "unfeature_game": "Took off the game of the week"
+        "unfeature_game": "Took off the game of the week",
+        "suspend_account": "Suspended an account",
+        "lift_suspension": "Lifted a suspension"
       },
       "targets": {
         "game": "game",
@@ -1118,7 +1121,69 @@
       "alreadyFeatured": "That game has already been the game of the week.",
       "quoteTooLong": "The quote can have up to 280 characters.",
       "invalidInput": "Something you sent is not valid. Reload the page and try again.",
-      "generic": "We could not do that. Try again."
+      "generic": "We could not do that. Try again.",
+      "reasonTooLong": "The reason can be up to 500 characters.",
+      "accountNotFound": "That account doesn't exist.",
+      "cannotSuspendSelf": "You can't suspend your own account.",
+      "cannotSuspendAdmin": "Administration accounts can't be suspended.",
+      "alreadySuspended": "That account is already suspended.",
+      "notSuspended": "That account isn't suspended."
+    },
+    "accounts": {
+      "title": "Accounts",
+      "subtitle": "Look someone up to suspend their account or lift their suspension. A suspended account can sign in and look around, but cannot post, comment, report, follow or like.",
+      "searchLabel": "Search by @username or name",
+      "searchPlaceholder": "For example: valen",
+      "filterLabel": "Show",
+      "filters": {
+        "all": "All",
+        "suspended": "Suspended only"
+      },
+      "search": "Search",
+      "clear": "Clear",
+      "empty": "We couldn't find accounts with that.",
+      "emptySuspended": "There are no suspended accounts.",
+      "truncated": "There are more results: type something more specific to see them.",
+      "joined": "Joined {date}",
+      "admin": "Administration",
+      "suspended": "Suspended",
+      "suspendedUntil": "Suspended until {date}",
+      "suspendedForever": "Suspended with no end date",
+      "reason": "Reason",
+      "viewProfile": "View profile",
+      "protected": "Administration accounts can't be suspended.",
+      "suspend": "Suspend",
+      "lift": "Lift suspension",
+      "dialog": {
+        "suspendTitle": "Suspend @{username}'s account",
+        "suspendText": "The person will see this reason and how long it lasts. Meanwhile they won't be able to post, comment, report or follow.",
+        "liftTitle": "Lift @{username}'s suspension",
+        "liftText": "The person can use Trafal again and is told with this reason.",
+        "reasonLabel": "Reason (shown to the person)",
+        "durationLabel": "Duration",
+        "durations": {
+          "1": "1 day",
+          "7": "7 days",
+          "30": "30 days",
+          "90": "90 days",
+          "forever": "Until we lift it"
+        },
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "count": "{count} of {max}"
+      },
+      "done": {
+        "suspended": "Account suspended",
+        "lifted": "Suspension lifted"
+      },
+      "fromReport": "View @{username}'s account"
     }
+  },
+  "suspension": {
+    "title": "Your account is suspended",
+    "untilDate": "Until {date}.",
+    "untilFurtherNotice": "Until further notice.",
+    "reason": "Reason: {reason}",
+    "text": "Meanwhile you can look around the site, but you can't post, comment, report, follow or like."
   }
 }

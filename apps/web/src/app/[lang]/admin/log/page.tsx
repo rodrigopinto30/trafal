@@ -7,7 +7,7 @@ import { listModerationLog } from "@/lib/admin/queries";
 import { parseBefore } from "@/lib/validation/admin";
 import { firstParam } from "@/lib/validation/common";
 
-const LOG_ACTIONS = ["hide_game", "restore_game", "hide_post", "restore_post", "hide_comment", "restore_comment", "take_report", "dismiss_report", "action_report", "feature_game", "replace_featured_game", "unfeature_game"] as const;
+const LOG_ACTIONS = ["hide_game", "restore_game", "hide_post", "restore_post", "hide_comment", "restore_comment", "take_report", "dismiss_report", "action_report", "feature_game", "replace_featured_game", "unfeature_game", "suspend_account", "lift_suspension"] as const;
 const LOG_TARGETS = ["game", "post", "comment", "report", "featured", "profile", "claim"] as const;
 
 const isLogAction = (value: string): value is (typeof LOG_ACTIONS)[number] => (LOG_ACTIONS as readonly string[]).includes(value);
