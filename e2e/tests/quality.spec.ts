@@ -23,6 +23,8 @@ const PAGES: readonly Target[] = [
   { name: "explorar-filtrado", path: "/explore?genre=arcade&engine=phaser&mobile=1&sort=plays" },
   { name: "explorar-sin-resultados", path: "/explore?q=zzzz" },
   { name: "terminos", path: "/legal/terms" },
+  { name: "privacidad", path: "/legal/privacy" },
+  { name: "normas-de-la-comunidad", path: "/legal/guidelines" },
   { name: "derechos-de-autor", path: "/legal/copyright" },
   { name: "reclamo-de-derechos-de-autor", path: "/legal/copyright/claim" },
   { name: "no-encontrado", path: "/pagina-que-no-existe" },
