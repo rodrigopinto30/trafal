@@ -3,11 +3,16 @@ import {
   ADMIN_ERROR_KEYS,
   FEATURED_QUOTE_MAX,
   MODERATION_NOTE_MAX,
+  SUSPENSION_REASON_MAX,
+  liftSuspensionSchema,
   moderateContentSchema,
+  parseAccountFilter,
+  parseAccountSearch,
   parseBefore,
   parseReportStatusFilter,
   resolveReportSchema,
   setFeaturedSchema,
+  suspendAccountSchema,
 } from "./admin";
 
 const id = "11111111-1111-4111-8111-111111111111";
@@ -43,6 +48,43 @@ describe("setFeaturedSchema", () => {
     expect(setFeaturedSchema.parse({ gameId: id, week: "2026-11-09" }).week).toBe("2026-11-09");
     expect(messages(setFeaturedSchema.safeParse({ gameId: id, week: "09/11/2026" }))).toContain("invalidInput");
     expect(messages(setFeaturedSchema.safeParse({ gameId: id, quote: "a".repeat(FEATURED_QUOTE_MAX + 1) }))).toEqual(["quoteTooLong"]);
+  });
+});
+
+describe("suspendAccountSchema and liftSuspensionSchema", () => {
+  it("accepts every duration and cleans the reason", () => {
+    for (const duration of ["1", "7", "30", "90", "forever"]) expect(messages(suspendAccountSchema.safeParse({ userId: id, reason: "Insultos", duration }))).toEqual([]);
+    expect(suspendAccountSchema.parse({ userId: id, reason: "  Insultos\n\n\n\nrepetidos  ", duration: "7" }).reason).toBe("Insultos\n\nrepetidos");
+  });
+
+  it("needs a reason, of up to 500 characters", () => {
+    expect(messages(suspendAccountSchema.safeParse({ userId: id, reason: "   ", duration: "7" }))).toEqual(["reasonRequired"]);
+    expect(messages(suspendAccountSchema.safeParse({ userId: id, reason: "a".repeat(SUSPENSION_REASON_MAX), duration: "7" }))).toEqual([]);
+    expect(messages(suspendAccountSchema.safeParse({ userId: id, reason: "a".repeat(SUSPENSION_REASON_MAX + 1), duration: "7" }))).toEqual(["reasonTooLong"]);
+    expect(messages(liftSuspensionSchema.safeParse({ userId: id, reason: "" }))).toEqual(["reasonRequired"]);
+  });
+
+  it("rejects durations that are not offered and ids that are not uuids", () => {
+    expect(messages(suspendAccountSchema.safeParse({ userId: id, reason: "x", duration: "365" }))).toEqual(["invalidInput"]);
+    expect(messages(suspendAccountSchema.safeParse({ userId: id, reason: "x", duration: "-1" }))).toEqual(["invalidInput"]);
+    expect(messages(suspendAccountSchema.safeParse({ userId: "x", reason: "x", duration: "7" }))).toEqual(["invalidInput"]);
+  });
+});
+
+describe("accounts search from the address", () => {
+  it("keeps letters, numbers, underscores and spaces only, and cuts it short", () => {
+    expect(parseAccountSearch("  valen_makes  ")).toBe("valen_makes");
+    expect(parseAccountSearch("José  Pérez")).toBe("José Pérez");
+    expect(parseAccountSearch("a%b,c(d)\"e\\f")).toBe("abcdef");
+    expect(parseAccountSearch("a".repeat(80))).toHaveLength(50);
+    expect(parseAccountSearch(undefined)).toBe("");
+    expect(parseAccountSearch(["x"])).toBe("");
+  });
+
+  it("falls back to «all» for unknown filters", () => {
+    expect(parseAccountFilter("suspended")).toBe("suspended");
+    expect(parseAccountFilter("admins")).toBe("all");
+    expect(parseAccountFilter(undefined)).toBe("all");
   });
 });
 

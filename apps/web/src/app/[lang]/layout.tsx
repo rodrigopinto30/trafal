@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Oxanium, Pixelify_Sans, Space_Grotesk } from "next/font/google";
 import { Background } from "@/components/layout/background";
 import { BackToTop } from "@/components/layout/back-to-top";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteNav } from "@/components/layout/site-nav";
+import { SuspensionBanner } from "@/components/layout/suspension-banner";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/i18n/client";
 import { locales } from "@/i18n/config";
@@ -72,6 +74,9 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
               {t("skipToContent")}
             </a>
             <SiteNav />
+            <Suspense fallback={null}>
+              <SuspensionBanner />
+            </Suspense>
             <main id="contenido" className="flex-1">
               {children}
             </main>

@@ -315,6 +315,20 @@ Migración nueva: `20261110000100_report_published_only.sql`. La tabla `reports`
 | **Solo se reporta lo publicado** (trigger de la base) | El reporte guarda una copia del texto que lee quien reportó (`reports_select`): reportar algo oculto, dado de baja o en borrador, cuyo id alguien conocía, le entregaría ese texto. | `report_target_not_found`, que la interfaz muestra como «Eso ya no está disponible para reportar». |
 | **No se bloquea reportar lo propio en la base; la interfaz no ofrece el botón** | No daña a nadie (solo llena la cola de quien lo hace) y evita una regla que complica a los tests que usan una sola cuenta. | Las tarjetas de avances y comentarios y el perfil propio no muestran el botón. |
 
+## Suspensiones (2026-11-10)
+
+Migración nueva: `20261110000200_suspensions.sql`. Las columnas (`status`, `suspended_until`, `suspension_reason`) y `private.can_write()` ya existían desde la Fase 1 y ya frenaban toda escritura.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Dos funciones y ninguna escritura directa**: `suspend_account(cuenta, motivo, hasta)` y `lift_suspension(cuenta, motivo)` | Igual que moderar contenido: tiene que ser de un admin activo y dejar rastro. | Escriben en `moderation_log` (`suspend_account`, `lift_suspension`; la fecha de fin va en el texto) y avisan a la persona con un aviso `moderation` sin nombrar al admin. La persona no puede levantarse la suspensión (no tiene permiso de columna). |
+| **No se suspende a la administración ni a uno mismo** | Un admin suspendiendo a otro (o a sí mismo) es una pelea por el control, no moderación; hay un solo rol de admin. | `cannot_suspend_admin` / `cannot_suspend_self`. Un admin que quedara suspendido igual pierde sus poderes (`is_admin()` lo exige activo), por ejemplo si se lo suspende a mano en la base. |
+| **El motivo es obligatorio (hasta 500 caracteres) y la persona lo lee** | Nadie debería ser sancionado sin saber por qué. | Se muestra en un aviso en todas las páginas (`SuspensionBanner`) mientras dure. |
+| **Una suspensión con fecha vence sola**, sin tareas programadas | `can_write()` y la nueva `private.is_suspended()` comparan con `now()`. | La fila queda «suspendida» pero deja de contar; se puede volver a suspender y no hay nada que levantar. La interfaz usa la misma regla. |
+| **Suspender no oculta lo ya publicado** | Ocultar contenido es otra acción, con su propio motivo, y puede ser sobre una parte. | Si hay que sacar contenido, se hace desde el reporte (ocultar y resolver). |
+| **El estado de la cuenta se pide una sola vez por pedido** (`getMyAccountState`) | El menú, el aviso de suspensión y el panel lo necesitan: tres consultas iguales en cada página con sesión. | `getIsAdmin` y `getMySuspension` comparten la misma consulta. |
+| **La búsqueda de cuentas es por comienzo** (del @usuario o de una palabra del nombre) y limpia el texto | Con la `q` en un patrón `ilike`, `%` y `_` serían comodines. | `parseAccountSearch` deja letras, números, `_` y espacios; el resto se escapa. Hasta 30 resultados. |
+
 ## SEO y tarjetas para compartir (2026-11-09)
 
 Sin migración.

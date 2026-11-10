@@ -6,9 +6,11 @@ import { createClient } from "@/lib/supabase/server";
 import {
   ADMIN_ERROR_KEYS,
   clearFeaturedSchema,
+  liftSuspensionSchema,
   moderateContentSchema,
   resolveReportSchema,
   setFeaturedSchema,
+  suspendAccountSchema,
   takeReportSchema,
   type AdminErrorKey,
 } from "@/lib/validation/admin";
@@ -24,6 +26,12 @@ const DATABASE_ERRORS: [RegExp, AdminErrorKey][] = [
   [/report_not_open/, "reportNotOpen"],
   [/report_already_resolved/, "reportAlreadyResolved"],
   [/reason_required/, "reasonRequired"],
+  [/account_not_found/, "accountNotFound"],
+  [/cannot_suspend_self/, "cannotSuspendSelf"],
+  [/cannot_suspend_admin/, "cannotSuspendAdmin"],
+  [/already_suspended/, "alreadySuspended"],
+  [/not_suspended/, "notSuspended"],
+  [/invalid_until/, "invalidInput"],
   [/note_too_long/, "noteTooLong"],
   [/target_not_found/, "targetNotFound"],
   [/invalid_status_for_action/, "invalidStatus"],
@@ -82,4 +90,19 @@ export async function setFeaturedGameAction(rawInput: unknown): Promise<AdminRes
 /** Takes off the pick of a week (the current one if no week is given). */
 export async function clearFeaturedGameAction(rawInput: unknown): Promise<AdminResult> {
   return asAdmin(rawInput, clearFeaturedSchema, async ({ week }, supabase) => (await supabase.rpc("clear_featured_game", { p_week_start: week ?? undefined })).error);
+}
+
+const DAY_MS = 86_400_000;
+
+/** Suspends an account for some days or until an admin lifts it. The person is told the reason; the database refuses admins and oneself. */
+export async function suspendAccountAction(rawInput: unknown): Promise<AdminResult> {
+  return asAdmin(rawInput, suspendAccountSchema, async ({ userId, reason, duration }, supabase) => {
+    const until = duration === "forever" ? undefined : new Date(Date.now() + Number(duration) * DAY_MS).toISOString();
+    return (await supabase.rpc("suspend_account", { p_user: userId, p_reason: reason, p_until: until })).error;
+  });
+}
+
+/** Lifts the suspension of an account, with the reason (the person is told). */
+export async function liftSuspensionAction(rawInput: unknown): Promise<AdminResult> {
+  return asAdmin(rawInput, liftSuspensionSchema, async ({ userId, reason }, supabase) => (await supabase.rpc("lift_suspension", { p_user: userId, p_reason: reason })).error);
 }

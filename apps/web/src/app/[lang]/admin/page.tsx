@@ -27,6 +27,12 @@ function snapshotText(report: AdminReport): string {
   return snapshot.body ?? "";
 }
 
+function accountOf(report: AdminReport): string | undefined {
+  const snapshot = report.snapshot as Record<string, string | undefined>;
+  const username = report.target_type === "profile" ? snapshot.username : report.target_type === "game" ? snapshot.owner : snapshot.author;
+  return username || undefined;
+}
+
 async function Reports({ searchParams }: { searchParams: PageProps<"/[lang]/admin">["searchParams"] }) {
   const raw = await searchParams;
   const filter = parseReportStatusFilter(firstParam(raw.status));
@@ -79,6 +85,11 @@ async function Reports({ searchParams }: { searchParams: PageProps<"/[lang]/admi
                   {report.target?.href ? (
                     <Link href={report.target.href} className="mt-1 inline-flex min-h-11 w-fit items-center rounded-lg font-semibold text-cyan hover:underline">
                       {t("reports.viewTarget")}
+                    </Link>
+                  ) : null}
+                  {accountOf(report) ? (
+                    <Link href={`/admin/accounts?q=${encodeURIComponent(accountOf(report) ?? "")}`} className="inline-flex min-h-11 w-fit items-center rounded-lg font-semibold text-cyan hover:underline">
+                      {t("accounts.fromReport", { username: accountOf(report) ?? "" })}
                     </Link>
                   ) : null}
                 </div>

@@ -105,7 +105,8 @@ test("la administración ve los tres reportes con su evidencia, oculta el coment
   const profile = page.getByRole("article", { name: "Perfil · Otro" }).filter({ hasText: `Perfil ${suffix}` });
   await expect(post.getByText(POST_TEXT)).toBeVisible();
   await expect(comment.getByText(SEEDED_COMMENT)).toBeVisible();
-  await expect(profile.getByText(/valen_makes/)).toBeVisible();
+  await expect(profile.getByText(/valen_makes/).first()).toBeVisible();
+  await expect(profile.getByRole("link", { name: "Ver cuenta de @valen_makes" })).toBeVisible();
   await expect(profile.getByRole("button", { name: "Ocultar y resolver" })).toHaveCount(0);
 
   const hide = comment.getByRole("button", { name: "Ocultar y resolver" });

@@ -83,6 +83,14 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Solo se modera ocultando o restaurando** (juegos, avances y comentarios): nada se borra ni se edita. Ocultar o restaurar exige un motivo, que lee la autoría del contenido en sus avisos.
 - **Registro**: toda acción queda anotada (quién, qué, sobre qué, por qué y cuándo) en un registro que solo se agrega.
 - **Juego de la semana**: elegir, ver lo que viene y sacar elecciones.
+- **Cuentas**: buscar a una persona (por el comienzo de su @usuario o de una palabra de su nombre) y **suspender** su cuenta por 1, 7, 30 o 90 días o hasta que se la levante, o **levantarle** la suspensión. Siempre con un **motivo** que la persona lee. No se puede suspender a la administración ni a uno mismo. Desde un reporte hay un enlace directo a la cuenta de quien lo hizo.
+
+### Suspensiones
+
+**Hoy**
+- Una cuenta suspendida **puede entrar y mirar**, pero no publicar, comentar, reportar, seguir ni dar me gusta (la base lo impone en cada tabla). En **todas las páginas** ve un aviso con el motivo y hasta cuándo dura.
+- Una suspensión con fecha **termina sola** al llegar esa fecha; sin fecha dura hasta que la administración la levanta.
+- Suspender y levantar quedan en el registro de moderación, y la persona recibe un aviso (sin saber qué administrador actuó).
 
 ### Creadores
 
@@ -182,7 +190,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Reportes** de juegos, avances, comentarios y perfiles, con copia del contenido como evidencia.
 - **Reclamos de derechos de autor** con un formulario público.
 - **Panel de administración** donde cada acción de moderación queda registrada en un historial que nadie puede editar ni borrar.
-- **Suspensiones** temporales o permanentes: una cuenta suspendida no puede escribir.
+- **Suspensiones** (hecho: ver «Administración» y «Suspensiones»): temporales o hasta que se levanten; una cuenta suspendida no puede escribir. Falta la pantalla de avisos (campanita) y que la persona pueda apelar.
 - **Límites de uso**, captcha en el registro y páginas legales definitivas (Términos, Privacidad, Normas de la comunidad y Derechos de autor).
 
 ### Diseño y accesibilidad

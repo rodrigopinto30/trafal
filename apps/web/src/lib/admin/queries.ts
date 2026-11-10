@@ -1,6 +1,6 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
-import type { ReportStatusFilter } from "@/lib/validation/admin";
+import type { AccountFilter, ReportStatusFilter } from "@/lib/validation/admin";
 
 export const ADMIN_PAGE_SIZE = 15;
 
@@ -106,4 +106,85 @@ export async function listEligibleFirstGames(): Promise<EligibleGame[]> {
   ]);
   const featured = new Set((used.data ?? []).map((row) => row.game_id));
   return (games.data ?? []).filter((game) => !featured.has(game.id)).map((game) => ({ id: game.id, title: game.title, owner: game.owner?.display_name ?? "" }));
+}
+
+export type AdminAccount = {
+  id: string;
+  username: string;
+  display_name: string;
+  avatar_path: string | null;
+  created_at: string;
+  role: "user" | "admin";
+  suspended: boolean;
+  suspended_until: string | null;
+  suspension_reason: string | null;
+};
+
+export const ACCOUNTS_LIMIT = 30;
+
+type AccountRow = {
+  id: string;
+  username: string;
+  display_name: string;
+  avatar_path: string | null;
+  created_at: string;
+  state: { role: "user" | "admin"; status: "active" | "suspended"; suspended_until: string | null; suspension_reason: string | null } | null;
+};
+
+const ACCOUNT_SELECT = "id, username, display_name, avatar_path, created_at, state:profile_private!profile_private_id_fkey(role, status, suspended_until, suspension_reason)";
+
+function toAdminAccount(row: AccountRow, now: number): AdminAccount {
+  const state = row.state;
+  const suspended = state?.status === "suspended" && (state.suspended_until === null || Date.parse(state.suspended_until) > now);
+  return {
+    id: row.id,
+    username: row.username,
+    display_name: row.display_name,
+    avatar_path: row.avatar_path,
+    created_at: row.created_at,
+    role: state?.role ?? "user",
+    suspended,
+    suspended_until: suspended ? (state?.suspended_until ?? null) : null,
+    suspension_reason: suspended ? (state?.suspension_reason ?? null) : null,
+  };
+}
+
+const escapePattern = (text: string) => text.replace(/[\\%_]/g, (character) => `\\${character}`);
+
+/**
+ * Accounts for the admin to look at: by the start of the username or of any word of the name, and only the suspended ones if asked.
+ * Without text, the newest accounts (or all the suspended ones). It shows at most ACCOUNTS_LIMIT: a more specific search narrows it.
+ */
+export async function listAccounts(search: string, filter: AccountFilter): Promise<{ accounts: AdminAccount[]; truncated: boolean }> {
+  const supabase = await createClient();
+  const pattern = escapePattern(search);
+  const wordStart = pattern.replace(/[,()"]/g, "");
+
+  let ids: string[] | null = null;
+  if (filter === "suspended") {
+    const { data } = await supabase.from("profile_private").select("id").eq("status", "suspended").limit(500);
+    ids = (data ?? []).map((row) => row.id);
+    if (ids.length === 0) return { accounts: [], truncated: false };
+  }
+  const base = () => {
+    const query = supabase.from("profiles").select(ACCOUNT_SELECT);
+    return ids ? query.in("id", ids) : query;
+  };
+
+  const rows = new Map<string, AccountRow>();
+  if (search === "") {
+    const { data } = await base().order("created_at", { ascending: false }).limit(ACCOUNTS_LIMIT + 1);
+    for (const row of (data ?? []) as unknown as AccountRow[]) rows.set(row.id, row);
+  } else {
+    const [usernames, names] = await Promise.all([
+      base().ilike("username", `${pattern}%`).order("username").limit(ACCOUNTS_LIMIT + 1),
+      base().or(`display_name.ilike.${wordStart}%,display_name.ilike.% ${wordStart}%`).order("display_name").limit(ACCOUNTS_LIMIT + 1),
+    ]);
+    for (const row of [...(usernames.data ?? []), ...(names.data ?? [])] as unknown as AccountRow[]) rows.set(row.id, row);
+  }
+
+  const now = Date.now();
+  let accounts = [...rows.values()].map((row) => toAdminAccount(row, now));
+  if (filter === "suspended") accounts = accounts.filter((account) => account.suspended);
+  return { accounts: accounts.slice(0, ACCOUNTS_LIMIT), truncated: accounts.length > ACCOUNTS_LIMIT };
 }

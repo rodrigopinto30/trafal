@@ -958,7 +958,8 @@
     "tabs": {
       "reports": "Reportes",
       "log": "Registro",
-      "featured": "Juego de la semana"
+      "featured": "Juego de la semana",
+      "accounts": "Cuentas"
     },
     "filtersLabel": "Estado de los reportes",
     "filters": {
@@ -1063,7 +1064,9 @@
         "action_report": "Resolvió un reporte",
         "feature_game": "Eligió el juego de la semana",
         "replace_featured_game": "Cambió el juego de la semana",
-        "unfeature_game": "Sacó el juego de la semana"
+        "unfeature_game": "Sacó el juego de la semana",
+        "suspend_account": "Suspendió una cuenta",
+        "lift_suspension": "Levantó una suspensión"
       },
       "targets": {
         "game": "juego",
@@ -1118,7 +1121,69 @@
       "alreadyFeatured": "Ese juego ya fue el de la semana alguna vez.",
       "quoteTooLong": "La frase puede tener hasta 280 caracteres.",
       "invalidInput": "Algo de lo que mandaste no es válido. Recargá la página e intentá de nuevo.",
-      "generic": "No pudimos hacerlo. Probá de nuevo."
+      "generic": "No pudimos hacerlo. Probá de nuevo.",
+      "reasonTooLong": "El motivo puede tener hasta 500 caracteres.",
+      "accountNotFound": "Esa cuenta no existe.",
+      "cannotSuspendSelf": "No podés suspender tu propia cuenta.",
+      "cannotSuspendAdmin": "No se puede suspender a la administración.",
+      "alreadySuspended": "Esa cuenta ya está suspendida.",
+      "notSuspended": "Esa cuenta no está suspendida."
+    },
+    "accounts": {
+      "title": "Cuentas",
+      "subtitle": "Buscá a una persona para suspender su cuenta o levantarle la suspensión. Una cuenta suspendida puede entrar y mirar, pero no publicar, comentar, reportar, seguir ni dar me gusta.",
+      "searchLabel": "Buscar por @usuario o nombre",
+      "searchPlaceholder": "Por ejemplo: valen",
+      "filterLabel": "Mostrar",
+      "filters": {
+        "all": "Todas",
+        "suspended": "Solo suspendidas"
+      },
+      "search": "Buscar",
+      "clear": "Limpiar",
+      "empty": "No encontramos cuentas con eso.",
+      "emptySuspended": "No hay cuentas suspendidas.",
+      "truncated": "Hay más resultados: escribí algo más específico para verlos.",
+      "joined": "Se unió el {date}",
+      "admin": "Administración",
+      "suspended": "Suspendida",
+      "suspendedUntil": "Suspendida hasta el {date}",
+      "suspendedForever": "Suspendida sin fecha de fin",
+      "reason": "Motivo",
+      "viewProfile": "Ver perfil",
+      "protected": "No se puede suspender a la administración.",
+      "suspend": "Suspender",
+      "lift": "Levantar suspensión",
+      "dialog": {
+        "suspendTitle": "Suspender la cuenta de @{username}",
+        "suspendText": "La persona va a ver este motivo y hasta cuándo dura. No va a poder publicar, comentar, reportar ni seguir mientras tanto.",
+        "liftTitle": "Levantar la suspensión de @{username}",
+        "liftText": "La persona vuelve a poder usar Trafal y se le avisa con este motivo.",
+        "reasonLabel": "Motivo (se le muestra a la persona)",
+        "durationLabel": "Duración",
+        "durations": {
+          "1": "1 día",
+          "7": "7 días",
+          "30": "30 días",
+          "90": "90 días",
+          "forever": "Hasta que la levantemos"
+        },
+        "confirm": "Confirmar",
+        "cancel": "Cancelar",
+        "count": "{count} de {max}"
+      },
+      "done": {
+        "suspended": "Cuenta suspendida",
+        "lifted": "Suspensión levantada"
+      },
+      "fromReport": "Ver cuenta de @{username}"
     }
+  },
+  "suspension": {
+    "title": "Tu cuenta está suspendida",
+    "untilDate": "Hasta el {date}.",
+    "untilFurtherNotice": "Hasta nuevo aviso.",
+    "reason": "Motivo: {reason}",
+    "text": "Mientras tanto podés mirar el sitio, pero no publicar, comentar, reportar, seguir ni dar me gusta."
   }
 }

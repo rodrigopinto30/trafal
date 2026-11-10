@@ -634,6 +634,9 @@ isOneToOne: false
               "entry_path": string,"needs_isolation": boolean,"state": string,"version_number": number
             }[]
                            },
+"lift_suspension":
+{ Args: { "p_reason": string,"p_user": string }; Returns: undefined
+                           },
 "moderate_content":
 { Args: { "p_action": string,"p_reason": string,"p_target_id": string,"p_target_type": string }; Returns: undefined
                            },
@@ -662,6 +665,9 @@ isOneToOne: false
                            },
 "start_play":
 { Args: { "p_device": string,"p_public_id": string,"p_session_id": string }; Returns: undefined
+                           },
+"suspend_account":
+{ Args: { "p_reason": string,"p_until"?: string,"p_user": string }; Returns: undefined
                            },
 "take_report":
 { Args: { "p_report_id": string }; Returns: undefined
