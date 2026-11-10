@@ -107,6 +107,7 @@ returns void
 language sql
 as $$
   delete from auth.users;   -- las claves foráneas en cascada se llevan perfiles, juegos, avances, comentarios, etc.
+  delete from public.copyright_claims;   -- no cuelgan de ninguna cuenta: se vacían aparte (los reclamos reales de la base local no cuentan en las pruebas)
 $$;
 
 select plan(1);

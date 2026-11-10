@@ -94,7 +94,11 @@ export async function signupAction(_prev: FormState, formData: FormData): Promis
     email,
     password,
     // La metadata deja constancia de que marcó la casilla (18+ y términos); el onboarding no la vuelve a pedir.
-    options: { data: { locale, terms_version: TERMS_VERSION, age_confirmed: true } },
+    options: {
+      data: { locale, terms_version: TERMS_VERSION, age_confirmed: true },
+      // La respuesta del captcha (si el sitio lo tiene): Supabase Auth la comprueba si el captcha está activado en su configuración.
+      captchaToken: readText(formData, "captchaToken") || undefined,
+    },
   });
   if (error) {
     return { status: "error", message: t(`errors.${authErrorKey(error)}`), values: { email, consent: "on" } };

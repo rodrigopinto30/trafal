@@ -93,6 +93,14 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - Los datos del reclamo los ve **solo la administración** (no la autoría del contenido). En **Administración → Reclamos** se puede **tomar**, **descartar**, **marcar como resuelto** u **ocultar lo reclamado y resolver**: lo reclamado se oculta (reversible, como cualquier moderación), su autoría recibe un aviso con el **motivo** y todo queda en el registro. Si se aclara el reclamo, se puede **restaurar**.
 - **No se manda nada por email** a quien reclama: el sitio no envía emails de este tipo (solo avisos dentro del sitio).
 
+### Captcha
+
+**Hoy**
+- El **registro** y el **formulario de reclamos de derechos de autor** llevan un captcha de **Cloudflare Turnstile**: un control que casi siempre se resuelve solo, sin pedirle nada a la persona. El botón de enviar espera a que termine, y si el sitio no lo carga (por ejemplo, por un bloqueador de contenido) lo explica.
+- **En un sitio público es obligatorio**: sin la clave secreta, el servidor **rechaza** esos formularios (y lo deja en el log) en lugar de dejarlos pasar; y si no puede preguntarle a Cloudflare, también rechaza. En local, sin claves, no hay captcha.
+- Cada respuesta del captcha sirve **una sola vez**: tras cada intento el control se reinicia.
+- **El registro lo comprueba Supabase Auth**, no solo la aplicación: se le pasa la respuesta y, con el captcha activado en la configuración de Supabase, nadie puede saltearlo llamando a la API directamente. **El formulario de reclamos lo comprueba el servidor** de la aplicación (la base ya limita cuántos reclamos entran por email y por hora).
+
 ### Límites de uso
 
 **Hoy**
@@ -214,7 +222,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Reclamos de derechos de autor** (hecho: ver «Reclamos de derechos de autor»); falta el captcha del formulario y el texto legal definitivo.
 - **Panel de administración** donde cada acción de moderación queda registrada en un historial que nadie puede editar ni borrar.
 - **Suspensiones** (hecho: ver «Administración» y «Suspensiones»): temporales o hasta que se levanten; una cuenta suspendida no puede escribir. Falta que la persona pueda apelar.
-- **Límites de uso** (hecho: ver «Límites de uso»), captcha en el registro y páginas legales definitivas (Términos, Privacidad, Normas de la comunidad y Derechos de autor).
+- **Límites de uso** (hecho: ver «Límites de uso»), **captcha** (hecho: ver «Captcha») y páginas legales definitivas (Términos, Privacidad, Normas de la comunidad y Derechos de autor).
 
 ### Diseño y accesibilidad
 

@@ -4,6 +4,7 @@ import { getTranslationsFor } from "@/i18n/server";
 import { readText, type FormState } from "@/lib/forms";
 import { publicEnv } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
+import { verifyTurnstile } from "@/lib/turnstile/verify";
 import { CLAIM_ERROR_KEYS, claimFormSchema, parseSiteTarget, type ClaimErrorKey } from "@/lib/validation/claims";
 import { parseLocale } from "@/lib/validation/common";
 import { fieldErrorsFrom } from "@/lib/validation/text";
@@ -26,6 +27,11 @@ export async function submitCopyrightClaimAction(_previous: FormState, formData:
     return { status: "error", fieldErrors: fieldErrorsFrom(parsed.error, CLAIM_ERROR_KEYS, message, "generic"), values };
   }
   const claim = parsed.data;
+
+  const captcha = await verifyTurnstile(readText(formData, "captchaToken"));
+  if (!captcha.ok) {
+    return { status: "error", message: message(captcha.reason === "missing" || captcha.reason === "failed" ? "captchaFailed" : "captchaUnavailable"), values };
+  }
 
   const origin = new URL(publicEnv.siteUrl).origin;
   const targets = claim.urls.map((link) => parseSiteTarget(link, origin)).filter((target) => target !== null);

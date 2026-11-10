@@ -5,6 +5,7 @@ export type AuthErrorKey =
   | "weakPassword"
   | "rateLimited"
   | "invalidEmail"
+  | "captchaFailed"
   | "generic";
 
 export function authErrorKey(error: { code?: string | null; status?: number | null }): AuthErrorKey {
@@ -19,6 +20,8 @@ export function authErrorKey(error: { code?: string | null; status?: number | nu
     case "over_email_send_rate_limit":
     case "over_sms_send_rate_limit":
       return "rateLimited";
+    case "captcha_failed":
+      return "captchaFailed";
     case "email_address_invalid":
     case "validation_failed":
       return "invalidEmail";

@@ -49,7 +49,7 @@ cleanup() {
 trap cleanup EXIT
 
 docker run --rm --network host --ipc=host -u "$(id -u):$(id -g)" \
-  -e HOME=/tmp/home -e CI=true \
+  -e HOME=/tmp/home -e CI=true -e E2E_TURNSTILE="${E2E_TURNSTILE:-}" \
   -v "$PWD":/app -w /app/e2e \
   "mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-noble" \
   sh -c 'mkdir -p "$HOME" && ./node_modules/.bin/playwright test "$@"' -- "$@"
