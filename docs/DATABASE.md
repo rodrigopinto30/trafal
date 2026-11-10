@@ -51,7 +51,9 @@ Las imágenes **no** viven en Postgres: la base guarda solo la ruta. Los bytes v
 |---|---|---|---|
 | `media` | Lectura pública; escritura solo con las credenciales S3 del **servidor** | `avatars/<id de la persona>/<32 hex>.webp\|jpg\|png` (hoy); capturas y avances (Fases 2–3) | Solo imagen/GIF/MP4/WebM (lista de tipos MIME del bucket), 20 MiB |
 
-El navegador **nunca** recibe credenciales: la subida pasa por una Server Action que valida los bytes (`lib/media/image-sniff.ts`). Variables (`S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET_MEDIA`, `MEDIA_PUBLIC_URL`): en local las genera `./start.sh`; en producción ver [`.env.example`](../.env.example). Esto **no** usa la `service_role` de Supabase: son las credenciales del almacenamiento (en producción, un token de R2 con permiso solo sobre ese bucket).
+El navegador **nunca** recibe credenciales: la subida pasa por una Server Action que valida los bytes (`lib/media/image-sniff.ts`). Variables (`S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET_MEDIA`, `MEDIA_PUBLIC_URL`): en local las genera `./start.sh`; en producción ver [`.env.example`](../.env.example). Esto **no** usa la `service_role` de Supabase: son las credenciales del almacenamiento (en producción, un token de R2 con permiso solo sobre ese bucket; para eliminar cuentas, además listar y borrar objetos en los buckets de cuarentena y de juegos).
+
+**Eliminar una cuenta**: `delete_my_account()` borra el usuario de `auth.users` y las claves foráneas en cascada se llevan todo lo demás; `account_files()` devuelve antes las carpetas del almacenamiento que el servidor tiene que vaciar (los objetos no se borran desde SQL). Se conservan `moderation_log` y `copyright_claims` (sin cuenta). Ver «Eliminar la cuenta» en [DECISIONS.md](DECISIONS.md).
 
 ## Cómo cambiar el esquema
 

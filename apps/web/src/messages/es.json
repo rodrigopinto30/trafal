@@ -615,7 +615,8 @@
     "navLabel": "Secciones de la configuración",
     "nav": {
       "profile": "Perfil",
-      "preferences": "Preferencias"
+      "preferences": "Preferencias",
+      "account": "Cuenta"
     },
     "profile": {
       "title": "Editar perfil",
@@ -681,6 +682,41 @@
       "tooManyEngines": "Podés elegir hasta 8 motores.",
       "invalidGenre": "Uno de los géneros elegidos no es válido.",
       "generic": "No pudimos guardar los cambios. Probá de nuevo."
+    },
+    "account": {
+      "title": "Cuenta",
+      "subtitle": "Lo que se guarda de vos y cómo irte si querés.",
+      "deleteTitle": "Eliminar tu cuenta",
+      "deleteText": "Es definitivo: no podemos recuperarla ni devolverte nada de lo que se borre.",
+      "removesTitle": "Se borra para siempre:",
+      "removes": {
+        "profile": "Tu perfil, tu foto y tus preferencias.",
+        "games": "Tus juegos, con sus versiones, portadas y capturas, y los comentarios que te dejaron.",
+        "updates": "Tus avances, con sus imágenes y videos.",
+        "comments": "Tus comentarios, tus me gusta, tus guardados y a quién seguís.",
+        "files": "Los archivos que subiste."
+      },
+      "keepsText": "Se conserva lo que necesitamos para la seguridad del sitio: el registro de moderación y los reclamos de derechos de autor sobre tu contenido, sin tu cuenta.",
+      "adminNote": "Las cuentas de administración no se pueden eliminar desde acá. Primero hay que quitarles el rol.",
+      "delete": "Eliminar mi cuenta",
+      "dialogTitle": "¿Eliminar tu cuenta?",
+      "dialogText": "Se borran tu perfil, tus juegos, tus avances y tus comentarios. No se puede deshacer.",
+      "confirmLabel": "Para confirmar, escribí tu usuario: {username}",
+      "cancel": "Cancelar",
+      "confirm": "Eliminar para siempre",
+      "deleting": "Eliminando…",
+      "errors": {
+        "confirmationRequired": "Escribí tu usuario para confirmar.",
+        "confirmationMismatch": "Ese no es tu usuario. Revisalo e intentá de nuevo.",
+        "deleteFailed": "No pudimos eliminar tu cuenta. No se borró nada: probá de nuevo en unos segundos.",
+        "adminCannotDelete": "Las cuentas de administración no se pueden eliminar.",
+        "generic": "No pudimos eliminar tu cuenta. Probá de nuevo."
+      }
+    },
+    "deleted": {
+      "title": "Eliminamos tu cuenta",
+      "text": "Se borraron tu perfil y todo lo que habías publicado. Gracias por haber pasado por Trafal.",
+      "home": "Ir al inicio"
     }
   },
   "engines": {
