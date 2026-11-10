@@ -968,7 +968,8 @@
       "reports": "Reportes",
       "log": "Registro",
       "featured": "Juego de la semana",
-      "accounts": "Cuentas"
+      "accounts": "Cuentas",
+      "claims": "Reclamos"
     },
     "filtersLabel": "Estado de los reportes",
     "filters": {
@@ -1075,7 +1076,10 @@
         "replace_featured_game": "Cambió el juego de la semana",
         "unfeature_game": "Sacó el juego de la semana",
         "suspend_account": "Suspendió una cuenta",
-        "lift_suspension": "Levantó una suspensión"
+        "lift_suspension": "Levantó una suspensión",
+        "take_claim": "Tomó un reclamo de derechos de autor",
+        "dismiss_claim": "Descartó un reclamo de derechos de autor",
+        "action_claim": "Resolvió un reclamo de derechos de autor"
       },
       "targets": {
         "game": "juego",
@@ -1136,7 +1140,11 @@
       "cannotSuspendSelf": "No podés suspender tu propia cuenta.",
       "cannotSuspendAdmin": "No se puede suspender a la administración.",
       "alreadySuspended": "Esa cuenta ya está suspendida.",
-      "notSuspended": "Esa cuenta no está suspendida."
+      "notSuspended": "Esa cuenta no está suspendida.",
+      "claimNotFound": "Ese reclamo no existe.",
+      "claimNotOpen": "Ese reclamo ya no está abierto.",
+      "claimAlreadyResolved": "Ese reclamo ya está resuelto.",
+      "nothingToHide": "Lo reclamado ya no está publicado: no hay nada que ocultar."
     },
     "accounts": {
       "title": "Cuentas",
@@ -1186,6 +1194,50 @@
         "lifted": "Suspensión levantada"
       },
       "fromReport": "Ver cuenta de @{username}"
+    },
+    "claims": {
+      "title": "Reclamos de derechos de autor",
+      "subtitle": "Lo que envió la gente desde el formulario público. Ocultar lo reclamado es reversible y avisa a su autoría con el motivo que escribas; el reclamante no recibe nada desde el sitio.",
+      "empty": {
+        "open": "No hay reclamos abiertos.",
+        "reviewing": "No hay reclamos en revisión.",
+        "resolved": "Todavía no se resolvió ningún reclamo."
+      },
+      "claimBy": "Reclamo de {name}",
+      "claimant": "Quién reclama",
+      "signedBy": "Firmado: {signature}",
+      "work": "Su obra",
+      "claimed": "Lo que reclama en Trafal",
+      "links": "Enlaces que mandó",
+      "take": "Tomar",
+      "dismiss": "Descartar",
+      "markHandled": "Marcar como resuelto",
+      "hide": "Ocultar lo reclamado y resolver",
+      "restoreGame": "Restaurar el juego",
+      "restorePost": "Restaurar el avance",
+      "dialog": {
+        "dismissTitle": "Descartar el reclamo",
+        "dismissText": "Lo reclamado se queda como está. Podés dejar una nota interna.",
+        "handledTitle": "Marcar como resuelto",
+        "handledText": "Usalo cuando ya resolviste el tema por otro lado (por ejemplo, hablaste con las dos partes). Podés dejar una nota interna.",
+        "hideTitle": "Ocultar lo reclamado y resolver",
+        "hideText": "El juego o el avance reclamado deja de verse para todo el mundo y se le avisa a su autoría con este motivo. Se puede restaurar.",
+        "restoreGameTitle": "Restaurar el juego",
+        "restorePostTitle": "Restaurar el avance",
+        "restoreText": "Vuelve a verse y se le avisa a su autoría con este motivo.",
+        "noteLabel": "Nota interna (opcional)",
+        "reasonLabel": "Motivo (se le muestra a la persona)",
+        "confirm": "Confirmar",
+        "cancel": "Cancelar",
+        "count": "{count} de {max}"
+      },
+      "done": {
+        "taken": "Reclamo tomado",
+        "dismissed": "Reclamo descartado",
+        "handled": "Reclamo resuelto",
+        "hidden": "Contenido oculto y reclamo resuelto",
+        "restored": "Contenido restaurado"
+      }
     }
   },
   "suspension": {
@@ -1239,6 +1291,50 @@
         "suspend": "Suspendimos tu cuenta",
         "lift": "Levantamos la suspensión de tu cuenta"
       }
+    }
+  },
+  "claims": {
+    "title": "Reclamo de derechos de autor",
+    "subtitle": "Si sos titular de derechos y creés que algo publicado en Trafal los infringe, completá este formulario. El equipo lo analiza y, si corresponde, oculta el contenido.",
+    "noteAccount": "No hace falta tener una cuenta.",
+    "notePrivacy": "Tus datos los ve solo el equipo de Trafal: no se muestran a quien publicó el contenido.",
+    "linkFromLegal": "Enviar un reclamo de derechos de autor",
+    "name": "Tu nombre completo",
+    "email": "Email de contacto",
+    "emailHint": "Es el único medio por el que podemos escribirte.",
+    "org": "Organización o empresa (opcional)",
+    "work": "Qué obra es tuya y por qué creés que la copiaron",
+    "workHint": "Describí la obra y cómo se ve que se usó sin permiso (de 10 a 2000 caracteres).",
+    "original": "Enlace a la obra original (opcional)",
+    "urls": "Enlaces a lo que reclamás en Trafal",
+    "urlsHint": "Uno por línea, hasta 10. Al menos uno tiene que ser de un juego o un avance de Trafal, por ejemplo {example}.",
+    "statements": "Declaraciones",
+    "goodFaith": "Creo de buena fe que el uso que se hace de la obra no está autorizado por su titular, por su representante ni por la ley.",
+    "accuracy": "Declaro que la información de este reclamo es exacta y que soy el titular de los derechos o estoy autorizado a actuar en su nombre.",
+    "signature": "Firma (escribí tu nombre completo)",
+    "signatureHint": "Vale como firma de las dos declaraciones de arriba.",
+    "submit": "Enviar reclamo",
+    "submitting": "Enviando…",
+    "sent": {
+      "title": "Recibimos tu reclamo",
+      "text": "El equipo lo va a revisar. Tu número de referencia es {reference}: guardalo por si necesitás consultarnos."
+    },
+    "errors": {
+      "nameRequired": "Escribí tu nombre completo.",
+      "nameTooLong": "El nombre puede tener hasta 120 caracteres.",
+      "emailInvalid": "Escribí un email válido.",
+      "orgTooLong": "El nombre de la organización puede tener hasta 120 caracteres.",
+      "descriptionTooShort": "Contanos un poco más: al menos 10 caracteres.",
+      "descriptionTooLong": "La descripción puede tener hasta 2000 caracteres.",
+      "originalUrlInvalid": "Escribí un enlace completo que empiece con http:// o https://.",
+      "urlsRequired": "Pegá al menos un enlace.",
+      "urlsTooMany": "Podés poner hasta 10 enlaces.",
+      "urlInvalid": "Cada línea tiene que ser un enlace completo que empiece con http:// o https://.",
+      "urlsNotOnSite": "Ninguno de los enlaces es de un juego o un avance de Trafal que esté publicado.",
+      "statementsRequired": "Tenés que marcar las dos declaraciones.",
+      "signatureRequired": "Escribí tu nombre completo como firma.",
+      "tooManyClaims": "Recibimos demasiados reclamos de este email o del sitio en poco tiempo. Probá de nuevo más tarde.",
+      "generic": "No pudimos enviar el reclamo. Probá de nuevo."
     }
   }
 }

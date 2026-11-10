@@ -13,6 +13,7 @@ const STATIC_PAGES: { path: string; changeFrequency: "daily" | "weekly" | "month
   { path: "/legal/privacy", changeFrequency: "monthly", priority: 0.2 },
   { path: "/legal/guidelines", changeFrequency: "monthly", priority: 0.2 },
   { path: "/legal/copyright", changeFrequency: "monthly", priority: 0.2 },
+  { path: "/legal/copyright/claim", changeFrequency: "monthly", priority: 0.2 },
 ];
 
 export type SitemapSources = {

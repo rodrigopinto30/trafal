@@ -85,6 +85,14 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Juego de la semana**: elegir, ver lo que viene y sacar elecciones.
 - **Cuentas**: buscar a una persona (por el comienzo de su @usuario o de una palabra de su nombre) y **suspender** su cuenta por 1, 7, 30 o 90 días o hasta que se la levante, o **levantarle** la suspensión. Siempre con un **motivo** que la persona lee. No se puede suspender a la administración ni a uno mismo. Desde un reporte hay un enlace directo a la cuenta de quien lo hizo.
 
+### Reclamos de derechos de autor
+
+**Hoy**
+- Quien es titular de una obra y cree que algo en Trafal la infringe puede mandar un **reclamo** desde un **formulario público** (`/legal/copyright/claim`, con enlace desde la página de Derechos de autor), **sin cuenta**: nombre, email, organización (opcional), qué obra es suya, enlace a la original (opcional), **enlaces a lo reclamado** (juegos o avances de Trafal), las dos **declaraciones** (buena fe y exactitud) y su firma.
+- Un reclamo tiene que apuntar a **algo publicado** del sitio (el servidor lo deduce de los enlaces). Para que el formulario no sirva para inundar al equipo: **3 reclamos por día por email** y **60 por hora** en todo el sitio. Al enviar se muestra un **número de referencia**.
+- Los datos del reclamo los ve **solo la administración** (no la autoría del contenido). En **Administración → Reclamos** se puede **tomar**, **descartar**, **marcar como resuelto** u **ocultar lo reclamado y resolver**: lo reclamado se oculta (reversible, como cualquier moderación), su autoría recibe un aviso con el **motivo** y todo queda en el registro. Si se aclara el reclamo, se puede **restaurar**.
+- **No se manda nada por email** a quien reclama: el sitio no envía emails de este tipo (solo avisos dentro del sitio).
+
 ### Límites de uso
 
 **Hoy**
@@ -203,7 +211,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Próximamente** (el modelo de datos ya está preparado)
 - **Reportes** de juegos, avances, comentarios y perfiles, con copia del contenido como evidencia.
-- **Reclamos de derechos de autor** con un formulario público.
+- **Reclamos de derechos de autor** (hecho: ver «Reclamos de derechos de autor»); falta el captcha del formulario y el texto legal definitivo.
 - **Panel de administración** donde cada acción de moderación queda registrada en un historial que nadie puede editar ni borrar.
 - **Suspensiones** (hecho: ver «Administración» y «Suspensiones»): temporales o hasta que se levanten; una cuenta suspendida no puede escribir. Falta que la persona pueda apelar.
 - **Límites de uso** (hecho: ver «Límites de uso»), captcha en el registro y páginas legales definitivas (Términos, Privacidad, Normas de la comunidad y Derechos de autor).

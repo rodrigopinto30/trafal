@@ -45,6 +45,7 @@ export function ReportActions({ reportId, status, targetType, targetId, targetSt
   const [text, setText] = useState("");
   const [message, setMessage] = useState<string | undefined>();
   const [pending, startTransition] = useTransition();
+  const [taking, startTaking] = useTransition();
 
   const waiting = status === "open" || status === "reviewing";
   const canModerate = targetType !== "profile";
@@ -73,7 +74,7 @@ export function ReportActions({ reportId, status, targetType, targetId, targetSt
   }
 
   function take() {
-    startTransition(async () => finish(await takeReportAction({ reportId }), "taken"));
+    startTaking(async () => finish(await takeReportAction({ reportId }), "taken"));
   }
 
   function confirm() {
@@ -90,7 +91,7 @@ export function ReportActions({ reportId, status, targetType, targetId, targetSt
     <>
       <div className="flex flex-wrap gap-2">
         {status === "open" ? (
-          <Button type="button" variant="outline" onClick={take} disabled={pending}>
+          <Button type="button" variant="outline" onClick={take} disabled={taking}>
             {t("reports.take")}
           </Button>
         ) : null}

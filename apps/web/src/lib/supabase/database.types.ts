@@ -669,6 +669,9 @@ isOneToOne: false
 "random_game":
 { Args: { "p_exclude"?: string }; Returns: string
                            },
+"resolve_claim":
+{ Args: { "p_claim_id": string,"p_note"?: string,"p_outcome": string }; Returns: undefined
+                           },
 "resolve_report":
 { Args: { "p_note"?: string,"p_outcome": string,"p_report_id": string }; Returns: undefined
                            },
@@ -689,8 +692,14 @@ isOneToOne: false
 "start_play":
 { Args: { "p_device": string,"p_public_id": string,"p_session_id": string }; Returns: undefined
                            },
+"submit_copyright_claim":
+{ Args: { "p_claimant_email": string,"p_claimant_name": string,"p_claimant_org": string,"p_game_id": string,"p_infringing_urls": (string)[],"p_original_url": string,"p_post_id": string,"p_signature": string,"p_statement_accuracy": boolean,"p_statement_good_faith": boolean,"p_work_description": string }; Returns: string
+                           },
 "suspend_account":
 { Args: { "p_reason": string,"p_until"?: string,"p_user": string }; Returns: undefined
+                           },
+"take_claim":
+{ Args: { "p_claim_id": string }; Returns: undefined
                            },
 "take_report":
 { Args: { "p_report_id": string }; Returns: undefined

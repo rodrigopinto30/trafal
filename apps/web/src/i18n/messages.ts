@@ -32,6 +32,7 @@ export const CLIENT_NAMESPACES = [
   "comments",
   "admin",
   "notifications",
+  "claims",
 ] as const satisfies readonly Namespace[];
 
 export type ClientNamespace = (typeof CLIENT_NAMESPACES)[number];

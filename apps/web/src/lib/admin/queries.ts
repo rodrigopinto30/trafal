@@ -188,3 +188,53 @@ export async function listAccounts(search: string, filter: AccountFilter): Promi
   if (filter === "suspended") accounts = accounts.filter((account) => account.suspended);
   return { accounts: accounts.slice(0, ACCOUNTS_LIMIT), truncated: accounts.length > ACCOUNTS_LIMIT };
 }
+
+export type AdminClaim = {
+  id: string;
+  claimant_name: string;
+  claimant_email: string;
+  claimant_org: string | null;
+  work_description: string;
+  original_url: string | null;
+  infringing_urls: string[];
+  signature: string;
+  status: "open" | "reviewing" | "actioned" | "dismissed";
+  resolution_note: string | null;
+  handled_at: string | null;
+  created_at: string;
+  game_id: string | null;
+  post_id: string | null;
+  handler: { username: string } | null;
+  game: { public_id: string; title: string; status: string } | null;
+  post: { id: string; body: string; status: string } | null;
+};
+
+const CLAIM_SELECT =
+  "id, claimant_name, claimant_email, claimant_org, work_description, original_url, infringing_urls, signature, status, resolution_note, handled_at, created_at, game_id, post_id, handler:profiles!copyright_claims_handled_by_fkey(username), game:games!copyright_claims_game_id_fkey(public_id, title, status), post:posts!copyright_claims_post_id_fkey(id, body, status)";
+
+/** Copyright claims of a state (same states and order as the reports), with where the claimed game or update stands now. */
+export async function listClaims(filter: ReportStatusFilter, before: string | null): Promise<{ claims: AdminClaim[]; nextBefore: string | null }> {
+  const supabase = await createClient();
+  const resolved = filter === "resolved";
+  let query = supabase
+    .from("copyright_claims")
+    .select(CLAIM_SELECT)
+    .in("status", STATUSES[filter])
+    .order(resolved ? "handled_at" : "created_at", { ascending: !resolved })
+    .limit(ADMIN_PAGE_SIZE + 1);
+  if (before) query = resolved ? query.lt("handled_at", before) : query.gt("created_at", before);
+  const { data } = await query;
+  const rows = (data ?? []) as unknown as AdminClaim[];
+  const page = rows.slice(0, ADMIN_PAGE_SIZE);
+  const last = page.at(-1);
+  const cursor = last ? (resolved ? last.handled_at : last.created_at) : null;
+  return { claims: page, nextBefore: rows.length > ADMIN_PAGE_SIZE ? cursor : null };
+}
+
+/** How many copyright claims wait in each state. */
+export async function countClaims(): Promise<Record<ReportStatusFilter, number>> {
+  const supabase = await createClient();
+  const count = async (statuses: string[]) => (await supabase.from("copyright_claims").select("id", { count: "exact", head: true }).in("status", statuses)).count ?? 0;
+  const [open, reviewing, resolved] = await Promise.all([count(STATUSES.open), count(STATUSES.reviewing), count(STATUSES.resolved)]);
+  return { open, reviewing, resolved };
+}
