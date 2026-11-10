@@ -35,8 +35,8 @@ select lives_ok($$ select public.moderate_content('game', '11111111-1111-1111-11
 select is((select status from public.games where id = '11111111-1111-1111-1111-111111111101'), 'hidden', 'it is hidden');
 select is(pg_temp.last_log(), 'hide_game|admina|game|11111111-1111-1111-1111-111111111101|Breaks the rules', 'the log says who, what, which game and why (reason trimmed)');
 select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
-select is((select data ->> 'reason' || '|' || (data ->> 'action') || '|' || (data ->> 'target_type') from public.notifications where game_id = '11111111-1111-1111-1111-111111111101'), 'Breaks the rules|hide|game', 'the creator is told, with the reason');
-select is((select actor_id from public.notifications where game_id = '11111111-1111-1111-1111-111111111101'), null, 'without saying which admin acted');
+select is((select data ->> 'reason' || '|' || (data ->> 'action') || '|' || (data ->> 'target_type') from public.notifications where type = 'moderation' and game_id = '11111111-1111-1111-1111-111111111101'), 'Breaks the rules|hide|game', 'the creator is told, with the reason');
+select is((select actor_id from public.notifications where type = 'moderation' and game_id = '11111111-1111-1111-1111-111111111101'), null, 'without saying which admin acted');
 select tests.authenticate_as('d0000000-0000-0000-0000-0000000000ad');
 select lives_ok($$ select public.moderate_content('game', '11111111-1111-1111-1111-111111111101', 'restore', 'Reviewed again, it is fine') $$, 'the game can be restored');
 select is((select status from public.games where id = '11111111-1111-1111-1111-111111111101'), 'published', 'and is published again');

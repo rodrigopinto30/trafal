@@ -80,3 +80,11 @@ export async function restoreCommentByBody(body: string, adminToken: string): Pr
   const rows = (await response.json()) as { id: string }[];
   for (const row of rows) await callRpc("moderate_content", { p_target_type: "comment", p_target_id: row.id, p_action: "restore", p_reason: "Limpieza de la prueba" }, adminToken);
 }
+
+/** Dismisses the notifications that the given person received since a moment (what a test caused), acting as that person. */
+export async function deleteNotificationsSince(token: string, sinceIso: string): Promise<void> {
+  await fetch(`${API}/rest/v1/notifications?created_at=gte.${encodeURIComponent(sinceIso)}`, {
+    method: "DELETE",
+    headers: { apikey: publishableKey(), authorization: `Bearer ${token}` },
+  });
+}

@@ -40,7 +40,9 @@
     "completeProfile": "Completar perfil",
     "logout": "Cerrar sesión",
     "saved": "Guardados",
-    "admin": "Administración"
+    "admin": "Administración",
+    "notifications": "Notificaciones",
+    "notificationsUnread": "Notificaciones: {count} sin leer"
   },
   "footer": {
     "tagline": "La red social para publicar videojuegos que se juegan en el navegador y compartir cómo se hacen.",
@@ -1185,5 +1187,51 @@
     "untilFurtherNotice": "Hasta nuevo aviso.",
     "reason": "Motivo: {reason}",
     "text": "Mientras tanto podés mirar el sitio, pero no publicar, comentar, reportar, seguir ni dar me gusta."
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "subtitle": "Lo que pasa con tus juegos, tus avances y tu cuenta.",
+    "empty": "Todavía no tenés avisos. Cuando alguien comente, responda, te siga o le guste algo tuyo, aparece acá.",
+    "unread": "Sin leer",
+    "markRead": "Marcar como leída",
+    "markAllRead": "Marcar todas como leídas",
+    "dismiss": "Quitar",
+    "allRead": "Listo, marcaste todo como leído",
+    "error": "No pudimos hacerlo. Probá de nuevo.",
+    "older": "Ver más antiguas",
+    "backToStart": "Volver al principio",
+    "someone": "Alguien",
+    "aGame": "tu juego",
+    "reason": "Motivo: {reason}",
+    "until": "Hasta el {date}",
+    "items": {
+      "comment": {
+        "game": "{who} comentó en {title}",
+        "post": "{who} comentó tu avance"
+      },
+      "reply": "{who} respondió a tu comentario",
+      "like": {
+        "game": "A {who} le gustó {title}",
+        "post": "A {who} le gustó tu avance"
+      },
+      "follow": "{who} empezó a seguirte",
+      "helpful": "{who} marcó tu comentario como «Me sirvió»",
+      "versionReady": "La versión {version} de {title} está lista",
+      "versionError": "No pudimos publicar la versión {version} de {title}",
+      "moderation": {
+        "hide": {
+          "game": "Ocultamos tu juego",
+          "post": "Ocultamos tu avance",
+          "comment": "Ocultamos tu comentario"
+        },
+        "restore": {
+          "game": "Restauramos tu juego",
+          "post": "Restauramos tu avance",
+          "comment": "Restauramos tu comentario"
+        },
+        "suspend": "Suspendimos tu cuenta",
+        "lift": "Levantamos la suspensión de tu cuenta"
+      }
+    }
   }
 }

@@ -62,11 +62,7 @@ export function parseReportStatusFilter(value: unknown): ReportStatusFilter {
   return REPORT_STATUS_FILTERS.find((candidate) => candidate === value) ?? "open";
 }
 
-/** The cursor of a page of the lists (the date of the last item seen), or null. */
-export function parseBefore(value: unknown): string | null {
-  const result = z.iso.datetime({ offset: true }).safeParse(value);
-  return result.success ? result.data : null;
-}
+export { parseBefore } from "./common";
 
 const suspensionReason = z
   .string()

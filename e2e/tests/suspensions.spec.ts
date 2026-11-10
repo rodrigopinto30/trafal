@@ -94,6 +94,9 @@ test("la persona suspendida lo ve en cada página y no puede reportar", async ()
   await expect(banner).toBeVisible();
   await expect(banner.getByText(`Insultos repetidos ${suffix}`)).toBeVisible();
   await expect(banner.getByText(/Hasta el/)).toBeVisible();
+  await gotoReady(person, "/notifications");
+  const notice = person.locator("article").filter({ hasText: "Suspendimos tu cuenta" });
+  await expect(notice.getByText(`Motivo: Insultos repetidos ${suffix}`)).toBeVisible();
 
   await gotoReady(person, GAME);
   await expect(person.getByRole("status", { name: "Tu cuenta está suspendida" })).toBeVisible();
@@ -132,6 +135,9 @@ test("al levantar la suspensión la persona vuelve a poder escribir", async () =
   await report.getByLabel("Motivo").selectOption("spam");
   await report.getByRole("button", { name: "Enviar reporte" }).click();
   await expect(report.getByText("Recibimos tu reporte")).toBeVisible();
+
+  await gotoReady(person, "/notifications");
+  await expect(person.locator("article").filter({ hasText: "Levantamos la suspensión de tu cuenta" }).getByText(`Motivo: Fue un malentendido ${suffix}`)).toBeVisible();
 
   await gotoReady(admin, "/admin/log");
   await expect(admin.getByRole("row", { name: new RegExp(`Levantó una suspensión.*Fue un malentendido ${suffix}`) })).toBeVisible();

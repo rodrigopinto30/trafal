@@ -64,3 +64,9 @@ export function parsePublicIdParam(value: string): string | null {
   const result = publicIdSchema.safeParse(value);
   return result.success ? result.data : null;
 }
+
+/** The cursor of a page of the lists (the date of the last item seen), or null. */
+export function parseBefore(value: unknown): string | null {
+  const result = z.iso.datetime({ offset: true }).safeParse(value);
+  return result.success ? result.data : null;
+}

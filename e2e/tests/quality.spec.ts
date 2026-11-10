@@ -26,6 +26,7 @@ const PAGES: readonly Target[] = [
   { name: "no-encontrado", path: "/pagina-que-no-existe" },
   { name: "subir-juego", path: "/games/new", login: true },
   { name: "guardados", path: "/saved", login: true },
+  { name: "notificaciones", path: "/notifications", login: true },
   { name: "publicar-avance", path: "/posts/new", login: true },
   { name: "configuracion-perfil", path: "/settings/profile", login: true },
   { name: "configuracion-preferencias", path: "/settings/preferences", login: true },

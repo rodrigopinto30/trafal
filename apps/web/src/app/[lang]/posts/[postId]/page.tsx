@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { CommentForm } from "@/components/games/comment-form";
+import { CommentHighlight } from "@/components/games/comment-highlight";
 import { CommentList, type CommentViewer } from "@/components/games/comment-list";
 import { PostCard } from "@/components/games/post-card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -62,6 +63,7 @@ async function PostContent({ params }: { params: PageProps<"/[lang]/posts/[postI
       <JsonLd data={postData(post, locale)} />
       <PostCard post={post} now={now} viewer={viewer} eagerMedia />
       <section aria-labelledby="comments" className="scroll-mt-28">
+        <CommentHighlight />
         <h2 id="comments" className="font-display text-2xl font-bold">
           {t("title")}
         </h2>
