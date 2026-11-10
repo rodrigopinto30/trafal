@@ -344,6 +344,21 @@ Migraciones nuevas: `20261110000300_notifications.sql` y `20261110000400_notific
 | **La campanita escucha realtime solo para altas (`INSERT`)** y con la sesión puesta a mano (`realtime.setAuth`) | Sin la sesión el socket entra como anónimo y la base responde «invalid column for filter»; y una suscripción a `UPDATE`/`DELETE` con filtro hace fallar todo el canal. | Marcar o quitar refresca la página desde las acciones. Si no hay conexión, el número es el que cargó la página. |
 | **El número de la campanita lo trae el servidor** y el cliente solo suma lo que llega | La portada y las demás páginas siguen sin pedir nada extra al navegador. | `getMyAccountState`, la campanita y el aviso de suspensión comparten consultas por pedido. |
 
+## Límites de uso (2026-11-10)
+
+Migraciones nuevas: `20261110000500_usage_limits.sql` y `20261110000600_usage_limits_writers_only.sql`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Los topes los cuenta y hace cumplir la base** (triggers `BEFORE INSERT` + `private.apply_usage`), no la aplicación | Un tope en la interfaz o en una Server Action se saltea llamando a la API directamente. | Valen igual desde la página, el navegador o `curl`. Los valores viven en una sola función, `private.usage_limits()`. |
+| **Un registro propio de eventos (`usage_events`)** y no contar las filas de cada tabla | Si se contara lo publicado, borrar lo recién publicado devolvería el cupo (publicar, borrar, publicar…). | El evento queda aunque se borre el contenido. La tabla no tiene permisos ni políticas; se limpia sola (lo de más de 2 días, de la propia persona, al contar). |
+| **Varias ventanas por acción** (por minuto o por hora, y por día) | Frena la ráfaga y el goteo constante. | `usage_limit_exceeded` con el detalle de la acción y, en el `hint`, cuántos segundos faltan para que se libere un lugar. |
+| **Solo cuentan las peticiones de una persona con sesión; la administración y el sistema no tienen tope** (`auth.uid()` nulo o admin) | El seed, el worker y las migraciones no son abuso; los admins moderan en ráfagas. | Los tests de la base que usan `service_role` no se ven afectados. |
+| **El trigger de topes corre después de los que validan** y un rechazo deshace su propio evento | Un intento inválido no gasta el cupo. | Por orden alfabético de nombre (`comments_before_write` < `comments_usage`). |
+| **Quien no puede escribir** (sin perfil o suspendido) **no pasa por los topes** (`not private.can_write()`) | Las políticas de la tabla lo rechazan con su propio error, y el registro tiene una clave foránea al perfil. | Descubierto por el test de seguir sin perfil (migración `…0600`). |
+| **La foto de perfil se consulta antes de guardar** (`check_usage('avatar')`, que no registra) | El rechazo tiene que llegar antes de procesar y guardar los bytes, no después. | El registro del evento lo hace el trigger al cambiar `avatar_path`. |
+| **El mensaje no dice cuánto esperar** | Cada pantalla tendría que formatear el tiempo en dos idiomas; el `hint` queda disponible para cuando haga falta. | «Esperá un momento / probá más tarde», según la acción. |
+
 ## SEO y tarjetas para compartir (2026-11-09)
 
 Sin migración.

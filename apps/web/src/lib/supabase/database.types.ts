@@ -577,13 +577,36 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"usage_events": {
+                  Row: {
+                    "action": string,"created_at": string,"id": number,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "action": string,"created_at"?: string,"id"?: never,"user_id": string
+                  }
+                  Update: {
+                    "action"?: string,"created_at"?: string,"id"?: never,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "usage_events_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
             [_ in never]: never
           }
           Functions: {
-            "clear_featured_game":
+            "check_usage":
+{ Args: { "p_action": string }; Returns: undefined
+                           },
+"clear_featured_game":
 { Args: { "p_week_start"?: string }; Returns: boolean
                            },
 "complete_onboarding":

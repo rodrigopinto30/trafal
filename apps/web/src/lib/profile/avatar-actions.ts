@@ -7,6 +7,7 @@ import { AVATAR_FORMATS, AVATAR_SIZE, avatarObjectKey, avatarPathPattern } from 
 import { inspectImage } from "@/lib/media/image-sniff";
 import { deleteMediaObject, putMediaObject } from "@/lib/storage/s3.server";
 import { createClient } from "@/lib/supabase/server";
+import { isUsageLimitError } from "@/lib/usage/limit";
 import { AVATAR_ERROR_KEYS, avatarUploadSchema, type AvatarErrorKey } from "@/lib/validation/profile";
 
 export type AvatarResult = { ok: true; avatarPath: string | null } | { ok: false; error: AvatarErrorKey };
@@ -51,6 +52,9 @@ export async function uploadAvatarAction(formData: FormData): Promise<AvatarResu
   const { data: current } = await supabase.from("profiles").select("avatar_path").eq("id", user.id).maybeSingle();
   if (!current) return fail("save"); // sin perfil (todavía no hizo el onboarding)
 
+  const { error: limit } = await supabase.rpc("check_usage", { p_action: "avatar" });
+  if (isUsageLimitError(limit)) return fail("rateLimited");
+
   const key = avatarObjectKey(user.id, randomBytes(16).toString("hex"), info.format);
   try {
     await putMediaObject(key, bytes, AVATAR_FORMATS[info.format].mime);
@@ -64,7 +68,7 @@ export async function uploadAvatarAction(formData: FormData): Promise<AvatarResu
   const { data: updated, error } = await supabase.from("profiles").update({ avatar_path: key }).eq("id", user.id).select("id");
   if (error || !updated?.length) {
     await discardAvatar(user.id, key); // se deshace la subida: no queda un archivo sin dueño
-    return fail("save");
+    return fail(isUsageLimitError(error) ? "rateLimited" : "save");
   }
 
   await discardAvatar(user.id, current.avatar_path);

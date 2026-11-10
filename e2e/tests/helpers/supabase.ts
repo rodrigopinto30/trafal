@@ -88,3 +88,24 @@ export async function deleteNotificationsSince(token: string, sinceIso: string):
     headers: { apikey: publishableKey(), authorization: `Bearer ${token}` },
   });
 }
+
+/** The id of the person a token belongs to (the `sub` of the access token). */
+export function userIdOf(token: string): string {
+  const payload = JSON.parse(Buffer.from(token.split(".")[1] ?? "", "base64url").toString("utf8")) as { sub: string };
+  return payload.sub;
+}
+
+/** Inserts a row through the REST API as the person of the token, the way the browser could: the database decides. */
+export async function insertRow(table: string, row: Record<string, unknown>, token: string): Promise<{ status: number; body: Record<string, unknown> | null }> {
+  const response = await fetch(`${API}/rest/v1/${table}`, {
+    method: "POST",
+    headers: { apikey: publishableKey(), "content-type": "application/json", authorization: `Bearer ${token}` },
+    body: JSON.stringify(row),
+  });
+  return { status: response.status, body: (await response.json().catch(() => null)) as Record<string, unknown> | null };
+}
+
+/** Deletes the rows of a table that match a PostgREST filter, as the person of the token (only their own, if the policies say so). */
+export async function deleteRows(table: string, filter: string, token: string): Promise<void> {
+  await fetch(`${API}/rest/v1/${table}?${filter}`, { method: "DELETE", headers: { apikey: publishableKey(), authorization: `Bearer ${token}` } });
+}

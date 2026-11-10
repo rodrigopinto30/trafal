@@ -261,7 +261,8 @@
     "completeCta": "Completar mi perfil",
     "ownDraftsTitle": "Tus juegos en preparación",
     "manageGame": "Ver estado",
-    "seoDescription": "Perfil de {name} en Trafal: sus juegos que se juegan en el navegador y sus avances."
+    "seoDescription": "Perfil de {name} en Trafal: sus juegos que se juegan en el navegador y sus avances.",
+    "rateLimited": "Estás siguiendo a mucha gente muy rápido. Esperá un rato y probá de nuevo."
   },
   "games": {
     "play": "Jugar gratis",
@@ -361,7 +362,8 @@
       "unauthenticated": "Iniciá sesión para reportar.",
       "accountRestricted": "Tu cuenta no puede reportar por ahora.",
       "generic": "No pudimos enviar el reporte. Probá de nuevo.",
-      "targetNotFound": "Eso ya no está disponible para reportar."
+      "targetNotFound": "Eso ya no está disponible para reportar.",
+      "rateLimited": "Enviaste demasiados reportes en poco tiempo. Probá de nuevo más tarde."
     }
   },
   "gameForm": {
@@ -437,7 +439,8 @@
       "accountRestricted": "Tu cuenta no puede subir juegos por ahora.",
       "unauthenticated": "Iniciá sesión para subir un juego.",
       "storage": "No pudimos guardar tus archivos. Probá de nuevo en un rato.",
-      "generic": "Algo salió mal. Revisá los datos y probá de nuevo."
+      "generic": "Algo salió mal. Revisá los datos y probá de nuevo.",
+      "rateLimited": "Creaste demasiados juegos hoy. Probá de nuevo mañana."
     }
   },
   "gameManage": {
@@ -651,7 +654,8 @@
         "animated": "No se admiten imágenes animadas. Elegí una foto fija.",
         "storage": "No pudimos guardar la foto. Probá de nuevo en unos segundos.",
         "save": "No pudimos actualizar tu perfil con la foto. Probá de nuevo.",
-        "unauthenticated": "Tu sesión venció. Iniciá sesión de nuevo."
+        "unauthenticated": "Tu sesión venció. Iniciá sesión de nuevo.",
+        "rateLimited": "Cambiaste la foto demasiadas veces hoy. Probá de nuevo mañana."
       }
     },
     "preferences": {
@@ -728,7 +732,8 @@
     "errors": {
       "unauthenticated": "Iniciá sesión para hacer esto.",
       "restricted": "Tu cuenta no puede hacer esto por ahora.",
-      "generic": "No pudimos hacerlo. Probá de nuevo."
+      "generic": "No pudimos hacerlo. Probá de nuevo.",
+      "rateLimited": "Estás yendo muy rápido. Esperá un momento y probá de nuevo."
     }
   },
   "saved": {
@@ -798,7 +803,8 @@
       "notFound": "No encontramos ese avance.",
       "storage": "No pudimos guardar los archivos. Probá de nuevo en un rato.",
       "generic": "No pudimos publicar el avance. Probá de nuevo.",
-      "invalidMedia": "La lista de archivos no es válida. Recargá la página e intentá de nuevo."
+      "invalidMedia": "La lista de archivos no es válida. Recargá la página e intentá de nuevo.",
+      "rateLimited": "Publicaste demasiados avances en poco tiempo. Probá de nuevo más tarde."
     },
     "manage": {
       "menu": "Opciones del avance",
@@ -869,7 +875,8 @@
       "generic": "No pudimos guardar el comentario. Probá de nuevo.",
       "alreadyAnswered": "Ya respondiste esta pregunta. Podés editar tu respuesta.",
       "notOwner": "Solo quien creó el juego o el avance puede marcar un comentario.",
-      "helpfulNotAllowed": "Este comentario no se puede marcar."
+      "helpfulNotAllowed": "Este comentario no se puede marcar.",
+      "rateLimited": "Estás comentando muy seguido. Esperá un momento y probá de nuevo."
     },
     "answerLabel": "Tu respuesta",
     "answerSubmit": "Responder la pregunta",

@@ -14,6 +14,7 @@ import {
 } from "@/lib/media/post-media";
 import { deleteMediaObject, putMediaObject } from "@/lib/storage/s3.server";
 import { createClient } from "@/lib/supabase/server";
+import { isUsageLimitError } from "@/lib/usage/limit";
 import { altTextSchema, newPostSchema, POST_ERROR_KEYS, postIdSchema, type PostErrorKey } from "@/lib/validation/post";
 
 export type PostSaveResult = { ok: true; postId: string; gamePublicId: string | null } | { ok: false; error: PostErrorKey; field?: string };
@@ -134,6 +135,7 @@ export async function createPost(form: FormData): Promise<PostSaveResult> {
     .select("id")
     .single();
   if (error || !post) {
+    if (isUsageLimitError(error)) return fail("rateLimited");
     if (error?.code === "42501") return fail("accountRestricted");
     console.error("[post] could not save the update", error);
     return fail("generic");

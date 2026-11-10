@@ -106,6 +106,7 @@ export const AVATAR_ERROR_KEYS = [
   "animated",
   "storage",
   "save",
+  "rateLimited",
   "unauthenticated",
 ] as const;
 export type AvatarErrorKey = (typeof AVATAR_ERROR_KEYS)[number];

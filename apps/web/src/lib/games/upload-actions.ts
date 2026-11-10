@@ -18,6 +18,7 @@ import {
 import { inspectImage } from "@/lib/media/image-sniff";
 import { createQuarantineUploadUrl, deleteMediaObject, putMediaObject } from "@/lib/storage/s3.server";
 import { createClient } from "@/lib/supabase/server";
+import { isUsageLimitError } from "@/lib/usage/limit";
 import { parseLocale } from "@/lib/validation/common";
 import {
   GAME_FORM_ERROR_KEYS,
@@ -149,6 +150,7 @@ export async function createGameAction(formData: FormData): Promise<CreateGameRe
     .select("id, public_id")
     .single();
   if (gameError || !game) {
+    if (isUsageLimitError(gameError)) return fail("rateLimited");
     if (gameError?.code === "23505") return { ok: false, fieldErrors: { isFirstGame: message("firstGameTaken") } };
     if (gameError?.code === "42501") return fail("accountRestricted");
     console.error("[game upload] could not create the game", gameError);

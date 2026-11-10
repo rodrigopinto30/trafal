@@ -261,7 +261,8 @@
     "completeCta": "Finish my profile",
     "ownDraftsTitle": "Your games in progress",
     "manageGame": "View status",
-    "seoDescription": "{name}'s profile on Trafal: their browser games and their updates."
+    "seoDescription": "{name}'s profile on Trafal: their browser games and their updates.",
+    "rateLimited": "You're following many people too fast. Wait a while and try again."
   },
   "games": {
     "play": "Play for free",
@@ -361,7 +362,8 @@
       "unauthenticated": "Log in to report.",
       "accountRestricted": "Your account can't report right now.",
       "generic": "We couldn't send the report. Try again.",
-      "targetNotFound": "That is no longer available to report."
+      "targetNotFound": "That is no longer available to report.",
+      "rateLimited": "You sent too many reports in a short time. Try again later."
     }
   },
   "gameForm": {
@@ -437,7 +439,8 @@
       "accountRestricted": "Your account can't upload games right now.",
       "unauthenticated": "Log in to upload a game.",
       "storage": "We couldn't save your files. Try again in a while.",
-      "generic": "Something went wrong. Check your details and try again."
+      "generic": "Something went wrong. Check your details and try again.",
+      "rateLimited": "You created too many games today. Try again tomorrow."
     }
   },
   "gameManage": {
@@ -651,7 +654,8 @@
         "animated": "Animated images aren't supported. Pick a still photo.",
         "storage": "We couldn't store the photo. Please try again in a few seconds.",
         "save": "We couldn't update your profile with the photo. Please try again.",
-        "unauthenticated": "Your session expired. Log in again."
+        "unauthenticated": "Your session expired. Log in again.",
+        "rateLimited": "You changed your photo too many times today. Try again tomorrow."
       }
     },
     "preferences": {
@@ -728,7 +732,8 @@
     "errors": {
       "unauthenticated": "Log in to do this.",
       "restricted": "Your account can't do this right now.",
-      "generic": "We couldn't do that. Try again."
+      "generic": "We couldn't do that. Try again.",
+      "rateLimited": "You're going too fast. Wait a moment and try again."
     }
   },
   "saved": {
@@ -798,7 +803,8 @@
       "notFound": "We could not find that update.",
       "storage": "We could not save the files. Try again in a while.",
       "generic": "We could not post the update. Try again.",
-      "invalidMedia": "The list of files is not valid. Reload the page and try again."
+      "invalidMedia": "The list of files is not valid. Reload the page and try again.",
+      "rateLimited": "You posted too many updates in a short time. Try again later."
     },
     "manage": {
       "menu": "Update options",
@@ -869,7 +875,8 @@
       "generic": "We could not save the comment. Try again.",
       "alreadyAnswered": "You already answered this question. You can edit your answer.",
       "notOwner": "Only the creator of the game or the update can mark a comment.",
-      "helpfulNotAllowed": "This comment cannot be marked."
+      "helpfulNotAllowed": "This comment cannot be marked.",
+      "rateLimited": "You're commenting too often. Wait a moment and try again."
     },
     "answerLabel": "Your answer",
     "answerSubmit": "Answer the question",

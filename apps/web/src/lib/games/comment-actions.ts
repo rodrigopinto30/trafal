@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getAuthUser } from "@/lib/auth/dal";
 import { createClient } from "@/lib/supabase/server";
+import { isUsageLimitError } from "@/lib/usage/limit";
 import { COMMENT_ERROR_KEYS, commentIdSchema, editCommentSchema, helpfulSchema, newCommentSchema, type CommentErrorKey } from "@/lib/validation/comment";
 
 export type CommentResult = { ok: true } | { ok: false; error: CommentErrorKey; field?: string };
@@ -14,6 +15,7 @@ function failureOfSchema(issue: { message: string; path: PropertyKey[] } | undef
 }
 
 function failureOfDatabase(error: { code?: string; message: string }): CommentResult {
+  if (isUsageLimitError(error)) return fail("rateLimited");
   if (error.code === "23505") return fail("alreadyAnswered");
   if (error.message.includes("not_owner")) return fail("notOwner");
   if (/own_comment|reply_cannot_be_helpful/.test(error.message)) return fail("helpfulNotAllowed");

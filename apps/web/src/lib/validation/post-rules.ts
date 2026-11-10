@@ -24,6 +24,7 @@ export const POST_ERROR_KEYS = [
   "invalidMedia",
   "requestTooLarge",
   "accountRestricted",
+  "rateLimited",
   "unauthenticated",
   "notFound",
   "storage",
