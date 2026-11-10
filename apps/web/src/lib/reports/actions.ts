@@ -3,6 +3,7 @@
 import { getTranslationsFor } from "@/i18n/server";
 import { getAuthUser } from "@/lib/auth/dal";
 import { createClient } from "@/lib/supabase/server";
+import { isUsageLimitError } from "@/lib/usage/limit";
 import { parseLocale } from "@/lib/validation/common";
 import { REPORT_ERROR_KEYS, reportSchema, type ReportErrorKey } from "@/lib/validation/report";
 
@@ -35,6 +36,7 @@ export async function reportContentAction(rawInput: unknown, rawLocale: unknown)
     detail: parsed.data.detail,
   });
   if (error) {
+    if (isUsageLimitError(error)) return fail("rateLimited");
     if (error.code === "23505") return fail("alreadyReported");
     if (error.code === "42501") return fail("accountRestricted");
     if (error.message.includes("report_target_not_found")) return fail("targetNotFound");

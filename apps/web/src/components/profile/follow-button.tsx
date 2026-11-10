@@ -3,6 +3,7 @@
 import { CheckIcon, PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useOptimistic, useState, useTransition } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { useLocale, useTranslations } from "@/i18n/client";
 import { Link } from "@/i18n/link";
@@ -56,6 +57,8 @@ export function FollowButton({ targetId, username, initialFollowing, signedIn }:
             router.refresh(); // actualiza los contadores de seguidores
           } else if (result.reason === "unauthenticated") {
             router.push(localizePath(locale, `/login?next=${encodeURIComponent(`/u/${username}`)}`));
+          } else if (result.reason === "rateLimited") {
+            toast.error(t("rateLimited"));
           }
           // En cualquier otro error, `following` no cambió y el botón vuelve a su estado anterior.
         });

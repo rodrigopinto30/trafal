@@ -41,6 +41,7 @@ export const GAME_FORM_ERROR_KEYS = [
   "tooManyScreenshots",
   "firstGameTaken",
   "dailyLimit",
+  "rateLimited",
   "accountRestricted",
   "unauthenticated",
   "storage",

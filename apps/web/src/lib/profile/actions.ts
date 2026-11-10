@@ -9,6 +9,7 @@ import { onboardingErrorCode } from "@/lib/auth/errors";
 import { MIN_AGE, TERMS_VERSION } from "@/lib/auth/terms";
 import { readText, type FormState } from "@/lib/forms";
 import { createClient } from "@/lib/supabase/server";
+import { isUsageLimitError } from "@/lib/usage/limit";
 import { parseLocale, parseNextPath } from "@/lib/validation/common";
 import {
   ONBOARDING_FORM_ERROR_KEYS,
@@ -146,7 +147,7 @@ export async function updateProfileAction(_prev: FormState, formData: FormData):
 
 export type FollowResult =
   | { ok: true; following: boolean; followersCount: number }
-  | { ok: false; reason: "unauthenticated" | "invalid" | "error" };
+  | { ok: false; reason: "unauthenticated" | "invalid" | "rateLimited" | "error" };
 
 /** Seguir / dejar de seguir. Devuelve el contador actualizado para que la interfaz no tenga que adivinarlo. */
 export async function toggleFollowAction(input: { targetId: string; follow: boolean }): Promise<FollowResult> {
@@ -162,6 +163,7 @@ export async function toggleFollowAction(input: { targetId: string; follow: bool
   if (follow) {
     const { error } = await supabase.from("follows").insert({ follower_id: user.id, followee_id: targetId });
     // 23505 = ya lo seguía (doble click / otra pestaña): el resultado deseado ya se cumple.
+    if (isUsageLimitError(error)) return { ok: false, reason: "rateLimited" };
     if (error && error.code !== "23505") return { ok: false, reason: "error" };
   } else {
     const { error } = await supabase.from("follows").delete().eq("follower_id", user.id).eq("followee_id", targetId);

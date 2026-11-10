@@ -85,6 +85,13 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Juego de la semana**: elegir, ver lo que viene y sacar elecciones.
 - **Cuentas**: buscar a una persona (por el comienzo de su @usuario o de una palabra de su nombre) y **suspender** su cuenta por 1, 7, 30 o 90 días o hasta que se la levante, o **levantarle** la suspensión. Siempre con un **motivo** que la persona lee. No se puede suspender a la administración ni a uno mismo. Desde un reporte hay un enlace directo a la cuenta de quien lo hizo.
 
+### Límites de uso
+
+**Hoy**
+- Para frenar el abuso, cada persona tiene un **tope de acciones por período**, que cuenta y hace cumplir la **base de datos** (no la interfaz): **comentarios** 8 por minuto y 150 por día; **avances** 10 por hora y 30 por día; **reportes** 10 por hora y 30 por día; **seguir** 100 por hora y 400 por día; **me gusta** y **guardados** 300 por hora cada uno; **juegos nuevos** 10 por día; **cambios de la foto de perfil** 10 por día (más el tope de 5 versiones por día que ya había).
+- Al pasarse, la acción se rechaza y la pantalla lo explica («Estás comentando muy seguido. Esperá un momento…»). Los intentos inválidos o rechazados **no cuentan**, y borrar lo que se acaba de publicar no devuelve el cupo.
+- **La administración no tiene tope**, y tampoco lo tiene el sistema (el seed de ejemplo, el procesador de juegos).
+
 ### Notificaciones
 
 **Hoy**
@@ -199,7 +206,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Reclamos de derechos de autor** con un formulario público.
 - **Panel de administración** donde cada acción de moderación queda registrada en un historial que nadie puede editar ni borrar.
 - **Suspensiones** (hecho: ver «Administración» y «Suspensiones»): temporales o hasta que se levanten; una cuenta suspendida no puede escribir. Falta que la persona pueda apelar.
-- **Límites de uso**, captcha en el registro y páginas legales definitivas (Términos, Privacidad, Normas de la comunidad y Derechos de autor).
+- **Límites de uso** (hecho: ver «Límites de uso»), captcha en el registro y páginas legales definitivas (Términos, Privacidad, Normas de la comunidad y Derechos de autor).
 
 ### Diseño y accesibilidad
 

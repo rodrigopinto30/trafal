@@ -2,9 +2,10 @@
 
 import { getAuthUser } from "@/lib/auth/dal";
 import { createClient } from "@/lib/supabase/server";
+import { isUsageLimitError } from "@/lib/usage/limit";
 import { reactionSchema, type ReactionInput } from "@/lib/validation/reaction";
 
-export type ReactionResult = { ok: true; active: boolean; count: number } | { ok: false; reason: "unauthenticated" | "restricted" | "generic" };
+export type ReactionResult = { ok: true; active: boolean; count: number } | { ok: false; reason: "unauthenticated" | "restricted" | "rateLimited" | "generic" };
 
 type Failure = Extract<ReactionResult, { ok: false }>;
 type Database = Awaited<ReturnType<typeof createClient>>;
@@ -17,7 +18,7 @@ async function readCount(supabase: Database, { target, kind, id }: ReactionInput
   return (data as Record<string, number> | null)?.[column] ?? 0;
 }
 
-async function setMark(supabase: Database, userId: string, input: ReactionInput): Promise<{ code?: string } | null> {
+async function setMark(supabase: Database, userId: string, input: ReactionInput): Promise<{ code?: string; message?: string } | null> {
   const { target, kind, id, active } = input;
   const key = `${target}_${kind}` as const;
   if (active) {
@@ -53,6 +54,7 @@ export async function setReactionAction(rawInput: unknown): Promise<ReactionResu
   const supabase = await createClient();
   const error = await setMark(supabase, user.id, parsed.data);
   if (error) {
+    if (isUsageLimitError(error)) return fail("rateLimited");
     if (error.code === "42501") return fail("restricted");
     console.error("[reaction] could not change the mark", error);
     return fail("generic");

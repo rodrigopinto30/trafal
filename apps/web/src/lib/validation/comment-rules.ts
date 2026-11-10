@@ -17,6 +17,7 @@ export const COMMENT_ERROR_KEYS = [
   "helpfulNotAllowed",
   "notFound",
   "accountRestricted",
+  "rateLimited",
   "unauthenticated",
   "generic",
 ] as const;

@@ -16,5 +16,5 @@ export const REPORT_REASONS_BY_TARGET: Record<ReportTarget, readonly ReportReaso
 export const REPORT_DETAIL_MAX = 1000;
 
 /** Error keys of the report form (namespace «report.errors»). */
-export const REPORT_ERROR_KEYS = ["invalidReason", "detailTooLong", "alreadyReported", "targetNotFound", "unauthenticated", "accountRestricted", "generic"] as const;
+export const REPORT_ERROR_KEYS = ["invalidReason", "detailTooLong", "alreadyReported", "targetNotFound", "unauthenticated", "accountRestricted", "rateLimited", "generic"] as const;
 export type ReportErrorKey = (typeof REPORT_ERROR_KEYS)[number];
