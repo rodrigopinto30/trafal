@@ -40,7 +40,9 @@
     "completeProfile": "Finish profile",
     "logout": "Log out",
     "saved": "Saved",
-    "admin": "Administration"
+    "admin": "Administration",
+    "notifications": "Notifications",
+    "notificationsUnread": "Notifications: {count} unread"
   },
   "footer": {
     "tagline": "The social network for publishing browser games and sharing how they're made.",
@@ -1185,5 +1187,51 @@
     "untilFurtherNotice": "Until further notice.",
     "reason": "Reason: {reason}",
     "text": "Meanwhile you can look around the site, but you can't post, comment, report, follow or like."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "What is happening with your games, your updates and your account.",
+    "empty": "You have no notifications yet. When someone comments, replies, follows you or likes something of yours, it shows up here.",
+    "unread": "Unread",
+    "markRead": "Mark as read",
+    "markAllRead": "Mark all as read",
+    "dismiss": "Dismiss",
+    "allRead": "Done, everything is marked as read",
+    "error": "We couldn't do it. Try again.",
+    "older": "See older",
+    "backToStart": "Back to the start",
+    "someone": "Someone",
+    "aGame": "your game",
+    "reason": "Reason: {reason}",
+    "until": "Until {date}",
+    "items": {
+      "comment": {
+        "game": "{who} commented on {title}",
+        "post": "{who} commented on your update"
+      },
+      "reply": "{who} replied to your comment",
+      "like": {
+        "game": "{who} liked {title}",
+        "post": "{who} liked your update"
+      },
+      "follow": "{who} started following you",
+      "helpful": "{who} found your comment helpful",
+      "versionReady": "Version {version} of {title} is ready",
+      "versionError": "We couldn't publish version {version} of {title}",
+      "moderation": {
+        "hide": {
+          "game": "We hid your game",
+          "post": "We hid your update",
+          "comment": "We hid your comment"
+        },
+        "restore": {
+          "game": "We restored your game",
+          "post": "We restored your update",
+          "comment": "We restored your comment"
+        },
+        "suspend": "We suspended your account",
+        "lift": "We lifted your account suspension"
+      }
+    }
   }
 }

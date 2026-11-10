@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
 import { getTranslations } from "@/i18n/server";
 import { MobileMenu } from "./mobile-menu";
+import { NavBell } from "./nav-bell";
 import { NavLinks } from "./nav-links";
 import { MobileAccount, NavUser } from "./nav-user";
 
@@ -29,6 +30,10 @@ export async function SiteNav() {
             </Suspense>
           </div>
           <span className="flex-1 md:hidden" aria-hidden="true" />
+
+          <Suspense fallback={null}>
+            <NavBell />
+          </Suspense>
 
           <Suspense fallback={<Skeleton className="h-11 w-28 rounded-full" />}>
             <NavUser />

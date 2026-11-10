@@ -85,6 +85,14 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Juego de la semana**: elegir, ver lo que viene y sacar elecciones.
 - **Cuentas**: buscar a una persona (por el comienzo de su @usuario o de una palabra de su nombre) y **suspender** su cuenta por 1, 7, 30 o 90 días o hasta que se la levante, o **levantarle** la suspensión. Siempre con un **motivo** que la persona lee. No se puede suspender a la administración ni a uno mismo. Desde un reporte hay un enlace directo a la cuenta de quien lo hizo.
 
+### Notificaciones
+
+**Hoy**
+- Una **campanita** en la barra (solo con cuenta) con cuántos avisos hay sin leer. Se actualiza **sola** mientras la página está abierta: si alguien comenta o te sigue, el número sube al instante.
+- La pantalla **Notificaciones** (`/notifications`) lista los avisos, de más nuevo a más viejo (20 por página). Cada uno dice quién, qué y dónde; al abrirlo se marca como leído y lleva a lo que pasó. Se puede **marcar como leído**, **quitar**, o **marcar todos como leídos**.
+- Se avisa de: un **comentario** en tu juego o avance; una **respuesta** a tu comentario; un **me gusta** en tu juego o avance (una vez por persona); un **seguidor** nuevo (una vez por persona); que el creador marcó tu comentario como **«Me sirvió»** (una vez por comentario); que una **versión** que subiste quedó lista o fue rechazada; y las decisiones de **moderación** sobre tu contenido o tu cuenta (con el motivo).
+- Nadie recibe avisos de lo que hace él mismo. Solo dentro del sitio: no se manda nada por email.
+
 ### Suspensiones
 
 **Hoy**
@@ -165,7 +173,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Publicar avances** (hasta 2000 caracteres y hasta 4 imágenes, GIF o videos cortos), **comentar y responder**, contestar las preguntas del creador y marcar qué comentarios te sirvieron.
 - **Me gusta** en juegos y avances, **guardar** y **compartir**.
 - **Feed** con las novedades de la gente que seguís y filtros por tipo de avance.
-- **Notificaciones** de seguidores, comentarios y me gusta.
+- **Notificaciones** (hecho: ver «Notificaciones»); falta el aviso por email, que no se hace (solo dentro del sitio).
 
 ### Descubrir juegos
 
@@ -190,7 +198,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Reportes** de juegos, avances, comentarios y perfiles, con copia del contenido como evidencia.
 - **Reclamos de derechos de autor** con un formulario público.
 - **Panel de administración** donde cada acción de moderación queda registrada en un historial que nadie puede editar ni borrar.
-- **Suspensiones** (hecho: ver «Administración» y «Suspensiones»): temporales o hasta que se levanten; una cuenta suspendida no puede escribir. Falta la pantalla de avisos (campanita) y que la persona pueda apelar.
+- **Suspensiones** (hecho: ver «Administración» y «Suspensiones»): temporales o hasta que se levanten; una cuenta suspendida no puede escribir. Falta que la persona pueda apelar.
 - **Límites de uso**, captcha en el registro y páginas legales definitivas (Términos, Privacidad, Normas de la comunidad y Derechos de autor).
 
 ### Diseño y accesibilidad

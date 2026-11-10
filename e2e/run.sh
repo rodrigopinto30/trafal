@@ -39,6 +39,8 @@ cleanup() {
   fi
   if [ -x .tools/supabase ]; then
     .tools/supabase db query --agent no "delete from auth.users where email like 'e2e\_%@trafal.test'" >/dev/null 2>&1 || true
+    # Notifications about what those accounts did (a like, a follow) stay in the seeded accounts' bell with no author: remove them.
+    .tools/supabase db query --agent no "delete from public.notifications where actor_id is null and type in ('comment', 'reply', 'like', 'follow', 'helpful')" >/dev/null 2>&1 || true
   fi
   curl -fsS -X DELETE http://localhost:54324/api/v1/messages >/dev/null 2>&1 || true
 }

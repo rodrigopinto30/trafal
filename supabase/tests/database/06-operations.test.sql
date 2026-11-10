@@ -22,6 +22,8 @@ insert into public.comments (id, author_id, post_id, body) values
   ('66666666-6666-6666-6666-666666666601', 'b0000000-0000-0000-0000-000000000002', '55555555-5555-5555-5555-555555555501', 'Un comentario de bruno');
 
 -- =================================================================== NOTIFICACIONES
+-- Los triggers ya avisaron del comentario de la preparación (se prueban en 23-notifications): acá se parte de cero.
+delete from public.notifications;
 insert into public.notifications (id, user_id, type, actor_id, post_id) values
   ('77777777-7777-7777-7777-777777777701', 'a0000000-0000-0000-0000-000000000001', 'comment', 'b0000000-0000-0000-0000-000000000002', '55555555-5555-5555-5555-555555555501'),
   ('77777777-7777-7777-7777-777777777702', 'b0000000-0000-0000-0000-000000000002', 'follow', 'a0000000-0000-0000-0000-000000000001', null);
