@@ -1,5 +1,5 @@
 import "server-only";
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, DeleteObjectsCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { assertStorageEnv } from "@/lib/env.server";
 
@@ -45,6 +45,36 @@ export async function putMediaObject(key: string, body: Uint8Array, contentType:
 export async function deleteMediaObject(key: string): Promise<void> {
   const { client, bucket } = s3();
   await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
+}
+
+export type StorageBucket = "media" | "quarantine" | "games";
+
+const PREFIX_SHAPE = /^[A-Za-z0-9][A-Za-z0-9_-]*(\/[A-Za-z0-9][A-Za-z0-9_-]*)*\/$/;
+
+/**
+ * Deletes every object under a folder of one of the buckets and returns how many went. The folder must be a real one (letters,
+ * digits, dashes and a trailing slash): an empty or malformed prefix would reach the whole bucket, so it is refused. Deleting
+ * an empty or missing folder is not an error.
+ */
+export async function deleteStoragePrefix(bucket: StorageBucket, prefix: string): Promise<number> {
+  if (!PREFIX_SHAPE.test(prefix)) throw new Error(`Refusing to delete the folder «${prefix}»`);
+  const { client } = s3();
+  const env = assertStorageEnv();
+  const name = bucket === "media" ? env.bucket : bucket === "quarantine" ? env.quarantineBucket : env.gamesBucket;
+
+  let deleted = 0;
+  let token: string | undefined;
+  do {
+    const page = await client.send(new ListObjectsV2Command({ Bucket: name, Prefix: prefix, ContinuationToken: token }));
+    const keys = (page.Contents ?? []).flatMap((object) => (object.Key?.startsWith(prefix) ? [{ Key: object.Key }] : []));
+    if (keys.length > 0) {
+      const result = await client.send(new DeleteObjectsCommand({ Bucket: name, Delete: { Objects: keys, Quiet: true } }));
+      if (result.Errors?.length) throw new Error(`Could not delete ${result.Errors.length} objects under «${prefix}»`);
+      deleted += keys.length;
+    }
+    token = page.IsTruncated ? page.NextContinuationToken : undefined;
+  } while (token);
+  return deleted;
 }
 
 let signingClient: S3Client | undefined;

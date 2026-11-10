@@ -123,6 +123,14 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - Una suspensión con fecha **termina sola** al llegar esa fecha; sin fecha dura hasta que la administración la levanta.
 - Suspender y levantar quedan en el registro de moderación, y la persona recibe un aviso (sin saber qué administrador actuó).
 
+### Eliminar la cuenta
+
+**Hoy**
+- En *Configuración → Cuenta* podés **eliminar tu cuenta**. Para confirmar escribís tu @usuario (el botón se habilita cuando coincide, y el servidor lo vuelve a comprobar).
+- Se borra **todo lo tuyo**, de verdad y sin vuelta atrás: tu perfil y tu inicio de sesión, tus juegos (con versiones, portadas, capturas y los archivos publicados), tus avances con sus imágenes y videos, tus comentarios, me gusta, guardados, seguidos y avisos, y tu foto. Los comentarios que otras personas dejaron en tus juegos se van con ellos.
+- Se conserva lo que el sitio necesita para su seguridad: el registro de moderación y los reclamos de derechos de autor sobre tu contenido (sin tu cuenta).
+- Las cuentas de administración no se pueden eliminar desde acá (primero hay que quitarles el rol), para que el sitio nunca se quede sin administración por un clic.
+
 ### Creadores
 
 **Hoy**
@@ -151,9 +159,10 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Configuración
 
 **Hoy**
-- Se llega desde el menú de tu cuenta. Tiene dos secciones en pestañas, con el mismo ancho que el perfil:
+- Se llega desde el menú de tu cuenta. Tiene tres secciones en pestañas, con el mismo ancho que el perfil:
   - **Perfil**: foto, datos personales, motores y géneros favoritos.
   - **Preferencias**: idioma de la interfaz.
+  - **Cuenta**: eliminar tu cuenta.
 
 ### Idioma
 
@@ -222,7 +231,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Reclamos de derechos de autor** (hecho: ver «Reclamos de derechos de autor»); falta el captcha del formulario y el texto legal definitivo.
 - **Panel de administración** donde cada acción de moderación queda registrada en un historial que nadie puede editar ni borrar.
 - **Suspensiones** (hecho: ver «Administración» y «Suspensiones»): temporales o hasta que se levanten; una cuenta suspendida no puede escribir. Falta que la persona pueda apelar.
-- **Límites de uso** (hecho: ver «Límites de uso»), **captcha** (hecho: ver «Captcha») y páginas legales definitivas (Términos, Privacidad, Normas de la comunidad y Derechos de autor).
+- **Eliminar la cuenta** (hecho: ver «Eliminar la cuenta»), **límites de uso** (hecho: ver «Límites de uso»), **captcha** (hecho: ver «Captcha») y páginas legales definitivas (Términos, Privacidad, Normas de la comunidad y Derechos de autor).
 
 ### Diseño y accesibilidad
 

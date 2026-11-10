@@ -615,7 +615,8 @@
     "navLabel": "Settings sections",
     "nav": {
       "profile": "Profile",
-      "preferences": "Preferences"
+      "preferences": "Preferences",
+      "account": "Account"
     },
     "profile": {
       "title": "Edit profile",
@@ -681,6 +682,41 @@
       "tooManyEngines": "You can pick up to 8 engines.",
       "invalidGenre": "One of the chosen genres isn't valid.",
       "generic": "We couldn't save your changes. Please try again."
+    },
+    "account": {
+      "title": "Account",
+      "subtitle": "What we keep about you and how to leave if you want to.",
+      "deleteTitle": "Delete your account",
+      "deleteText": "This is final: we cannot recover it or give back anything that is deleted.",
+      "removesTitle": "Deleted for good:",
+      "removes": {
+        "profile": "Your profile, your photo and your preferences.",
+        "games": "Your games, with their versions, covers and screenshots, and the comments people left on them.",
+        "updates": "Your updates, with their images and videos.",
+        "comments": "Your comments, your likes, your saves and who you follow.",
+        "files": "The files you uploaded."
+      },
+      "keepsText": "We keep what the site's safety needs: the moderation log and the copyright claims about your content, without your account.",
+      "adminNote": "Admin accounts cannot be deleted from here. The role has to be removed first.",
+      "delete": "Delete my account",
+      "dialogTitle": "Delete your account?",
+      "dialogText": "Your profile, games, updates and comments are deleted. This cannot be undone.",
+      "confirmLabel": "To confirm, type your username: {username}",
+      "cancel": "Cancel",
+      "confirm": "Delete for good",
+      "deleting": "Deleting…",
+      "errors": {
+        "confirmationRequired": "Type your username to confirm.",
+        "confirmationMismatch": "That is not your username. Check it and try again.",
+        "deleteFailed": "We couldn't delete your account. Nothing was deleted: try again in a few seconds.",
+        "adminCannotDelete": "Admin accounts cannot be deleted.",
+        "generic": "We couldn't delete your account. Try again."
+      }
+    },
+    "deleted": {
+      "title": "Your account is deleted",
+      "text": "Your profile and everything you published were deleted. Thanks for stopping by Trafal.",
+      "home": "Go to the home page"
     }
   },
   "engines": {

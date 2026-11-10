@@ -603,7 +603,12 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "check_usage":
+            "account_files":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "bucket": string,"prefix": string
+            }[]
+                           },
+"check_usage":
 { Args: { "p_action": string }; Returns: undefined
                            },
 "clear_featured_game":
@@ -638,6 +643,9 @@ isOneToOne: false
 { Args: { "p_changelog"?: string,"p_declared_size_bytes": number,"p_game_id": string,"p_label"?: string }; Returns: {
               "quarantine_key": string,"version_id": string,"version_number": number
             }[]
+                           },
+"delete_my_account":
+{ Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "edit_post":
 { Args: { "p_body": string,"p_game_id": string,"p_highlight": string,"p_kind": string,"p_media": Json,"p_post_id": string }; Returns: undefined

@@ -1,6 +1,6 @@
 "use client";
 
-import { SlidersHorizontalIcon, UserRoundIcon } from "lucide-react";
+import { ShieldIcon, SlidersHorizontalIcon, UserRoundIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "@/i18n/client";
 import { Link } from "@/i18n/link";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const ITEMS = [
   { href: "/settings/profile", key: "profile", Icon: UserRoundIcon },
   { href: "/settings/preferences", key: "preferences", Icon: SlidersHorizontalIcon },
+  { href: "/settings/account", key: "account", Icon: ShieldIcon },
 ] as const;
 
 /**

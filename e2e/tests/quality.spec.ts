@@ -32,6 +32,8 @@ const PAGES: readonly Target[] = [
   { name: "publicar-avance", path: "/posts/new", login: true },
   { name: "configuracion-perfil", path: "/settings/profile", login: true },
   { name: "configuracion-preferencias", path: "/settings/preferences", login: true },
+  { name: "configuracion-cuenta", path: "/settings/account", login: true },
+  { name: "cuenta-eliminada", path: "/account-deleted" },
   { name: "admin-reportes", path: "/admin", login: "admin" },
   { name: "admin-reportes-resueltos", path: "/admin?status=resolved", login: "admin" },
   { name: "admin-reclamos", path: "/admin/claims", login: "admin" },
