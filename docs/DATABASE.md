@@ -28,7 +28,7 @@ Postgres (vía Supabase). El esquema completo del MVP está desde la Fase 1: **2
 | `plays` | Partidas (inicio, duración aproximada, dispositivo; sin IP) | Solo funciones (Fase 2) |
 | `notifications` | Campanita | Solo triggers y las funciones de moderación (nadie inserta desde el cliente); el destinatario lee, marca como leídas (`read_at`) y descarta las suyas |
 | `reports` | Reportes de contenido, con copia del contenido como evidencia | Cualquier cuenta activa inserta; admins leen y solo cambian el estado con `take_report` / `resolve_report` |
-| `copyright_claims` | Reclamos de derechos de autor | Formulario vía función (Fase 5); admins leen |
+| `copyright_claims` | Reclamos de derechos de autor | Se crean solo con `submit_copyright_claim` (también para visitantes); los leen solo admins, que los manejan con `take_claim` / `resolve_claim` (con registro) |
 | `featured_games` | Primer juego de la semana (solo «primeros juegos» publicados) | Solo las funciones de admin `set_featured_game` / `clear_featured_game`, que dejan rastro en `moderation_log` |
 | `usage_events` | Cada acción limitada de cada persona (para contar los topes de uso) | Solo los triggers; nadie la lee ni la escribe desde el cliente (RLS sin policies ni permisos). Se limpia sola: al contar, se borra lo de más de 2 días |
 | `moderation_log` | Registro de acciones de moderación (inmutable) | Funciones de moderación: `take_report`, `resolve_report`, `moderate_content`, `set_featured_game`, `clear_featured_game` |

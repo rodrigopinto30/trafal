@@ -8,9 +8,11 @@ import {
   clearFeaturedSchema,
   liftSuspensionSchema,
   moderateContentSchema,
+  resolveClaimSchema,
   resolveReportSchema,
   setFeaturedSchema,
   suspendAccountSchema,
+  takeClaimSchema,
   takeReportSchema,
   type AdminErrorKey,
 } from "@/lib/validation/admin";
@@ -25,6 +27,10 @@ const DATABASE_ERRORS: [RegExp, AdminErrorKey][] = [
   [/report_not_found/, "reportNotFound"],
   [/report_not_open/, "reportNotOpen"],
   [/report_already_resolved/, "reportAlreadyResolved"],
+  [/claim_not_found/, "claimNotFound"],
+  [/claim_not_open/, "claimNotOpen"],
+  [/claim_already_resolved/, "claimAlreadyResolved"],
+  [/nothing_to_hide/, "nothingToHide"],
   [/reason_required/, "reasonRequired"],
   [/account_not_found/, "accountNotFound"],
   [/cannot_suspend_self/, "cannotSuspendSelf"],
@@ -105,4 +111,14 @@ export async function suspendAccountAction(rawInput: unknown): Promise<AdminResu
 /** Lifts the suspension of an account, with the reason (the person is told). */
 export async function liftSuspensionAction(rawInput: unknown): Promise<AdminResult> {
   return asAdmin(rawInput, liftSuspensionSchema, async ({ userId, reason }, supabase) => (await supabase.rpc("lift_suspension", { p_user: userId, p_reason: reason })).error);
+}
+
+/** Takes a copyright claim to review it. */
+export async function takeClaimAction(rawInput: unknown): Promise<AdminResult> {
+  return asAdmin(rawInput, takeClaimSchema, async ({ claimId }, supabase) => (await supabase.rpc("take_claim", { p_claim_id: claimId })).error);
+}
+
+/** Resolves a copyright claim: dismiss it, mark it as handled, or hide what was claimed and mark it as handled (the author is told the reason). */
+export async function resolveClaimAction(rawInput: unknown): Promise<AdminResult> {
+  return asAdmin(rawInput, resolveClaimSchema, async ({ claimId, outcome, note }, supabase) => (await supabase.rpc("resolve_claim", { p_claim_id: claimId, p_outcome: outcome, p_note: note })).error);
 }

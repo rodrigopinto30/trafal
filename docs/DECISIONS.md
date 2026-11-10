@@ -359,6 +359,21 @@ Migraciones nuevas: `20261110000500_usage_limits.sql` y `20261110000600_usage_li
 | **La foto de perfil se consulta antes de guardar** (`check_usage('avatar')`, que no registra) | El rechazo tiene que llegar antes de procesar y guardar los bytes, no después. | El registro del evento lo hace el trigger al cambiar `avatar_path`. |
 | **El mensaje no dice cuánto esperar** | Cada pantalla tendría que formatear el tiempo en dos idiomas; el `hint` queda disponible para cuando haga falta. | «Esperá un momento / probá más tarde», según la acción. |
 
+## Reclamos de derechos de autor (2026-11-10)
+
+Migración nueva: `20261110000700_copyright_claims.sql`. La tabla y sus permisos (solo lectura para admins) ya existían desde la Fase 1.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Se envía por una función** (`submit_copyright_claim`, ejecutable también por visitantes), no por la tabla | La tabla no tiene permiso de `INSERT` para nadie; la función valida y limita. | La API pública solo ve esa función; la base vuelve a comprobar todo lo que comprobó el servidor. |
+| **El formulario es público y sin cuenta** | Quien reclama no tiene por qué tener una cuenta de Trafal. | Para que no sirva para inundar: 3 por día por email (sin distinguir mayúsculas) y 60 por hora en todo el sitio (`too_many_claims`). El captcha se agrega aparte, en el registro y en este formulario. |
+| **Tiene que apuntar a algo publicado del sitio**: el servidor lee los enlaces (`parseSiteTarget`: `/games/<id>` o `/posts/<id>`, con o sin `/en`, solo del mismo origen) y manda los ids | Un reclamo sin objetivo no se puede atender; y el enlace es lo único que sabe quien reclama. | `urlsNotOnSite` si ningún enlace es del sitio; la base exige un juego o avance existente y no en borrador (`claim_target_required` / `claim_target_not_found`). Los demás enlaces se guardan como evidencia. |
+| **Se maneja con dos funciones auditadas** (`take_claim`, `resolve_claim`), igual que los reportes | Misma regla del repo: los admins no escriben tablas, solo funciones que dejan rastro. | Registro: `take_claim`, `dismiss_claim`, `action_claim`. |
+| **Ocultar lo reclamado es la misma moderación de siempre** (`private.apply_moderation`) | Reversible, con motivo, avisa a la autoría y se registra. | Si el reclamo tiene un juego y un avance, se ocultan los dos (los que sigan publicados); `nothing_to_hide` si ya no hay nada publicado. Restaurar se hace desde el mismo reclamo. |
+| **La autoría del contenido no ve los datos del reclamante** | Privacidad de quien reclama. | Solo recibe el aviso de moderación con el motivo que escribe el admin; si hace falta, el admin escribe lo que corresponda. No hay contranotificación (ver limitaciones). |
+| **No se manda ningún email a quien reclama** | El sitio solo avisa dentro del sitio (decisión de la fase). | Se le da un número de referencia al enviar; el equipo lo contacta por el email que dejó. |
+| **Los botones «Tomar» tienen su propio estado de «en curso»** | Compartir el de «Confirmar» dejaba el campo del motivo deshabilitado mientras la pantalla se refrescaba. | Se arregló también en `ReportActions`. |
+
 ## SEO y tarjetas para compartir (2026-11-09)
 
 Sin migración.
@@ -406,4 +421,5 @@ Sin migración. Herramienta: `tools/lighthouse.sh` (ver `docs/DESARROLLO.md`).
 - **Avances**: los videos MP4 y los GIF no se transcodifican ni se les saca la metadata (un MP4 de un celular puede traer la ubicación en sus cajas `udta`); tampoco se limpian los WebP. No hay tope de publicaciones por minuto ni por día (límites de uso: Fase 5). Borrar una **cuenta** borra sus avances en la base pero no sus archivos del almacenamiento (igual que el avatar: se resuelve junto con el borrado de cuentas, Fase 5). Un fallo del almacenamiento al borrar un avance deja un archivo huérfano.
 - **Preguntas del creador**: se escriben solo al subir el juego; no hay todavía una pantalla para cambiarlas, agregarlas o borrarlas después (la base ya lo permite al dueño).
 - **Rendimiento del feed**: las imágenes de los avances se sirven tal como se subieron (hasta 5 MB). Con una imagen grande al principio de la lista, el rendimiento en celular baja de 85 (es una limitación de los datos, no del código). La solución es generar variantes reducidas al subir (o usar el optimizador de imágenes de Next con el dominio público de R2); queda para una pieza aparte.
+- **Reclamos de derechos de autor**: no hay contranotificación (que la autoría responda al reclamo y pida restaurar) ni aviso por email a quien reclama; los textos legales del formulario son un borrador hasta la pieza de documentos legales.
 - **Lighthouse en local**: la categoría «buenas prácticas» marca 79 porque se mide por HTTP (no hay HTTPS en la prueba); en producción con HTTPS no aplica.

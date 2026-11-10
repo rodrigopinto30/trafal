@@ -8,13 +8,14 @@ import { cn } from "@/lib/utils";
 
 const TABS = [
   { key: "reports", href: "/admin" },
+  { key: "claims", href: "/admin/claims" },
   { key: "accounts", href: "/admin/accounts" },
   { key: "log", href: "/admin/log" },
   { key: "featured", href: "/admin/featured" },
 ] as const;
 
-/** Sections of the administration, as links; the current one is marked. `openReports` is how many reports wait for someone. */
-export function AdminTabs({ openReports }: { openReports: number }) {
+/** Sections of the administration, as links; the current one is marked. `openReports` and `openClaims` are how many wait for someone. */
+export function AdminTabs({ openReports, openClaims }: { openReports: number; openClaims: number }) {
   const t = useTranslations("admin");
   const { path } = stripLocale(usePathname());
   return (
@@ -34,6 +35,7 @@ export function AdminTabs({ openReports }: { openReports: number }) {
               >
                 {t(`tabs.${tab.key}`)}
                 {tab.key === "reports" && openReports > 0 ? <span className="rounded-full bg-coral px-2 py-0.5 text-xs font-bold text-ink">{openReports}</span> : null}
+                {tab.key === "claims" && openClaims > 0 ? <span className="rounded-full bg-coral px-2 py-0.5 text-xs font-bold text-ink">{openClaims}</span> : null}
               </Link>
             </li>
           );

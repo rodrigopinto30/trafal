@@ -968,7 +968,8 @@
       "reports": "Reports",
       "log": "Log",
       "featured": "Game of the week",
-      "accounts": "Accounts"
+      "accounts": "Accounts",
+      "claims": "Claims"
     },
     "filtersLabel": "State of the reports",
     "filters": {
@@ -1075,7 +1076,10 @@
         "replace_featured_game": "Changed the game of the week",
         "unfeature_game": "Took off the game of the week",
         "suspend_account": "Suspended an account",
-        "lift_suspension": "Lifted a suspension"
+        "lift_suspension": "Lifted a suspension",
+        "take_claim": "Took a copyright claim",
+        "dismiss_claim": "Dismissed a copyright claim",
+        "action_claim": "Resolved a copyright claim"
       },
       "targets": {
         "game": "game",
@@ -1136,7 +1140,11 @@
       "cannotSuspendSelf": "You can't suspend your own account.",
       "cannotSuspendAdmin": "Administration accounts can't be suspended.",
       "alreadySuspended": "That account is already suspended.",
-      "notSuspended": "That account isn't suspended."
+      "notSuspended": "That account isn't suspended.",
+      "claimNotFound": "That claim doesn't exist.",
+      "claimNotOpen": "That claim isn't open anymore.",
+      "claimAlreadyResolved": "That claim is already resolved.",
+      "nothingToHide": "What was claimed is no longer published: there is nothing to hide."
     },
     "accounts": {
       "title": "Accounts",
@@ -1186,6 +1194,50 @@
         "lifted": "Suspension lifted"
       },
       "fromReport": "View @{username}'s account"
+    },
+    "claims": {
+      "title": "Copyright claims",
+      "subtitle": "What people sent from the public form. Hiding what was claimed is reversible and tells its author with the reason you write; the claimant gets nothing from the site.",
+      "empty": {
+        "open": "There are no open claims.",
+        "reviewing": "There are no claims under review.",
+        "resolved": "No claim has been resolved yet."
+      },
+      "claimBy": "Claim by {name}",
+      "claimant": "Who is claiming",
+      "signedBy": "Signed: {signature}",
+      "work": "Their work",
+      "claimed": "What they claim on Trafal",
+      "links": "Links they sent",
+      "take": "Take",
+      "dismiss": "Dismiss",
+      "markHandled": "Mark as resolved",
+      "hide": "Hide what was claimed and resolve",
+      "restoreGame": "Restore the game",
+      "restorePost": "Restore the update",
+      "dialog": {
+        "dismissTitle": "Dismiss the claim",
+        "dismissText": "What was claimed stays as it is. You can leave an internal note.",
+        "handledTitle": "Mark as resolved",
+        "handledText": "Use it when you already solved it some other way (for example, you talked to both sides). You can leave an internal note.",
+        "hideTitle": "Hide what was claimed and resolve",
+        "hideText": "The claimed game or update stops being visible to everyone and its author is told with this reason. It can be restored.",
+        "restoreGameTitle": "Restore the game",
+        "restorePostTitle": "Restore the update",
+        "restoreText": "It is visible again and its author is told with this reason.",
+        "noteLabel": "Internal note (optional)",
+        "reasonLabel": "Reason (shown to the person)",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "count": "{count} of {max}"
+      },
+      "done": {
+        "taken": "Claim taken",
+        "dismissed": "Claim dismissed",
+        "handled": "Claim resolved",
+        "hidden": "Content hidden and claim resolved",
+        "restored": "Content restored"
+      }
     }
   },
   "suspension": {
@@ -1239,6 +1291,50 @@
         "suspend": "We suspended your account",
         "lift": "We lifted your account suspension"
       }
+    }
+  },
+  "claims": {
+    "title": "Copyright claim",
+    "subtitle": "If you own rights and believe something published on Trafal infringes them, fill in this form. The team reviews it and, if it applies, hides the content.",
+    "noteAccount": "You do not need an account.",
+    "notePrivacy": "Only the Trafal team sees your details: they are not shown to whoever published the content.",
+    "linkFromLegal": "Send a copyright claim",
+    "name": "Your full name",
+    "email": "Contact email",
+    "emailHint": "It is the only way we can write to you.",
+    "org": "Organization or company (optional)",
+    "work": "Which work is yours and why you think it was copied",
+    "workHint": "Describe the work and how it shows that it was used without permission (10 to 2000 characters).",
+    "original": "Link to the original work (optional)",
+    "urls": "Links to what you are claiming on Trafal",
+    "urlsHint": "One per line, up to 10. At least one must be a game or an update on Trafal, for example {example}.",
+    "statements": "Statements",
+    "goodFaith": "I believe in good faith that the use of the work is not authorized by its owner, its agent or the law.",
+    "accuracy": "I declare that the information in this claim is accurate and that I own the rights or am authorized to act on their behalf.",
+    "signature": "Signature (type your full name)",
+    "signatureHint": "It counts as the signature of the two statements above.",
+    "submit": "Send claim",
+    "submitting": "Sending…",
+    "sent": {
+      "title": "We got your claim",
+      "text": "The team will review it. Your reference number is {reference}: keep it in case you need to contact us."
+    },
+    "errors": {
+      "nameRequired": "Type your full name.",
+      "nameTooLong": "The name can be up to 120 characters.",
+      "emailInvalid": "Type a valid email.",
+      "orgTooLong": "The organization name can be up to 120 characters.",
+      "descriptionTooShort": "Tell us a bit more: at least 10 characters.",
+      "descriptionTooLong": "The description can be up to 2000 characters.",
+      "originalUrlInvalid": "Type a full link starting with http:// or https://.",
+      "urlsRequired": "Paste at least one link.",
+      "urlsTooMany": "You can add up to 10 links.",
+      "urlInvalid": "Each line must be a full link starting with http:// or https://.",
+      "urlsNotOnSite": "None of the links is a published game or update on Trafal.",
+      "statementsRequired": "You have to tick both statements.",
+      "signatureRequired": "Type your full name as the signature.",
+      "tooManyClaims": "We got too many claims from this email or from the site in a short time. Try again later.",
+      "generic": "We couldn't send the claim. Try again."
     }
   }
 }

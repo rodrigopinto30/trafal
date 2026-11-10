@@ -23,9 +23,16 @@ const note = z
   .refine((value) => charLength(value) <= MODERATION_NOTE_MAX, "noteTooLong");
 
 export const takeReportSchema = z.object({ reportId: z.uuid("invalidInput") });
+export const takeClaimSchema = z.object({ claimId: z.uuid("invalidInput") });
 
 export const resolveReportSchema = z.object({
   reportId: z.uuid("invalidInput"),
+  outcome: z.enum(REPORT_OUTCOMES, "invalidInput"),
+  note: note.optional().default(""),
+});
+
+export const resolveClaimSchema = z.object({
+  claimId: z.uuid("invalidInput"),
   outcome: z.enum(REPORT_OUTCOMES, "invalidInput"),
   note: note.optional().default(""),
 });
