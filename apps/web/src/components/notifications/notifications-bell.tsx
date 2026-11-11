@@ -4,9 +4,8 @@ import { BellIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslations } from "@/i18n/client";
 import { Link } from "@/i18n/link";
+import { unreadBadgeText } from "@/lib/notifications/unread";
 import { loadBrowserClient } from "@/lib/supabase/load-client";
-
-const MAX_SHOWN = 99;
 
 /**
  * The bell in the bar: a link to the notifications with how many are unread. While the page is open it listens to the database
@@ -46,7 +45,8 @@ export function NotificationsBell({ userId, unread }: { userId: string; unread: 
   }, [userId]);
 
   const count = unread + arrived;
-  const label = count > 0 ? t("notificationsUnread", { count }) : t("notifications");
+  const badge = unreadBadgeText(count);
+  const label = count > 0 ? t("notificationsUnread", { count: badge }) : t("notifications");
 
   return (
     <Link
@@ -57,7 +57,7 @@ export function NotificationsBell({ userId, unread }: { userId: string; unread: 
       <BellIcon aria-hidden="true" className="size-5" />
       {count > 0 ? (
         <span aria-hidden="true" className="absolute top-1 right-1 grid min-w-[18px] place-items-center rounded-full bg-cyan px-1 text-[11px] leading-[18px] font-bold text-ink">
-          {count > MAX_SHOWN ? `${MAX_SHOWN}+` : count}
+          {badge}
         </span>
       ) : null}
     </Link>
