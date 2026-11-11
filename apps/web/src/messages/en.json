@@ -1330,7 +1330,16 @@
       },
       "appellant": "Who appeals",
       "reason": "Reason: {reason}",
-      "answer": "Answer: {note}"
+      "answer": "Answer: {note}",
+      "kind": {
+        "counter_notice": "Counter-notice"
+      },
+      "claimTitle": "The claim behind the decision",
+      "claimant": "Who claimed",
+      "work": "Work claimed",
+      "counterContact": "Who answers",
+      "counterHint": "Pass the contact details on by hand if needed: the system does not write to anyone.",
+      "statementsMade": "Stated good faith and that what they say is accurate."
     }
   },
   "suspension": {
@@ -1409,7 +1418,9 @@
         "suspend": "We suspended your account",
         "lift": "We lifted your account suspension",
         "appealUpheld": "We reviewed your appeal: the decision was kept",
-        "appealOverturned": "We reviewed your appeal: we reversed the decision"
+        "appealOverturned": "We reviewed your appeal: we reversed the decision",
+        "counterUpheld": "We reviewed your counter-notice: the content stays hidden",
+        "counterOverturned": "We reviewed your counter-notice: we published the content again"
       }
     },
     "answer": "Answer: {note}",
@@ -1513,7 +1524,29 @@
       "alreadyAppealed": "This decision already has an appeal.",
       "tooManyOpen": "You have too many appeals under review. Wait until we answer one.",
       "unauthenticated": "Log in to appeal.",
-      "generic": "We could not send your appeal. Try again."
+      "generic": "We could not send your appeal. Try again.",
+      "nameRequired": "Write your full name.",
+      "invalidEmail": "Write a valid email.",
+      "statementsRequired": "Check both statements to send the counter-notice.",
+      "counterNoticeRequired": "This was hidden because of a copyright claim: answer with a counter-notice.",
+      "notAClaim": "This was not hidden because of a copyright claim."
+    },
+    "counter": {
+      "button": "Send a counter-notice",
+      "title": "Counter-notice",
+      "text": "This was hidden because of a copyright claim. If you believe in good faith that it was a mistake or that the wrong work was identified, tell us why. An admin compares your answer with the claim and decides whether it is published again. You can only answer once.",
+      "message": "Why you think it was a mistake",
+      "name": "Your full name",
+      "email": "Your contact email",
+      "privacy": "If needed, we pass your name and this email to whoever made the claim so you can get in touch. We do not give you their details.",
+      "goodFaith": "I believe in good faith that this was hidden by mistake or by misidentifying the work.",
+      "accuracy": "What I wrote is accurate and I am the one who published this content.",
+      "submit": "Send counter-notice",
+      "sent": "We received your counter-notice. We will let you know when we have an answer.",
+      "note": "This was hidden because of a copyright claim: you answer it with a counter-notice."
+    },
+    "kind": {
+      "counter_notice": "Counter-notice"
     }
   }
 }

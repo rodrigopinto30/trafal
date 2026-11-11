@@ -368,7 +368,13 @@ export const legalEs: LegalContent = {
         id: "responder",
         title: "Si tu contenido fue reclamado",
         blocks: [
-          "Si creés que tu contenido se ocultó por error, por ejemplo porque tenés permiso o la obra es tuya, escribinos a {email} con las pruebas. Hoy no hay un formulario de contranotificación: lo resolvemos caso por caso.",
+          "Si creés que tu contenido se ocultó por error, por ejemplo porque tenés permiso o la obra es tuya, podés responder con una contranotificación desde Configuración → Moderación.",
+          [
+            "Explicás por qué creés que fue un error, con tu nombre completo y un email de contacto.",
+            "Declarás que lo hacés de buena fe y que lo que escribís es exacto.",
+            "Una persona del equipo la compara con el reclamo y decide si se vuelve a publicar. Siempre te responde por escrito.",
+          ],
+          "Para que las dos partes puedan ponerse en contacto, podemos pasarle tu nombre y tu email a quien hizo el reclamo; nosotros no te damos sus datos. También podés escribirnos a {email} con las pruebas.",
         ],
       },
       {

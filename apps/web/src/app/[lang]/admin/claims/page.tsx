@@ -70,7 +70,7 @@ async function Claims({ searchParams }: { searchParams: PageProps<"/[lang]/admin
                   <p className="text-text-2">
                     {claim.claimant_name}
                     {claim.claimant_org ? ` · ${claim.claimant_org}` : ""} ·{" "}
-                    <a href={`mailto:${claim.claimant_email}`} className="text-cyan hover:underline">
+                    <a href={`mailto:${claim.claimant_email}`} className="text-cyan underline underline-offset-2 hover:text-white">
                       {claim.claimant_email}
                     </a>
                   </p>

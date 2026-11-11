@@ -443,6 +443,19 @@ Migración `20261111000200`: tabla `appeals` y las funciones `my_decisions`, `su
 | **No se avisa a los admins por notificación**, solo con el contador de la pestaña | Hoy los admins entran al panel a trabajar la cola. | Si no entran, no se enteran. |
 | **Se actualizó el texto legal** (`LEGAL_UPDATED` = 2026-11-11, `TERMS_VERSION` sigue igual) | Decía que no había trámite de apelación. | El cambio no pide aceptar de nuevo: no quita nada, agrega un trámite. |
 
+## Contranotificación de derechos de autor (2026-11-11)
+
+Migración `20261111000300`: columnas nuevas en `appeals` y la función `submit_counter_notice`; `my_decisions` marca lo que viene de un reclamo y `submit_appeal` lo rechaza. Mismo panel (`/admin/appeals`) y misma pantalla (`/settings/moderation`); test e2e `counter-notice.spec.ts`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Es una apelación con más datos**, en la misma cola (`kind = 'counter_notice'`) | La administración ya responde apelaciones; lo único distinto es quién reclamó y qué declara quien responde. | Mismas respuestas, mismo registro y mismas notificaciones (con otro texto). Sin tabla nueva. |
+| **Solo se acepta para lo oculto por un reclamo**; para eso la apelación común se rechaza (`counter_notice_required`) | La contranotificación se hace contra un reclamo concreto y pide declaraciones; las dos vías a la vez se pisarían. | Se sabe que algo se ocultó por un reclamo porque el `handled_at` del reclamo coincide con la hora de la línea del registro (el reclamo oculta en una sola transacción). Si lo mismo se oculta después por otra razón, esa decisión se apela normal. |
+| **Quien responde da nombre completo, email y dos declaraciones** (buena fe y exactitud) | Es lo que se espera de una contranotificación y deja constancia de quién se hace cargo. | La base lo exige (`CHECK` en la tabla y la función). No se pide una dirección postal ni el consentimiento a una jurisdicción: es una decisión legal que revisa quien revise los textos. |
+| **Los datos de contacto se pasan a mano** | No hay correo saliente en el producto. | La administración ve el reclamo y la contranotificación juntos, con los dos emails, y pone a las partes en contacto; el sistema no escribe a nadie. El diálogo y el texto legal avisan que se puede pasar el nombre y el email a quien reclamó. |
+| **Quien responde nunca ve los datos de quien reclamó** | Privacidad de quien reclama (como ya pasa con el aviso de ocultado). | La política de reclamos no cambia: la persona solo lee el motivo que escribió el admin. |
+| **Sin plazos automáticos** (como la regla de 10 a 14 días de otras leyes) | Depende de la jurisdicción y de quién use el sitio. | Decide la administración, caso por caso; si hace falta un plazo, se agrega con el asesoramiento legal. |
+
 ## Medios en producción: `nosniff` (2026-11-10)
 
 Sin migraciones ni cambios en la aplicación: es configuración de Cloudflare más una herramienta que la comprueba.
@@ -503,7 +516,8 @@ Sin migración. Herramienta: `tools/lighthouse.sh` (ver `docs/DESARROLLO.md`).
 - **Medios en producción**: nada en el repositorio obliga a que la regla de Cloudflare exista; solo se comprueba a mano con `tools/check-media-headers.sh`. Si se cambia el dominio de medios, hay que repetir la regla y la comprobación.
 - **Documentos legales**: son un borrador sin revisión legal; hacen falta el titular, el email de contacto y la jurisdicción. No hay un trámite de contranotificación formal (los textos mandan a escribir al email de contacto). Las páginas no se pueden descargar ni imprimir con un formato propio.
 - **Aceptar los términos de nuevo**: lo hace cumplir la interfaz (aviso y pantallas con perfil), no la base: quien ya tiene una pantalla abierta, o llama a la API directo, puede seguir escribiendo hasta que recargue o acepte. No queda un historial de aceptaciones, solo la última (versión y fecha); no se explica qué cambió entre versiones.
-- **Apelaciones**: no hay contranotificación de derechos de autor ni se apelan los reportes descartados; no hay apelación de segunda instancia (una por decisión); no se avisa por email ni a la persona ni a la administración, y la administración no recibe notificación de una apelación nueva (solo el contador del panel); quien responde puede ser el mismo admin que tomó la decisión.
+- **Contranotificación**: no hay plazos, ni aviso automático a quien reclamó, ni consentimiento de jurisdicción ni dirección postal; los textos son un borrador hasta la revisión legal.
+- **Apelaciones**: no se apelan los reportes descartados; no hay apelación de segunda instancia (una por decisión); no se avisa por email ni a la persona ni a la administración, y la administración no recibe notificación de una apelación nueva (solo el contador del panel); quien responde puede ser el mismo admin que tomó la decisión.
 - **Eliminar la cuenta**: no se pide la contraseña ni hay un período de gracia para arrepentirse (la sesión abierta alcanza, más el @usuario escrito); si el almacenamiento falla después de borrar la cuenta, quedan archivos huérfanos que solo se ven en el registro del servidor. No se avisa por email que la cuenta se eliminó, ni se ofrece descargar los datos antes. Lo que otras personas comentaron en tus juegos o respondieron a tus comentarios se borra con ellos.
-- **Reclamos de derechos de autor**: no hay contranotificación (que la autoría responda al reclamo y pida restaurar) ni aviso por email a quien reclama; los textos legales son un borrador hasta que los revise un abogado.
+- **Reclamos de derechos de autor**: no hay aviso por email a quien reclama; los textos legales son un borrador hasta que los revise un abogado.
 - **Lighthouse en local**: la categoría «buenas prácticas» marca 79 porque se mide por HTTP (no hay HTTPS en la prueba); en producción con HTTPS no aplica.

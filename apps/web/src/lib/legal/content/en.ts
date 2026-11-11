@@ -368,7 +368,13 @@ export const legalEn: LegalContent = {
         id: "responder",
         title: "If your content was claimed",
         blocks: [
-          "If you think your content was hidden by mistake, for example because you have permission or the work is yours, write to us at {email} with the evidence. There is no counter-notice form today: we resolve it case by case.",
+          "If you think your content was hidden by mistake, for example because you have permission or the work is yours, you can answer with a counter-notice from Settings → Moderation.",
+          [
+            "You explain why you think it was a mistake, with your full name and a contact email.",
+            "You state that you do it in good faith and that what you write is accurate.",
+            "A person on the team compares it with the claim and decides whether it is published again. They always answer you in writing.",
+          ],
+          "So that both parties can get in touch, we may pass your name and email to whoever made the claim; we do not give you theirs. You can also write to us at {email} with the evidence.",
         ],
       },
       {
