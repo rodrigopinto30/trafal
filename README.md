@@ -258,6 +258,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Todo lo que escribís se limpia y se valida en el servidor**: sin HTML, sin caracteres invisibles que sirvan para falsificar nombres, con límites de longitud.
 - **Las imágenes se revisan byte a byte** antes de guardarse y solo se aceptan en tres formatos.
 - **Cabeceras de seguridad** en todo el sitio, que además no puede incrustarse en otras páginas.
+- **Los archivos que sube la gente se sirven con `nosniff`** (en producción, con una regla de Cloudflare sobre el dominio de medios), para que un archivo con forma de imagen nunca se interprete como otra cosa. `tools/check-media-headers.sh` comprueba un archivo real.
 
 **Próximamente**
 - Los juegos subidos corren en **otro dominio**, dentro de un iframe aislado, sin acceso a cookies ni a datos del sitio principal, y se verifican con un juego malicioso de prueba.
