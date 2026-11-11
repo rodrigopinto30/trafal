@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseAppealFilter, resolveAppealSchema, submitAppealSchema } from "./appeal";
+import { counterNoticeSchema, parseAppealFilter, resolveAppealSchema, submitAppealSchema } from "./appeal";
 
 const id = "11111111-1111-4111-8111-111111111111";
 
@@ -17,6 +17,31 @@ describe("submitAppealSchema", () => {
   it("only knows what can be moderated", () => {
     expect(submitAppealSchema.safeParse({ targetType: "report", targetId: id, message: "x" }).success).toBe(false);
     expect(submitAppealSchema.safeParse({ targetType: "game", targetId: "nope", message: "x" }).success).toBe(false);
+  });
+});
+
+describe("counterNoticeSchema", () => {
+  const valid = { targetType: "game", targetId: id, message: "I drew it myself", name: "  Ana  Maker ", email: " Ana@Example.COM ", goodFaith: true, accuracy: true };
+
+  it("cleans the name and the email", () => {
+    const parsed = counterNoticeSchema.parse(valid);
+    expect(parsed.name).toBe("Ana Maker");
+    expect(parsed.email).toBe("ana@example.com");
+  });
+
+  it("only exists for games and updates", () => {
+    expect(counterNoticeSchema.safeParse({ ...valid, targetType: "comment" }).success).toBe(false);
+    expect(counterNoticeSchema.safeParse({ ...valid, targetType: "post" }).success).toBe(true);
+  });
+
+  it("needs a message, a name, a real email and both statements", () => {
+    const first = (input: object) => counterNoticeSchema.safeParse(input).error?.issues[0]?.message;
+    expect(first({ ...valid, message: "  " })).toBe("messageRequired");
+    expect(first({ ...valid, name: "  " })).toBe("nameRequired");
+    expect(first({ ...valid, name: "x".repeat(201) })).toBe("nameRequired");
+    expect(first({ ...valid, email: "not an email" })).toBe("invalidEmail");
+    expect(first({ ...valid, goodFaith: false })).toBe("statementsRequired");
+    expect(first({ ...valid, accuracy: false })).toBe("statementsRequired");
   });
 });
 

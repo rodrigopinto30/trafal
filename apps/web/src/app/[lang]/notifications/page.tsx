@@ -59,8 +59,9 @@ async function Notifications({ searchParams }: { searchParams: PageProps<"/[lang
         const action = item.data.action;
         if (action === "suspend") return t("items.moderation.suspend");
         if (action === "lift") return t("items.moderation.lift");
-        if (action === "appeal_upheld") return t("items.moderation.appealUpheld");
-        if (action === "appeal_overturned") return t("items.moderation.appealOverturned");
+        const counter = item.data.kind === "counter_notice";
+        if (action === "appeal_upheld") return t(counter ? "items.moderation.counterUpheld" : "items.moderation.appealUpheld");
+        if (action === "appeal_overturned") return t(counter ? "items.moderation.counterOverturned" : "items.moderation.appealOverturned");
         const target = item.data.target_type === "game" || item.data.target_type === "post" || item.data.target_type === "comment" ? item.data.target_type : "game";
         return t(`items.moderation.${action === "restore" ? "restore" : "hide"}.${target}`);
       }

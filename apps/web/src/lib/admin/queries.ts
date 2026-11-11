@@ -242,6 +242,10 @@ export async function countClaims(): Promise<Record<ReportStatusFilter, number>>
 
 export type AdminAppeal = {
   id: string;
+  kind: "appeal" | "counter_notice";
+  counter_name: string | null;
+  counter_email: string | null;
+  claim: { claimant_name: string; claimant_org: string | null; claimant_email: string; work_description: string; original_url: string | null; infringing_urls: string[]; created_at: string } | null;
   target_type: "profile" | "game" | "post" | "comment";
   target_id: string;
   target_label: string;
@@ -257,7 +261,7 @@ export type AdminAppeal = {
 };
 
 const APPEAL_SELECT =
-  "id, target_type, target_id, target_label, decision_reason, decision_at, message, status, resolution_note, resolved_at, created_at, appellant:profiles!appeals_appellant_id_fkey(username, display_name), resolver:profiles!appeals_resolved_by_fkey(username)";
+  "id, kind, counter_name, counter_email, target_type, target_id, target_label, decision_reason, decision_at, message, status, resolution_note, resolved_at, created_at, appellant:profiles!appeals_appellant_id_fkey(username, display_name), resolver:profiles!appeals_resolved_by_fkey(username), claim:copyright_claims!appeals_claim_id_fkey(claimant_name, claimant_org, claimant_email, work_description, original_url, infringing_urls, created_at)";
 const APPEAL_STATUSES: Record<AppealFilter, string[]> = { open: ["open"], resolved: ["upheld", "overturned"] };
 
 /** Appeals waiting for an answer (the longest wait first) or already answered (the latest first). */

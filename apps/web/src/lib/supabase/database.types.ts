@@ -7,14 +7,14 @@ export type Database = {
           Tables: {
             "appeals": {
                   Row: {
-                    "appellant_id": string,"created_at": string,"decision_at": string | null,"decision_log_id": number | null,"decision_reason": string | null,"id": string,"message": string,"resolution_note": string | null,"resolved_at": string | null,"resolved_by": string | null,"status": string,"target_id": string,"target_label": string,"target_type": string
+                    "appellant_id": string,"claim_id": string | null,"counter_accuracy": boolean | null,"counter_email": string | null,"counter_good_faith": boolean | null,"counter_name": string | null,"created_at": string,"decision_at": string | null,"decision_log_id": number | null,"decision_reason": string | null,"id": string,"kind": string,"message": string,"resolution_note": string | null,"resolved_at": string | null,"resolved_by": string | null,"status": string,"target_id": string,"target_label": string,"target_type": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "appellant_id": string,"created_at"?: string,"decision_at"?: string | null,"decision_log_id"?: number | null,"decision_reason"?: string | null,"id"?: string,"message": string,"resolution_note"?: string | null,"resolved_at"?: string | null,"resolved_by"?: string | null,"status"?: string,"target_id": string,"target_label"?: string,"target_type": string
+                    "appellant_id": string,"claim_id"?: string | null,"counter_accuracy"?: boolean | null,"counter_email"?: string | null,"counter_good_faith"?: boolean | null,"counter_name"?: string | null,"created_at"?: string,"decision_at"?: string | null,"decision_log_id"?: number | null,"decision_reason"?: string | null,"id"?: string,"kind"?: string,"message": string,"resolution_note"?: string | null,"resolved_at"?: string | null,"resolved_by"?: string | null,"status"?: string,"target_id": string,"target_label"?: string,"target_type": string
                   }
                   Update: {
-                    "appellant_id"?: string,"created_at"?: string,"decision_at"?: string | null,"decision_log_id"?: number | null,"decision_reason"?: string | null,"id"?: string,"message"?: string,"resolution_note"?: string | null,"resolved_at"?: string | null,"resolved_by"?: string | null,"status"?: string,"target_id"?: string,"target_label"?: string,"target_type"?: string
+                    "appellant_id"?: string,"claim_id"?: string | null,"counter_accuracy"?: boolean | null,"counter_email"?: string | null,"counter_good_faith"?: boolean | null,"counter_name"?: string | null,"created_at"?: string,"decision_at"?: string | null,"decision_log_id"?: number | null,"decision_reason"?: string | null,"id"?: string,"kind"?: string,"message"?: string,"resolution_note"?: string | null,"resolved_at"?: string | null,"resolved_by"?: string | null,"status"?: string,"target_id"?: string,"target_label"?: string,"target_type"?: string
                   }
                   Relationships: [
                     {
@@ -22,6 +22,12 @@ export type Database = {
       columns: ["appellant_id"]
 isOneToOne: false
       referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "appeals_claim_id_fkey"
+      columns: ["claim_id"]
+isOneToOne: false
+      referencedRelation: "copyright_claims"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "appeals_resolved_by_fkey"
@@ -702,7 +708,7 @@ isOneToOne: false
                            },
 "my_decisions":
 { Args: Record<PropertyKey, never>; Returns: {
-              "appeal_id": string,"appeal_status": string,"decided_at": string,"label": string,"reason": string,"target_id": string,"target_type": string
+              "appeal_id": string,"appeal_status": string,"copyright": boolean,"decided_at": string,"label": string,"reason": string,"target_id": string,"target_type": string
             }[]
                            },
 "play_heartbeat":
@@ -742,6 +748,9 @@ isOneToOne: false
                            },
 "submit_copyright_claim":
 { Args: { "p_claimant_email": string,"p_claimant_name": string,"p_claimant_org": string,"p_game_id": string,"p_infringing_urls": (string)[],"p_original_url": string,"p_post_id": string,"p_signature": string,"p_statement_accuracy": boolean,"p_statement_good_faith": boolean,"p_work_description": string }; Returns: string
+                           },
+"submit_counter_notice":
+{ Args: { "p_accuracy": boolean,"p_email": string,"p_good_faith": boolean,"p_message": string,"p_name": string,"p_target_id": string,"p_target_type": string }; Returns: string
                            },
 "suspend_account":
 { Args: { "p_reason": string,"p_until"?: string,"p_user": string }; Returns: undefined

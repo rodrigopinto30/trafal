@@ -8,12 +8,14 @@ export type Decision = {
   label: string;
   reason: string | null;
   decided_at: string | null;
+  copyright: boolean;
   appeal_id: string | null;
   appeal_status: "open" | "upheld" | "overturned" | null;
 };
 
 export type MyAppeal = {
   id: string;
+  kind: "appeal" | "counter_notice";
   target_type: AppealTarget;
   target_label: string;
   decision_reason: string | null;
@@ -38,7 +40,7 @@ export async function listMyAppeals(): Promise<MyAppeal[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("appeals")
-    .select("id, target_type, target_label, decision_reason, message, status, resolution_note, resolved_at, created_at")
+    .select("id, kind, target_type, target_label, decision_reason, message, status, resolution_note, resolved_at, created_at")
     .order("created_at", { ascending: false })
     .limit(MY_APPEALS_LIMIT);
   return (data ?? []) as MyAppeal[];

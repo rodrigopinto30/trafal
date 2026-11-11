@@ -65,6 +65,15 @@ export async function callRpc(name: string, args: Record<string, unknown>, token
   return { status: response.status, body: await response.json().catch(() => null) };
 }
 
+/** The id of the latest published update of an account, read like any visitor would. */
+export async function latestPostIdOf(username: string): Promise<string> {
+  const authorId = String((await publicProfile(username, "id")).id);
+  const response = await fetch(`${API}/rest/v1/posts?author_id=eq.${authorId}&select=id&order=created_at.desc&limit=1`, { headers: { apikey: publishableKey() } });
+  const rows = (await response.json()) as { id: string }[];
+  if (!rows[0]) throw new Error(`@${username} no tiene avances`);
+  return rows[0].id;
+}
+
 /** The id of a published game, read like any visitor would. */
 export async function gameIdOf(publicId: string): Promise<string> {
   const row = await publicGame(publicId, "id");

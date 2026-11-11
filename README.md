@@ -131,6 +131,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - En **Configuración → Moderación** se ve lo que está decidido ahora, con su motivo y su fecha, y un botón **Apelar** que pide un mensaje (hasta 1.000 caracteres). También hay un enlace desde el aviso de suspensión y desde la notificación de lo ocultado. Se puede apelar **una vez por decisión**, y hasta 5 apelaciones en revisión a la vez; si lo mismo se oculta o se suspende de nuevo, es una decisión nueva y se puede apelar otra vez.
 - En el panel, la pestaña **Apelaciones** (con la cantidad que espera) muestra quién apela, qué decisión, su motivo y el mensaje. La administración responde **mantener la decisión** o **revertirla** (se levanta la suspensión o vuelve a publicarse lo oculto), y siempre con una **respuesta** que la persona lee.
 - La persona recibe una notificación con el resultado y la respuesta; todo queda en el registro de moderación.
+- **Contranotificación**: si lo oculto fue por un **reclamo de derechos de autor**, la apelación común no sirve y se responde con una contranotificación: por qué creyó que fue un error, nombre completo, email de contacto y dos declaraciones (buena fe y exactitud). La administración la ve **junto al reclamo** (quién reclamó, qué obra) y decide mantenerlo oculto o volver a publicarlo, con una respuesta escrita. A quien reclamó se lo pone en contacto **a mano** (el sistema no escribe a nadie) y la persona nunca ve sus datos; el diálogo avisa que su nombre y email se pueden pasar a quien reclamó.
 
 ### Eliminar la cuenta
 

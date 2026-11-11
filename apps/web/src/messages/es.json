@@ -1330,7 +1330,16 @@
       },
       "appellant": "Quién apela",
       "reason": "Motivo: {reason}",
-      "answer": "Respuesta: {note}"
+      "answer": "Respuesta: {note}",
+      "kind": {
+        "counter_notice": "Contranotificación"
+      },
+      "claimTitle": "Reclamo que originó la decisión",
+      "claimant": "Quién reclamó",
+      "work": "Obra reclamada",
+      "counterContact": "Quién responde",
+      "counterHint": "Pasales los datos de contacto a mano si hace falta: el sistema no le avisa a nadie por email.",
+      "statementsMade": "Declaró buena fe y que lo que dice es exacto."
     }
   },
   "suspension": {
@@ -1409,7 +1418,9 @@
         "suspend": "Suspendimos tu cuenta",
         "lift": "Levantamos la suspensión de tu cuenta",
         "appealUpheld": "Revisamos tu apelación: se mantuvo la decisión",
-        "appealOverturned": "Revisamos tu apelación: revertimos la decisión"
+        "appealOverturned": "Revisamos tu apelación: revertimos la decisión",
+        "counterUpheld": "Revisamos tu contranotificación: el contenido sigue oculto",
+        "counterOverturned": "Revisamos tu contranotificación: volvimos a publicar el contenido"
       }
     },
     "answer": "Respuesta: {note}",
@@ -1513,7 +1524,29 @@
       "alreadyAppealed": "Esta decisión ya tiene una apelación.",
       "tooManyOpen": "Tenés demasiadas apelaciones en revisión. Esperá a que respondamos alguna.",
       "unauthenticated": "Iniciá sesión para apelar.",
-      "generic": "No pudimos enviar tu apelación. Probá de nuevo."
+      "generic": "No pudimos enviar tu apelación. Probá de nuevo.",
+      "nameRequired": "Escribí tu nombre completo.",
+      "invalidEmail": "Escribí un email válido.",
+      "statementsRequired": "Marcá las dos declaraciones para enviar la contranotificación.",
+      "counterNoticeRequired": "Esto se ocultó por un reclamo de derechos de autor: respondé con una contranotificación.",
+      "notAClaim": "Esto no se ocultó por un reclamo de derechos de autor."
+    },
+    "counter": {
+      "button": "Enviar contranotificación",
+      "title": "Contranotificación",
+      "text": "Esto se ocultó por un reclamo de derechos de autor. Si creés de buena fe que fue un error o que se confundieron de obra, contanos por qué. Un administrador compara tu respuesta con el reclamo y decide si se vuelve a publicar. Solo podés responder una vez.",
+      "message": "Por qué creés que fue un error",
+      "name": "Tu nombre completo",
+      "email": "Tu email de contacto",
+      "privacy": "Si hace falta, le pasamos tu nombre y este email a quien hizo el reclamo para que se pongan en contacto. Nosotros no te damos sus datos.",
+      "goodFaith": "Creo de buena fe que esto se ocultó por un error o por confundir la obra.",
+      "accuracy": "Lo que escribí es exacto y soy quien publicó este contenido.",
+      "submit": "Enviar contranotificación",
+      "sent": "Recibimos tu contranotificación. Te avisamos cuando tengamos una respuesta.",
+      "note": "Esto se ocultó por un reclamo de derechos de autor: se responde con una contranotificación."
+    },
+    "kind": {
+      "counter_notice": "Contranotificación"
     }
   }
 }

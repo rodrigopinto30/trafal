@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { AppealButton } from "@/components/appeals/appeal-button";
+import { CounterNoticeButton } from "@/components/appeals/counter-notice-button";
 import { ExtraMessages } from "@/components/i18n/extra-messages";
 import { SettingsSection } from "@/components/settings/settings-section";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +53,13 @@ async function ModerationContent() {
                   <div className="flex flex-wrap items-center gap-3">
                     {decision.appeal_status ? (
                       <Badge variant={decision.appeal_status === "open" ? "cyan" : "violet"}>{t(`appealStatus.${decision.appeal_status}`)}</Badge>
+                    ) : decision.copyright && (decision.target_type === "game" || decision.target_type === "post") ? (
+                      <div className="grid gap-3">
+                        <p className="text-sm text-text-2">{t("counter.note")}</p>
+                        <div>
+                          <CounterNoticeButton targetType={decision.target_type} targetId={decision.target_id} />
+                        </div>
+                      </div>
                     ) : (
                       <AppealButton targetType={decision.target_type} targetId={decision.target_id} />
                     )}
@@ -73,6 +81,7 @@ async function ModerationContent() {
                 <article className="grid gap-2 rounded-2xl border border-white/8 p-4">
                   <header className="flex flex-wrap items-center gap-2">
                     <Badge variant={appeal.status === "open" ? "cyan" : "violet"}>{t(`status.${appeal.status}`)}</Badge>
+                    {appeal.kind === "counter_notice" ? <Badge variant="soft">{t("kind.counter_notice")}</Badge> : null}
                     <span className="text-xs text-text-3">{t("sentOn", { date: date.format(new Date(appeal.created_at)) })}</span>
                   </header>
                   <p className="font-semibold break-words text-foreground">{t(`target.${appeal.target_type}`, { label: appeal.target_label })}</p>

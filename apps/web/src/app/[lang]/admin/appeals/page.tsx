@@ -61,6 +61,7 @@ async function Appeals({ searchParams }: { searchParams: PageProps<"/[lang]/admi
               <article aria-label={t("appeals.by", { username: appeal.appellant?.username ?? "?" })} className="grid gap-4 rounded-3xl border border-white/8 bg-card p-5 sm:p-6">
                 <header className="flex flex-wrap items-center gap-2">
                   <Badge variant={appeal.status === "open" ? "coral" : "violet"}>{appeal.status === "open" ? t("reports.status.open") : t(`appeals.outcome.${appeal.status}`)}</Badge>
+                  {appeal.kind === "counter_notice" ? <Badge variant="cyan">{t("appeals.kind.counter_notice")}</Badge> : null}
                   <span className="text-sm text-text-3">{date.format(new Date(appeal.created_at))}</span>
                   <span className="text-xs text-text-3">#{appeal.id.slice(0, 8).toUpperCase()}</span>
                 </header>
@@ -90,6 +91,37 @@ async function Appeals({ searchParams }: { searchParams: PageProps<"/[lang]/admi
                   <p className="text-xs font-semibold text-text-3 uppercase">{t("appeals.message")}</p>
                   <p className="break-words whitespace-pre-line text-text-2">{appeal.message}</p>
                 </div>
+
+                {appeal.kind === "counter_notice" ? (
+                  <>
+                    <div className="grid gap-1 text-sm">
+                      <p className="text-xs font-semibold text-text-3 uppercase">{t("appeals.counterContact")}</p>
+                      <p className="text-text-2">
+                        {appeal.counter_name} ·{" "}
+                        <a href={`mailto:${appeal.counter_email}`} className="text-cyan underline underline-offset-2 hover:text-white">
+                          {appeal.counter_email}
+                        </a>
+                      </p>
+                      <p className="text-text-3">{t("appeals.statementsMade")}</p>
+                      <p className="text-text-3">{t("appeals.counterHint")}</p>
+                    </div>
+                    {appeal.claim ? (
+                      <div className="grid gap-1 text-sm">
+                        <p className="text-xs font-semibold text-text-3 uppercase">{t("appeals.claimTitle")}</p>
+                        <p className="text-text-2">
+                          {t("appeals.claimant")}: {appeal.claim.claimant_name}
+                          {appeal.claim.claimant_org ? ` · ${appeal.claim.claimant_org}` : ""} ·{" "}
+                          <a href={`mailto:${appeal.claim.claimant_email}`} className="text-cyan underline underline-offset-2 hover:text-white">
+                            {appeal.claim.claimant_email}
+                          </a>
+                        </p>
+                        <p className="break-words whitespace-pre-line text-text-2">
+                          {t("appeals.work")}: {appeal.claim.work_description}
+                        </p>
+                      </div>
+                    ) : null}
+                  </>
+                ) : null}
 
                 {appeal.resolved_at ? (
                   <p className="text-sm text-text-2">
