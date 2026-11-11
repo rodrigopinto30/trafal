@@ -9,6 +9,11 @@ import { GENRE_IDS } from "@/lib/profile/catalog";
 /**
  * Grilla de géneros de juegos que le gustan a la persona: tocar uno lo elige, tocarlo de nuevo lo saca.
  * Cada baldosa es una casilla real con name="favoriteGenres", así que el formulario envía los elegidos tal cual.
+ *
+ * Las casillas NO son controladas: React 19 reinicia el formulario al terminar la Server Action, y una casilla controlada vuelve al
+ * valor con el que se montó (el género recién elegido quedaría desmarcado aunque se guardó). Con `defaultChecked` tomado de lo que
+ * devuelve el servidor, el reinicio deja cada una como quedó guardada; el contador se lleva aparte. Quien lo usa le pone una `key` con
+ * los géneros guardados para que, al cambiar, se vuelva a montar con los nuevos.
  */
 export function TopicGrid({ initial }: { initial: string[] }) {
   const t = useTranslations("settings");
@@ -27,7 +32,7 @@ export function TopicGrid({ initial }: { initial: string[] }) {
             <TopicTile
               name="favoriteGenres"
               value={id}
-              checked={selected.includes(id)}
+              defaultChecked={initial.includes(id)}
               onChange={() => toggle(id)}
               icon={<GenreIcon id={id} />}
               label={tGenres(id as Parameters<typeof tGenres>[0])}

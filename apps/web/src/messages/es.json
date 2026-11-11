@@ -25,7 +25,8 @@
       "label": "Verificación de seguridad",
       "loading": "Verificando que sos una persona…",
       "error": "No pudimos cargar la verificación de seguridad. Revisá tu conexión, desactivá los bloqueadores de contenido para este sitio y recargá la página."
-    }
+    },
+    "backButton": "Atrás"
   },
   "nav": {
     "label": "Principal",

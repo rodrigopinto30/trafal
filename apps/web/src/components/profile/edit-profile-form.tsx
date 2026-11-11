@@ -108,7 +108,7 @@ export function EditProfileForm({ countries, ...initial }: Props) {
       <SettingsSection title={t("profile.genresTitle")} description={t("profile.genresHint")}>
         <fieldset className="grid gap-3">
           <legend className="sr-only">{t("profile.genresTitle")}</legend>
-          <TopicGrid initial={selectedGenres} />
+          <TopicGrid key={values.favoriteGenres} initial={selectedGenres} />
           {genresError ? (
             <p role="alert" className="text-xs font-medium text-[#ff8fa5]">
               {genresError}

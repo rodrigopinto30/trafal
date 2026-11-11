@@ -454,6 +454,16 @@ Migración `20261111000200`: tabla `appeals` y las funciones `my_decisions`, `su
 | **No se avisa a los admins por notificación**, solo con el contador de la pestaña | Hoy los admins entran al panel a trabajar la cola. | Si no entran, no se enteran. |
 | **Se actualizó el texto legal** (`LEGAL_UPDATED` = 2026-11-11, `TERMS_VERSION` sigue igual) | Decía que no había trámite de apelación. | El cambio no pide aceptar de nuevo: no quita nada, agrega un trámite. |
 
+## Géneros que se desmarcaban, botón «Atrás» y seguir desde las listas (2026-11-11)
+
+Sin migraciones. `components/profile/{topic-grid,profile-list,follow-button}.tsx`, `components/layout/back-button.tsx` y `app/[lang]/u/[username]/{following,followers}`; test e2e `profile-lists-and-back.spec.ts`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Los géneros del perfil usan casillas no controladas** (`defaultChecked`) y `TopicGrid` se vuelve a montar (`key`) con lo guardado | Al terminar la Server Action, React 19 reinicia el formulario y una casilla controlada vuelve al valor con el que se montó: el género recién elegido se veía desmarcado aunque se había guardado (al recargar aparecía). Es la misma trampa de las casillas de los formularios. | El contador («Elegiste N géneros») se lleva aparte. El test guarda, comprueba sin recargar y recarga. |
+| **El botón «Atrás» está en el layout**, debajo de la barra, en todas las rutas menos la portada | Pedido del producto: poder volver en cualquier sección. | Usa `router.back()`; si no hay pantalla anterior en la pestaña (`navigation.canGoBack`, o el largo del historial en navegadores viejos) lleva a la portada. Mide 44 px y no agrega desplazamiento de diseño (CLS 0,000 en la página de un juego; rendimiento 87). Las pantallas que ya tenían «Volver al perfil» lo conservan. |
+| **Las listas de seguidores y seguidos llevan el botón de seguir** (el mismo `FollowButton` de Creadores), salvo en la propia cuenta | Pedido del producto: no entrar a cada perfil para dejar de seguir. | `ProfileList` pasó de una tarjeta-enlace a una tarjeta con el enlace al perfil y el botón al lado (un botón dentro de un enlace no es válido). El botón no recarga la página (`refreshAfter={false}`): quien deja de seguir ve «Seguir» en la misma tarjeta y puede revertirlo; al recargar, la lista ya no la incluye. Un visitante ve «Seguir» que lo lleva a iniciar sesión. |
+
 ## Marca y detalles de interfaz (2026-11-11)
 
 Sin migraciones. `components/brand/logo.tsx`, `app/icon.svg`, `app/apple-icon.png`, `components/ui/{badge,button}.tsx`, tokens nuevos en `globals.css`, `lib/notifications/text.ts` y el desplegable de `notifications-bell.tsx`.

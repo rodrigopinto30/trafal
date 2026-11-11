@@ -25,7 +25,8 @@
       "label": "Security check",
       "loading": "Checking that you are a person…",
       "error": "We couldn't load the security check. Check your connection, turn off content blockers for this site and reload the page."
-    }
+    },
+    "backButton": "Back"
   },
   "nav": {
     "label": "Main",

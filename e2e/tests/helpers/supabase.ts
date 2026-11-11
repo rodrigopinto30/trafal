@@ -65,6 +65,13 @@ export async function callRpc(name: string, args: Record<string, unknown>, token
   return { status: response.status, body: await response.json().catch(() => null) };
 }
 
+/** Whether the first account follows the second one, read like any visitor would (the lists of follows are public). */
+export async function followsPerson(followerUsername: string, followeeUsername: string): Promise<boolean> {
+  const [follower, followee] = await Promise.all([publicProfile(followerUsername, "id"), publicProfile(followeeUsername, "id")]);
+  const response = await fetch(`${API}/rest/v1/follows?follower_id=eq.${follower.id}&followee_id=eq.${followee.id}&select=follower_id`, { headers: { apikey: publishableKey() } });
+  return ((await response.json()) as unknown[]).length > 0;
+}
+
 /** The id of the latest published update of an account, read like any visitor would. */
 export async function latestPostIdOf(username: string): Promise<string> {
   const authorId = String((await publicProfile(username, "id")).id);
