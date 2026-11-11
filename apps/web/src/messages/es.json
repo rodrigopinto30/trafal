@@ -616,7 +616,8 @@
     "nav": {
       "profile": "Perfil",
       "preferences": "Preferencias",
-      "account": "Cuenta"
+      "account": "Cuenta",
+      "moderation": "Moderación"
     },
     "profile": {
       "title": "Editar perfil",
@@ -1014,7 +1015,8 @@
       "log": "Registro",
       "featured": "Juego de la semana",
       "accounts": "Cuentas",
-      "claims": "Reclamos"
+      "claims": "Reclamos",
+      "appeals": "Apelaciones"
     },
     "filtersLabel": "Estado de los reportes",
     "filters": {
@@ -1189,7 +1191,9 @@
       "claimNotFound": "Ese reclamo no existe.",
       "claimNotOpen": "Ese reclamo ya no está abierto.",
       "claimAlreadyResolved": "Ese reclamo ya está resuelto.",
-      "nothingToHide": "Lo reclamado ya no está publicado: no hay nada que ocultar."
+      "nothingToHide": "Lo reclamado ya no está publicado: no hay nada que ocultar.",
+      "appealNotFound": "Esa apelación no existe.",
+      "appealAlreadyResolved": "Esa apelación ya tiene respuesta."
     },
     "accounts": {
       "title": "Cuentas",
@@ -1283,6 +1287,50 @@
         "hidden": "Contenido oculto y reclamo resuelto",
         "restored": "Contenido restaurado"
       }
+    },
+    "appeals": {
+      "title": "Apelaciones",
+      "subtitle": "Personas que piden que se revise una suspensión o un contenido oculto. Podés mantener la decisión o revertirla; la persona lee tu respuesta.",
+      "empty": {
+        "open": "No hay apelaciones esperando respuesta.",
+        "resolved": "Todavía no se respondió ninguna apelación."
+      },
+      "by": "Apelación de @{username}",
+      "decision": "Decisión apelada",
+      "decisionOn": "Decisión del {date}",
+      "message": "Mensaje de la persona",
+      "target": {
+        "profile": "Suspensión de la cuenta",
+        "game": "Juego «{label}»",
+        "post": "Avance «{label}»",
+        "comment": "Comentario «{label}»"
+      },
+      "outcome": {
+        "upheld": "Se mantuvo la decisión",
+        "overturned": "Se revirtió la decisión"
+      },
+      "actions": {
+        "upheld": "Mantener la decisión",
+        "overturned": "Revertir la decisión"
+      },
+      "dialog": {
+        "upheldTitle": "Mantener la decisión",
+        "upheldText": "La decisión sigue como está. La persona lee tu respuesta.",
+        "overturnedTitle": "Revertir la decisión",
+        "overturnedProfileText": "Se levanta la suspensión de la cuenta. La persona lee tu respuesta.",
+        "overturnedContentText": "Lo oculto vuelve a verse. La persona lee tu respuesta.",
+        "noteLabel": "Respuesta (se le muestra a la persona)",
+        "confirm": "Confirmar",
+        "cancel": "Cancelar",
+        "count": "{count} de {max}"
+      },
+      "done": {
+        "upheld": "Respuesta enviada: se mantiene la decisión",
+        "overturned": "Respuesta enviada: decisión revertida"
+      },
+      "appellant": "Quién apela",
+      "reason": "Motivo: {reason}",
+      "answer": "Respuesta: {note}"
     }
   },
   "suspension": {
@@ -1290,7 +1338,8 @@
     "untilDate": "Hasta el {date}.",
     "untilFurtherNotice": "Hasta nuevo aviso.",
     "reason": "Motivo: {reason}",
-    "text": "Mientras tanto podés mirar el sitio, pero no publicar, comentar, reportar, seguir ni dar me gusta."
+    "text": "Mientras tanto podés mirar el sitio, pero no publicar, comentar, reportar, seguir ni dar me gusta.",
+    "appealLink": "Apelar la suspensión"
   },
   "terms": {
     "title": "Actualizamos nuestros términos",
@@ -1358,9 +1407,13 @@
           "comment": "Restauramos tu comentario"
         },
         "suspend": "Suspendimos tu cuenta",
-        "lift": "Levantamos la suspensión de tu cuenta"
+        "lift": "Levantamos la suspensión de tu cuenta",
+        "appealUpheld": "Revisamos tu apelación: se mantuvo la decisión",
+        "appealOverturned": "Revisamos tu apelación: revertimos la decisión"
       }
-    }
+    },
+    "answer": "Respuesta: {note}",
+    "appealLink": "Apelar esta decisión"
   },
   "claims": {
     "title": "Reclamo de derechos de autor",
@@ -1406,6 +1459,61 @@
       "generic": "No pudimos enviar el reclamo. Probá de nuevo.",
       "captchaFailed": "No pudimos comprobar que sos una persona. Esperá a que termine la verificación y probá de nuevo.",
       "captchaUnavailable": "La verificación de seguridad no está disponible ahora. Probá de nuevo en un rato."
+    }
+  },
+  "appeals": {
+    "title": "Moderación",
+    "subtitle": "Las decisiones que el equipo tomó sobre tu cuenta o tu contenido, y tus apelaciones.",
+    "how": "Si creés que una decisión fue un error, podés apelarla una vez. Un administrador la analiza y te responde acá y con una notificación. Si te da la razón, la decisión se revierte.",
+    "decisionsTitle": "Decisiones vigentes",
+    "decisionsEmpty": "No hay ninguna decisión vigente sobre tu cuenta ni tu contenido.",
+    "decision": {
+      "profile": "Tu cuenta está suspendida",
+      "game": "Ocultamos tu juego «{label}»",
+      "post": "Ocultamos tu avance «{label}»",
+      "comment": "Ocultamos tu comentario «{label}»"
+    },
+    "decidedOn": "Decisión del {date}",
+    "reason": "Motivo: {reason}",
+    "appeal": "Apelar",
+    "appealStatus": {
+      "open": "Apelación en revisión",
+      "upheld": "Apelación respondida: se mantuvo la decisión",
+      "overturned": "Apelación respondida: se revirtió la decisión"
+    },
+    "appealsTitle": "Tus apelaciones",
+    "appealsEmpty": "Todavía no apelaste ninguna decisión.",
+    "status": {
+      "open": "En revisión",
+      "upheld": "Se mantuvo la decisión",
+      "overturned": "Se revirtió la decisión"
+    },
+    "target": {
+      "profile": "Suspensión de tu cuenta",
+      "game": "Tu juego «{label}»",
+      "post": "Tu avance «{label}»",
+      "comment": "Tu comentario «{label}»"
+    },
+    "yourMessage": "Tu mensaje",
+    "answer": "Respuesta del equipo",
+    "sentOn": "Enviada el {date}",
+    "dialog": {
+      "title": "Apelar esta decisión",
+      "text": "Contanos por qué creés que fue un error. Un administrador la va a revisar y te va a responder. Solo podés apelar una vez cada decisión.",
+      "label": "Tu mensaje",
+      "hint": "Hasta {max} caracteres.",
+      "submit": "Enviar apelación",
+      "submitting": "Enviando…",
+      "sent": "Recibimos tu apelación. Te avisamos cuando tengamos una respuesta."
+    },
+    "errors": {
+      "messageRequired": "Escribí por qué creés que fue un error.",
+      "messageTooLong": "El mensaje es demasiado largo.",
+      "nothingToAppeal": "Ya no hay nada para apelar: la decisión cambió.",
+      "alreadyAppealed": "Esta decisión ya tiene una apelación.",
+      "tooManyOpen": "Tenés demasiadas apelaciones en revisión. Esperá a que respondamos alguna.",
+      "unauthenticated": "Iniciá sesión para apelar.",
+      "generic": "No pudimos enviar tu apelación. Probá de nuevo."
     }
   }
 }

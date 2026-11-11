@@ -39,4 +39,12 @@ describe("notificationHref", () => {
     expect(notificationHref({ ...base, type: "moderation", data: { target_type: "game" }, game: { public_id: "orbita", title: "Órbita" } })).toBe("/games/orbita");
     expect(notificationHref({ ...base, type: "moderation", data: { action: "suspend", target_type: "profile" } })).toBeNull();
   });
+
+  it("leads the answer to an appeal to the moderation screen, whatever it was about", () => {
+    for (const target_type of ["profile", "game", "post", "comment"]) {
+      for (const action of ["appeal_upheld", "appeal_overturned"]) {
+        expect(notificationHref({ ...base, type: "moderation", data: { action, target_type }, game: { public_id: "orbita", title: "Órbita" } })).toBe("/settings/moderation");
+      }
+    }
+  });
 });

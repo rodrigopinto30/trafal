@@ -59,6 +59,8 @@ async function Notifications({ searchParams }: { searchParams: PageProps<"/[lang
         const action = item.data.action;
         if (action === "suspend") return t("items.moderation.suspend");
         if (action === "lift") return t("items.moderation.lift");
+        if (action === "appeal_upheld") return t("items.moderation.appealUpheld");
+        if (action === "appeal_overturned") return t("items.moderation.appealOverturned");
         const target = item.data.target_type === "game" || item.data.target_type === "post" || item.data.target_type === "comment" ? item.data.target_type : "game";
         return t(`items.moderation.${action === "restore" ? "restore" : "hide"}.${target}`);
       }
@@ -67,7 +69,11 @@ async function Notifications({ searchParams }: { searchParams: PageProps<"/[lang
 
   function detail(item: NotificationItem): string | null {
     if (item.type === "moderation") {
-      const parts = [item.data.until ? t("until", { date: day.format(new Date(item.data.until)) }) : null, item.data.reason ? t("reason", { reason: item.data.reason }) : null];
+      const parts = [
+        item.data.until ? t("until", { date: day.format(new Date(item.data.until)) }) : null,
+        item.data.reason ? t("reason", { reason: item.data.reason }) : null,
+        item.data.note ? t("answer", { note: item.data.note }) : null,
+      ];
       return parts.filter(Boolean).join(" · ") || null;
     }
     if ((item.type === "comment" || item.type === "reply" || item.type === "helpful") && item.comment) return `“${snippet(item.comment.body)}”`;
@@ -111,6 +117,11 @@ async function Notifications({ searchParams }: { searchParams: PageProps<"/[lang
                           )}
                         </p>
                         {extra ? <p className="text-sm break-words whitespace-pre-line text-text-2">{extra}</p> : null}
+                        {item.type === "moderation" && (item.data.action === "suspend" || item.data.action === "hide") ? (
+                          <Link href="/settings/moderation" className="w-fit text-sm font-semibold text-cyan underline underline-offset-2 hover:text-white">
+                            {t("appealLink")}
+                          </Link>
+                        ) : null}
                         <time dateTime={item.created_at} className="text-xs text-text-3">
                           {formatRelativeTime(locale, item.created_at, now)}
                         </time>

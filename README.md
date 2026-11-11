@@ -122,6 +122,15 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - Una cuenta suspendida **puede entrar y mirar**, pero no publicar, comentar, reportar, seguir ni dar me gusta (la base lo impone en cada tabla). En **todas las páginas** ve un aviso con el motivo y hasta cuándo dura.
 - Una suspensión con fecha **termina sola** al llegar esa fecha; sin fecha dura hasta que la administración la levanta.
 - Suspender y levantar quedan en el registro de moderación, y la persona recibe un aviso (sin saber qué administrador actuó).
+- El aviso enlaza a **Configuración → Moderación**, donde la persona puede **apelar** (ver «Apelaciones»).
+
+### Apelaciones
+
+**Hoy**
+- Se puede apelar lo que la administración decide sobre una persona: **su suspensión** y **lo suyo que se ocultó** (un juego, un avance o un comentario). Una cuenta suspendida también puede apelar: es lo único que le queda por escribir.
+- En **Configuración → Moderación** se ve lo que está decidido ahora, con su motivo y su fecha, y un botón **Apelar** que pide un mensaje (hasta 1.000 caracteres). También hay un enlace desde el aviso de suspensión y desde la notificación de lo ocultado. Se puede apelar **una vez por decisión**, y hasta 5 apelaciones en revisión a la vez; si lo mismo se oculta o se suspende de nuevo, es una decisión nueva y se puede apelar otra vez.
+- En el panel, la pestaña **Apelaciones** (con la cantidad que espera) muestra quién apela, qué decisión, su motivo y el mensaje. La administración responde **mantener la decisión** o **revertirla** (se levanta la suspensión o vuelve a publicarse lo oculto), y siempre con una **respuesta** que la persona lee.
+- La persona recibe una notificación con el resultado y la respuesta; todo queda en el registro de moderación.
 
 ### Eliminar la cuenta
 
@@ -238,7 +247,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Reportes** de juegos, avances, comentarios y perfiles, con copia del contenido como evidencia.
 - **Reclamos de derechos de autor** (hecho: ver «Reclamos de derechos de autor»).
 - **Panel de administración** donde cada acción de moderación queda registrada en un historial que nadie puede editar ni borrar.
-- **Suspensiones** (hecho: ver «Administración» y «Suspensiones»): temporales o hasta que se levanten; una cuenta suspendida no puede escribir. Falta que la persona pueda apelar.
+- **Suspensiones** (hecho: ver «Administración» y «Suspensiones»): temporales o hasta que se levanten; una cuenta suspendida no puede escribir. Una apelación se responde desde el panel (ver «Apelaciones»).
 - **Eliminar la cuenta** (hecho: ver «Eliminar la cuenta»), **límites de uso** (hecho: ver «Límites de uso»), **captcha** (hecho: ver «Captcha») y **documentos legales** (hecho como borrador: ver «Documentos legales»). Falta la revisión legal y cargar los datos del titular.
 
 ### Diseño y accesibilidad

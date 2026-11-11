@@ -1,4 +1,5 @@
 import { ShieldAlertIcon } from "lucide-react";
+import { Link } from "@/i18n/link";
 import { getLocale, getTranslations } from "@/i18n/server";
 import { getMySuspension } from "@/lib/auth/dal";
 
@@ -19,6 +20,11 @@ export async function SuspensionBanner() {
           </p>
           {suspension.reason ? <p className="break-words whitespace-pre-line">{t("reason", { reason: suspension.reason })}</p> : null}
           <p>{t("text")}</p>
+          <p>
+            <Link href="/settings/moderation" className="font-semibold text-cyan underline underline-offset-2 hover:text-white">
+              {t("appealLink")}
+            </Link>
+          </p>
         </div>
       </div>
     </section>

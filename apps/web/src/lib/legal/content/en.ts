@@ -77,7 +77,7 @@ export const legalEn: LegalContent = {
           "Anyone with an account can report content. The administration team reviews it, and may hide a game, an update or a comment that breaks these rules, and publish it again if it was a mistake.",
           "When we hide something or suspend an account, we tell the person and give them the reason. A suspended account can sign in and look around, but cannot publish, comment, react, report or follow; a suspension may have an end date.",
           "Every moderation action goes into an internal log that cannot be edited or deleted, recording who acted, on what and why.",
-          "If you think we got it wrong, write to us at {email} and tell us the case. We do not have a formal appeals process today: we review what reaches us.",
+          "If you think we got it wrong, you can appeal the decision from Settings → Moderation: an admin looks at it, answers you and, if they agree with you, reverses it (the suspension is lifted or what was hidden is published again). Each decision can be appealed once. You can also write to us at {email}.",
         ],
       },
       {
@@ -316,7 +316,7 @@ export const legalEn: LegalContent = {
             "We may suspend an account (with or without an end date) or close it in serious or repeated cases.",
             "Everything goes into an internal log that nobody can edit or delete.",
           ],
-          "If you think we got it wrong, write to us at {email}. There is no formal appeals process today, but we review every case that reaches us.",
+          "If you think we got it wrong, appeal from Settings → Moderation (once per decision) or write to us at {email}.",
         ],
       },
     ],

@@ -77,7 +77,7 @@ export const legalEs: LegalContent = {
           "Cualquier persona con cuenta puede reportar contenido. Lo revisa el equipo de administración, que puede ocultar un juego, un avance o un comentario si no cumple estas reglas, y volver a publicarlo si fue un error.",
           "Cuando ocultamos algo o suspendemos una cuenta, avisamos a la persona y le decimos el motivo. Una cuenta suspendida puede entrar y mirar, pero no publicar, comentar, reaccionar, reportar ni seguir; la suspensión puede tener una fecha de fin.",
           "Cada acción de moderación queda en un registro interno que no se puede editar ni borrar, con quién actuó, sobre qué y por qué.",
-          "Si creés que nos equivocamos, escribinos a {email} contando el caso. Hoy no tenemos un trámite de apelación formal: revisamos lo que nos llega.",
+          "Si creés que nos equivocamos, podés apelar la decisión desde Configuración → Moderación: un administrador la analiza, te responde y, si te da la razón, la revierte (se levanta la suspensión o se vuelve a publicar lo oculto). Cada decisión se puede apelar una vez. También podés escribirnos a {email}.",
         ],
       },
       {
@@ -316,7 +316,7 @@ export const legalEs: LegalContent = {
             "Podemos suspender una cuenta (con o sin fecha de fin) o cerrarla en casos graves o repetidos.",
             "Todo queda en un registro interno que nadie puede editar ni borrar.",
           ],
-          "Si creés que nos equivocamos, escribinos a {email}. Hoy no hay un trámite de apelación formal, pero revisamos cada caso que nos llega.",
+          "Si creés que nos equivocamos, apelá desde Configuración → Moderación (una vez por decisión) o escribinos a {email}.",
         ],
       },
     ],

@@ -5,7 +5,33 @@ export type Database = {
   
   "public": {
           Tables: {
-            "comments": {
+            "appeals": {
+                  Row: {
+                    "appellant_id": string,"created_at": string,"decision_at": string | null,"decision_log_id": number | null,"decision_reason": string | null,"id": string,"message": string,"resolution_note": string | null,"resolved_at": string | null,"resolved_by": string | null,"status": string,"target_id": string,"target_label": string,"target_type": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "appellant_id": string,"created_at"?: string,"decision_at"?: string | null,"decision_log_id"?: number | null,"decision_reason"?: string | null,"id"?: string,"message": string,"resolution_note"?: string | null,"resolved_at"?: string | null,"resolved_by"?: string | null,"status"?: string,"target_id": string,"target_label"?: string,"target_type": string
+                  }
+                  Update: {
+                    "appellant_id"?: string,"created_at"?: string,"decision_at"?: string | null,"decision_log_id"?: number | null,"decision_reason"?: string | null,"id"?: string,"message"?: string,"resolution_note"?: string | null,"resolved_at"?: string | null,"resolved_by"?: string | null,"status"?: string,"target_id"?: string,"target_label"?: string,"target_type"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "appeals_appellant_id_fkey"
+      columns: ["appellant_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "appeals_resolved_by_fkey"
+      columns: ["resolved_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"comments": {
                   Row: {
                     "author_id": string,"body": string,"created_at": string,"game_id": string | null,"id": string,"is_helpful": boolean,"label": string | null,"parent_id": string | null,"post_id": string | null,"question_id": string | null,"status": string,"updated_at": string
                   }
@@ -674,11 +700,19 @@ isOneToOne: false
 "moderate_content":
 { Args: { "p_action": string,"p_reason": string,"p_target_id": string,"p_target_type": string }; Returns: undefined
                            },
+"my_decisions":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "appeal_id": string,"appeal_status": string,"decided_at": string,"label": string,"reason": string,"target_id": string,"target_type": string
+            }[]
+                           },
 "play_heartbeat":
 { Args: { "p_public_id": string,"p_session_id": string }; Returns: undefined
                            },
 "random_game":
 { Args: { "p_exclude"?: string }; Returns: string
+                           },
+"resolve_appeal":
+{ Args: { "p_appeal_id": string,"p_note": string,"p_outcome": string }; Returns: undefined
                            },
 "resolve_claim":
 { Args: { "p_claim_id": string,"p_note"?: string,"p_outcome": string }; Returns: undefined
@@ -702,6 +736,9 @@ isOneToOne: false
                            },
 "start_play":
 { Args: { "p_device": string,"p_public_id": string,"p_session_id": string }; Returns: undefined
+                           },
+"submit_appeal":
+{ Args: { "p_message": string,"p_target_id": string,"p_target_type": string }; Returns: string
                            },
 "submit_copyright_claim":
 { Args: { "p_claimant_email": string,"p_claimant_name": string,"p_claimant_org": string,"p_game_id": string,"p_infringing_urls": (string)[],"p_original_url": string,"p_post_id": string,"p_signature": string,"p_statement_accuracy": boolean,"p_statement_good_faith": boolean,"p_work_description": string }; Returns: string

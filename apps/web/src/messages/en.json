@@ -616,7 +616,8 @@
     "nav": {
       "profile": "Profile",
       "preferences": "Preferences",
-      "account": "Account"
+      "account": "Account",
+      "moderation": "Moderation"
     },
     "profile": {
       "title": "Edit profile",
@@ -1014,7 +1015,8 @@
       "log": "Log",
       "featured": "Game of the week",
       "accounts": "Accounts",
-      "claims": "Claims"
+      "claims": "Claims",
+      "appeals": "Appeals"
     },
     "filtersLabel": "State of the reports",
     "filters": {
@@ -1189,7 +1191,9 @@
       "claimNotFound": "That claim doesn't exist.",
       "claimNotOpen": "That claim isn't open anymore.",
       "claimAlreadyResolved": "That claim is already resolved.",
-      "nothingToHide": "What was claimed is no longer published: there is nothing to hide."
+      "nothingToHide": "What was claimed is no longer published: there is nothing to hide.",
+      "appealNotFound": "That appeal does not exist.",
+      "appealAlreadyResolved": "That appeal already has an answer."
     },
     "accounts": {
       "title": "Accounts",
@@ -1283,6 +1287,50 @@
         "hidden": "Content hidden and claim resolved",
         "restored": "Content restored"
       }
+    },
+    "appeals": {
+      "title": "Appeals",
+      "subtitle": "People asking for a suspension or hidden content to be reviewed. You can keep the decision or reverse it; the person reads your answer.",
+      "empty": {
+        "open": "No appeals are waiting for an answer.",
+        "resolved": "No appeal has been answered yet."
+      },
+      "by": "Appeal by @{username}",
+      "decision": "Decision appealed",
+      "decisionOn": "Decided on {date}",
+      "message": "The person's message",
+      "target": {
+        "profile": "Suspension of the account",
+        "game": "Game «{label}»",
+        "post": "Update «{label}»",
+        "comment": "Comment «{label}»"
+      },
+      "outcome": {
+        "upheld": "The decision was kept",
+        "overturned": "The decision was reversed"
+      },
+      "actions": {
+        "upheld": "Keep the decision",
+        "overturned": "Reverse the decision"
+      },
+      "dialog": {
+        "upheldTitle": "Keep the decision",
+        "upheldText": "The decision stays as it is. The person reads your answer.",
+        "overturnedTitle": "Reverse the decision",
+        "overturnedProfileText": "The suspension of the account is lifted. The person reads your answer.",
+        "overturnedContentText": "What was hidden is visible again. The person reads your answer.",
+        "noteLabel": "Answer (shown to the person)",
+        "confirm": "Confirm",
+        "cancel": "Cancel",
+        "count": "{count} of {max}"
+      },
+      "done": {
+        "upheld": "Answer sent: the decision stays",
+        "overturned": "Answer sent: decision reversed"
+      },
+      "appellant": "Who appeals",
+      "reason": "Reason: {reason}",
+      "answer": "Answer: {note}"
     }
   },
   "suspension": {
@@ -1290,7 +1338,8 @@
     "untilDate": "Until {date}.",
     "untilFurtherNotice": "Until further notice.",
     "reason": "Reason: {reason}",
-    "text": "Meanwhile you can look around the site, but you can't post, comment, report, follow or like."
+    "text": "Meanwhile you can look around the site, but you can't post, comment, report, follow or like.",
+    "appealLink": "Appeal the suspension"
   },
   "terms": {
     "title": "We updated our terms",
@@ -1358,9 +1407,13 @@
           "comment": "We restored your comment"
         },
         "suspend": "We suspended your account",
-        "lift": "We lifted your account suspension"
+        "lift": "We lifted your account suspension",
+        "appealUpheld": "We reviewed your appeal: the decision was kept",
+        "appealOverturned": "We reviewed your appeal: we reversed the decision"
       }
-    }
+    },
+    "answer": "Answer: {note}",
+    "appealLink": "Appeal this decision"
   },
   "claims": {
     "title": "Copyright claim",
@@ -1406,6 +1459,61 @@
       "generic": "We couldn't send the claim. Try again.",
       "captchaFailed": "We couldn't check that you are a person. Wait for the check to finish and try again.",
       "captchaUnavailable": "The security check is not available right now. Try again in a while."
+    }
+  },
+  "appeals": {
+    "title": "Moderation",
+    "subtitle": "The decisions the team took about your account or your content, and your appeals.",
+    "how": "If you think a decision was a mistake, you can appeal it once. An admin reviews it and answers you here and with a notification. If they agree with you, the decision is reversed.",
+    "decisionsTitle": "Decisions in force",
+    "decisionsEmpty": "There is no decision in force about your account or your content.",
+    "decision": {
+      "profile": "Your account is suspended",
+      "game": "We hid your game «{label}»",
+      "post": "We hid your update «{label}»",
+      "comment": "We hid your comment «{label}»"
+    },
+    "decidedOn": "Decided on {date}",
+    "reason": "Reason: {reason}",
+    "appeal": "Appeal",
+    "appealStatus": {
+      "open": "Appeal under review",
+      "upheld": "Appeal answered: the decision was kept",
+      "overturned": "Appeal answered: the decision was reversed"
+    },
+    "appealsTitle": "Your appeals",
+    "appealsEmpty": "You have not appealed any decision yet.",
+    "status": {
+      "open": "Under review",
+      "upheld": "The decision was kept",
+      "overturned": "The decision was reversed"
+    },
+    "target": {
+      "profile": "Suspension of your account",
+      "game": "Your game «{label}»",
+      "post": "Your update «{label}»",
+      "comment": "Your comment «{label}»"
+    },
+    "yourMessage": "Your message",
+    "answer": "The team's answer",
+    "sentOn": "Sent on {date}",
+    "dialog": {
+      "title": "Appeal this decision",
+      "text": "Tell us why you think it was a mistake. An admin will review it and answer you. You can only appeal each decision once.",
+      "label": "Your message",
+      "hint": "Up to {max} characters.",
+      "submit": "Send appeal",
+      "submitting": "Sending…",
+      "sent": "We received your appeal. We will let you know when we have an answer."
+    },
+    "errors": {
+      "messageRequired": "Write why you think it was a mistake.",
+      "messageTooLong": "The message is too long.",
+      "nothingToAppeal": "There is nothing left to appeal: the decision changed.",
+      "alreadyAppealed": "This decision already has an appeal.",
+      "tooManyOpen": "You have too many appeals under review. Wait until we answer one.",
+      "unauthenticated": "Log in to appeal.",
+      "generic": "We could not send your appeal. Try again."
     }
   }
 }
