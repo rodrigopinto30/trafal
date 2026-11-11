@@ -4,6 +4,7 @@ import { SettingsSection } from "@/components/settings/settings-section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getTranslations } from "@/i18n/server";
 import { getIsAdmin, requireProfile } from "@/lib/auth/dal";
+import { reauthMethodOf } from "@/lib/auth/reauth";
 
 export async function generateMetadata() {
   const t = await getTranslations("settings");
@@ -28,7 +29,7 @@ export default async function SettingsAccountPage() {
 /** Pide sesión y perfil: va dentro de <Suspense>. */
 async function AccountContent() {
   const t = await getTranslations("settings");
-  const { profile } = await requireProfile("/settings/account", { allowOutdatedTerms: true });
+  const { user, profile } = await requireProfile("/settings/account", { allowOutdatedTerms: true });
   const isAdmin = await getIsAdmin();
   return (
     <SettingsSection title={t("account.deleteTitle")} description={t("account.deleteText")}>
@@ -42,7 +43,7 @@ async function AccountContent() {
           </ul>
         </div>
         <p className="text-sm text-text-2">{t("account.keepsText")}</p>
-        {isAdmin ? <p className="text-sm font-medium text-text-2">{t("account.adminNote")}</p> : <div><DeleteAccount username={profile.username} /></div>}
+        {isAdmin ? <p className="text-sm font-medium text-text-2">{t("account.adminNote")}</p> : <div><DeleteAccount username={profile.username} method={reauthMethodOf(user)} /></div>}
       </div>
     </SettingsSection>
   );

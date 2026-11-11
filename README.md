@@ -136,7 +136,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Eliminar la cuenta
 
 **Hoy**
-- En *Configuración → Cuenta* podés **eliminar tu cuenta**. Para confirmar escribís tu @usuario (el botón se habilita cuando coincide, y el servidor lo vuelve a comprobar).
+- En *Configuración → Cuenta* podés **eliminar tu cuenta**. Para confirmar escribís tu @usuario **y tu contraseña** (o tu email, si tu cuenta entra solo con Google y no tiene contraseña): una sesión abierta en una pantalla ajena no alcanza. El botón se habilita cuando están completos y el servidor lo vuelve a comprobar todo; una contraseña equivocada no borra nada ni cierra tu sesión.
 - Se borra **todo lo tuyo**, de verdad y sin vuelta atrás: tu perfil y tu inicio de sesión, tus juegos (con versiones, portadas, capturas y los archivos publicados), tus avances con sus imágenes y videos, tus comentarios, me gusta, guardados, seguidos y avisos, y tu foto. Los comentarios que otras personas dejaron en tus juegos se van con ellos.
 - Se conserva lo que el sitio necesita para su seguridad: el registro de moderación y los reclamos de derechos de autor sobre tu contenido (sin tu cuenta).
 - Las cuentas de administración no se pueden eliminar desde acá (primero hay que quitarles el rol), para que el sitio nunca se quede sin administración por un clic.

@@ -711,8 +711,20 @@
         "confirmationMismatch": "That is not your username. Check it and try again.",
         "deleteFailed": "We couldn't delete your account. Nothing was deleted: try again in a few seconds.",
         "adminCannotDelete": "Admin accounts cannot be deleted.",
-        "generic": "We couldn't delete your account. Try again."
-      }
+        "generic": "We couldn't delete your account. Try again.",
+        "passwordRequired": "Type your password to confirm.",
+        "emailRequired": "Type your email to confirm.",
+        "wrongPassword": "That password is not correct.",
+        "emailMismatch": "That is not the email of your account.",
+        "rateLimited": "Too many attempts. Wait a while and try again.",
+        "verifyFailed": "We could not check your password. Nothing was deleted: try again in a few seconds."
+      },
+      "passwordLabel": "Your password",
+      "passwordHint": "We ask for it again to confirm it is you.",
+      "emailLabel": "Your email",
+      "emailHint": "Your account has no password: type your email to confirm it is you.",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
     },
     "deleted": {
       "title": "Your account is deleted",

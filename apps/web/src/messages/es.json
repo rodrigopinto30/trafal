@@ -711,8 +711,20 @@
         "confirmationMismatch": "Ese no es tu usuario. Revisalo e intentá de nuevo.",
         "deleteFailed": "No pudimos eliminar tu cuenta. No se borró nada: probá de nuevo en unos segundos.",
         "adminCannotDelete": "Las cuentas de administración no se pueden eliminar.",
-        "generic": "No pudimos eliminar tu cuenta. Probá de nuevo."
-      }
+        "generic": "No pudimos eliminar tu cuenta. Probá de nuevo.",
+        "passwordRequired": "Escribí tu contraseña para confirmar.",
+        "emailRequired": "Escribí tu email para confirmar.",
+        "wrongPassword": "Esa contraseña no es correcta.",
+        "emailMismatch": "Ese no es el email de tu cuenta.",
+        "rateLimited": "Hiciste demasiados intentos. Esperá un rato y probá de nuevo.",
+        "verifyFailed": "No pudimos comprobar tu contraseña. No se borró nada: probá de nuevo en unos segundos."
+      },
+      "passwordLabel": "Tu contraseña",
+      "passwordHint": "Te la pedimos de nuevo para confirmar que sos vos.",
+      "emailLabel": "Tu email",
+      "emailHint": "Tu cuenta no tiene contraseña: escribí tu email para confirmar que sos vos.",
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña"
     },
     "deleted": {
       "title": "Eliminamos tu cuenta",
