@@ -6,7 +6,6 @@ import { absoluteUrl, languageAlternates } from "./site";
 /** Pages that are always there, with how often they change. */
 const STATIC_PAGES: { path: string; changeFrequency: "daily" | "weekly" | "monthly"; priority: number }[] = [
   { path: "/", changeFrequency: "daily", priority: 1 },
-  { path: "/explore", changeFrequency: "daily", priority: 0.9 },
   { path: "/creators", changeFrequency: "daily", priority: 0.8 },
   { path: "/feed", changeFrequency: "daily", priority: 0.8 },
   { path: "/legal/terms", changeFrequency: "monthly", priority: 0.2 },

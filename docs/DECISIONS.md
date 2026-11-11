@@ -87,8 +87,8 @@ Migración nueva: `20261106000100_search_games.sql`.
 | **La búsqueda vive en la base: `search_games(texto, límite)`** y devuelve ids con su relevancia | Ya existía `games.search_doc` (título > descripción y etiquetas > género, motor y creador, sin tildes). Un solo lugar define qué coincide y en qué orden; la app solo trae los juegos por id. | Cada palabra se busca como **prefijo** (sirve para las sugerencias). Del texto solo se conservan letras y números, así que nada de lo que se escriba llega como operador de `tsquery`; hasta 8 palabras y 80 caracteres. `SECURITY INVOKER` + filtro `published`: ni los borradores propios aparecen. |
 | **Sugerencias por Server Action**, no por una API propia | Mismo patrón que el resto de la app: el texto del navegador se sanea y valida con Zod (`lib/validation/search.ts`) antes de tocar la base. | Pausa de 200 ms al escribir, mínimo 2 caracteres y se descartan respuestas viejas. Sin tope de uso por ahora (llega con la Fase 5). |
 | **Patrón combobox accesible** (flechas, Enter, Escape, `aria-activedescendant`, aviso «N sugerencias») | Es un campo que se usa en cada visita: tiene que andar igual con teclado y lector de pantalla. | `search.spec.ts` lo recorre en escritorio y celular; `quality.spec.ts` audita con axe las pantallas de resultados. |
-| **`/explore` pasa a ser la pantalla de resultados** (antes «en construcción») | Sin destino, el buscador no sirve. | Muestra los resultados o, sin texto, los juegos más nuevos (48 como máximo). Los filtros por género y motor, el orden y «Sorprendeme» siguen siendo de la Fase 4. |
-| **Sin JavaScript el formulario igual envía a `/explore?q=…`** | Es un `<form method="get">` real. | Los resultados llegan por *streaming*, igual que el resto del sitio, y sin JavaScript ese contenido no se muestra: es una limitación general de la app, no del buscador. |
+| **`/explore` pasa a ser la pantalla de resultados** (antes «en construcción»; más tarde, ver «Portada con sesión y fin de Explorar») | Sin destino, el buscador no sirve. | Muestra los resultados o, sin texto, los juegos más nuevos (48 como máximo). Los filtros por género y motor, el orden y «Sorprendeme» siguen siendo de la Fase 4. |
+| **Sin JavaScript el formulario igual envía a la portada (`/?q=…`)** | Es un `<form method="get">` real. | Los resultados llegan por *streaming*, igual que el resto del sitio, y sin JavaScript ese contenido no se muestra: es una limitación general de la app, no del buscador. |
 
 ## Validador de zips de juegos (2026-11-05)
 
@@ -453,6 +453,24 @@ Migración `20261111000200`: tabla `appeals` y las funciones `my_decisions`, `su
 | **Tope de 5 apelaciones en revisión por persona** | Para que la cola no se llene de golpe. | Es un límite simple en la función; no pasa por los límites de uso. |
 | **No se avisa a los admins por notificación**, solo con el contador de la pestaña | Hoy los admins entran al panel a trabajar la cola. | Si no entran, no se enteran. |
 | **Se actualizó el texto legal** (`LEGAL_UPDATED` = 2026-11-11, `TERMS_VERSION` sigue igual) | Decía que no había trámite de apelación. | El cambio no pide aceptar de nuevo: no quita nada, agrega un trámite. |
+
+## Portada con sesión y fin de «Explorar» (2026-11-11)
+
+Sin migraciones. `app/[lang]/home`, `components/home/{visitor-home,home-content,home-skeleton}.tsx`, `components/search/explore-results.tsx`, el proxy y `EXPLORE_PARAMS`/`isExploring`; tests `signed-in-home.spec.ts` y `home-search.spec.ts` (antes `explore.spec.ts`).
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **La portada con sesión es otra página, no un cambio dentro de la portada**: el proxy reescribe `/` (y `/en`) a `/home` cuando hay una sesión **válida** | La portada pública es estática y se mide con Lighthouse (≥ 85 en celular): leer la sesión ahí la volvería dinámica. Y con el saludo dentro de un `<Suspense>`, quien inició sesión vería un instante la versión de visitante. | La dirección no cambia. Los visitantes y los buscadores (sin cookie) reciben la página estática de siempre; midió 92 en celular. |
+| **La sesión se valida en el proxy** (`getClaims`, que ya se llamaba para renovar el token) | Con solo mirar que exista la cookie, una sesión vencida mostraría la portada con sesión. | `updateSession` avisa si la sesión es válida y crea la respuesta una sola vez, con las cookies renovadas. |
+| **Se elimina la pantalla «Explorar» para todos**: su buscador, filtros y resultados pasan a la portada (`/?q=…&genre=…`) | Pedido del producto: la portada con sesión tiene que ser como Explorar, y dos pantallas casi iguales confunden. | Se borran la página, el ítem del menú y el del pie, y la entrada del mapa del sitio. El buscador (`GameSearch`), los filtros y «Sorprendeme» apuntan a `/`. El `SearchAction` de Google apunta a `/?q=…`. |
+| **El proxy también reescribe `/` a `/home` cuando la dirección trae un parámetro de búsqueda**, aunque no haya sesión | Los visitantes tienen que poder buscar y la portada pública no puede leer la dirección sin volverse dinámica. | Solo `/?q=…` & compañía son dinámicas; el `/` pelado sigue estático. Una dirección con valores inválidos o por defecto muestra la portada de siempre (`isExploring`); un `sort` válido cuenta, para que el botón «Buscar» con el campo vacío muestre todos los juegos (`/?sort=recent`). |
+| **`/explore` redirige (308) a `/`**, con la misma búsqueda y el idioma | Había enlaces, favoritos y buscadores apuntando a esa dirección. | Se hace en el proxy, antes de decidir el idioma. |
+| **Las vistas de búsqueda piden `noindex, follow`** y su canónica es la portada | Son variantes de la portada; antes la vista base de Explorar se indexaba. | Se perdió esa página indexable: la portada y los juegos siguen en el mapa del sitio. |
+| **`/home` abierto sin sesión y sin búsqueda muestra la portada pública** y no redirige | Un redirect a `/` volvería a reescribir a `/home` y haría un bucle. | La página lleva `noindex`. |
+| **Sin banners ni tarjetas «Tu espacio»**: lema, búsqueda, filtros, y debajo los juegos, después las novedades de quienes sigue y más estantes | Pedido del producto: se parece a lo que ya se conocía de Explorar, con los juegos antes que las novedades. | Orden: Recién agregados → Novedades de quienes seguís → Los más jugados → Primeros juegos. Los accesos a publicar, subir, guardados y avisos siguen en el menú y en el de la cuenta. |
+| **Un lema en lugar de un saludo con el nombre** («Juegos del navegador, hechos por la comunidad») | Pedido del producto: la portada tiene que decir qué es Trafal. | Es el título de la página para quien inició sesión; quien busca sin sesión ve «Buscar juegos». |
+
+Esto encontró algo ajeno: `next build` rechazaba `/admin/featured` (leía la hora antes de un acceso dinámico) y el servidor de desarrollo no lo ve. Se arregló aparte y se agregó `./check.sh --build` (`tools/build-check.sh`).
 
 ## Contranotificación de derechos de autor (2026-11-11)
 

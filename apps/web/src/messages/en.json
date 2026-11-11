@@ -31,7 +31,6 @@
     "label": "Main",
     "mobileLabel": "Mobile menu",
     "home": "Go to the Trafal home page",
-    "explore": "Explore",
     "community": "Community",
     "creators": "Creators",
     "upload": "Upload game",
@@ -54,7 +53,6 @@
     "product": "Product",
     "help": "Help",
     "legal": "Legal",
-    "explore": "Explore games",
     "community": "Community",
     "howToUpload": "How to upload a game",
     "guidelines": "Community guidelines",
@@ -128,7 +126,33 @@
       }
     },
     "finalTitle": "Your game doesn't have to be perfect. It has to be published.",
-    "finalText": "Create your profile, upload what you have and tell us what you're working on. The community does the rest."
+    "finalText": "Create your profile, upload what you have and tell us what you're working on. The community does the rest.",
+    "signedIn": {
+      "following": {
+        "title": "News from people you follow",
+        "subtitle": "The latest from the creators you follow.",
+        "empty": "You do not follow anyone yet. Follow creators to see their updates here.",
+        "quiet": "The people you follow have not posted anything new yet.",
+        "discover": "Discover creators",
+        "more": "See everything they post"
+      },
+      "recent": {
+        "title": "Recently added",
+        "subtitle": "The latest the community uploaded."
+      },
+      "mostPlayed": {
+        "title": "Most played",
+        "subtitle": "What is played the most on Trafal."
+      },
+      "firstGames": {
+        "title": "First games",
+        "subtitle": "People who just published their first game. A kind comment goes a long way."
+      },
+      "slogan": "Browser games, <accent>made by the community</accent>"
+    },
+    "search": {
+      "title": "Find games"
+    }
   },
   "auth": {
     "email": "Email",
@@ -540,7 +564,6 @@
     "by": "by {creator}"
   },
   "explore": {
-    "title": "Explore games",
     "subtitleAll": "Every published game, newest first.",
     "subtitleResults": "Results for “{query}”",
     "count": "{count, plural, one {# game} other {# games}}",

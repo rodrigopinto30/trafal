@@ -31,7 +31,6 @@
     "label": "Principal",
     "mobileLabel": "Menú móvil",
     "home": "Ir al inicio de Trafal",
-    "explore": "Explorar",
     "community": "Comunidad",
     "creators": "Creadores",
     "upload": "Subir juego",
@@ -54,7 +53,6 @@
     "product": "Producto",
     "help": "Ayuda",
     "legal": "Legal",
-    "explore": "Explorar juegos",
     "community": "Comunidad",
     "howToUpload": "Cómo subir un juego",
     "guidelines": "Normas de la comunidad",
@@ -128,7 +126,33 @@
       }
     },
     "finalTitle": "Tu juego no tiene que ser perfecto. Tiene que estar publicado.",
-    "finalText": "Creá tu perfil, subí lo que tengas y contá en qué estás trabajando. La comunidad hace el resto."
+    "finalText": "Creá tu perfil, subí lo que tengas y contá en qué estás trabajando. La comunidad hace el resto.",
+    "signedIn": {
+      "following": {
+        "title": "Novedades de quienes seguís",
+        "subtitle": "Lo último de los creadores que seguís.",
+        "empty": "Todavía no seguís a nadie. Seguí a creadores para ver acá sus avances.",
+        "quiet": "Quienes seguís no publicaron nada nuevo todavía.",
+        "discover": "Descubrir creadores",
+        "more": "Ver todo lo que publican"
+      },
+      "recent": {
+        "title": "Recién agregados",
+        "subtitle": "Lo último que subió la comunidad."
+      },
+      "mostPlayed": {
+        "title": "Los más jugados",
+        "subtitle": "Lo que más se juega en Trafal."
+      },
+      "firstGames": {
+        "title": "Primeros juegos",
+        "subtitle": "Gente que acaba de publicar su primer juego. Un comentario amable vale mucho."
+      },
+      "slogan": "Juegos del navegador, <accent>hechos por la comunidad</accent>"
+    },
+    "search": {
+      "title": "Buscar juegos"
+    }
   },
   "auth": {
     "email": "Email",
@@ -540,7 +564,6 @@
     "by": "de {creator}"
   },
   "explore": {
-    "title": "Explorar juegos",
     "subtitleAll": "Todos los juegos publicados, los más nuevos primero.",
     "subtitleResults": "Resultados para «{query}»",
     "count": "{count, plural, one {# juego} other {# juegos}}",

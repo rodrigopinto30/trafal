@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   const { locale, exclude } = parseSurpriseParams({ lang: request.nextUrl.searchParams.get("lang"), exclude: request.nextUrl.searchParams.get("exclude") });
   const supabase = await createClient();
   const { data } = await supabase.rpc("random_game", { p_exclude: exclude ?? undefined });
-  const path = data ? `/games/${data}` : "/explore";
+  const path = data ? `/games/${data}` : "/";
   const response = NextResponse.redirect(new URL(localizePath(locale, path), publicEnv.siteUrl), 307);
   response.headers.set("Cache-Control", "no-store");
   return response;

@@ -10,7 +10,6 @@ export async function SiteFooter() {
     {
       title: t("product"),
       links: [
-        { href: "/explore", label: t("explore") },
         { href: "/feed", label: t("community") },
         { href: "/creators", label: tNav("creators") },
       ],

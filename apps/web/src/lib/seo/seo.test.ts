@@ -130,7 +130,7 @@ describe("structured data", () => {
 
   it("describes the site with its search", () => {
     const data = webSiteData("es", "Una red social") as { potentialAction: { target: { urlTemplate: string } } };
-    expect(data.potentialAction.target.urlTemplate).toContain("/explore?q={search_term_string}");
+    expect(data.potentialAction.target.urlTemplate).toContain("/?q={search_term_string}");
   });
 
   it("describes a game", () => {

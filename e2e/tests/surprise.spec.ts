@@ -3,11 +3,11 @@ import { gotoReady } from "./helpers/session";
 
 /** «Sorprendeme»: a link that sends the person to a random published game, never to the one they are on. */
 test.describe("sorprendeme", () => {
-  test("está en la portada, en Explorar y en la página de un juego, y es un enlace común (sin precarga)", async ({ page }) => {
+  test("está en la portada, en la búsqueda y en la página de un juego, y es un enlace común (sin precarga)", async ({ page }) => {
     await gotoReady(page, "/");
     await expect(page.getByRole("link", { name: "Sorprendeme" })).toHaveAttribute("href", "/api/surprise?lang=es");
 
-    await gotoReady(page, "/explore");
+    await gotoReady(page, "/?genre=arcade");
     await expect(page.getByRole("link", { name: "Sorprendeme" })).toHaveAttribute("href", "/api/surprise?lang=es");
 
     await gotoReady(page, "/games/orbita");

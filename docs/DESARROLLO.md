@@ -34,6 +34,7 @@ Lo único que necesitás instalado es **Docker** (con Compose v2) y unos 4 GB de
 ```bash
 ./check.sh                # lint + tipos + tests unitarios + worker de Python + tests de la base (RLS/permisos) + tipos de la DB al día
 ./check.sh --e2e          # además, pruebas de punta a punta con Playwright (~2 min)
+./check.sh --build        # además, comprueba que la web compila para producción (next build, en una imagen aparte)
 ./pnpm test               # solo los tests unitarios
 tools/worker-check.sh     # solo el worker de Python (ruff, mypy estricto, pytest), en Docker
 tools/check-media-headers.sh <url>   # comprueba que el dominio público de medios sirva nosniff (ver «Medios en producción»)

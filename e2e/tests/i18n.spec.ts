@@ -15,17 +15,17 @@ test.describe("idioma", () => {
 
   test("el idioma sale del sistema: español, inglés, y español si es un idioma que no tenemos", async ({ browser }) => {
     const cases = [
-      { acceptLanguage: "es-AR,es;q=0.9", url: /localhost:3000\/explore$/, heading: "Explorar juegos", lang: "es" },
-      { acceptLanguage: "en-US,en;q=0.9", url: /\/en\/explore$/, heading: "Explore games", lang: "en" },
-      { acceptLanguage: "en-GB,en;q=0.9,es;q=0.8", url: /\/en\/explore$/, heading: "Explore games", lang: "en" },
-      { acceptLanguage: "fr-FR,fr;q=0.9", url: /localhost:3000\/explore$/, heading: "Explorar juegos", lang: "es" },
+      { acceptLanguage: "es-AR,es;q=0.9", url: /localhost:3000\/$/, heading: "Publicá tu juego.", lang: "es" },
+      { acceptLanguage: "en-US,en;q=0.9", url: /\/en$/, heading: "Publish your game.", lang: "en" },
+      { acceptLanguage: "en-GB,en;q=0.9,es;q=0.8", url: /\/en$/, heading: "Publish your game.", lang: "en" },
+      { acceptLanguage: "fr-FR,fr;q=0.9", url: /localhost:3000\/$/, heading: "Publicá tu juego.", lang: "es" },
     ];
     for (const item of cases) {
       const context = await browser.newContext({ locale: item.acceptLanguage.split(",")[0], extraHTTPHeaders: { "Accept-Language": item.acceptLanguage } });
       const page = await context.newPage();
-      await page.goto("/explore");
+      await page.goto("/");
       await expect(page, item.acceptLanguage).toHaveURL(item.url);
-      await expect(page.getByRole("heading", { level: 1 })).toHaveText(item.heading);
+      await expect(page.getByRole("heading", { level: 1 })).toContainText(item.heading);
       await expect(page.locator("html")).toHaveAttribute("lang", item.lang);
       await context.close();
     }
@@ -58,14 +58,14 @@ test.describe("idioma", () => {
     // Queda recordado: entrar a «/» sin prefijo lleva al inglés.
     await page.goto("/");
     await expect(page).toHaveURL(/\/en$/);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Publish your game.");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Browser games, made by the community");
 
     // Otro dispositivo (navegador SIN cookies y en español): al iniciar sesión se usa el idioma de la CUENTA.
     const otherDevice = await browser.newContext({ locale: "es-AR", extraHTTPHeaders: { "Accept-Language": "es-AR,es;q=0.9" } });
     const other = await otherDevice.newPage();
     await loginWith(other, email, "Trafal12345");
     await expect(other).toHaveURL(/\/en$/);
-    await expect(other.getByRole("heading", { level: 1 })).toContainText("Publish your game.");
+    await expect(other.getByRole("heading", { level: 1 })).toContainText("Browser games, made by the community");
     await otherDevice.close();
 
     // Y de vuelta a español: la URL pierde el prefijo.

@@ -2,8 +2,9 @@ import { expect, test, type Page } from "@playwright/test";
 import { gotoReady } from "./helpers/session";
 
 /**
- * The explore page: text search plus filters (genre, engine, works on mobile) and order, all kept in the address. It runs on the
- * example games of supabase/seeds; games people create in the dev database are ignored when the order matters.
+ * The search view of the home (`/?q=…&genre=…`): text search plus filters (genre, engine, works on mobile) and order, all kept in the
+ * address, for visitors and for people signed in. It runs on the example games of supabase/seeds; games people create in the dev
+ * database are ignored when the order matters.
  */
 const SEEDS = new Set([
   "Órbita", "Granja Cuántica", "El Faro", "Luciérnaga Valiente", "Colectivo 152", "Isla Eco", "Gato Láser", "Pulpo DJ",
@@ -24,24 +25,24 @@ async function applyFilters(page: Page) {
   await page.waitForLoadState("networkidle");
 }
 
-test.describe("explorar", () => {
-  test("sin filtros muestra los juegos más nuevos y deja elegir género, motor, celular y orden", async ({ page }) => {
-    await gotoReady(page, "/explore");
+test.describe("buscar en la portada", () => {
+  test("una búsqueda sin filtros deja elegir género, motor, celular y orden, y quitar filtros no aparece", async ({ page }) => {
+    await gotoReady(page, "/?sort=plays");
     const filters = page.getByRole("search", { name: "Filtros" });
     await expect(filters.getByLabel("Género")).toHaveValue("");
     await expect(filters.getByLabel("Motor")).toHaveValue("");
-    await expect(filters.getByLabel("Ordenar por")).toHaveValue("recent");
+    await expect(filters.getByLabel("Ordenar por")).toHaveValue("plays");
     await expect(filters.getByLabel("Ordenar por").locator("option")).toHaveText(["Más nuevos", "En tendencia", "Más jugados"]);
     await expect(filters.getByRole("checkbox", { name: "Solo los que funcionan en celular" })).not.toBeChecked();
     await expect(filters.getByRole("link", { name: "Quitar filtros" })).toHaveCount(0);
-    expect((await seedTitles(page)).slice(0, 2)).toEqual(["Órbita", "Granja Cuántica"]);
+    expect((await seedTitles(page)).slice(0, 2)).toEqual(["Neón Express", "Chancleta Run"]);
   });
 
   test("filtrar por género deja solo ese género, y queda en la dirección", async ({ page }) => {
-    await gotoReady(page, "/explore");
+    await gotoReady(page, "/?genre=puzzle");
     await page.getByRole("search", { name: "Filtros" }).getByLabel("Género").selectOption("arcade");
     await applyFilters(page);
-    await expect(page).toHaveURL(/\/explore\?genre=arcade$/);
+    await expect(page).toHaveURL(/\/\?genre=arcade$/);
     expect(await seedTitles(page)).toEqual(expect.arrayContaining(["Neón Express", "Chancleta Run", "Colectivo 152"]));
     expect(await seedTitles(page)).toHaveLength(3);
     await expect(cards(page).filter({ hasNotText: "Arcade" })).toHaveCount(0);
@@ -49,73 +50,73 @@ test.describe("explorar", () => {
   });
 
   test("filtrar por motor y por «funciona en celular» se combinan", async ({ page }) => {
-    await gotoReady(page, "/explore?engine=godot");
+    await gotoReady(page, "/?engine=godot");
     expect(await seedTitles(page)).toEqual(expect.arrayContaining(["Luciérnaga Valiente", "Pasillo 9", "Mazmorra 1-Bit", "Granja Cuántica"]));
     await expect(cards(page).filter({ hasNotText: "Godot" })).toHaveCount(0);
 
     await page.getByRole("checkbox", { name: "Solo los que funcionan en celular" }).check();
     await applyFilters(page);
-    await expect(page).toHaveURL(/\/explore\?engine=godot&mobile=1$/);
+    await expect(page).toHaveURL(/\/\?engine=godot&mobile=1$/);
     const titles = await seedTitles(page);
     expect(titles).toEqual(["Granja Cuántica"]);
   });
 
   test("ordenar por más jugados y por tendencia", async ({ page }) => {
-    await gotoReady(page, "/explore");
+    await gotoReady(page, "/?genre=puzzle");
+    await page.getByLabel("Género").selectOption("");
     await page.getByLabel("Ordenar por").selectOption("plays");
     await applyFilters(page);
-    await expect(page).toHaveURL(/\/explore\?sort=plays$/);
+    await expect(page).toHaveURL(/\/\?sort=plays$/);
     expect((await seedTitles(page)).slice(0, 3)).toEqual(["Neón Express", "Chancleta Run", "Luciérnaga Valiente"]);
 
     await page.getByLabel("Ordenar por").selectOption("trending");
     await applyFilters(page);
-    await expect(page).toHaveURL(/\/explore\?sort=trending$/);
+    await expect(page).toHaveURL(/\/\?sort=trending$/);
     await expect(page.getByLabel("Ordenar por")).toHaveValue("trending");
     expect((await seedTitles(page)).length).toBe(16);
   });
 
   test("el texto, los filtros y el orden trabajan juntos, y quitar los filtros conserva el texto", async ({ page }) => {
-    await gotoReady(page, "/explore?q=carton&genre=racing");
+    await gotoReady(page, "/?q=carton&genre=racing");
     expect(await seedTitles(page)).toEqual(["Kart de Cartón"]);
     await expect(page.getByLabel("Ordenar por").locator("option")).toHaveText(["Más nuevos", "En tendencia", "Más jugados", "Más relevantes"]);
     await expect(page.getByLabel("Ordenar por")).toHaveValue("relevance");
 
     await page.getByRole("link", { name: "Quitar filtros" }).click();
-    await expect(page).toHaveURL(/\/explore\?q=carton$/);
+    await expect(page).toHaveURL(/\/\?q=carton$/);
     expect(await seedTitles(page)).toEqual(["Kart de Cartón"]);
 
-    await gotoReady(page, "/explore?q=carton&genre=arcade");
+    await gotoReady(page, "/?q=carton&genre=arcade");
     await expect(page.getByRole("heading", { name: "No encontramos juegos para «carton»" })).toBeVisible();
     await expect(page.getByText("Probá con menos filtros, con otro orden o con otra palabra.")).toBeVisible();
   });
 
   test("buscar otro texto conserva los filtros y vuelve a la primera página", async ({ page }) => {
-    await gotoReady(page, "/explore?genre=arcade&sort=plays");
+    await gotoReady(page, "/?genre=arcade&sort=plays");
     const box = page.getByRole("combobox", { name: "Buscar juegos" });
     await box.fill("express");
     await box.press("Enter");
-    await expect(page).toHaveURL(/\/explore\?q=express&genre=arcade&sort=plays$/);
+    await expect(page).toHaveURL(/\/\?q=express&genre=arcade&sort=plays$/);
     expect(await seedTitles(page)).toEqual(["Neón Express"]);
   });
 
-  test("una dirección con valores raros muestra la vista por defecto, y una página que no existe lo explica", async ({ page }) => {
-    await gotoReady(page, "/explore?genre=hack%27%20or%20%271%27%3D%271&engine=flash&sort=zzz&page=-3&mobile=si");
-    await expect(page.getByLabel("Género")).toHaveValue("");
-    await expect(page.getByLabel("Ordenar por")).toHaveValue("recent");
-    expect((await seedTitles(page)).length).toBe(16);
+  test("una dirección con valores raros no rompe nada: es la portada de siempre, y una página que no existe lo explica", async ({ page }) => {
+    await gotoReady(page, "/?genre=hack%27%20or%20%271%27%3D%271&engine=flash&sort=zzz&page=-3&mobile=si");
+    await expect(page.getByRole("search", { name: "Filtros" })).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Crear cuenta" }).first()).toBeVisible();
 
-    await gotoReady(page, "/explore?page=99");
+    await gotoReady(page, "/?page=99");
     await expect(page.getByRole("heading", { name: "Esa página no existe: volvé a la primera." })).toBeVisible();
     await page.getByRole("link", { name: "Anterior" }).click();
-    await expect(page).toHaveURL(/\/explore$/);
+    await expect(page).toHaveURL(/localhost:3000\/$/);
   });
 
   test("en inglés los filtros y los órdenes se traducen", async ({ page }) => {
-    await gotoReady(page, "/en/explore?genre=puzzle&sort=plays");
+    await gotoReady(page, "/en/?genre=puzzle&sort=plays");
     const filters = page.getByRole("search", { name: "Filters" });
     await expect(filters.getByLabel("Genre")).toHaveValue("puzzle");
     await expect(filters.getByLabel("Sort by").locator("option")).toHaveText(["Newest", "Trending", "Most played"]);
-    await expect(page.getByRole("link", { name: "Clear filters" })).toHaveAttribute("href", "/en/explore?sort=plays");
+    await expect(page.getByRole("link", { name: "Clear filters" })).toHaveAttribute("href", "/en?sort=plays");
     expect((await seedTitles(page)).slice(0, 2)).toEqual(["Gato Láser", "Torre de Termos"]);
   });
 });

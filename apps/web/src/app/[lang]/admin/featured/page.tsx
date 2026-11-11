@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { ClearFeaturedButton, FeaturedForm } from "@/components/admin/featured-form";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -16,7 +17,9 @@ export default function AdminFeaturedPage() {
   );
 }
 
+/** Depends on today's date, so it waits for a real request before reading the clock (the build refuses to prerender an unstable value). */
 async function Featured() {
+  await connection();
   const thisWeek = weekStartOf(new Date());
   const [t, locale, picks, games] = await Promise.all([getTranslations("admin"), getLocale(), listFeaturedPicks(thisWeek), listEligibleFirstGames()]);
   const day = new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "UTC" });
