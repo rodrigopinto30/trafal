@@ -118,7 +118,7 @@ test("ocultar y resolver oculta el juego, avisa a su dueño y queda en el regist
   await expect(page.getByRole("row", { name: new RegExp(`Restauró un juego.*${restoreReason}`) })).toBeVisible();
 });
 
-test("elegir el juego de la semana desde el panel lo muestra en la portada y se puede sacar", async () => {
+test("elegir el juego de la semana desde el panel lo muestra en la portada de los visitantes y se puede sacar", async ({ browser }, testInfo) => {
   await gotoReady(page, "/admin/featured");
   await page.getByLabel("Juego", { exact: true }).selectOption(await gameIdOf(FEATURED_GAME));
   await page.getByLabel(/Frase/).fill(FEATURED_QUOTE);
@@ -128,8 +128,10 @@ test("elegir el juego de la semana desde el panel lo muestra en la portada y se 
   await expect(page.getByText("Juego elegido")).toBeVisible();
   await expect(page.getByText(FEATURED_QUOTE)).toBeVisible();
 
-  await gotoReady(page, "/");
-  await expect(page.getByText(FEATURED_QUOTE)).toBeVisible();
+  const visitor = await (await browser.newContext({ ...testInfo.project.use })).newPage();
+  await gotoReady(visitor, "/");
+  await expect(visitor.getByText(FEATURED_QUOTE)).toBeVisible();
+  await visitor.context().close();
 
   await gotoReady(page, "/admin/featured");
   const clear = page.getByRole("button", { name: "Sacar" });

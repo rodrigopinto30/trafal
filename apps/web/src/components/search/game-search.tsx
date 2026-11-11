@@ -151,7 +151,7 @@ export function GameSearch({ variant, defaultValue = "", keep = "" }: Props) {
           />
           <button
             type="submit"
-            className="absolute top-1/2 right-1.5 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-brand text-sm font-bold text-ink sm:w-auto sm:px-6 outline-none transition-[box-shadow,filter] hover:brightness-110 hover:shadow-glow-violet focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+            className="absolute top-1/2 right-1.5 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-action text-sm font-bold text-white sm:w-auto sm:px-6 outline-none transition-[box-shadow,filter] hover:brightness-110 hover:shadow-glow-violet focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-card"
           >
             <SearchIcon aria-hidden="true" className="size-5 sm:hidden" />
             <span className="max-sm:sr-only">{t("submit")}</span>

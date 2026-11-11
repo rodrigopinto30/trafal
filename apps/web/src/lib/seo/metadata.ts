@@ -22,7 +22,7 @@ const OPEN_GRAPH_LOCALES: Record<Locale, string> = { es: "es_AR", en: "en_US" };
  */
 export function pageMetadata({ title, description, path, locale, titleIsComplete = false, type = "website", noindex = false, publishedTime }: PageSeo): Metadata {
   const url = absoluteUrl(locale, path);
-  const cardTitle = titleIsComplete ? title : `${title} · ${SITE_NAME}`;
+  const cardTitle = titleIsComplete ? title : `${SITE_NAME} - ${title}`;
   return {
     title: titleIsComplete ? { absolute: title } : title,
     description,

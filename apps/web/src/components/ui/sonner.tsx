@@ -13,7 +13,7 @@ function Toaster(props: ToasterProps) {
         classNames: {
           toast: "!rounded-2xl !border !border-white/10 !bg-panel !text-foreground !shadow-float !font-sans",
           description: "!text-text-2",
-          actionButton: "!bg-brand !font-bold !text-ink",
+          actionButton: "!bg-action !font-bold !text-white",
           cancelButton: "!bg-white/10 !text-foreground",
         },
       }}

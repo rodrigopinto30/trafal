@@ -107,3 +107,10 @@ test.describe("portada", () => {
     await expect(page.getByRole("region", { name: "Just published" })).toContainText("Órbita");
   });
 });
+
+test("la portada ya no lleva la etiqueta «NUEVO» ni «La red social para quienes hacen videojuegos» sobre el título", async ({ page }) => {
+  await gotoReady(page, "/");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Publicá tu juego.");
+  await expect(page.getByRole("main").getByText("NUEVO", { exact: true })).toHaveCount(0);
+  await expect(page.getByRole("main").getByText("La red social para quienes hacen videojuegos")).toHaveCount(0);
+});

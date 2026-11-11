@@ -62,8 +62,8 @@ describe("pageMetadata", () => {
     expect(metadata.title).toBe("Órbita");
     expect(metadata.alternates?.canonical).toBe(`${absoluteUrl("en", "/games/orbita")}`);
     expect(Object.keys(metadata.alternates?.languages ?? {})).toEqual(["es", "en", "x-default"]);
-    expect(metadata.openGraph).toMatchObject({ type: "website", title: "Órbita · Trafal", locale: "en_US", alternateLocale: ["es_AR"] });
-    expect(metadata.twitter).toMatchObject({ card: "summary_large_image", title: "Órbita · Trafal" });
+    expect(metadata.openGraph).toMatchObject({ type: "website", title: "Trafal - Órbita", locale: "en_US", alternateLocale: ["es_AR"] });
+    expect(metadata.twitter).toMatchObject({ card: "summary_large_image", title: "Trafal - Órbita" });
     expect(metadata.robots).toBeUndefined();
   });
 

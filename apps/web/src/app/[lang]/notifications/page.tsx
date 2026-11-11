@@ -8,6 +8,7 @@ import { getLocale, getTranslations } from "@/i18n/server";
 import { requireProfile } from "@/lib/auth/dal";
 import { formatRelativeTime } from "@/lib/format";
 import { notificationHref } from "@/lib/notifications/href";
+import { notificationDetail, notificationSentence } from "@/lib/notifications/text";
 import { listNotifications, type NotificationItem } from "@/lib/notifications/queries";
 import { firstParam, parseBefore } from "@/lib/validation/common";
 import { cn } from "@/lib/utils";
@@ -25,9 +26,6 @@ export default function NotificationsPage({ searchParams }: PageProps<"/[lang]/n
   );
 }
 
-const SNIPPET_MAX = 140;
-const snippet = (text: string) => (Array.from(text).length > SNIPPET_MAX ? `${Array.from(text).slice(0, SNIPPET_MAX).join("")}…` : text);
-
 async function Notifications({ searchParams }: { searchParams: PageProps<"/[lang]/notifications">["searchParams"] }) {
   await requireProfile("/notifications");
   const before = parseBefore(firstParam((await searchParams).before));
@@ -36,50 +34,8 @@ async function Notifications({ searchParams }: { searchParams: PageProps<"/[lang
   const day = new Intl.DateTimeFormat(locale, { dateStyle: "long", timeStyle: "short" });
   const hasUnread = items.some((item) => item.read_at === null);
 
-  function sentence(item: NotificationItem): string {
-    const who = item.actor?.display_name ?? t("someone");
-    const title = item.game?.title ?? t("aGame");
-    const place = item.game ? "game" : "post";
-    switch (item.type) {
-      case "comment":
-        return t(`items.comment.${place}`, { who, title });
-      case "reply":
-        return t("items.reply", { who });
-      case "like":
-        return t(`items.like.${place}`, { who, title });
-      case "follow":
-        return t("items.follow", { who });
-      case "helpful":
-        return t("items.helpful", { who });
-      case "version_ready":
-        return t("items.versionReady", { version: item.version?.label ?? "", title });
-      case "version_error":
-        return t("items.versionError", { version: item.version?.label ?? "", title });
-      case "moderation": {
-        const action = item.data.action;
-        if (action === "suspend") return t("items.moderation.suspend");
-        if (action === "lift") return t("items.moderation.lift");
-        const counter = item.data.kind === "counter_notice";
-        if (action === "appeal_upheld") return t(counter ? "items.moderation.counterUpheld" : "items.moderation.appealUpheld");
-        if (action === "appeal_overturned") return t(counter ? "items.moderation.counterOverturned" : "items.moderation.appealOverturned");
-        const target = item.data.target_type === "game" || item.data.target_type === "post" || item.data.target_type === "comment" ? item.data.target_type : "game";
-        return t(`items.moderation.${action === "restore" ? "restore" : "hide"}.${target}`);
-      }
-    }
-  }
-
-  function detail(item: NotificationItem): string | null {
-    if (item.type === "moderation") {
-      const parts = [
-        item.data.until ? t("until", { date: day.format(new Date(item.data.until)) }) : null,
-        item.data.reason ? t("reason", { reason: item.data.reason }) : null,
-        item.data.note ? t("answer", { note: item.data.note }) : null,
-      ];
-      return parts.filter(Boolean).join(" · ") || null;
-    }
-    if ((item.type === "comment" || item.type === "reply" || item.type === "helpful") && item.comment) return `“${snippet(item.comment.body)}”`;
-    return null;
-  }
+  const sentence = (item: NotificationItem) => notificationSentence(item, t);
+  const detail = (item: NotificationItem) => notificationDetail(item, t, (date) => day.format(date));
 
   return (
     <ExtraMessages namespaces={["notifications"]}>

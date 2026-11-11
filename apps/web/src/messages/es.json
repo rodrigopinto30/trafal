@@ -1,8 +1,8 @@
 {
   "meta": {
     "siteName": "Trafal",
-    "defaultTitle": "Trafal — Publicá tu juego. Sumá jugadores.",
-    "titleTemplate": "%s · Trafal",
+    "defaultTitle": "Trafal - Publicá tu juego. Sumá jugadores.",
+    "titleTemplate": "Trafal - %s",
     "description": "Trafal es la red social para quienes hacen videojuegos: subí un juego que se juega en el navegador, mostrá cómo lo hacés y recibí feedback de la comunidad."
   },
   "common": {
@@ -46,7 +46,15 @@
     "saved": "Guardados",
     "admin": "Administración",
     "notifications": "Notificaciones",
-    "notificationsUnread": "Notificaciones: {count} sin leer"
+    "notificationsUnread": "Notificaciones: {count} sin leer",
+    "notificationsMenu": {
+      "title": "Notificaciones",
+      "loading": "Cargando…",
+      "empty": "Todavía no tenés notificaciones.",
+      "error": "No pudimos cargar tus notificaciones.",
+      "seeAll": "Ver todas las notificaciones",
+      "unread": "Sin leer"
+    }
   },
   "footer": {
     "tagline": "La red social para publicar videojuegos que se juegan en el navegador y compartir cómo se hacen.",
@@ -62,8 +70,6 @@
     "rights": "© {year} Trafal"
   },
   "home": {
-    "badge": "NUEVO",
-    "badgeText": "La red social para quienes hacen videojuegos",
     "titleLead": "Publicá tu juego.",
     "titleAccent": "Sumá jugadores.",
     "subtitle": "Juegos que se juegan en el navegador, hechos por gente que recién empieza. Jugá, comentá y subí el tuyo.",
