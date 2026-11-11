@@ -398,10 +398,21 @@ Migración nueva: `20261110000800_account_deletion.sql`. Las claves foráneas en
 | **Los archivos se borran desde el servidor, por carpetas**, no desde SQL | Supabase Storage no permite borrar objetos desde SQL y R2 tampoco es de la base; hace falta la API S3 con sus credenciales, que son solo del servidor. | `account_files()` devuelve las carpetas de la cuenta (`avatars/<id>/`, `covers/<id>/`, `screenshots/<juego>/`, `posts/<avance>/`, `quarantine/<juego>/`, `games/<id público>/`). |
 | **Orden: lista de archivos → borrar la cuenta → borrar los archivos** | Después de borrar, las filas que dicen qué existe ya no están. Si la base falla, no se perdió nada; si el almacenamiento falla, la cuenta ya no existe y quedan archivos sueltos, no una cuenta rota. | `removeAccountFiles` no lanza: registra cada carpeta que no pudo vaciar (`account deletion: could not empty …`) para limpiarla a mano. |
 | **Se borra por carpeta con una comprobación estricta**, nunca un bucket entero | Un prefijo vacío o raro alcanzaría todo el bucket. | `deleteStoragePrefix` exige letras, números, guiones y `/` al final; Zod valida lo que devuelve la base; solo borra claves que empiezan con la carpeta. Un test lo prueba. |
-| **Se escribe el @usuario para confirmar** | Es irreversible: un clic no alcanza. Sirve igual a quien entró con Google (no tiene contraseña). | El servidor lo vuelve a comprobar (la interfaz solo habilita el botón). |
+| **Se escribe el @usuario para confirmar** | Es irreversible: un clic no alcanza. | El servidor lo vuelve a comprobar (la interfaz solo habilita el botón). |
 | **También se borran los avisos que causó la persona** (`actor_id`) | Si no, otras personas quedarían con un aviso «alguien te siguió» sin autor. | El resto de los datos de otras personas (sus juegos, sus avances) no se toca. |
 | **Se conserva `moderation_log` y los reclamos de derechos de autor** | El registro es de auditoría (sin clave foránea a propósito) y un reclamo es de quien reclamó, no de la cuenta. | El reclamo queda sin el juego al que apuntaba (`game_id` pasa a nulo); guarda las direcciones que la persona escribió. |
 | **La web necesita acceso al bucket de juegos** (`S3_BUCKET_GAMES`) | Los archivos publicados están ahí. | En producción el token de R2 de la web necesita listar y borrar objetos en el bucket de juegos (ver `.env.example`). |
+
+### Eliminar la cuenta: se pide la contraseña (2026-11-11)
+
+Sin migraciones. `lib/auth/reauth.ts`, `lib/auth/reauth.server.ts`, `deleteAccountSchemaFor`, el campo nuevo del diálogo y el test e2e actualizado.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Además del @usuario se pide la contraseña** | Una sesión abierta en un equipo ajeno no debería alcanzar para borrar todo para siempre. | El servidor la comprueba con Supabase Auth antes de listar los archivos y de borrar; una contraseña equivocada no borra nada. |
+| **Se comprueba con un cliente sin sesión** (sin cookies ni almacenamiento) | Si se usara el cliente normal, comprobar la contraseña reemplazaría la sesión de la persona. | La sesión queda como estaba. La sesión extra que abre Supabase se deja vencer. |
+| **Quien entra solo con Google confirma con su email** | No tiene contraseña en Trafal. | Se decide por los proveedores de la cuenta (`app_metadata.providers`): si incluye `email` se pide la contraseña, si no, el email. Esa rama la cubre un test unitario; el e2e prueba la de la contraseña porque Google no está configurado en local. |
+| **Los intentos fallidos los limita Supabase Auth** (límite de peticiones) | Es el mismo control que protege el inicio de sesión. | Con demasiados intentos aparece «esperá un rato»; no hay un tope propio. |
 
 ## Documentos legales (2026-11-10)
 
@@ -518,6 +529,6 @@ Sin migración. Herramienta: `tools/lighthouse.sh` (ver `docs/DESARROLLO.md`).
 - **Aceptar los términos de nuevo**: lo hace cumplir la interfaz (aviso y pantallas con perfil), no la base: quien ya tiene una pantalla abierta, o llama a la API directo, puede seguir escribiendo hasta que recargue o acepte. No queda un historial de aceptaciones, solo la última (versión y fecha); no se explica qué cambió entre versiones.
 - **Contranotificación**: no hay plazos, ni aviso automático a quien reclamó, ni consentimiento de jurisdicción ni dirección postal; los textos son un borrador hasta la revisión legal.
 - **Apelaciones**: no se apelan los reportes descartados; no hay apelación de segunda instancia (una por decisión); no se avisa por email ni a la persona ni a la administración, y la administración no recibe notificación de una apelación nueva (solo el contador del panel); quien responde puede ser el mismo admin que tomó la decisión.
-- **Eliminar la cuenta**: no se pide la contraseña ni hay un período de gracia para arrepentirse (la sesión abierta alcanza, más el @usuario escrito); si el almacenamiento falla después de borrar la cuenta, quedan archivos huérfanos que solo se ven en el registro del servidor. No se avisa por email que la cuenta se eliminó, ni se ofrece descargar los datos antes. Lo que otras personas comentaron en tus juegos o respondieron a tus comentarios se borra con ellos.
+- **Eliminar la cuenta**: no hay un período de gracia para arrepentirse (se pide el @usuario y la contraseña, pero el borrado es inmediato); si el captcha de Supabase Auth se activa para el inicio de sesión, la comprobación de la contraseña necesitará el token, como el formulario de ingreso (hoy ninguno lo envía); si el almacenamiento falla después de borrar la cuenta, quedan archivos huérfanos que solo se ven en el registro del servidor. No se avisa por email que la cuenta se eliminó, ni se ofrece descargar los datos antes. Lo que otras personas comentaron en tus juegos o respondieron a tus comentarios se borra con ellos.
 - **Reclamos de derechos de autor**: no hay aviso por email a quien reclama; los textos legales son un borrador hasta que los revise un abogado.
 - **Lighthouse en local**: la categoría «buenas prácticas» marca 79 porque se mide por HTTP (no hay HTTPS en la prueba); en producción con HTTPS no aplica.

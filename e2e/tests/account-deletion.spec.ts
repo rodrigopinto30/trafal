@@ -52,7 +52,7 @@ test("la cuenta sube una foto y publica un avance con una imagen", async () => {
   expect((await page.request.get(updateImageUrl)).status()).toBe(200);
 });
 
-test("la pestaña Cuenta pide escribir el usuario, y cancelar no borra nada", async () => {
+test("la pestaña Cuenta pide escribir el usuario y la contraseña, y cancelar no borra nada", async () => {
   await gotoReady(page, "/settings/account");
   await expect(page.getByRole("heading", { level: 2, name: "Cuenta" })).toBeVisible();
   await expect(page.getByText("Se borra para siempre:")).toBeVisible();
@@ -64,6 +64,9 @@ test("la pestaña Cuenta pide escribir el usuario, y cancelar no borra nada", as
   await dialog.getByLabel(`Para confirmar, escribí tu usuario: ${username}`).fill("otro_usuario");
   await expect(confirm).toBeDisabled();
   await dialog.getByLabel(/Para confirmar/).fill(`@${username}`);
+  await expect(confirm).toBeDisabled();
+  await expect(dialog.getByText("Te la pedimos de nuevo para confirmar que sos vos.")).toBeVisible();
+  await dialog.getByLabel("Tu contraseña").fill(PASSWORD);
   await expect(confirm).toBeEnabled();
 
   await dialog.getByRole("button", { name: "Cancelar" }).click();
@@ -77,6 +80,7 @@ test("el servidor vuelve a comprobar el usuario aunque se fuerce el botón", asy
   await page.getByRole("button", { name: "Eliminar mi cuenta" }).click();
   const dialog = page.getByRole("dialog", { name: "¿Eliminar tu cuenta?" });
   await dialog.getByLabel(/Para confirmar/).fill("otro_usuario");
+  await dialog.getByLabel("Tu contraseña").fill(PASSWORD);
   await dialog.getByRole("button", { name: "Eliminar para siempre" }).evaluate((button) => (button as HTMLButtonElement).removeAttribute("disabled"));
   await dialog.getByRole("button", { name: "Eliminar para siempre" }).click();
   await expect(dialog.getByText("Ese no es tu usuario")).toBeVisible();
@@ -84,11 +88,41 @@ test("el servidor vuelve a comprobar el usuario aunque se fuerce el botón", asy
   await page.keyboard.press("Escape");
 });
 
-test("se confirma el usuario y la cuenta, lo publicado y los archivos desaparecen", async () => {
+test("con el usuario bien pero la contraseña mal no se borra nada, y la sesión sigue abierta", async () => {
   await gotoReady(page, "/settings/account");
   await page.getByRole("button", { name: "Eliminar mi cuenta" }).click();
   const dialog = page.getByRole("dialog", { name: "¿Eliminar tu cuenta?" });
   await dialog.getByLabel(/Para confirmar/).fill(username);
+  await dialog.getByLabel("Tu contraseña").fill("Contraseña-equivocada1");
+  await dialog.getByRole("button", { name: "Eliminar para siempre" }).click();
+  await expect(dialog.getByText("Esa contraseña no es correcta.")).toBeVisible();
+  await expect(dialog.getByLabel(/Para confirmar/)).toHaveValue(username);
+  expect((await publicProfile(username, "username")).username).toBe(username);
+  expect((await page.request.get(photoUrl)).status()).toBe(200);
+  await page.keyboard.press("Escape");
+
+  await gotoReady(page, "/settings/account");
+  await expect(page.getByRole("button", { name: "Eliminar mi cuenta" })).toBeVisible();
+});
+
+test("el servidor pide la contraseña aunque se fuerce el botón sin escribirla", async () => {
+  await gotoReady(page, "/settings/account");
+  await page.getByRole("button", { name: "Eliminar mi cuenta" }).click();
+  const dialog = page.getByRole("dialog", { name: "¿Eliminar tu cuenta?" });
+  await dialog.getByLabel(/Para confirmar/).fill(username);
+  await dialog.getByRole("button", { name: "Eliminar para siempre" }).evaluate((button) => (button as HTMLButtonElement).removeAttribute("disabled"));
+  await dialog.getByRole("button", { name: "Eliminar para siempre" }).click();
+  await expect(dialog.getByText("Escribí tu contraseña para confirmar.")).toBeVisible();
+  expect((await publicProfile(username, "username")).username).toBe(username);
+  await page.keyboard.press("Escape");
+});
+
+test("se confirma el usuario y la contraseña, y la cuenta, lo publicado y los archivos desaparecen", async () => {
+  await gotoReady(page, "/settings/account");
+  await page.getByRole("button", { name: "Eliminar mi cuenta" }).click();
+  const dialog = page.getByRole("dialog", { name: "¿Eliminar tu cuenta?" });
+  await dialog.getByLabel(/Para confirmar/).fill(username);
+  await dialog.getByLabel("Tu contraseña").fill(PASSWORD);
   await dialog.getByRole("button", { name: "Eliminar para siempre" }).click();
 
   await expect(page).toHaveURL(/\/account-deleted$/, { timeout: 30_000 });
