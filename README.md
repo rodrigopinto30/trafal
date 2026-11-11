@@ -28,7 +28,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Géneros favoritos**: una grilla de 17 géneros con ícono (plataformas, arcade, puzzle, narrativo, roguelike, cozy, terror, ritmo, carreras, aventura, estrategia, disparos, simulación, deportes, lucha, incremental y otro). Tocás uno para elegirlo y lo tocás de nuevo para sacarlo; se muestran en tu perfil.
 - **Foto de perfil** que reemplaza la letra de colores. Elegís una imagen (JPG, PNG o WebP, hasta 15 MB), la encuadrás arrastrándola con el dedo o el mouse, o con las flechas del teclado, y hacés zoom. Se guarda cuadrada de 256 px, en WebP (o JPEG si tu navegador no sabe generar WebP). El servidor la vuelve a verificar: formato real, tamaño exacto, que no sea animada y que no traiga datos escondidos. Al cambiarla o quitarla, la anterior se borra. Si no subís foto, tu avatar es tu inicial sobre un degradé único.
 - **Página pública del perfil**: avatar, nombre, @usuario, bio, ubicación, motores y géneros; contadores de seguidores, seguidos, juegos y avances; pestañas con **tus juegos** y **tus avances**. Si te falta la foto o los géneros, te aparece un aviso para terminar el perfil.
-- **Seguir y dejar de seguir** a otras personas con respuesta inmediata y contador actualizado. Las listas de seguidores y seguidos muestran avatar, nombre y bio. Quien no tiene cuenta, al tocar «Seguir» pasa por el login y vuelve al perfil.
+- **Seguir y dejar de seguir** a otras personas con respuesta inmediata y contador actualizado. Las listas de seguidores y seguidos muestran avatar, nombre y bio, y **un botón de seguir o dejar de seguir en cada persona** (menos en tu propia cuenta), sin tener que entrar a su perfil; al cambiarlo la persona queda en su lugar, así se puede volver a seguir. Quien no tiene cuenta, al tocar «Seguir» pasa por el login y vuelve al perfil.
 
 ### Avances
 
@@ -266,6 +266,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Menú superior mínimo**: el nombre de la app, «Creadores», «Comunidad» y «Subir juego», y tu cuenta (Mi perfil, Configuración, Cerrar sesión). En celular se abre con una hamburguesa.
 - **Marca**: el ícono de Trafal (un **gamepad en pixel art** sobre el degradé violeta-cian) está en el logo, en la pestaña del navegador (`icon.svg`) y como ícono de pantalla de inicio (`apple-icon.png`). El título de cada pestaña es **«Trafal - <página>»** (por ejemplo «Trafal - Comunidad»).
 - **Botones y etiquetas con más contraste**: el botón principal es un degradé de violeta a azul profundos con texto blanco (≥ 5,5:1), y las etiquetas (**1ER JUEGO**, géneros, motores, estados) van rellenas o con borde claro (≥ 7:1).
+- **Botón «Atrás»** debajo de la barra de arriba en todas las secciones (menos la portada): vuelve a la pantalla anterior y, si la sección se abrió directamente en una pestaña nueva, lleva a la portada.
 - **Cursor propio**: flecha pixelada, y la manita en todo lo que se puede apretar.
 - **Hecho para celular primero**, desde pantallas de 360 px, sin scroll horizontal y con botón para volver arriba.
 - **Accesible**: contraste de texto de al menos 4,5:1, objetivos táctiles de al menos 44 px, uso completo con teclado, enlace «Saltar al contenido», etiquetas y errores conectados para lectores de pantalla, y una auditoría automática WCAG 2.2 AA sobre las pantallas principales.

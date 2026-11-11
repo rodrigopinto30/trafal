@@ -5,6 +5,7 @@ import { Background } from "@/components/layout/background";
 import { BackToTop } from "@/components/layout/back-to-top";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteNav } from "@/components/layout/site-nav";
+import { BackButton } from "@/components/layout/back-button";
 import { SuspensionBanner } from "@/components/layout/suspension-banner";
 import { TermsBanner } from "@/components/layout/terms-banner";
 import { Toaster } from "@/components/ui/sonner";
@@ -78,6 +79,9 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
             <Suspense fallback={null}>
               <SuspensionBanner />
               <TermsBanner />
+            </Suspense>
+            <Suspense fallback={null}>
+              <BackButton />
             </Suspense>
             <main id="contenido" className="flex-1">
               {children}

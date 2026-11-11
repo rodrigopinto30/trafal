@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
 import { getTranslations } from "@/i18n/server";
+import { getAuthUser } from "@/lib/auth/dal";
+import { listFollowedAmong } from "@/lib/games/queries";
 import { createClient } from "@/lib/supabase/server";
 import { parseUsernameParam } from "@/lib/validation/common";
 
@@ -38,12 +40,15 @@ async function Content({ params }: { params: PageProps<"/[lang]/u/[username]/fol
 
   const { data } = await supabase
     .from("follows")
-    .select("created_at, followee:profiles!follows_followee_id_fkey(username, display_name, avatar_path, bio)")
+    .select("created_at, followee:profiles!follows_followee_id_fkey(id, username, display_name, avatar_path, bio)")
     .eq("follower_id", profile.id)
     .order("created_at", { ascending: false })
     .limit(PAGE_SIZE);
 
   const people: PersonRow[] = (data ?? []).flatMap((row) => (row.followee ? [row.followee] : []));
+
+  const viewer = await getAuthUser();
+  const following = viewer ? await listFollowedAmong(viewer.id, people.map((person) => person.id)) : new Set<string>();
 
   return (
     <div className="grid gap-6">
@@ -55,7 +60,7 @@ async function Content({ params }: { params: PageProps<"/[lang]/u/[username]/fol
           {t("followingTitle", { username: profile.username })}
         </h1>
       </div>
-      <ProfileList people={people} emptyText={t("noFollowing")} />
+      <ProfileList people={people} emptyText={t("noFollowing")} viewer={{ signedIn: Boolean(viewer), userId: viewer?.id ?? null, following }} />
     </div>
   );
 }
