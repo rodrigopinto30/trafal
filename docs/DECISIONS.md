@@ -454,6 +454,20 @@ Migración `20261111000200`: tabla `appeals` y las funciones `my_decisions`, `su
 | **No se avisa a los admins por notificación**, solo con el contador de la pestaña | Hoy los admins entran al panel a trabajar la cola. | Si no entran, no se enteran. |
 | **Se actualizó el texto legal** (`LEGAL_UPDATED` = 2026-11-11, `TERMS_VERSION` sigue igual) | Decía que no había trámite de apelación. | El cambio no pide aceptar de nuevo: no quita nada, agrega un trámite. |
 
+## Portada para quien inició sesión (2026-11-11)
+
+Sin migraciones. `app/[lang]/home` (la página), `components/home/{visitor-home,signed-in-home,signed-in-skeleton}.tsx`, el proxy y `listMyGamesOverview`; test e2e `signed-in-home.spec.ts`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Es otra página, no un cambio dentro de la portada**: el proxy reescribe `/` (y `/en`) a `/home` cuando hay una sesión **válida** | La portada pública es estática y se mide con Lighthouse (≥ 85 en celular): leer la sesión ahí la volvería dinámica. Y si la portada pública llevara el saludo dentro de un `<Suspense>`, quien inició sesión vería un instante la versión de visitante. | La dirección en el navegador no cambia. Los visitantes (y los buscadores, que no tienen cookie) reciben la misma página estática de antes; midió 92 en celular. |
+| **La sesión se valida en el proxy** (`getClaims`, que ya se llamaba para renovar el token) | Con solo mirar que exista la cookie, una sesión vencida mostraría la portada con sesión. | `updateSession` ahora avisa si la sesión es válida y crea la respuesta una sola vez, ya con las cookies renovadas. |
+| **`/home` abierto sin sesión (o con una sesión que la base ya revocó) muestra la portada pública** y no redirige | Un redirect a `/` volvería a reescribir a `/home` y haría un bucle. | La página lleva `noindex`, para que no compita con `/`. |
+| **Los textos y los estantes de juegos son los de siempre**; lo nuevo es lo personal | Que se note que se inició sesión sin duplicar lo que ya funciona. | `LandingGames` recibe `signedIn` y omite la tarjeta de «creá tu cuenta». |
+| **«Tus juegos» muestra los últimos 4 con cualquier estado** y las novedades, 6 avances | Es una portada, no un panel. | Para más está el perfil y el feed. |
+
+Esto encontró algo ajeno: `next build` rechazaba `/admin/featured` (leía la hora antes de un acceso dinámico) y el servidor de desarrollo no lo ve. Se arregló aparte y se agregó `./check.sh --build` (`tools/build-check.sh`).
+
 ## Contranotificación de derechos de autor (2026-11-11)
 
 Migración `20261111000300`: columnas nuevas en `appeals` y la función `submit_counter_notice`; `my_decisions` marca lo que viene de un reclamo y `submit_appeal` lo rechaza. Mismo panel (`/admin/appeals`) y misma pantalla (`/settings/moderation`); test e2e `counter-notice.spec.ts`.

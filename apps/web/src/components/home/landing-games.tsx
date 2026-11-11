@@ -14,8 +14,11 @@ import { buildLandingSections } from "@/lib/games/sections";
 const COMMUNITY_QUOTES = 5;
 const LATEST_POSTS = 6;
 
-/** Secciones de juegos y comunidad de la portada, intercaladas con banners grandes. Lee la base: va dentro de un <Suspense>. */
-export async function LandingGames() {
+/**
+ * Secciones de juegos y comunidad de la portada, intercaladas con banners grandes. Lee la base: va dentro de un <Suspense>.
+ * Con `signedIn` no se invita a crear una cuenta (la persona ya tiene una).
+ */
+export async function LandingGames({ signedIn = false }: { signedIn?: boolean }) {
   const [games, featured, highlights, posts] = await Promise.all([
     listPublishedGames(),
     findFeaturedGame(),
@@ -51,12 +54,14 @@ export async function LandingGames() {
           {highlights.map((highlight) => (
             <CommunityQuote key={highlight.id} highlight={highlight} now={now} />
           ))}
-          <JoinCard
-            title={t("sections.community.joinTitle")}
-            text={t("sections.community.joinText")}
-            signupLabel={t("sections.community.joinCta")}
-            loginLabel={t("sections.community.loginCta")}
-          />
+          {signedIn ? null : (
+            <JoinCard
+              title={t("sections.community.joinTitle")}
+              text={t("sections.community.joinText")}
+              signupLabel={t("sections.community.joinCta")}
+              loginLabel={t("sections.community.loginCta")}
+            />
+          )}
         </div>
       </ShowcaseSection>
 

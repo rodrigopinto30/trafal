@@ -149,6 +149,15 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Son un borrador**: cada página lo avisa con una marca visible hasta que un abogado los revise. Los datos del titular (nombre, email de contacto y jurisdicción) salen de `LEGAL_OPERATOR_NAME`, `LEGAL_CONTACT_EMAIL` y `LEGAL_JURISDICTION`; si faltan, el texto muestra un hueco «a completar» y un aviso, nunca un valor inventado.
 - **Aceptar de nuevo**: cuando cambian los textos se sube `TERMS_VERSION` y a las cuentas que aceptaron una versión anterior se les muestra un aviso en todas las páginas; las pantallas de la cuenta las llevan a `/accept-terms` (leer los documentos, confirmar la edad y aceptar) y vuelven a donde iban. Mientras no acepten pueden mirar el sitio, y la pantalla de eliminar la cuenta sigue disponible.
 
+### Portada con sesión
+
+**Hoy**
+- Quien inició sesión ve **otra portada en la misma dirección** (`/` y `/en`): un saludo con su nombre («Hola de nuevo, Valentina»), cuántos avisos tiene sin leer, el buscador y sus atajos (**publicar un avance**, **subir un juego**, **mis guardados** y **Sorprendeme**). No ve invitaciones a crear una cuenta ni el «cómo funciona».
+- **Tu espacio**: sus últimos juegos (con estado, partidas y me gusta, y un acceso a administrarlos; si no tiene ninguno, una invitación a subir el primero) y **su actividad** (avisos sin leer, seguidores y seguidos, cada uno un enlace).
+- **Novedades de quienes seguís**: los últimos avances de los creadores que sigue, con me gusta y guardar, y un enlace al feed filtrado; si no sigue a nadie, una invitación a descubrir creadores.
+- Debajo, los mismos estantes de juegos de la portada pública (sin la tarjeta de «creá tu cuenta»).
+- Los visitantes siguen viendo la portada pública, que no cambia (sigue estática y rápida).
+
 ### Creadores
 
 **Hoy**

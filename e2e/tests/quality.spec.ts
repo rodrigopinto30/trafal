@@ -9,6 +9,8 @@ type Target = { name: string; path: string; /** Pantallas que piden sesión: se 
 const PAGES: readonly Target[] = [
   { name: "inicio", path: "/" },
   { name: "inicio-en", path: "/en" },
+  { name: "inicio-con-cuenta", path: "/", login: true },
+  { name: "inicio-con-cuenta-en", path: "/en", login: true },
   { name: "login", path: "/login" },
   { name: "signup", path: "/signup" },
   { name: "forgot", path: "/forgot-password" },

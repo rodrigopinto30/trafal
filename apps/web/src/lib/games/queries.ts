@@ -388,6 +388,20 @@ export async function listOwnUnpublishedGames(ownerId: string): Promise<OwnGame[
   return data ?? [];
 }
 
+export type OwnGameOverview = { public_id: string; title: string; status: string; play_count: number; like_count: number };
+
+/** The signed-in person's latest games, whatever their status, for their home. RLS plus the owner filter keep it to their own. */
+export async function listMyGamesOverview(ownerId: string, limit: number): Promise<OwnGameOverview[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("games")
+    .select("public_id, title, status, play_count, like_count")
+    .eq("owner_id", ownerId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  return data ?? [];
+}
+
 export type GameDelivery = { needsIsolation: boolean };
 
 /** What the player needs to know about a published game's active version, or null if it cannot be played. */
