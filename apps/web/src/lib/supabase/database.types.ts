@@ -603,7 +603,10 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "account_files":
+            "accept_terms":
+{ Args: { "p_age_confirmed": boolean,"p_terms_version": string }; Returns: undefined
+                           },
+"account_files":
 { Args: Record<PropertyKey, never>; Returns: {
               "bucket": string,"prefix": string
             }[]

@@ -41,7 +41,7 @@ begin
     values (u.id, u.username, u.display_name, u.bio, u.city, u.country, u.engines, u.favorite_genres);
 
     insert into public.profile_private (id, role, locale, terms_version, terms_accepted_at, age_confirmed_at)
-    values (u.id, u.role, 'es', '2026-11-04', now(), now());
+    values (u.id, u.role, 'es', '2026-11-10', now(), now());
   end loop;
 
   insert into public.follows (follower_id, followee_id)

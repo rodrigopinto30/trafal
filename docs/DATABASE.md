@@ -53,6 +53,8 @@ Las imágenes **no** viven en Postgres: la base guarda solo la ruta. Los bytes v
 
 El navegador **nunca** recibe credenciales: la subida pasa por una Server Action que valida los bytes (`lib/media/image-sniff.ts`). Variables (`S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET_MEDIA`, `MEDIA_PUBLIC_URL`): en local las genera `./start.sh`; en producción ver [`.env.example`](../.env.example). Esto **no** usa la `service_role` de Supabase: son las credenciales del almacenamiento (en producción, un token de R2 con permiso solo sobre ese bucket; para eliminar cuentas, además listar y borrar objetos en los buckets de cuarentena y de juegos).
 
+**Aceptar los términos de nuevo**: `accept_terms(versión, edad confirmada)` anota en `profile_private` la versión, la fecha y la confirmación de edad de la propia cuenta (la tabla no deja escribir esas columnas directo). Ver «Aceptar los términos de nuevo» en [DECISIONS.md](DECISIONS.md).
+
 **Eliminar una cuenta**: `delete_my_account()` borra el usuario de `auth.users` y las claves foráneas en cascada se llevan todo lo demás; `account_files()` devuelve antes las carpetas del almacenamiento que el servidor tiene que vaciar (los objetos no se borran desde SQL). Se conservan `moderation_log` y `copyright_claims` (sin cuenta). Ver «Eliminar la cuenta» en [DECISIONS.md](DECISIONS.md).
 
 ## Cómo cambiar el esquema

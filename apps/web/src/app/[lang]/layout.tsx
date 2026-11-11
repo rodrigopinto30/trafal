@@ -6,6 +6,7 @@ import { BackToTop } from "@/components/layout/back-to-top";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteNav } from "@/components/layout/site-nav";
 import { SuspensionBanner } from "@/components/layout/suspension-banner";
+import { TermsBanner } from "@/components/layout/terms-banner";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/i18n/client";
 import { locales } from "@/i18n/config";
@@ -76,6 +77,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
             <SiteNav />
             <Suspense fallback={null}>
               <SuspensionBanner />
+              <TermsBanner />
             </Suspense>
             <main id="contenido" className="flex-1">
               {children}

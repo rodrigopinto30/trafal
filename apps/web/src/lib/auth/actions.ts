@@ -16,6 +16,7 @@ import {
   signupSchema,
 } from "@/lib/validation/auth";
 import { parseLocale, parseNextPath } from "@/lib/validation/common";
+import { TERMS_FORM_ERROR_KEYS, acceptTermsSchema } from "@/lib/validation/terms";
 import { fieldErrorsFrom, sanitizeLine } from "@/lib/validation/text";
 import { getAuthUser } from "./dal";
 import { authErrorKey } from "./errors";
@@ -112,6 +113,33 @@ export async function signupAction(_prev: FormState, formData: FormData): Promis
 
   // Si el email ya tenía cuenta, Supabase responde igual (a propósito, para no revelar qué emails existen).
   return { status: "success", sentTo: email };
+}
+
+/**
+ * Records that the person accepted the current version of the terms (and confirmed their age again), then sends them back to where
+ * they were going. The version is the one this server runs, never one the browser says.
+ */
+export async function acceptTermsAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const locale = readLocale(formData);
+  const t = getTranslationsFor(locale, "terms");
+  const next = readNext(formData);
+
+  const user = await getAuthUser();
+  if (!user) redirect(localizePath(locale, `/login?next=${encodeURIComponent("/accept-terms")}`));
+
+  const consent = formData.get("consent") === "on";
+  const values = { consent: consent ? "on" : "" };
+  const parsed = acceptTermsSchema.safeParse({ consent });
+  if (!parsed.success) {
+    return { status: "error", fieldErrors: fieldErrorsFrom(parsed.error, TERMS_FORM_ERROR_KEYS, (key) => t(`errors.${key}`), "generic"), values };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("accept_terms", { p_terms_version: TERMS_VERSION, p_age_confirmed: true });
+  if (error) return { status: "error", message: t("errors.generic"), values };
+
+  revalidatePath("/", "layout");
+  redirect(localizePath(locale, next));
 }
 
 export async function forgotPasswordAction(_prev: FormState, formData: FormData): Promise<FormState> {

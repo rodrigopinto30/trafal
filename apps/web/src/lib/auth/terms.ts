@@ -1,6 +1,6 @@
 /**
  * Versión vigente de los Términos y la Política de privacidad. Se guarda junto con la fecha de aceptación
- * (profile_private.terms_version). Si cambian los textos, se actualiza acá y se vuelve a pedir la aceptación.
+ * (profile_private.terms_version). Si cambian los textos, se actualiza acá (y en el seed, y LEGAL_UPDATED) y a las cuentas con una versión anterior se les vuelve a pedir la aceptación.
  *
  * 2026-11-04: la edad mínima pasó de 13 a 18 años.
  * 2026-11-10: los documentos legales pasaron de «en redacción» a su primer texto completo (borrador).
