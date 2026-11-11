@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export const NOTIFICATIONS_PAGE_SIZE = 20;
 
-export type NotificationData = { action?: string; target_type?: string; reason?: string; until?: string | null; error_code?: string };
+export type NotificationData = { action?: string; target_type?: string; reason?: string; until?: string | null; error_code?: string; note?: string };
 
 export type NotificationItem = {
   id: string;

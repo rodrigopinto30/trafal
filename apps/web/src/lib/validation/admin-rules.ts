@@ -33,6 +33,8 @@ export const ADMIN_ERROR_KEYS = [
   "claimNotFound",
   "claimNotOpen",
   "claimAlreadyResolved",
+  "appealNotFound",
+  "appealAlreadyResolved",
   "nothingToHide",
   "reasonRequired",
   "reasonTooLong",

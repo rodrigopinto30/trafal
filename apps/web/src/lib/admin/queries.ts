@@ -1,6 +1,7 @@
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import type { AccountFilter, ReportStatusFilter } from "@/lib/validation/admin";
+import type { AppealFilter } from "@/lib/validation/appeal-rules";
 
 export const ADMIN_PAGE_SIZE = 15;
 
@@ -237,4 +238,51 @@ export async function countClaims(): Promise<Record<ReportStatusFilter, number>>
   const count = async (statuses: string[]) => (await supabase.from("copyright_claims").select("id", { count: "exact", head: true }).in("status", statuses)).count ?? 0;
   const [open, reviewing, resolved] = await Promise.all([count(STATUSES.open), count(STATUSES.reviewing), count(STATUSES.resolved)]);
   return { open, reviewing, resolved };
+}
+
+export type AdminAppeal = {
+  id: string;
+  target_type: "profile" | "game" | "post" | "comment";
+  target_id: string;
+  target_label: string;
+  decision_reason: string | null;
+  decision_at: string | null;
+  message: string;
+  status: "open" | "upheld" | "overturned";
+  resolution_note: string | null;
+  resolved_at: string | null;
+  created_at: string;
+  appellant: { username: string; display_name: string } | null;
+  resolver: { username: string } | null;
+};
+
+const APPEAL_SELECT =
+  "id, target_type, target_id, target_label, decision_reason, decision_at, message, status, resolution_note, resolved_at, created_at, appellant:profiles!appeals_appellant_id_fkey(username, display_name), resolver:profiles!appeals_resolved_by_fkey(username)";
+const APPEAL_STATUSES: Record<AppealFilter, string[]> = { open: ["open"], resolved: ["upheld", "overturned"] };
+
+/** Appeals waiting for an answer (the longest wait first) or already answered (the latest first). */
+export async function listAppeals(filter: AppealFilter, before: string | null): Promise<{ appeals: AdminAppeal[]; nextBefore: string | null }> {
+  const supabase = await createClient();
+  const resolved = filter === "resolved";
+  let query = supabase
+    .from("appeals")
+    .select(APPEAL_SELECT)
+    .in("status", APPEAL_STATUSES[filter])
+    .order(resolved ? "resolved_at" : "created_at", { ascending: !resolved })
+    .limit(ADMIN_PAGE_SIZE + 1);
+  if (before) query = resolved ? query.lt("resolved_at", before) : query.gt("created_at", before);
+  const { data } = await query;
+  const rows = (data ?? []) as unknown as AdminAppeal[];
+  const page = rows.slice(0, ADMIN_PAGE_SIZE);
+  const last = page.at(-1);
+  const cursor = last ? (resolved ? last.resolved_at : last.created_at) : null;
+  return { appeals: page, nextBefore: rows.length > ADMIN_PAGE_SIZE ? cursor : null };
+}
+
+/** How many appeals wait for an answer and how many were answered. */
+export async function countAppeals(): Promise<Record<AppealFilter, number>> {
+  const supabase = await createClient();
+  const count = async (statuses: string[]) => (await supabase.from("appeals").select("id", { count: "exact", head: true }).in("status", statuses)).count ?? 0;
+  const [open, resolved] = await Promise.all([count(APPEAL_STATUSES.open), count(APPEAL_STATUSES.resolved)]);
+  return { open, resolved };
 }

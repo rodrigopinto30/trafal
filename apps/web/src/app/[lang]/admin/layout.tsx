@@ -3,7 +3,7 @@ import { AdminTabs } from "@/components/admin/admin-tabs";
 import { ExtraMessages } from "@/components/i18n/extra-messages";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getTranslations } from "@/i18n/server";
-import { countClaims, countReports } from "@/lib/admin/queries";
+import { countAppeals, countClaims, countReports } from "@/lib/admin/queries";
 import { requireAdmin } from "@/lib/auth/dal";
 
 export async function generateMetadata() {
@@ -29,11 +29,11 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
 async function AdminGate({ children }: { children: ReactNode }) {
   await requireAdmin("/admin");
-  const [counts, claims] = await Promise.all([countReports(), countClaims()]);
+  const [counts, claims, appeals] = await Promise.all([countReports(), countClaims(), countAppeals()]);
   return (
     <ExtraMessages namespaces={["admin"]}>
       <div className="grid gap-6">
-        <AdminTabs openReports={counts.open} openClaims={claims.open} />
+        <AdminTabs openReports={counts.open} openClaims={claims.open} openAppeals={appeals.open} />
         {children}
       </div>
     </ExtraMessages>

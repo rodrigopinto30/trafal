@@ -28,6 +28,7 @@ Postgres (vía Supabase). El esquema completo del MVP está desde la Fase 1: **2
 | `plays` | Partidas (inicio, duración aproximada, dispositivo; sin IP) | Solo funciones (Fase 2) |
 | `notifications` | Campanita | Solo triggers y las funciones de moderación (nadie inserta desde el cliente); el destinatario lee, marca como leídas (`read_at`) y descarta las suyas |
 | `reports` | Reportes de contenido, con copia del contenido como evidencia | Cualquier cuenta activa inserta; admins leen y solo cambian el estado con `take_report` / `resolve_report` |
+| `appeals` | Apelaciones de una suspensión o de contenido oculto, con la decisión apelada copiada (motivo y fecha) | Solo funciones: `submit_appeal` (la persona afectada, también suspendida) y `resolve_appeal` (admin); la leen quien apela (las suyas) y los admins |
 | `copyright_claims` | Reclamos de derechos de autor | Se crean solo con `submit_copyright_claim` (también para visitantes); los leen solo admins, que los manejan con `take_claim` / `resolve_claim` (con registro) |
 | `featured_games` | Primer juego de la semana (solo «primeros juegos» publicados) | Solo las funciones de admin `set_featured_game` / `clear_featured_game`, que dejan rastro en `moderation_log` |
 | `usage_events` | Cada acción limitada de cada persona (para contar los topes de uso) | Solo los triggers; nadie la lee ni la escribe desde el cliente (RLS sin policies ni permisos). Se limpia sola: al contar, se borra lo de más de 2 días |
@@ -52,6 +53,8 @@ Las imágenes **no** viven en Postgres: la base guarda solo la ruta. Los bytes v
 | `media` | Lectura pública; escritura solo con las credenciales S3 del **servidor** | `avatars/<id de la persona>/<32 hex>.webp\|jpg\|png` (hoy); capturas y avances (Fases 2–3) | Solo imagen/GIF/MP4/WebM (lista de tipos MIME del bucket), 20 MiB |
 
 El navegador **nunca** recibe credenciales: la subida pasa por una Server Action que valida los bytes (`lib/media/image-sniff.ts`). Variables (`S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET_MEDIA`, `MEDIA_PUBLIC_URL`): en local las genera `./start.sh`; en producción ver [`.env.example`](../.env.example). Esto **no** usa la `service_role` de Supabase: son las credenciales del almacenamiento (en producción, un token de R2 con permiso solo sobre ese bucket; para eliminar cuentas, además listar y borrar objetos en los buckets de cuarentena y de juegos).
+
+**Apelaciones**: `my_decisions()` lista lo que está decidido sobre la persona ahora (su suspensión y lo suyo que está oculto) y qué apeló ya; `submit_appeal(tipo, id, mensaje)` crea la apelación (una por decisión, la decisión es una línea del registro de moderación); `resolve_appeal(apelación, resultado, respuesta)` la responde y, si se revierte, levanta la suspensión o vuelve a publicar lo oculto. Ver «Apelaciones» en [DECISIONS.md](DECISIONS.md).
 
 **Aceptar los términos de nuevo**: `accept_terms(versión, edad confirmada)` anota en `profile_private` la versión, la fecha y la confirmación de edad de la propia cuenta (la tabla no deja escribir esas columnas directo). Ver «Aceptar los términos de nuevo» en [DECISIONS.md](DECISIONS.md).
 

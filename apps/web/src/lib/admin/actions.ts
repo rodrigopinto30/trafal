@@ -16,6 +16,7 @@ import {
   takeReportSchema,
   type AdminErrorKey,
 } from "@/lib/validation/admin";
+import { resolveAppealSchema } from "@/lib/validation/appeal";
 
 export type AdminResult = { ok: true } | { ok: false; error: AdminErrorKey };
 
@@ -30,6 +31,8 @@ const DATABASE_ERRORS: [RegExp, AdminErrorKey][] = [
   [/claim_not_found/, "claimNotFound"],
   [/claim_not_open/, "claimNotOpen"],
   [/claim_already_resolved/, "claimAlreadyResolved"],
+  [/appeal_not_found/, "appealNotFound"],
+  [/appeal_already_resolved/, "appealAlreadyResolved"],
   [/nothing_to_hide/, "nothingToHide"],
   [/reason_required/, "reasonRequired"],
   [/account_not_found/, "accountNotFound"],
@@ -121,4 +124,9 @@ export async function takeClaimAction(rawInput: unknown): Promise<AdminResult> {
 /** Resolves a copyright claim: dismiss it, mark it as handled, or hide what was claimed and mark it as handled (the author is told the reason). */
 export async function resolveClaimAction(rawInput: unknown): Promise<AdminResult> {
   return asAdmin(rawInput, resolveClaimSchema, async ({ claimId, outcome, note }, supabase) => (await supabase.rpc("resolve_claim", { p_claim_id: claimId, p_outcome: outcome, p_note: note })).error);
+}
+
+/** Answers an appeal: keep the decision or reverse it (the suspension is lifted, the content is back), with an answer that the person reads. */
+export async function resolveAppealAction(rawInput: unknown): Promise<AdminResult> {
+  return asAdmin(rawInput, resolveAppealSchema, async ({ appealId, outcome, note }, supabase) => (await supabase.rpc("resolve_appeal", { p_appeal_id: appealId, p_outcome: outcome, p_note: note })).error);
 }
