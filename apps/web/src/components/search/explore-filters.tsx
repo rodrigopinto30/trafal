@@ -11,7 +11,7 @@ import { ENGINE_IDS, GENRE_IDS } from "@/lib/profile/catalog";
 import { EXPLORE_SORTS, exploreHref, hasFilters, type ExploreQuery } from "@/lib/validation/explore";
 
 /**
- * Filters and order of the explore page: a GET form whose view stays in the address, with the text being searched kept as a
+ * Filters and order of the games on the home: a GET form whose view stays in the address, with the text being searched kept as a
  * hidden field. Changing any filter starts again from the first page.
  */
 export async function ExploreFilters({ query }: { query: ExploreQuery }) {
@@ -19,7 +19,7 @@ export async function ExploreFilters({ query }: { query: ExploreQuery }) {
   const sorts = EXPLORE_SORTS.filter((sort) => sort !== "relevance" || query.q);
 
   return (
-    <FilterForm kind="explore" label={t("filtersLabel")} action={localizePath(locale, "/explore")}>
+    <FilterForm kind="explore" label={t("filtersLabel")} action={localizePath(locale, "/")}>
       {query.q ? <input type="hidden" name="q" value={query.q} /> : null}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Field id="explore-genre" label={t("genre")}>

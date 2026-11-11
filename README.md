@@ -54,19 +54,19 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Buscadores y redes sociales
 
 **Hoy**
-- **Cada página dice quién es**: título, descripción, **dirección canónica** (siempre la limpia: una vista filtrada de Explorar, Comunidad o Creadores apunta a la base y pide no figurar), **su versión en el otro idioma** (`hreflang`, con el español como predeterminado) y las tarjetas de **Open Graph** y de **Twitter**. Las pantallas de acceso, las listas de seguidores y las páginas que no existen piden no figurar.
+- **Cada página dice quién es**: título, descripción, **dirección canónica** (siempre la limpia: una vista filtrada de la portada, Comunidad o Creadores apunta a la base y pide no figurar), **su versión en el otro idioma** (`hreflang`, con el español como predeterminado) y las tarjetas de **Open Graph** y de **Twitter**. Las pantallas de acceso, las listas de seguidores y las páginas que no existen piden no figurar.
 - **Imagen para compartir** en la portada, en cada juego, en cada perfil y en cada avance (1200 × 630, con los colores de Trafal, el nombre, quién lo hizo y, en los juegos, «Jugá gratis en el navegador»), en el idioma de la página. Lo que escribe una persona solo se dibuja como texto, recortado.
 - **Datos estructurados** para los buscadores: el sitio con su buscador, cada juego como videojuego (gratis, en el navegador, con quién lo hizo y cuántas partidas lleva), cada perfil como persona y cada avance como publicación. Nada de lo que escribe una persona puede cerrar la etiqueta que los contiene.
 - **`robots.txt` y `sitemap.xml`**: el sitemap lista las páginas fijas, todos los juegos publicados, los creadores y los avances, cada uno en los dos idiomas y con sus traducciones. `robots.txt` deja afuera las zonas privadas (cuenta, formularios, administración del juego) y las rutas técnicas. **Un sitio que no es público (localhost, `.local`, `.test`) se cierra por completo**: no se indexa una copia de prueba por error; en producción hay que poner el dominio real en `SITE_URL`.
 
-### Explorar
+### Buscar y filtrar (la antigua «Explorar»)
 
 **Hoy**
-- **Explorar** (`/explore`): la búsqueda de texto de siempre más **filtros por género, por motor y «solo los que funcionan en celular»**, y **orden** por más nuevos, **en tendencia** (más partidas en los últimos 7 días; a igual cantidad, más me gusta), más jugados y, cuando buscaste algo, más relevantes. Muestra la cantidad total de juegos que coinciden y pasa de a **24 por página**.
-- Todo queda en la dirección (`/explore?q=…&genre=…&engine=…&mobile=1&sort=…&page=…`): se puede compartir y funciona el botón de atrás. Los enlaces salen cortos (sin parámetros vacíos ni por defecto), cambiar un filtro vuelve a la primera página, buscar otro texto **conserva los filtros** y cualquier valor raro en la dirección se ignora.
+- **Búsqueda y filtros en la portada** (`/?q=…`, para visitantes y para quien inició sesión; la pantalla «Explorar» ya no existe y `/explore` redirige a la portada con la misma búsqueda): la búsqueda de texto de siempre más **filtros por género, por motor y «solo los que funcionan en celular»**, y **orden** por más nuevos, **en tendencia** (más partidas en los últimos 7 días; a igual cantidad, más me gusta), más jugados y, cuando buscaste algo, más relevantes. Muestra la cantidad total de juegos que coinciden y pasa de a **24 por página**.
+- Todo queda en la dirección (`/?q=…&genre=…&engine=…&mobile=1&sort=…&page=…`): se puede compartir y funciona el botón de atrás. Los enlaces salen cortos (sin parámetros vacíos ni por defecto), cambiar un filtro vuelve a la primera página, buscar otro texto **conserva los filtros** y cualquier valor raro en la dirección se ignora.
 - Solo aparecen juegos publicados: la base lo garantiza, también para quien tiene cuenta.
 
-- **Sorprendeme**: un botón (en la portada, en Explorar y en la página de cada juego) que te lleva a un **juego publicado al azar**, con la misma chance para todos (sin favorecer a los más jugados) y sin repetir el juego en el que estás. Es un enlace común: funciona sin JavaScript y cada vez elige de nuevo.
+- **Sorprendeme**: un botón (en la portada, en la búsqueda y en la página de cada juego) que te lleva a un **juego publicado al azar**, con la misma chance para todos (sin favorecer a los más jugados) y sin repetir el juego en el que estás. Es un enlace común: funciona sin JavaScript y cada vez elige de nuevo.
 
 ### Primer juego de la semana
 
@@ -152,11 +152,10 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Portada con sesión
 
 **Hoy**
-- Quien inició sesión ve **otra portada en la misma dirección** (`/` y `/en`): un saludo con su nombre («Hola de nuevo, Valentina»), cuántos avisos tiene sin leer, el buscador y sus atajos (**publicar un avance**, **subir un juego**, **mis guardados** y **Sorprendeme**). No ve invitaciones a crear una cuenta ni el «cómo funciona».
-- **Tu espacio**: sus últimos juegos (con estado, partidas y me gusta, y un acceso a administrarlos; si no tiene ninguno, una invitación a subir el primero) y **su actividad** (avisos sin leer, seguidores y seguidos, cada uno un enlace).
-- **Novedades de quienes seguís**: los últimos avances de los creadores que sigue, con me gusta y guardar, y un enlace al feed filtrado; si no sigue a nadie, una invitación a descubrir creadores.
-- Debajo, los mismos estantes de juegos de la portada pública (sin la tarjeta de «creá tu cuenta»).
-- Los visitantes siguen viendo la portada pública, que no cambia (sigue estática y rápida).
+- Quien inició sesión ve **otra portada en la misma dirección** (`/` y `/en`) y con la misma estética que la búsqueda: un saludo con su nombre («Hola de nuevo, Valentina») y **Sorprendeme**, el **buscador** y los **filtros** (género, motor, «funciona en celular» y orden).
+- Sin nada buscado, debajo van las **Novedades de quienes seguís** (los últimos avances de los creadores que sigue, con me gusta y guardar, y un enlace al feed filtrado; si no sigue a nadie, una invitación a descubrir creadores) y los estantes **Recién agregados**, **Los más jugados** y **Primeros juegos**. No hay banners ni invitaciones a crear una cuenta.
+- Al buscar o filtrar, los resultados aparecen ahí mismo (con paginación), en lugar de las novedades y los estantes.
+- Los visitantes siguen viendo la portada pública, que no cambia (sigue estática y rápida); si buscan, ven los resultados en `/?q=…`.
 
 ### Creadores
 
@@ -264,7 +263,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Hoy**
 - **Estética oscura con neón moderado e inspiración retro/pixel**: tipografías Oxanium, Space Grotesk y Pixelify Sans, botones en forma de píldora, barra de navegación flotante con borde neón y un fondo con aurora y píxeles flotantes que se apagan en celular y si pedís menos movimiento.
-- **Menú superior mínimo**: el nombre de la app, «Explorar», «Creadores», «Comunidad» y «Subir juego», y tu cuenta (Mi perfil, Configuración, Cerrar sesión). En celular se abre con una hamburguesa.
+- **Menú superior mínimo**: el nombre de la app, «Creadores», «Comunidad» y «Subir juego», y tu cuenta (Mi perfil, Configuración, Cerrar sesión). En celular se abre con una hamburguesa.
 - **Cursor propio**: flecha pixelada, y la manita en todo lo que se puede apretar.
 - **Hecho para celular primero**, desde pantallas de 360 px, sin scroll horizontal y con botón para volver arriba.
 - **Accesible**: contraste de texto de al menos 4,5:1, objetivos táctiles de al menos 44 px, uso completo con teclado, enlace «Saltar al contenido», etiquetas y errores conectados para lectores de pantalla, y una auditoría automática WCAG 2.2 AA sobre las pantallas principales.

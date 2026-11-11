@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import { SignedInHome } from "@/components/home/signed-in-home";
-import { SignedInSkeleton } from "@/components/home/signed-in-skeleton";
+import { HomeContent } from "@/components/home/home-content";
+import { HomeSkeleton } from "@/components/home/home-skeleton";
 import { getLocale, getTranslations } from "@/i18n/server";
 import { pageMetadata } from "@/lib/seo/metadata";
 
@@ -10,13 +10,13 @@ export async function generateMetadata() {
 }
 
 /**
- * The home of someone who signed in. People never type this address: the proxy serves it at «/» when there is a valid session, so
- * the visitors' home stays static and untouched. If someone does open «/home» with no session, they get the public home.
+ * People never type this address: the proxy serves it at «/» when there is a valid session or when the address asks for a search
+ * (`/?q=…`), so the public home stays static and untouched. Opened by hand with no session and nothing searched, it shows the public home.
  */
-export default function SignedInHomePage() {
+export default function HomePage({ searchParams }: PageProps<"/[lang]/home">) {
   return (
-    <Suspense fallback={<SignedInSkeleton />}>
-      <SignedInHome />
+    <Suspense fallback={<HomeSkeleton />}>
+      <HomeContent searchParams={searchParams} />
     </Suspense>
   );
 }

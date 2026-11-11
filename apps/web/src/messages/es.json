@@ -31,7 +31,6 @@
     "label": "Principal",
     "mobileLabel": "Menú móvil",
     "home": "Ir al inicio de Trafal",
-    "explore": "Explorar",
     "community": "Comunidad",
     "creators": "Creadores",
     "upload": "Subir juego",
@@ -54,7 +53,6 @@
     "product": "Producto",
     "help": "Ayuda",
     "legal": "Legal",
-    "explore": "Explorar juegos",
     "community": "Comunidad",
     "howToUpload": "Cómo subir un juego",
     "guidelines": "Normas de la comunidad",
@@ -131,35 +129,6 @@
     "finalText": "Creá tu perfil, subí lo que tengas y contá en qué estás trabajando. La comunidad hace el resto.",
     "signedIn": {
       "greeting": "Hola de nuevo, <accent>{name}</accent>",
-      "unreadNone": "No tenés avisos nuevos. Esto es lo que hay para vos hoy.",
-      "unreadOne": "Tenés 1 aviso sin leer.",
-      "unreadMany": "Tenés {count} avisos sin leer.",
-      "seeNotifications": "Verlos",
-      "publish": "Publicar un avance",
-      "upload": "Subir un juego",
-      "saved": "Mis guardados",
-      "yourSpace": "Tu espacio",
-      "yourGames": {
-        "title": "Tus juegos",
-        "empty": "Todavía no subiste ningún juego. ¡Mostrale al mundo el primero!",
-        "emptyCta": "Subir mi primer juego",
-        "plays": "{count, plural, one {# partida} other {# partidas}}",
-        "likes": "{count, plural, one {# me gusta} other {# me gusta}}",
-        "manage": "Administrar",
-        "status": {
-          "published": "Publicado",
-          "draft": "Borrador",
-          "hidden": "Oculto",
-          "removed": "Eliminado"
-        },
-        "profile": "Ver mi perfil"
-      },
-      "activity": {
-        "title": "Tu actividad",
-        "unread": "Avisos sin leer",
-        "followers": "Seguidores",
-        "following": "Siguiendo"
-      },
       "following": {
         "title": "Novedades de quienes seguís",
         "subtitle": "Lo último de los creadores que seguís.",
@@ -167,7 +136,22 @@
         "quiet": "Quienes seguís no publicaron nada nuevo todavía.",
         "discover": "Descubrir creadores",
         "more": "Ver todo lo que publican"
+      },
+      "recent": {
+        "title": "Recién agregados",
+        "subtitle": "Lo último que subió la comunidad."
+      },
+      "mostPlayed": {
+        "title": "Los más jugados",
+        "subtitle": "Lo que más se juega en Trafal."
+      },
+      "firstGames": {
+        "title": "Primeros juegos",
+        "subtitle": "Gente que acaba de publicar su primer juego. Un comentario amable vale mucho."
       }
+    },
+    "search": {
+      "title": "Buscar juegos"
     }
   },
   "auth": {
@@ -580,7 +564,6 @@
     "by": "de {creator}"
   },
   "explore": {
-    "title": "Explorar juegos",
     "subtitleAll": "Todos los juegos publicados, los más nuevos primero.",
     "subtitleResults": "Resultados para «{query}»",
     "count": "{count, plural, one {# juego} other {# juegos}}",

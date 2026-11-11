@@ -31,7 +31,6 @@
     "label": "Main",
     "mobileLabel": "Mobile menu",
     "home": "Go to the Trafal home page",
-    "explore": "Explore",
     "community": "Community",
     "creators": "Creators",
     "upload": "Upload game",
@@ -54,7 +53,6 @@
     "product": "Product",
     "help": "Help",
     "legal": "Legal",
-    "explore": "Explore games",
     "community": "Community",
     "howToUpload": "How to upload a game",
     "guidelines": "Community guidelines",
@@ -131,35 +129,6 @@
     "finalText": "Create your profile, upload what you have and tell us what you're working on. The community does the rest.",
     "signedIn": {
       "greeting": "Welcome back, <accent>{name}</accent>",
-      "unreadNone": "No new notifications. Here is what is up for you today.",
-      "unreadOne": "You have 1 unread notification.",
-      "unreadMany": "You have {count} unread notifications.",
-      "seeNotifications": "See them",
-      "publish": "Post an update",
-      "upload": "Upload a game",
-      "saved": "My saved",
-      "yourSpace": "Your space",
-      "yourGames": {
-        "title": "Your games",
-        "empty": "You have not uploaded any game yet. Show the world your first one!",
-        "emptyCta": "Upload my first game",
-        "plays": "{count, plural, one {# play} other {# plays}}",
-        "likes": "{count, plural, one {# like} other {# likes}}",
-        "manage": "Manage",
-        "status": {
-          "published": "Published",
-          "draft": "Draft",
-          "hidden": "Hidden",
-          "removed": "Removed"
-        },
-        "profile": "See my profile"
-      },
-      "activity": {
-        "title": "Your activity",
-        "unread": "Unread notifications",
-        "followers": "Followers",
-        "following": "Following"
-      },
       "following": {
         "title": "News from people you follow",
         "subtitle": "The latest from the creators you follow.",
@@ -167,7 +136,22 @@
         "quiet": "The people you follow have not posted anything new yet.",
         "discover": "Discover creators",
         "more": "See everything they post"
+      },
+      "recent": {
+        "title": "Recently added",
+        "subtitle": "The latest the community uploaded."
+      },
+      "mostPlayed": {
+        "title": "Most played",
+        "subtitle": "What is played the most on Trafal."
+      },
+      "firstGames": {
+        "title": "First games",
+        "subtitle": "People who just published their first game. A kind comment goes a long way."
       }
+    },
+    "search": {
+      "title": "Find games"
     }
   },
   "auth": {
@@ -580,7 +564,6 @@
     "by": "by {creator}"
   },
   "explore": {
-    "title": "Explore games",
     "subtitleAll": "Every published game, newest first.",
     "subtitleResults": "Results for “{query}”",
     "count": "{count, plural, one {# game} other {# games}}",

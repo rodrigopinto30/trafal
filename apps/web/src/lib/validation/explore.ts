@@ -4,6 +4,9 @@ import { parseSearchQuery } from "./search";
 export const EXPLORE_SORTS = ["recent", "trending", "plays", "relevance"] as const;
 export type ExploreSort = (typeof EXPLORE_SORTS)[number];
 
+/** The parameters of the address that make the home a search view (they are what the proxy looks for to serve it to visitors too). */
+export const EXPLORE_PARAMS = ["q", "genre", "engine", "mobile", "sort", "page"] as const;
+
 export const EXPLORE_PAGE_SIZE = 24;
 export const EXPLORE_MAX_PAGE = 400;
 
@@ -29,7 +32,7 @@ export function defaultSort(q: string | null): ExploreSort {
 }
 
 /**
- * Everything on the explore page comes from the address bar, so everything is checked: the text is cleaned, a genre or an
+ * Everything on the search view of the home comes from the address bar, so everything is checked: the text is cleaned, a genre or an
  * engine that is not in the catalog is ignored, an unknown order is the default one (and «relevance» only makes sense with a
  * text), and the page is a whole number between 1 and the maximum.
  */
@@ -56,10 +59,15 @@ export function exploreHref(query: ExploreQuery, without: readonly ("q" | "page"
   if (query.sort !== defaultSort(query.q)) params.set("sort", query.sort);
   if (query.page > 1 && !without.includes("page")) params.set("page", String(query.page));
   const text = params.toString();
-  return text ? `/explore?${text}` : "/explore";
+  return text ? `/?${text}` : "/";
 }
 
 /** Whether the person narrowed the list down with any filter (the text and the order are not filters). */
 export function hasFilters(query: ExploreQuery): boolean {
   return query.genre !== null || query.engine !== null || query.mobile;
+}
+
+/** Whether the address asks for a search or a filtered, sorted or later page of the games (anything else is the plain home). */
+export function isExploring(query: ExploreQuery): boolean {
+  return query.q !== null || hasFilters(query) || query.sort !== defaultSort(query.q) || query.page > 1;
 }

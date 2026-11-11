@@ -14,7 +14,7 @@ export function webSiteData(locale: Locale, description: string): Json {
     inLanguage: locale,
     potentialAction: {
       "@type": "SearchAction",
-      target: { "@type": "EntryPoint", urlTemplate: `${absoluteUrl(locale, "/explore")}?q={search_term_string}` },
+      target: { "@type": "EntryPoint", urlTemplate: `${absoluteUrl(locale, "/")}?q={search_term_string}` },
       "query-input": "required name=search_term_string",
     },
   };

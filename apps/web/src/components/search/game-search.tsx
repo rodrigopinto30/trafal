@@ -31,7 +31,7 @@ function nextActive(current: number, step: 1 | -1, count: number): number {
 
 /**
  * Buscador de juegos con sugerencias en vivo (patrón combobox: flechas, Enter y Escape; un lector de pantalla oye cuántas
- * sugerencias hay). Sin JavaScript sigue funcionando: es un formulario GET a /explore.
+ * sugerencias hay). Sin JavaScript sigue funcionando: es un formulario GET a la portada (/?q=…).
  */
 export function GameSearch({ variant, defaultValue = "", keep = "" }: Props) {
   const t = useTranslations("search");
@@ -67,8 +67,8 @@ export function GameSearch({ variant, defaultValue = "", keep = "" }: Props) {
 
   function goToResults(text: string | null) {
     setOpen(false);
-    const params = [text ? `q=${encodeURIComponent(text)}` : "", keep].filter(Boolean).join("&");
-    const path = params ? `/explore?${params}` : "/explore";
+    const params = [text ? `q=${encodeURIComponent(text)}` : keep ? "" : "sort=recent", keep].filter(Boolean).join("&");
+    const path = params ? `/?${params}` : "/";
     router.push(localizePath(locale, path));
   }
 
@@ -110,7 +110,7 @@ export function GameSearch({ variant, defaultValue = "", keep = "" }: Props) {
         if (!container.current?.contains(event.relatedTarget)) setOpen(false);
       }}
     >
-      <form role="search" aria-label={t("label")} action={localizePath(locale, "/explore")} method="get" onSubmit={onSubmit}>
+      <form role="search" aria-label={t("label")} action={localizePath(locale, "/")} method="get" onSubmit={onSubmit}>
         {Array.from(new URLSearchParams(keep)).map(([name, content]) => (
           <input key={name} type="hidden" name={name} value={content} />
         ))}

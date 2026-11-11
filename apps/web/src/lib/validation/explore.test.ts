@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import es from "@/messages/es.json";
-import { EXPLORE_MAX_PAGE, EXPLORE_SORTS, exploreHref, hasFilters, parseExploreQuery } from "./explore";
+import { EXPLORE_MAX_PAGE, EXPLORE_PARAMS, EXPLORE_SORTS, exploreHref, hasFilters, isExploring, parseExploreQuery } from "./explore";
 
 describe("parseExploreQuery", () => {
   it("defaults to the newest games, from the first page", () => {
@@ -48,16 +48,34 @@ describe("parseExploreQuery", () => {
   });
 });
 
+describe("isExploring", () => {
+  it("is false for the plain home, whatever the unrelated parameters", () => {
+    expect(isExploring(parseExploreQuery({}))).toBe(false);
+    expect(isExploring(parseExploreQuery({ sort: "recent" }))).toBe(false);
+    expect(isExploring(parseExploreQuery({ q: "   ", genre: "nope", page: "1" }))).toBe(false);
+  });
+
+  it("is true for a search, a filter, another order or a later page", () => {
+    for (const raw of [{ q: "faro" }, { genre: "puzzle" }, { engine: "phaser" }, { mobile: "1" }, { sort: "plays" }, { page: "2" }]) {
+      expect(isExploring(parseExploreQuery(raw)), JSON.stringify(raw)).toBe(true);
+    }
+  });
+
+  it("knows the parameters that make the home a search view", () => {
+    expect([...EXPLORE_PARAMS].sort()).toEqual(["engine", "genre", "mobile", "page", "q", "sort"]);
+  });
+});
+
 describe("exploreHref", () => {
   it("leaves out the defaults", () => {
-    expect(exploreHref(parseExploreQuery({}))).toBe("/explore");
-    expect(exploreHref(parseExploreQuery({ q: "faro" }))).toBe("/explore?q=faro");
-    expect(exploreHref(parseExploreQuery({ genre: "puzzle", mobile: "1", sort: "plays", page: "2" }))).toBe("/explore?genre=puzzle&mobile=1&sort=plays&page=2");
+    expect(exploreHref(parseExploreQuery({}))).toBe("/");
+    expect(exploreHref(parseExploreQuery({ q: "faro" }))).toBe("/?q=faro");
+    expect(exploreHref(parseExploreQuery({ genre: "puzzle", mobile: "1", sort: "plays", page: "2" }))).toBe("/?genre=puzzle&mobile=1&sort=plays&page=2");
   });
 
   it("can drop the text and the page, to change the search but keep the filters", () => {
     const query = parseExploreQuery({ q: "faro", genre: "puzzle", sort: "plays", page: "4" });
-    expect(exploreHref(query, ["q", "page"])).toBe("/explore?genre=puzzle&sort=plays");
+    expect(exploreHref(query, ["q", "page"])).toBe("/?genre=puzzle&sort=plays");
   });
 
   it("round-trips through the parser", () => {

@@ -47,7 +47,7 @@ async function SavedContent() {
           <div className="rounded-3xl border border-dashed border-white/20 px-6 py-12 text-center">
             <p className="text-text-2">{t("emptyGames")}</p>
             <Button asChild size="lg" className="mt-5">
-              <Link href="/explore">{t("explore")}</Link>
+              <Link href="/">{t("explore")}</Link>
             </Button>
           </div>
         )}

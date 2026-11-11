@@ -47,7 +47,7 @@ test("quien no tiene sesión no ve la campanita y la página lo lleva a iniciar 
 });
 
 test("la campanita se actualiza sola cuando llega un aviso", async () => {
-  await gotoReady(creator, "/explore");
+  await gotoReady(creator, "/feed");
   await expect(bell(creator)).toBeVisible();
   const before = Number(/(\d+) sin leer/.exec((await bell(creator).getAttribute("aria-label")) ?? "")?.[1] ?? 0);
 

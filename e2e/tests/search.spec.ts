@@ -3,7 +3,7 @@ import { gotoReady } from "./helpers/session";
 
 /**
  * El buscador de juegos de la portada: está arriba de todo, sugiere mientras se escribe, se maneja con el teclado y lleva a
- * los resultados (/explore?q=…). Los juegos son los de ejemplo del seed.
+ * los resultados (/?q=…). Los juegos son los de ejemplo del seed.
  */
 function searchBox(page: Page) {
   return page.getByRole("combobox", { name: /Buscar juegos|Search games/ });
@@ -62,7 +62,7 @@ test.describe("buscador de la portada", () => {
     await gotoReady(page, "/");
     await searchBox(page).fill("láser");
     await searchBox(page).press("Enter");
-    await expect(page).toHaveURL(/\/explore\?q=l%C3%A1ser$/);
+    await expect(page).toHaveURL(/\/\?q=l%C3%A1ser$/);
     await expect(page.getByRole("heading", { level: 2, name: "Resultados para «láser»" })).toBeVisible();
     await expect(page.getByRole("article")).toHaveCount(1);
     await expect(page.getByRole("article")).toContainText("Gato Láser");
@@ -73,16 +73,16 @@ test.describe("buscador de la portada", () => {
   test("el botón Buscar y un campo vacío llevan a todos los juegos", async ({ page }) => {
     await gotoReady(page, "/");
     await page.getByRole("button", { name: "Buscar", exact: true }).click();
-    await expect(page).toHaveURL(/\/explore$/);
+    await expect(page).toHaveURL(/\/\?sort=recent$/);
     await expect(page.getByRole("heading", { level: 2, name: "Todos los juegos publicados, los más nuevos primero." })).toBeVisible();
     expect(await page.getByRole("article").count()).toBeGreaterThanOrEqual(8);
   });
 
   test("sin coincidencias lo dice y ofrece ver todos los juegos", async ({ page }) => {
-    await gotoReady(page, "/explore?q=zzzzzz");
+    await gotoReady(page, "/?q=zzzzzz");
     await expect(page.getByRole("heading", { name: "No encontramos juegos para «zzzzzz»" })).toBeVisible();
     await page.getByRole("link", { name: "Ver todos los juegos" }).click();
-    await expect(page).toHaveURL(/\/explore$/);
+    await expect(page).toHaveURL(/localhost:3000\/$/);
   });
 
   test("lo que se escribe es texto: nunca se interpreta como HTML ni rompe la búsqueda", async ({ page }) => {
@@ -95,15 +95,15 @@ test.describe("buscador de la portada", () => {
     const evil = `<img src=x onerror=alert(1)> "' & | ! : * ( ) \\`;
     await searchBox(page).fill(evil);
     await searchBox(page).press("Enter");
-    await expect(page).toHaveURL(/\/explore\?q=/);
+    await expect(page).toHaveURL(/\/\?q=/);
     await expect(page.getByRole("heading", { name: /No encontramos juegos/ })).toBeVisible();
     await expect(page.locator("img[src='x']")).toHaveCount(0);
     expect(alerts).toEqual([]);
   });
 
   test("un texto larguísimo se recorta y no rompe la pantalla", async ({ page }) => {
-    await gotoReady(page, `/explore?q=${"a".repeat(3000)}`);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Explorar juegos");
+    await gotoReady(page, `/?q=${"a".repeat(3000)}`);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Buscar juegos");
     expect(await searchBox(page).inputValue()).toHaveLength(80);
   });
 
@@ -114,18 +114,18 @@ test.describe("buscador de la portada", () => {
     await expect(page.getByRole("option").first()).toContainText("by ");
     await expect(page.getByRole("option").last()).toContainText("See all results for “orb”");
     await searchBox(page).press("Enter");
-    await expect(page).toHaveURL(/\/en\/explore\?q=orb$/);
+    await expect(page).toHaveURL(/\/en\?q=orb$/);
     await expect(page.getByRole("heading", { level: 2, name: "Results for “orb”" })).toBeVisible();
     await expect(page.getByRole("article")).toContainText("Órbita");
   });
 
-  test("sin JavaScript el formulario igual envía la búsqueda a /explore", async ({ browser }) => {
+  test("sin JavaScript el formulario igual envía la búsqueda a la portada", async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const page = await context.newPage();
     await page.goto("/");
     await page.getByRole("combobox", { name: "Buscar juegos" }).fill("orbita");
     await page.getByRole("button", { name: "Buscar", exact: true }).click();
-    await expect(page).toHaveURL(/\/explore\?q=orbita$/);
+    await expect(page).toHaveURL(/\/\?q=orbita$/);
     await context.close();
   });
 });

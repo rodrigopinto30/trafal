@@ -55,7 +55,7 @@ test.describe("metadatos de cada página", () => {
     expect(meta(es, "name", "twitter:card")).toBe("summary_large_image");
     const [site] = structuredData(es);
     expect(site).toMatchObject({ "@type": "WebSite", name: "Trafal", inLanguage: "es" });
-    expect(JSON.stringify(site)).toContain("/explore?q={search_term_string}");
+    expect(JSON.stringify(site)).toContain("/?q={search_term_string}");
 
     const en = await fetchHtml(request, "/en");
     expect(en).toContain("<title>Trafal — Publish your game. Get players.</title>");
@@ -89,8 +89,19 @@ test.describe("metadatos de cada página", () => {
     expect(structuredData(html)[0]).toMatchObject({ "@type": "ProfilePage", mainEntity: { "@type": "Person", name: "Sofi Pixels", alternateName: "@sofi_pixels" } });
   });
 
-  test("Explorar, Comunidad y Creadores: la vista base se indexa; una vista filtrada no y apunta a la base", async ({ request }) => {
-    for (const [base, filtered] of [["/explore", "/explore?genre=arcade&sort=plays"], ["/feed", "/feed?kind=hito"], ["/creators", "/creators?engine=godot"]] as const) {
+  test("una búsqueda de la portada no se indexa y apunta a la portada", async ({ request }) => {
+    for (const view of ["/?q=orbita", "/?genre=arcade&sort=plays", "/?sort=recent"]) {
+      const html = await fetchHtml(request, view);
+      expect(meta(html, "name", "robots"), view).toBe("noindex, follow");
+      expect(link(html, "canonical"), view).toBe(SITE);
+    }
+    const plain = await fetchHtml(request, "/");
+    expect(meta(plain, "name", "robots")).toBeNull();
+    expect(link(plain, "canonical")).toBe(SITE);
+  });
+
+  test("Comunidad y Creadores: la vista base se indexa; una vista filtrada no y apunta a la base", async ({ request }) => {
+    for (const [base, filtered] of [["/feed", "/feed?kind=hito"], ["/creators", "/creators?engine=godot"]] as const) {
       const plain = await fetchHtml(request, base);
       expect(meta(plain, "name", "robots"), base).toBeNull();
       expect(link(plain, "canonical")).toBe(`${SITE}${base}`);
@@ -132,7 +143,8 @@ test.describe("robots.txt y sitemap", () => {
     expect(response.status()).toBe(200);
     expect(response.headers()["content-type"]).toContain("xml");
     const xml = await response.text();
-    for (const path of ["/", "/en", "/explore", "/en/creators", "/feed", "/legal/terms", "/games/orbita", "/en/games/orbita", "/games/neon-express", "/u/sofi_pixels", "/en/u/valen_makes"]) {
+    expect(xml).not.toContain("/explore");
+    for (const path of ["/", "/en", "/en/creators", "/feed", "/legal/terms", "/games/orbita", "/en/games/orbita", "/games/neon-express", "/u/sofi_pixels", "/en/u/valen_makes"]) {
       expect(xml, path).toContain(`<loc>${SITE}${path}</loc>`);
     }
     expect(xml).toMatch(/<loc>http:\/\/localhost:3000\/posts\/[0-9a-f-]{36}<\/loc>/);
