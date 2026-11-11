@@ -65,11 +65,12 @@ test("se avisa de un me gusta y de un seguidor, y cada aviso dice quién, qué y
   await expect(like).toBeEnabled();
   await like.click();
   await expect(like).toHaveAttribute("aria-pressed", "true");
+  await expect(like).toBeEnabled();
   await gotoReady(actor, `/u/${CREATOR.username}`);
   const follow = actor.getByRole("button", { name: /^Seguir/ });
   await expect(follow).toBeEnabled();
   await follow.click();
-  await expect(actor.getByRole("button", { name: /^Dejar de seguir/ })).toBeVisible();
+  await expect(actor.getByRole("button", { name: /^Dejar de seguir/ })).toBeEnabled();
 
   await gotoReady(creator, "/notifications");
   await expect(creator.getByRole("heading", { level: 1, name: "Notificaciones" })).toBeVisible();
