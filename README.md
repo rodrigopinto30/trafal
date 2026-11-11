@@ -152,8 +152,8 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Portada con sesión
 
 **Hoy**
-- Quien inició sesión ve **otra portada en la misma dirección** (`/` y `/en`) y con la misma estética que la búsqueda: un saludo con su nombre («Hola de nuevo, Valentina») y **Sorprendeme**, el **buscador** y los **filtros** (género, motor, «funciona en celular» y orden).
-- Sin nada buscado, debajo van las **Novedades de quienes seguís** (los últimos avances de los creadores que sigue, con me gusta y guardar, y un enlace al feed filtrado; si no sigue a nadie, una invitación a descubrir creadores) y los estantes **Recién agregados**, **Los más jugados** y **Primeros juegos**. No hay banners ni invitaciones a crear una cuenta.
+- Quien inició sesión ve **otra portada en la misma dirección** (`/` y `/en`) y con la misma estética que la búsqueda: el lema «Juegos del navegador, hechos por la comunidad» con **Sorprendeme**, el **buscador** y los **filtros** (género, motor, «funciona en celular» y orden).
+- Sin nada buscado, debajo van primero los **juegos** (**Recién agregados**, 8 de una vez), luego las **Novedades de quienes seguís** (los últimos avances de los creadores que sigue, con me gusta y guardar, y un enlace al feed filtrado; si no sigue a nadie, una invitación a descubrir creadores) y después **Los más jugados** y **Primeros juegos**. No hay banners ni invitaciones a crear una cuenta.
 - Al buscar o filtrar, los resultados aparecen ahí mismo (con paginación), en lugar de las novedades y los estantes.
 - Los visitantes siguen viendo la portada pública, que no cambia (sigue estática y rápida); si buscan, ven los resultados en `/?q=…`.
 

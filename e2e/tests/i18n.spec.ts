@@ -58,14 +58,14 @@ test.describe("idioma", () => {
     // Queda recordado: entrar a «/» sin prefijo lleva al inglés.
     await page.goto("/");
     await expect(page).toHaveURL(/\/en$/);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Welcome back");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Browser games, made by the community");
 
     // Otro dispositivo (navegador SIN cookies y en español): al iniciar sesión se usa el idioma de la CUENTA.
     const otherDevice = await browser.newContext({ locale: "es-AR", extraHTTPHeaders: { "Accept-Language": "es-AR,es;q=0.9" } });
     const other = await otherDevice.newPage();
     await loginWith(other, email, "Trafal12345");
     await expect(other).toHaveURL(/\/en$/);
-    await expect(other.getByRole("heading", { level: 1 })).toContainText("Welcome back");
+    await expect(other.getByRole("heading", { level: 1 })).toContainText("Browser games, made by the community");
     await otherDevice.close();
 
     // Y de vuelta a español: la URL pierde el prefijo.

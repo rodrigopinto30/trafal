@@ -467,7 +467,8 @@ Sin migraciones. `app/[lang]/home`, `components/home/{visitor-home,home-content,
 | **`/explore` redirige (308) a `/`**, con la misma búsqueda y el idioma | Había enlaces, favoritos y buscadores apuntando a esa dirección. | Se hace en el proxy, antes de decidir el idioma. |
 | **Las vistas de búsqueda piden `noindex, follow`** y su canónica es la portada | Son variantes de la portada; antes la vista base de Explorar se indexaba. | Se perdió esa página indexable: la portada y los juegos siguen en el mapa del sitio. |
 | **`/home` abierto sin sesión y sin búsqueda muestra la portada pública** y no redirige | Un redirect a `/` volvería a reescribir a `/home` y haría un bucle. | La página lleva `noindex`. |
-| **Sin banners ni tarjetas «Tu espacio»**: saludo, búsqueda, filtros, novedades de quienes sigue y estantes (recién agregados, más jugados, primeros juegos) | Pedido del producto: se parece a lo que ya se conocía de Explorar. | Los accesos a publicar, subir, guardados y avisos siguen en el menú y en el de la cuenta. |
+| **Sin banners ni tarjetas «Tu espacio»**: lema, búsqueda, filtros, y debajo los juegos, después las novedades de quienes sigue y más estantes | Pedido del producto: se parece a lo que ya se conocía de Explorar, con los juegos antes que las novedades. | Orden: Recién agregados → Novedades de quienes seguís → Los más jugados → Primeros juegos. Los accesos a publicar, subir, guardados y avisos siguen en el menú y en el de la cuenta. |
+| **Un lema en lugar de un saludo con el nombre** («Juegos del navegador, hechos por la comunidad») | Pedido del producto: la portada tiene que decir qué es Trafal. | Es el título de la página para quien inició sesión; quien busca sin sesión ve «Buscar juegos». |
 
 Esto encontró algo ajeno: `next build` rechazaba `/admin/featured` (leía la hora antes de un acceso dinámico) y el servidor de desarrollo no lo ve. Se arregló aparte y se agregó `./check.sh --build` (`tools/build-check.sh`).
 

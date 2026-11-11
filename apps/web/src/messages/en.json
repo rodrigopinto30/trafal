@@ -128,7 +128,6 @@
     "finalTitle": "Your game doesn't have to be perfect. It has to be published.",
     "finalText": "Create your profile, upload what you have and tell us what you're working on. The community does the rest.",
     "signedIn": {
-      "greeting": "Welcome back, <accent>{name}</accent>",
       "following": {
         "title": "News from people you follow",
         "subtitle": "The latest from the creators you follow.",
@@ -148,7 +147,8 @@
       "firstGames": {
         "title": "First games",
         "subtitle": "People who just published their first game. A kind comment goes a long way."
-      }
+      },
+      "slogan": "Browser games, <accent>made by the community</accent>"
     },
     "search": {
       "title": "Find games"

@@ -128,7 +128,6 @@
     "finalTitle": "Tu juego no tiene que ser perfecto. Tiene que estar publicado.",
     "finalText": "Creá tu perfil, subí lo que tengas y contá en qué estás trabajando. La comunidad hace el resto.",
     "signedIn": {
-      "greeting": "Hola de nuevo, <accent>{name}</accent>",
       "following": {
         "title": "Novedades de quienes seguís",
         "subtitle": "Lo último de los creadores que seguís.",
@@ -148,7 +147,8 @@
       "firstGames": {
         "title": "Primeros juegos",
         "subtitle": "Gente que acaba de publicar su primer juego. Un comentario amable vale mucho."
-      }
+      },
+      "slogan": "Juegos del navegador, <accent>hechos por la comunidad</accent>"
     },
     "search": {
       "title": "Buscar juegos"
