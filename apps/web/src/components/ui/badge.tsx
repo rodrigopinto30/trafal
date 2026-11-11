@@ -2,18 +2,21 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
-/** Etiquetas chicas en mayúsculas con la tipografía pixel (NUEVO, 1ER JUEGO, AVANCE...). */
+/**
+ * Etiquetas chicas en mayúsculas con la tipografía pixel (NUEVO, 1ER JUEGO, AVANCE...). Todas tienen un contraste marcado contra la
+ * tarjeta: las de color van rellenas con texto oscuro y las neutras con borde claro y texto blanco.
+ */
 const badgeVariants = cva(
   "pixel-label inline-flex w-fit shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] leading-none",
   {
     variants: {
       variant: {
-        violet: "bg-violet text-ink shadow-glow-violet",
-        cyan: "bg-cyan/12 text-cyan",
-        lime: "border border-lime/35 bg-lime/12 text-lime",
-        coral: "bg-coral/14 text-[#ff9cb0]",
-        soft: "bg-violet/18 text-[#d3c2ff]",
-        outline: "border border-white/15 text-text-2",
+        violet: "bg-violet-pale text-violet-ink shadow-glow-violet",
+        cyan: "bg-cyan text-ink",
+        lime: "bg-lime text-ink",
+        coral: "bg-coral text-ink",
+        soft: "border border-violet bg-violet/45 text-white",
+        outline: "border border-white/40 bg-white/8 text-foreground",
       },
     },
     defaultVariants: { variant: "soft" },

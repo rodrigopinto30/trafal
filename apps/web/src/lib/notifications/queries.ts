@@ -39,6 +39,13 @@ export async function listNotifications(before: string | null): Promise<{ items:
   return { items, nextBefore: rows.length > NOTIFICATIONS_PAGE_SIZE ? (items.at(-1)?.created_at ?? null) : null };
 }
 
+/** The latest notifications of the signed-in person (the ones the bell shows), newest first. */
+export async function listRecentNotifications(limit: number): Promise<NotificationItem[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("notifications").select(SELECT).order("created_at", { ascending: false }).order("id", { ascending: false }).limit(limit);
+  return (data ?? []) as unknown as NotificationItem[];
+}
+
 /** One of the signed-in person's notifications, with what it needs to know where it leads. */
 export async function findNotification(id: string): Promise<NotificationItem | null> {
   const supabase = await createClient();

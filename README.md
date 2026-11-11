@@ -111,7 +111,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Notificaciones
 
 **Hoy**
-- Una **campanita** en la barra (solo con cuenta) con cuántos avisos hay sin leer. Se actualiza **sola** mientras la página está abierta: si alguien comenta o te sigue, el número sube al instante.
+- Una **campanita** en la barra (solo con cuenta) con cuántos avisos hay sin leer. Se actualiza **sola** mientras la página está abierta: si alguien comenta o te sigue, el número sube al instante. Al tocarla **se despliega un menú con los últimos 5 avisos** (los sin leer, resaltados) y un enlace **«Ver todas las notificaciones»**; cada aviso se abre igual que en la pantalla (se marca como leído y lleva a lo que pasó).
 - La pantalla **Notificaciones** (`/notifications`) lista los avisos, de más nuevo a más viejo (20 por página). Cada uno dice quién, qué y dónde; al abrirlo se marca como leído y lleva a lo que pasó: si es sobre un comentario, **te deja en ese comentario** (lo centra en la pantalla) y lo **resalta unos segundos**. Se puede **marcar como leído**, **quitar**, o **marcar todos como leídos**.
 - Se avisa de: un **comentario** en tu juego o avance; una **respuesta** a tu comentario; un **me gusta** en tu juego o avance (una vez por persona); un **seguidor** nuevo (una vez por persona); que el creador marcó tu comentario como **«Me sirvió»** (una vez por comentario); que una **versión** que subiste quedó lista o fue rechazada; y las decisiones de **moderación** sobre tu contenido o tu cuenta (con el motivo).
 - Nadie recibe avisos de lo que hace él mismo. Solo dentro del sitio: no se manda nada por email.
@@ -264,6 +264,8 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 **Hoy**
 - **Estética oscura con neón moderado e inspiración retro/pixel**: tipografías Oxanium, Space Grotesk y Pixelify Sans, botones en forma de píldora, barra de navegación flotante con borde neón y un fondo con aurora y píxeles flotantes que se apagan en celular y si pedís menos movimiento.
 - **Menú superior mínimo**: el nombre de la app, «Creadores», «Comunidad» y «Subir juego», y tu cuenta (Mi perfil, Configuración, Cerrar sesión). En celular se abre con una hamburguesa.
+- **Marca**: el ícono de Trafal (un **gamepad en pixel art** sobre el degradé violeta-cian) está en el logo, en la pestaña del navegador (`icon.svg`) y como ícono de pantalla de inicio (`apple-icon.png`). El título de cada pestaña es **«Trafal - <página>»** (por ejemplo «Trafal - Comunidad»).
+- **Botones y etiquetas con más contraste**: el botón principal es un degradé de violeta a azul profundos con texto blanco (≥ 5,5:1), y las etiquetas (**1ER JUEGO**, géneros, motores, estados) van rellenas o con borde claro (≥ 7:1).
 - **Cursor propio**: flecha pixelada, y la manita en todo lo que se puede apretar.
 - **Hecho para celular primero**, desde pantallas de 360 px, sin scroll horizontal y con botón para volver arriba.
 - **Accesible**: contraste de texto de al menos 4,5:1, objetivos táctiles de al menos 44 px, uso completo con teclado, enlace «Saltar al contenido», etiquetas y errores conectados para lectores de pantalla, y una auditoría automática WCAG 2.2 AA sobre las pantallas principales.

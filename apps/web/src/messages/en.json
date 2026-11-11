@@ -1,8 +1,8 @@
 {
   "meta": {
     "siteName": "Trafal",
-    "defaultTitle": "Trafal — Publish your game. Get players.",
-    "titleTemplate": "%s · Trafal",
+    "defaultTitle": "Trafal - Publish your game. Get players.",
+    "titleTemplate": "Trafal - %s",
     "description": "Trafal is the social network for people making video games: upload a browser game, show how you build it and get feedback from the community."
   },
   "common": {
@@ -46,7 +46,15 @@
     "saved": "Saved",
     "admin": "Administration",
     "notifications": "Notifications",
-    "notificationsUnread": "Notifications: {count} unread"
+    "notificationsUnread": "Notifications: {count} unread",
+    "notificationsMenu": {
+      "title": "Notifications",
+      "loading": "Loading…",
+      "empty": "You have no notifications yet.",
+      "error": "We could not load your notifications.",
+      "seeAll": "See all notifications",
+      "unread": "Unread"
+    }
   },
   "footer": {
     "tagline": "The social network for publishing browser games and sharing how they're made.",
@@ -62,8 +70,6 @@
     "rights": "© {year} Trafal"
   },
   "home": {
-    "badge": "NEW",
-    "badgeText": "The social network for game makers",
     "titleLead": "Publish your game.",
     "titleAccent": "Get players.",
     "subtitle": "Browser games made by people just getting started. Play, comment and upload yours.",

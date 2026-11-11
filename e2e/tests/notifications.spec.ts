@@ -18,7 +18,7 @@ let suffix = "";
 let since = "";
 const actorName = "Persona Avisos";
 
-const bell = (page: Page) => page.getByRole("link", { name: /^Notificaciones/ }).first();
+const bell = (page: Page) => page.getByRole("button", { name: /^Notificaciones/ }).first();
 const item = (page: Page, text: string | RegExp) => page.locator("article").filter({ hasText: text });
 
 test.beforeAll(async ({ browser }, testInfo) => {
@@ -80,6 +80,24 @@ test("se avisa de un me gusta y de un seguidor, y cada aviso dice quién, qué y
   await expect(comment.getByText("Sin leer")).toBeAttached();
   await expect(item(creator, `A ${actorName} le gustó Órbita`)).toBeVisible();
   await expect(item(creator, `${actorName} empezó a seguirte`)).toBeVisible();
+});
+
+test("la campanita abre un menú con los últimos avisos y un enlace a todos", async () => {
+  await gotoReady(creator, "/feed");
+  await bell(creator).click();
+  const menu = creator.getByRole("menu");
+  await expect(menu).toBeVisible();
+  await expect(menu.getByText("Notificaciones", { exact: true })).toBeVisible();
+  const entries = menu.getByRole("menuitem").filter({ hasNot: creator.getByText("Ver todas las notificaciones") });
+  await expect(entries.filter({ hasText: `${actorName} comentó en Órbita` })).toHaveCount(1);
+  await expect(entries.filter({ hasText: `A ${actorName} le gustó Órbita` })).toHaveCount(1);
+  await expect(entries.filter({ hasText: `${actorName} empezó a seguirte` })).toHaveCount(1);
+  expect(await entries.count(), "se muestran pocos, no todos").toBeLessThanOrEqual(5);
+  await expect(entries.first().getByRole("link").or(entries.first())).toHaveAttribute("href", /\/api\/notifications\/[0-9a-f-]{36}\?lang=es$/);
+
+  await menu.getByRole("menuitem", { name: "Ver todas las notificaciones" }).click();
+  await expect(creator).toHaveURL(/\/notifications$/);
+  await expect(creator.getByRole("heading", { level: 1, name: "Notificaciones" })).toBeVisible();
 });
 
 test("abrir un aviso de comentario lleva al comentario, lo centra y lo resalta unos segundos", async () => {

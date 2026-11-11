@@ -4,7 +4,6 @@ import { LandingGames } from "@/components/home/landing-games";
 import { SurpriseButton } from "@/components/games/surprise-button";
 import { LandingSkeleton } from "@/components/home/landing-skeleton";
 import { GameSearch } from "@/components/search/game-search";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/link";
 import { getLocale, getTranslations } from "@/i18n/server";
@@ -25,12 +24,7 @@ export async function VisitorHome() {
     <>
       <JsonLd data={webSiteData(locale, tMeta("description"))} />
       <section className="mx-auto max-w-[980px] px-5 pt-[clamp(40px,6vw,72px)] text-center">
-        <span className="inline-flex items-center gap-2.5 rounded-full border border-violet/35 bg-violet/14 py-1.5 pr-3.5 pl-2 text-sm text-[#dcd3ff]">
-          <Badge variant="violet">{t("badge")}</Badge>
-          {t("badgeText")}
-        </span>
-
-        <h1 className="mt-5 font-display text-[clamp(36px,5.8vw,62px)] leading-[1.04] font-bold tracking-tight text-glow-violet">
+        <h1 className="font-display text-[clamp(36px,5.8vw,62px)] leading-[1.04] font-bold tracking-tight text-glow-violet">
           {t("titleLead")} <span className="text-gradient">{t("titleAccent")}</span>
         </h1>
         <p className="mx-auto mt-4 max-w-[620px] text-lg text-text-2">{t("subtitle")}</p>

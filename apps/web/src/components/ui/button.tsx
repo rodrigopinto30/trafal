@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Botones tipo píldora con brillo neón suave. Todos miden al menos 44 px de alto (objetivo táctil).
- *   default → acción principal (degradé violeta → cian)
+ *   default → acción principal (degradé de violeta a azul profundos con texto blanco: contraste ≥ 5,5:1)
  *   play    → SOLO acciones de jugar (lima)
  *   like    → me gusta (coral)
  */
@@ -21,7 +21,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-brand font-bold text-ink shadow-glow-violet hover:shadow-glow-violet-lg",
+        default: "bg-action font-bold text-white shadow-glow-action hover:shadow-glow-action-lg",
         play: "bg-lime font-bold text-ink shadow-glow-lime hover:shadow-[0_0_28px_rgb(198_255_61/0.6)]",
         secondary: "bg-foreground font-bold text-ink hover:shadow-[0_0_20px_rgb(255_255_255/0.3)]",
         outline: "border border-white/20 bg-white/5 text-foreground hover:border-cyan/60 hover:bg-white/10",

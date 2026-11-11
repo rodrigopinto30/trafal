@@ -30,6 +30,12 @@
   --trafal-lime: #c6ff3d;
   --trafal-coral: #ff5c7a;
 
+  /* Botones principales y etiquetas fuertes: violeta y azul profundos (texto blanco ≥ 5,5:1) y lila claro con índigo (≥ 11:1). */
+  --trafal-violet-deep: #5a2fd6;
+  --trafal-blue-deep: #2a5fe0;
+  --trafal-violet-pale: #d9ccff;
+  --trafal-violet-ink: #1b0f4a;
+
   /* Variables semánticas (las usan los componentes de shadcn) */
   --background: var(--trafal-bg);
   --foreground: var(--trafal-text);
@@ -77,6 +83,10 @@
   --color-cyan: var(--trafal-cyan);
   --color-lime: var(--trafal-lime);
   --color-coral: var(--trafal-coral);
+  --color-violet-deep: var(--trafal-violet-deep);
+  --color-blue-deep: var(--trafal-blue-deep);
+  --color-violet-pale: var(--trafal-violet-pale);
+  --color-violet-ink: var(--trafal-violet-ink);
   --color-ink: var(--trafal-bg); /* texto oscuro sobre botones de acento */
   --color-panel: var(--trafal-panel);
   --color-surface: var(--trafal-surface);
@@ -99,6 +109,8 @@
   /* Brillo neón suave */
   --shadow-glow-violet: 0 0 18px rgb(139 92 255 / 0.6);
   --shadow-glow-violet-lg: 0 0 24px rgb(139 92 255 / 0.6), 0 0 52px rgb(46 230 255 / 0.22);
+  --shadow-glow-action: 0 0 14px rgb(90 47 214 / 0.55);
+  --shadow-glow-action-lg: 0 0 20px rgb(90 47 214 / 0.6), 0 0 44px rgb(42 95 224 / 0.25);
   --shadow-glow-cyan: 0 0 14px rgb(46 230 255 / 0.35);
   --shadow-glow-lime: 0 0 18px rgb(198 255 61 / 0.45);
   --shadow-glow-coral: 0 0 14px rgb(255 92 122 / 0.4);
@@ -107,6 +119,7 @@
 
   /* Degradé principal violeta → cian y bordes de marca */
   --background-image-brand: linear-gradient(90deg, var(--trafal-violet), var(--trafal-cyan));
+  --background-image-action: linear-gradient(90deg, var(--trafal-violet-deep), var(--trafal-blue-deep));
   --background-image-brand-diag: linear-gradient(135deg, var(--trafal-violet), var(--trafal-cyan));
   --background-image-nav-border: linear-gradient(
     90deg,

@@ -454,6 +454,19 @@ Migración `20261111000200`: tabla `appeals` y las funciones `my_decisions`, `su
 | **No se avisa a los admins por notificación**, solo con el contador de la pestaña | Hoy los admins entran al panel a trabajar la cola. | Si no entran, no se enteran. |
 | **Se actualizó el texto legal** (`LEGAL_UPDATED` = 2026-11-11, `TERMS_VERSION` sigue igual) | Decía que no había trámite de apelación. | El cambio no pide aceptar de nuevo: no quita nada, agrega un trámite. |
 
+## Marca y detalles de interfaz (2026-11-11)
+
+Sin migraciones. `components/brand/logo.tsx`, `app/icon.svg`, `app/apple-icon.png`, `components/ui/{badge,button}.tsx`, tokens nuevos en `globals.css`, `lib/notifications/text.ts` y el desplegable de `notifications-bell.tsx`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Se quita el texto «NUEVO · La red social para quienes hacen videojuegos»** de la portada pública | Pedido del producto: la portada ya dice qué es en el título y la descripción. | Se borran los dos mensajes. La descripción del sitio no cambia. |
+| **Etiquetas con contraste marcado**: las de color rellenas (lila claro con índigo, cian, lima y coral con texto oscuro) y las neutras con borde claro | El lila oscuro sobre fondo oscuro no se distinguía. | El test de contraste exige ≥ 7:1 (≥ 5,5:1 para coral y la suave). Los colores nuevos son tokens (`--trafal-violet-pale`, `--trafal-violet-ink`). |
+| **El botón principal pasa a un degradé de violeta a azul profundos con texto blanco** (`bg-action`) en vez del degradé violeta-cian con texto oscuro | Pedido del producto: un contraste más amigable. Blanco sobre esos colores da 5,5–7,5:1 (antes 4,9:1 en el extremo violeta). | Rompe la regla «texto sobre acentos: oscuro» solo para este botón (el buscador y el aviso de acción de los avisos emergentes lo usan igual); lima, coral y blanco siguen con texto oscuro. Brillo más suave. |
+| **La campanita despliega un menú con los últimos 5 avisos** y un enlace «Ver todas las notificaciones» | Pedido del producto: ver lo último sin salir de la página. | Es un botón (`menu`) que, al abrirse, pide los avisos con una Server Action (`recentNotificationsAction`); abrir uno usa el mismo enlace de la pantalla (lo marca como leído y lleva a donde corresponde). El texto de cada aviso se extrajo a `lib/notifications/text.ts` y lo usan el menú y la pantalla. Un aviso sin destino lleva a la lista. |
+| **Ícono nuevo: un gamepad en pixel art** (degradé de la marca, cuerpo oscuro, cruceta blanca y botones lima y cian) | Dice «videojuegos» a 16 px y combina con la tipografía pixel. | Es el mismo dibujo en el logo (`LogoMark`), la pestaña (`icon.svg`) y el ícono de inicio (`apple-icon.png`, 180 px, generado desde el SVG). Ya no hay «T». |
+| **El título de la pestaña es «Trafal - <página>»** (antes «<página> · Trafal») | Pedido del producto. | Cambia `meta.titleTemplate` y el título de las tarjetas sociales; el de la portada pasa a «Trafal - Publicá tu juego. Sumá jugadores.». El «icono de Trafal» que va antes del título es el favicon: el navegador lo muestra solo. |
+
 ## Portada con sesión y fin de «Explorar» (2026-11-11)
 
 Sin migraciones. `app/[lang]/home`, `components/home/{visitor-home,home-content,home-skeleton}.tsx`, `components/search/explore-results.tsx`, el proxy y `EXPLORE_PARAMS`/`isExploring`; tests `signed-in-home.spec.ts` y `home-search.spec.ts` (antes `explore.spec.ts`).

@@ -22,6 +22,10 @@ const cyan = token("cyan");
 const lime = token("lime");
 const coral = token("coral");
 const panel = token("panel");
+const violetDeep = token("violet-deep");
+const blueDeep = token("blue-deep");
+const violetPale = token("violet-pale");
+const violetInk = token("violet-ink");
 // Tarjeta: superficie al 90 % de opacidad sobre el fondo.
 const card = over(token("surface"), 0.9, bg);
 // Campos de formulario: blanco al 5 % sobre la superficie donde estén.
@@ -55,10 +59,12 @@ const pairs: Pair[] = [
   { name: "texto de error sobre panel", fg: hex("#ff8fa5"), bg: panel },
   { name: "texto de error sobre tarjeta", fg: hex("#ff8fa5"), bg: card },
 
-  // Botones: texto oscuro (#07060e) sobre el color del botón
-  { name: "botón principal, extremo violeta", fg: bg, bg: violet },
-  { name: "botón principal, punto medio del degradé", fg: bg, bg: mix(violet, cyan, 0.5) },
-  { name: "botón principal, extremo cian", fg: bg, bg: cyan },
+  // Botón principal: texto blanco sobre el degradé de violeta a azul profundos (se pide más que el mínimo: es lo que más se toca)
+  { name: "botón principal, extremo violeta", fg: white, bg: violetDeep, min: 5.5 },
+  { name: "botón principal, punto medio del degradé", fg: white, bg: mix(violetDeep, blueDeep, 0.5), min: 5.5 },
+  { name: "botón principal, extremo azul", fg: white, bg: blueDeep, min: 5.5 },
+
+  // Otros botones: texto oscuro (#07060e) sobre el color del botón
   { name: "botón de jugar (lima)", fg: bg, bg: lime },
   { name: "botón destructivo (coral)", fg: bg, bg: coral },
   { name: "botón secundario (blanco)", fg: bg, bg: text },
@@ -69,13 +75,13 @@ const pairs: Pair[] = [
   { name: "estado cian (lista, publicado)", fg: white, bg: over(cyan, 0.2, card) },
   { name: "estado coral (con errores)", fg: white, bg: over(coral, 0.25, card) },
 
-  // Etiquetas (Badge)
-  { name: "badge violeta", fg: bg, bg: violet },
-  { name: "badge cian", fg: cyan, bg: over(cyan, 0.12, bg) },
-  { name: "badge lima (1ER JUEGO)", fg: lime, bg: over(lime, 0.12, bg) },
-  { name: "badge coral", fg: hex("#ff9cb0"), bg: over(coral, 0.14, bg) },
-  { name: "badge suave", fg: hex("#d3c2ff"), bg: over(violet, 0.18, bg) },
-  { name: "badge contorno", fg: text2, bg },
+  // Etiquetas (Badge): marcadas contra la tarjeta (se pide ≥ 7:1 entre el texto y su fondo)
+  { name: "badge violeta", fg: violetInk, bg: violetPale, min: 7 },
+  { name: "badge cian", fg: bg, bg: cyan, min: 7 },
+  { name: "badge lima", fg: bg, bg: lime, min: 7 },
+  { name: "badge coral", fg: bg, bg: coral, min: 5.5 },
+  { name: "badge suave", fg: white, bg: over(violet, 0.45, card), min: 7 },
+  { name: "badge contorno", fg: text, bg: over(white, 0.08, card), min: 7 },
 
   // Interfaz
   { name: "chip seleccionado", fg: white, bg: over(violet, 0.22, panel) },
