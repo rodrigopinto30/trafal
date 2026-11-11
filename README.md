@@ -137,6 +137,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - Los cuatro documentos están escritos, en español y en inglés: **Términos y condiciones**, **Política de privacidad**, **Normas de la comunidad** y **Derechos de autor** (`/legal/...`, enlazados desde el pie y desde el registro). Cada uno tiene su fecha de última actualización y un **índice** que lleva a cada sección.
 - Dicen lo que Trafal hace de verdad: qué datos se guardan (y que no se vende nada ni hay publicidad ni analítica de terceros), cómo funcionan la moderación, las suspensiones y los reclamos, que se puede eliminar la cuenta, y que cada juego corre aislado y bajo responsabilidad de quien juega.
 - **Son un borrador**: cada página lo avisa con una marca visible hasta que un abogado los revise. Los datos del titular (nombre, email de contacto y jurisdicción) salen de `LEGAL_OPERATOR_NAME`, `LEGAL_CONTACT_EMAIL` y `LEGAL_JURISDICTION`; si faltan, el texto muestra un hueco «a completar» y un aviso, nunca un valor inventado.
+- **Aceptar de nuevo**: cuando cambian los textos se sube `TERMS_VERSION` y a las cuentas que aceptaron una versión anterior se les muestra un aviso en todas las páginas; las pantallas de la cuenta las llevan a `/accept-terms` (leer los documentos, confirmar la edad y aceptar) y vuelven a donde iban. Mientras no acepten pueden mirar el sitio, y la pantalla de eliminar la cuenta sigue disponible.
 
 ### Creadores
 

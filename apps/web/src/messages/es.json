@@ -1292,6 +1292,30 @@
     "reason": "Motivo: {reason}",
     "text": "Mientras tanto podés mirar el sitio, pero no publicar, comentar, reportar, seguir ni dar me gusta."
   },
+  "terms": {
+    "title": "Actualizamos nuestros términos",
+    "subtitle": "Para seguir usando Trafal con tu cuenta, leé y aceptá la versión vigente.",
+    "updated": "Última actualización: {date}.",
+    "readTitle": "Lo que tenés que leer",
+    "documents": {
+      "terms": "Términos y condiciones",
+      "privacy": "Política de privacidad",
+      "guidelines": "Normas de la comunidad",
+      "copyright": "Derechos de autor"
+    },
+    "consent": "Tengo {age} años o más y acepto los <terms>Términos</terms> y la <privacy>Política de privacidad</privacy> vigentes.",
+    "submit": "Aceptar y seguir",
+    "submitting": "Guardando…",
+    "decline": "¿No querés aceptarlos? Podés <delete>borrar tu cuenta</delete>.",
+    "errors": {
+      "consentRequired": "Tildá la casilla para seguir.",
+      "generic": "No pudimos guardar tu aceptación. Probá de nuevo."
+    },
+    "banner": {
+      "text": "Actualizamos los términos y la política de privacidad. Aceptalos para seguir usando tu cuenta.",
+      "action": "Revisar y aceptar"
+    }
+  },
   "notifications": {
     "title": "Notificaciones",
     "subtitle": "Lo que pasa con tus juegos, tus avances y tu cuenta.",

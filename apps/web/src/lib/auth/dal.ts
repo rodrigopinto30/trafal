@@ -30,12 +30,12 @@ export const getMyProfile = cache(async () => {
   return data;
 });
 
-/** El estado privado de la cuenta con sesión (rol y suspensión). Se pide una sola vez por pedido: lo usan el menú, el aviso de suspensión y el panel. */
+/** El estado privado de la cuenta con sesión (rol, suspensión y versión de los términos aceptada). Se pide una sola vez por pedido: lo usan el menú, el aviso de suspensión y el panel. */
 const getMyAccountState = cache(async () => {
   const user = await getAuthUser();
   if (!user) return null;
   const supabase = await createClient();
-  const { data } = await supabase.from("profile_private").select("role, status, suspended_until, suspension_reason").eq("id", user.id).maybeSingle();
+  const { data } = await supabase.from("profile_private").select("role, status, suspended_until, suspension_reason, terms_version").eq("id", user.id).maybeSingle();
   return data;
 });
 
@@ -52,6 +52,12 @@ export const getMySuspension = cache(async (): Promise<{ reason: string | null; 
   if (data?.status !== "suspended") return null;
   if (data.suspended_until !== null && Date.parse(data.suspended_until) <= Date.now()) return null;
   return { reason: data.suspension_reason, until: data.suspended_until };
+});
+
+/** ¿La cuenta con sesión aceptó una versión anterior de los términos (hay que pedirle que acepte la vigente)? Quien todavía no tiene perfil no cuenta: el onboarding se los pide. */
+export const hasOutdatedTerms = cache(async (): Promise<boolean> => {
+  const data = await getMyAccountState();
+  return data !== null && data.terms_version !== TERMS_VERSION;
 });
 
 /** Para las pantallas de administración: sin sesión → login; sin ser admin → 404 (no se anuncia que existen). */
@@ -71,13 +77,20 @@ export async function requireUser(returnTo: string): Promise<User> {
   return user;
 }
 
-/** Para páginas que exigen perfil completo: sin sesión → login; sin perfil → onboarding. */
-export async function requireProfile(returnTo: string) {
+/**
+ * Para páginas que exigen perfil completo: sin sesión → login; sin perfil → onboarding; con una versión vieja de los términos →
+ * pantalla para aceptar la vigente (salvo que la página tenga que seguir disponible, como la de borrar la cuenta).
+ */
+export async function requireProfile(returnTo: string, options: { allowOutdatedTerms?: boolean } = {}) {
   const user = await requireUser(returnTo);
   const profile = await getMyProfile();
   if (!profile) {
     const locale = await getLocale();
     redirect(localizePath(locale, `/onboarding?next=${encodeURIComponent(returnTo)}`));
+  }
+  if (!options.allowOutdatedTerms && (await hasOutdatedTerms())) {
+    const locale = await getLocale();
+    redirect(localizePath(locale, `/accept-terms?next=${encodeURIComponent(returnTo)}`));
   }
   return { user, profile };
 }

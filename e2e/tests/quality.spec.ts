@@ -1,9 +1,10 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 import { mkdirSync } from "node:fs";
-import { loginAndWait } from "./helpers/session";
+import { lettersOnly, loginAndWait, registerAccount, uniqueSuffix } from "./helpers/session";
+import { accessTokenOf, callRpc } from "./helpers/supabase";
 
-type Target = { name: string; path: string; /** Pantallas que piden sesión: se entra con una cuenta de prueba que estos tests solo LEEN. */ login?: true | "admin" };
+type Target = { name: string; path: string; /** Pantallas que piden sesión: se entra con una cuenta de prueba que estos tests solo LEEN. */ login?: true | "admin" | "outdated" };
 
 const PAGES: readonly Target[] = [
   { name: "inicio", path: "/" },
@@ -36,6 +37,8 @@ const PAGES: readonly Target[] = [
   { name: "configuracion-preferencias", path: "/settings/preferences", login: true },
   { name: "configuracion-cuenta", path: "/settings/account", login: true },
   { name: "cuenta-eliminada", path: "/account-deleted" },
+  { name: "aceptar-terminos", path: "/accept-terms", login: "outdated" },
+  { name: "aviso-de-terminos", path: "/", login: "outdated" },
   { name: "admin-reportes", path: "/admin", login: "admin" },
   { name: "admin-reportes-resueltos", path: "/admin?status=resolved", login: "admin" },
   { name: "admin-reclamos", path: "/admin/claims", login: "admin" },
@@ -47,8 +50,18 @@ const PAGES: readonly Target[] = [
 
 mkdirSync("screenshots", { recursive: true });
 
-async function open(page: Page, target: Target) {
-  if (target.login === "admin") await loginAndWait(page, "admin@trafal.test", "trafal123");
+/** Creates an account of its own (the seeded ones are only read) and leaves it with an older version of the terms accepted. */
+async function registerWithOlderTerms(page: Page, projectName: string) {
+  const suffix = `${uniqueSuffix(projectName)}${Math.random().toString(36).slice(2, 5)}`;
+  const email = `e2e_quality_${suffix}@trafal.test`;
+  await registerAccount(page, { email, username: `quality_${lettersOnly(suffix)}`, displayName: "Persona Calidad" });
+  const response = await callRpc("accept_terms", { p_terms_version: "2026-01-01", p_age_confirmed: true }, await accessTokenOf(email, "Trafal12345"));
+  expect(response.status).toBeLessThan(300);
+}
+
+async function open(page: Page, target: Target, projectName: string) {
+  if (target.login === "outdated") await registerWithOlderTerms(page, projectName);
+  else if (target.login === "admin") await loginAndWait(page, "admin@trafal.test", "trafal123");
   else if (target.login) await loginAndWait(page, "mateo@trafal.test", "trafal123");
   await page.goto(target.path);
 }
@@ -62,7 +75,7 @@ async function settle(page: Page) {
 for (const target of PAGES) {
   test.describe(target.name, () => {
     test("no tiene scroll horizontal y deja captura para revisión visual", async ({ page }, testInfo) => {
-      await open(page, target);
+      await open(page, target, testInfo.project.name);
       await settle(page);
       const { scrollWidth, innerWidth } = await page.evaluate(() => ({
         scrollWidth: document.documentElement.scrollWidth,
@@ -72,8 +85,8 @@ for (const target of PAGES) {
       await page.screenshot({ path: `screenshots/${testInfo.project.name}-${target.name}.png`, fullPage: true });
     });
 
-    test("los controles tienen al menos 44 px de alto", async ({ page }) => {
-      await open(page, target);
+    test("los controles tienen al menos 44 px de alto", async ({ page }, testInfo) => {
+      await open(page, target, testInfo.project.name);
       await settle(page);
       const small = await page.evaluate(() => {
         // El checkbox de Radix (<button role=checkbox>) mide 24 px pero su área táctil real es de 44 px: un pseudo-elemento
@@ -96,8 +109,8 @@ for (const target of PAGES) {
       expect(small, "controles de menos de 40 px de alto").toEqual([]);
     });
 
-    test("pasa la auditoría de accesibilidad de axe (WCAG 2.2 AA, incluido el contraste)", async ({ page }) => {
-      await open(page, target);
+    test("pasa la auditoría de accesibilidad de axe (WCAG 2.2 AA, incluido el contraste)", async ({ page }, testInfo) => {
+      await open(page, target, testInfo.project.name);
       await settle(page);
       const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
       const serious = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");

@@ -1292,6 +1292,30 @@
     "reason": "Reason: {reason}",
     "text": "Meanwhile you can look around the site, but you can't post, comment, report, follow or like."
   },
+  "terms": {
+    "title": "We updated our terms",
+    "subtitle": "To keep using Trafal with your account, read and accept the current version.",
+    "updated": "Last updated: {date}.",
+    "readTitle": "What you need to read",
+    "documents": {
+      "terms": "Terms and conditions",
+      "privacy": "Privacy policy",
+      "guidelines": "Community guidelines",
+      "copyright": "Copyright"
+    },
+    "consent": "I am {age} or older and I accept the current <terms>Terms</terms> and <privacy>Privacy policy</privacy>.",
+    "submit": "Accept and continue",
+    "submitting": "Saving…",
+    "decline": "Don't want to accept them? You can <delete>delete your account</delete>.",
+    "errors": {
+      "consentRequired": "Check the box to continue.",
+      "generic": "We could not save your acceptance. Try again."
+    },
+    "banner": {
+      "text": "We updated the terms and the privacy policy. Accept them to keep using your account.",
+      "action": "Review and accept"
+    }
+  },
   "notifications": {
     "title": "Notifications",
     "subtitle": "What is happening with your games, your updates and your account.",
