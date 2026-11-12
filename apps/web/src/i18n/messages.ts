@@ -24,7 +24,6 @@ export const CLIENT_NAMESPACES = [
   "auth",
   "onboarding",
   "settings",
-  "engines",
   "genres",
   "gameForm",
   "gamePlayer",

@@ -8,10 +8,10 @@ select tests.create_profile('a0000000-0000-0000-0000-000000000001', 'ana');
 select tests.create_profile('b0000000-0000-0000-0000-000000000002', 'bruno');
 select tests.create_profile('d0000000-0000-0000-0000-0000000000ad', 'admina', 'admin');
 
-insert into public.games (id, owner_id, public_id, title, short_description, genre_id, engine_id, cover_path) values
-  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'anagame01', 'Ana''s game', 'A game', 'puzzle', 'phaser', 'covers/a0000000-0000-0000-0000-000000000001/0123456789abcdef0123456789abcdef.webp'),
-  ('11111111-1111-1111-1111-111111111102', 'a0000000-0000-0000-0000-000000000001', 'anagame02', 'Ana''s draft', 'x', 'puzzle', 'phaser', null),
-  ('11111111-1111-1111-1111-111111111103', 'b0000000-0000-0000-0000-000000000002', 'brugame01', 'Bruno''s game', 'A game', 'puzzle', 'phaser', null);
+insert into public.games (id, owner_id, public_id, title, short_description, genre_id, cover_path) values
+  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'anagame01', 'Ana''s game', 'A game', 'puzzle', 'covers/a0000000-0000-0000-0000-000000000001/0123456789abcdef0123456789abcdef.webp'),
+  ('11111111-1111-1111-1111-111111111102', 'a0000000-0000-0000-0000-000000000001', 'anagame02', 'Ana''s draft', 'x', 'puzzle', null),
+  ('11111111-1111-1111-1111-111111111103', 'b0000000-0000-0000-0000-000000000002', 'brugame01', 'Bruno''s game', 'A game', 'puzzle', null);
 insert into public.game_versions (id, game_id, number, label, status) values
   ('22222222-2222-2222-2222-222222222201', '11111111-1111-1111-1111-111111111101', 1, 'v1', 'ready'),
   ('22222222-2222-2222-2222-222222222203', '11111111-1111-1111-1111-111111111103', 1, 'v1', 'ready');

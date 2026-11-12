@@ -30,7 +30,6 @@ class VersionQueue(Protocol):
         file_count: int,
         unpacked_bytes: int,
         size_bytes: int,
-        engine: str,
         needs_isolation: bool,
         scan_flags: list[str],
     ) -> None: ...
@@ -87,14 +86,13 @@ class PostgresVersionQueue:
         file_count: int,
         unpacked_bytes: int,
         size_bytes: int,
-        engine: str,
         needs_isolation: bool,
         scan_flags: list[str],
     ) -> None:
         with self._connect().cursor() as cursor:
             cursor.execute(
-                "select worker.complete_version(%s::uuid, %s, %s, %s, %s, %s, %s)",
-                (version_id, file_count, unpacked_bytes, size_bytes, engine, needs_isolation, Jsonb(scan_flags)),
+                "select worker.complete_version(%s::uuid, %s, %s, %s, %s, %s)",
+                (version_id, file_count, unpacked_bytes, size_bytes, needs_isolation, Jsonb(scan_flags)),
             )
 
     def fail(self, version_id: str, error_code: str, error_params: ErrorParams, scan_flags: list[str]) -> None:

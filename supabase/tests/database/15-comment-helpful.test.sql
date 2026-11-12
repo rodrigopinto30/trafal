@@ -8,9 +8,9 @@ select tests.create_profile('a0000000-0000-0000-0000-000000000001', 'ana');
 select tests.create_profile('b0000000-0000-0000-0000-000000000002', 'bruno');
 select tests.create_profile('c0000000-0000-0000-0000-000000000003', 'carla');
 
-insert into public.games (id, owner_id, title, genre_id, engine_id) values
-  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Ana''s game', 'puzzle', 'phaser'),
-  ('11111111-1111-1111-1111-111111111102', 'b0000000-0000-0000-0000-000000000002', 'Bruno''s game', 'puzzle', 'phaser');
+insert into public.games (id, owner_id, title, genre_id) values
+  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Ana''s game', 'puzzle'),
+  ('11111111-1111-1111-1111-111111111102', 'b0000000-0000-0000-0000-000000000002', 'Bruno''s game', 'puzzle');
 insert into public.game_versions (id, game_id, number, label, status) values
   ('22222222-2222-2222-2222-222222222201', '11111111-1111-1111-1111-111111111101', 1, 'v0.1', 'ready'),
   ('22222222-2222-2222-2222-222222222202', '11111111-1111-1111-1111-111111111102', 1, 'v0.1', 'ready');

@@ -2,43 +2,33 @@ import pytest
 
 from tests.conftest import INDEX  # noqa: F401
 from trafal_worker.content_types import FALLBACK_CONTENT_TYPE, describe_file
-from trafal_worker.engine import EngineDetection, detect_engine
+from trafal_worker.isolation import needs_cross_origin_isolation
 from trafal_worker.rules import UploadRules
 
 
-def detect(files: dict[str, str]) -> EngineDetection:
-    names = list(files)
-    return detect_engine(names, lambda name: files.get(name, ""))
+def needs_isolation(files: dict[str, str]) -> bool:
+    return needs_cross_origin_isolation(list(files), lambda name: files.get(name, ""))
 
 
-class TestEngineDetection:
+class TestIsolation:
+    def test_godot_with_threads_needs_isolation(self) -> None:
+        assert needs_isolation({"index.html": "const GODOT_THREADS_ENABLED = true;", "index.pck": ""}) is True
+        assert needs_isolation({"index.html": "const GODOT_THREADS_ENABLED = false;", "index.pck": ""}) is False
+        assert needs_isolation({"index.html": "", "index.pck": "", "index.worker.js": ""}) is True
+        threaded_page = "GODOT_THREADS_ENABLED = true"
+        assert needs_isolation({"index.html": threaded_page, "index.js": "this is the Godot export"}) is True
+
     @pytest.mark.parametrize(
-        ("files", "engine"),
+        "files",
         [
-            ({"index.html": "", "Build/game.loader.js": "", "Build/game.data.unityweb": ""}, "unity"),
-            ({"index.html": "", "UnityLoader.js": ""}, "unity"),
-            ({"index.html": "", "index.js": "Godot engine", "index.pck": "", "index.wasm": ""}, "godot"),
-            ({"index.html": "", "index.js": "this is the Godot export template"}, "godot"),
-            ({"index.html": "", "scripts/c3runtime.js": ""}, "construct"),
-            ({"index.html": "", "html5game/game.js": ""}, "gamemaker"),
-            ({"index.html": "<tw-storydata name='x'>", "story.js": ""}, "twine"),
-            ({"index.html": "<script>var pico8_state = []</script>"}, "pico8"),
-            ({"index.html": "<script src='scratch-vm.js'></script>"}, "scratch"),
-            ({"index.html": "<script src='lib/phaser.min.js'></script>", "game.js": ""}, "phaser"),
-            ({"index.html": "", "js/phaser.min.js": ""}, "phaser"),
-            ({"index.html": "<canvas></canvas>", "game.js": "plain canvas"}, "other"),
+            {"index.html": "", "Build/a.loader.js": ""},
+            {"index.html": "<canvas></canvas>", "game.js": "plain canvas"},
+            {"index.html": "GODOT_THREADS_ENABLED = true", "game.js": "not an export"},
+            {"index.html": "", "js/phaser.min.js": "", "sound.worker.js": ""},
         ],
     )
-    def test_recognizes_common_engines(self, files: dict[str, str], engine: str) -> None:
-        assert detect(files).engine == engine
-
-    def test_godot_with_threads_needs_isolation(self) -> None:
-        assert detect({"index.html": "const GODOT_THREADS_ENABLED = true;", "index.pck": ""}).needs_isolation is True
-        assert detect({"index.html": "const GODOT_THREADS_ENABLED = false;", "index.pck": ""}).needs_isolation is False
-        assert detect({"index.html": "", "index.pck": "", "index.worker.js": ""}).needs_isolation is True
-
-    def test_other_engines_never_need_isolation(self) -> None:
-        assert detect({"index.html": "", "Build/a.loader.js": ""}).needs_isolation is False
+    def test_other_games_never_need_isolation(self, files: dict[str, str]) -> None:
+        assert needs_isolation(files) is False
 
 
 class TestContentTypes:

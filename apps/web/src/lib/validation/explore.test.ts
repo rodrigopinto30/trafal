@@ -5,15 +5,13 @@ import { EXPLORE_MAX_PAGE, EXPLORE_PARAMS, EXPLORE_SORTS, exploreHref, hasFilter
 
 describe("parseExploreQuery", () => {
   it("defaults to the newest games, from the first page", () => {
-    expect(parseExploreQuery({})).toEqual({ q: null, genre: null, engine: null, mobile: false, sort: "recent", page: 1 });
+    expect(parseExploreQuery({})).toEqual({ q: null, genre: null, sort: "recent", page: 1 });
   });
 
   it("keeps what is valid", () => {
-    expect(parseExploreQuery({ q: "  orbita ", genre: "puzzle", engine: "godot", mobile: "1", sort: "trending", page: "3" })).toEqual({
+    expect(parseExploreQuery({ q: "  orbita ", genre: "puzzle", sort: "trending", page: "3" })).toEqual({
       q: "orbita",
       genre: "puzzle",
-      engine: "godot",
-      mobile: true,
       sort: "trending",
       page: 3,
     });
@@ -29,9 +27,6 @@ describe("parseExploreQuery", () => {
     [{ genre: "terror2" }],
     [{ genre: "PUZZLE" }],
     [{ genre: "puzzle' or '1'='1" }],
-    [{ engine: "flash" }],
-    [{ mobile: "yes" }],
-    [{ mobile: "true" }],
     [{ sort: "random" }],
     [{ page: "0" }],
     [{ page: "-4" }],
@@ -39,7 +34,7 @@ describe("parseExploreQuery", () => {
     [{ page: "abc" }],
     [{ page: String(EXPLORE_MAX_PAGE + 1) }],
   ])("ignores %j", (raw) => {
-    expect(parseExploreQuery(raw)).toEqual({ q: null, genre: null, engine: null, mobile: false, sort: "recent", page: 1 });
+    expect(parseExploreQuery(raw)).toEqual({ q: null, genre: null, sort: "recent", page: 1 });
   });
 
   it("cleans the text like the search box does", () => {
@@ -56,13 +51,13 @@ describe("isExploring", () => {
   });
 
   it("is true for a search, a filter, another order or a later page", () => {
-    for (const raw of [{ q: "faro" }, { genre: "puzzle" }, { engine: "phaser" }, { mobile: "1" }, { sort: "plays" }, { page: "2" }]) {
+    for (const raw of [{ q: "faro" }, { genre: "puzzle" }, { sort: "plays" }, { page: "2" }]) {
       expect(isExploring(parseExploreQuery(raw)), JSON.stringify(raw)).toBe(true);
     }
   });
 
   it("knows the parameters that make the home a search view", () => {
-    expect([...EXPLORE_PARAMS].sort()).toEqual(["engine", "genre", "mobile", "page", "q", "sort"]);
+    expect([...EXPLORE_PARAMS].sort()).toEqual(["genre", "page", "q", "sort"]);
   });
 });
 
@@ -70,7 +65,7 @@ describe("exploreHref", () => {
   it("leaves out the defaults", () => {
     expect(exploreHref(parseExploreQuery({}))).toBe("/");
     expect(exploreHref(parseExploreQuery({ q: "faro" }))).toBe("/?q=faro");
-    expect(exploreHref(parseExploreQuery({ genre: "puzzle", mobile: "1", sort: "plays", page: "2" }))).toBe("/?genre=puzzle&mobile=1&sort=plays&page=2");
+    expect(exploreHref(parseExploreQuery({ genre: "puzzle", sort: "plays", page: "2" }))).toBe("/?genre=puzzle&sort=plays&page=2");
   });
 
   it("can drop the text and the page, to change the search but keep the filters", () => {
@@ -79,7 +74,7 @@ describe("exploreHref", () => {
   });
 
   it("round-trips through the parser", () => {
-    const query = parseExploreQuery({ q: "caja de música", genre: "puzzle", engine: "phaser", mobile: "1", sort: "trending", page: "2" });
+    const query = parseExploreQuery({ q: "caja de música", genre: "puzzle", sort: "trending", page: "2" });
     const url = new URL(exploreHref(query), "http://localhost");
     expect(parseExploreQuery(Object.fromEntries(url.searchParams))).toEqual(query);
   });
@@ -89,7 +84,7 @@ describe("hasFilters", () => {
   it("the text and the order do not count as filters", () => {
     expect(hasFilters(parseExploreQuery({ q: "faro", sort: "plays" }))).toBe(false);
     expect(hasFilters(parseExploreQuery({ genre: "puzzle" }))).toBe(true);
-    expect(hasFilters(parseExploreQuery({ mobile: "1" }))).toBe(true);
+    expect(hasFilters(parseExploreQuery({ genre: "puzzle" }))).toBe(true);
   });
 });
 

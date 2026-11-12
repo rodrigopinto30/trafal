@@ -62,9 +62,9 @@ select is((select count(*) from public.posts where id = '55555555-5555-5555-5555
 
 -- ------------------------------------------------------------------ editing everything at once (edit_post)
 select tests.clear_authentication();
-insert into public.games (id, owner_id, title, genre_id, engine_id) values
-  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Ana''s game', 'puzzle', 'phaser'),
-  ('11111111-1111-1111-1111-111111111102', 'b0000000-0000-0000-0000-000000000002', 'Bruno''s game', 'puzzle', 'phaser');
+insert into public.games (id, owner_id, title, genre_id) values
+  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Ana''s game', 'puzzle'),
+  ('11111111-1111-1111-1111-111111111102', 'b0000000-0000-0000-0000-000000000002', 'Bruno''s game', 'puzzle');
 insert into public.posts (id, author_id, kind, body) values
   ('55555555-5555-5555-5555-555555555530', 'a0000000-0000-0000-0000-000000000001', 'avance', 'To be edited');
 

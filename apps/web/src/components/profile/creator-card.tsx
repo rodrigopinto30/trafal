@@ -5,17 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/link";
 import { getLocale, getTranslations } from "@/i18n/server";
 import type { CreatorCard as Creator } from "@/lib/games/queries";
+import { GENRE_IDS } from "@/lib/profile/catalog";
 
 type Props = { creator: Creator; signedIn: boolean; isOwn: boolean; following: boolean };
 
-const SHOWN_ENGINES = 3;
+const SHOWN_GENRES = 3;
 
-/** A person in the creators directory: who they are, what they use, what they have published, and a button to follow them. */
+/** A person in the creators directory: who they are, which genres they like, what they have published, and a button to follow them. */
 export async function CreatorCard({ creator, signedIn, isOwn, following }: Props) {
-  const [t, tEngines, locale] = await Promise.all([getTranslations("creators"), getTranslations("engines"), getLocale()]);
+  const [t, tGenres, locale] = await Promise.all([getTranslations("creators"), getTranslations("genres"), getLocale()]);
   const country = creator.country ? new Intl.DisplayNames([locale], { type: "region" }).of(creator.country) : null;
   const place = [creator.city, country].filter(Boolean).join(", ");
-  const engines = creator.engines.slice(0, SHOWN_ENGINES);
+  const genres = GENRE_IDS.filter((id) => creator.favorite_genres.includes(id)).slice(0, SHOWN_GENRES);
 
   return (
     <article className="flex h-full flex-col gap-4 rounded-3xl border border-white/8 bg-card p-5 transition-shadow duration-200 focus-within:shadow-card-hover hover:shadow-card-hover">
@@ -39,11 +40,11 @@ export async function CreatorCard({ creator, signedIn, isOwn, following }: Props
 
       {creator.bio ? <p className="line-clamp-3 text-sm text-text-2">{creator.bio}</p> : null}
 
-      {engines.length > 0 ? (
+      {genres.length > 0 ? (
         <ul className="flex flex-wrap gap-2">
-          {engines.map((engine) => (
-            <li key={engine}>
-              <Badge variant="soft">{tEngines(engine as Parameters<typeof tEngines>[0])}</Badge>
+          {genres.map((id) => (
+            <li key={id}>
+              <Badge variant="soft">{tGenres(id as Parameters<typeof tGenres>[0])}</Badge>
             </li>
           ))}
         </ul>

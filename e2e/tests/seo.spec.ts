@@ -101,7 +101,7 @@ test.describe("metadatos de cada página", () => {
   });
 
   test("Comunidad y Creadores: la vista base se indexa; una vista filtrada no y apunta a la base", async ({ request }) => {
-    for (const [base, filtered] of [["/feed", "/feed?kind=hito"], ["/creators", "/creators?engine=godot"]] as const) {
+    for (const [base, filtered] of [["/feed", "/feed?kind=hito"], ["/creators", "/creators?genre=puzzle"]] as const) {
       const plain = await fetchHtml(request, base);
       expect(meta(plain, "name", "robots"), base).toBeNull();
       expect(link(plain, "canonical")).toBe(`${SITE}${base}`);

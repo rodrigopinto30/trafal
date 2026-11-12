@@ -9,9 +9,9 @@ select tests.create_profile('c0000000-0000-0000-0000-000000000003', 'carla');
 select tests.create_profile('d0000000-0000-0000-0000-0000000000ad', 'admina', 'admin');
 
 -- Preparación (como el sistema): un juego publicado de ana y otro de bruno, y una pregunta de feedback.
-insert into public.games (id, owner_id, title, genre_id, engine_id) values
-  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Juego de Ana', 'puzzle', 'phaser'),
-  ('11111111-1111-1111-1111-111111111102', 'b0000000-0000-0000-0000-000000000002', 'Juego de Bruno', 'arcade', 'godot');
+insert into public.games (id, owner_id, title, genre_id) values
+  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Juego de Ana', 'puzzle'),
+  ('11111111-1111-1111-1111-111111111102', 'b0000000-0000-0000-0000-000000000002', 'Juego de Bruno', 'arcade');
 insert into public.game_versions (id, game_id, number, label, status) values
   ('22222222-2222-2222-2222-222222222201', '11111111-1111-1111-1111-111111111101', 1, 'v0.1', 'ready'),
   ('22222222-2222-2222-2222-222222222202', '11111111-1111-1111-1111-111111111102', 1, 'v0.1', 'ready');

@@ -47,7 +47,7 @@
     "saved": "Saved",
     "admin": "Administration",
     "notifications": "Notifications",
-    "notificationsUnread": "Notifications: {count} unread",
+    "notificationsNew": "Notifications: {count} new",
     "notificationsMenu": {
       "title": "Notifications",
       "loading": "Loading…",
@@ -121,7 +121,7 @@
     "steps": {
       "upload": {
         "title": "Upload your game",
-        "text": "A .zip with your web build and you're done: it plays instantly on desktop and mobile. Godot, Unity, GameMaker, Phaser, PICO-8 or Scratch."
+        "text": "A .zip with your web build and you're done: it plays instantly in the browser."
       },
       "share": {
         "title": "Post your progress",
@@ -271,7 +271,6 @@
     "unfollowAction": "Unfollow @{username}",
     "edit": "Edit profile",
     "memberOf": "Uses",
-    "enginesLabel": "Engines they use",
     "genresLabel": "Genres they like",
     "tabs": {
       "label": "Profile sections",
@@ -304,7 +303,6 @@
   "games": {
     "play": "Play for free",
     "firstGame": "First game",
-    "mobileFriendly": "Works on mobile",
     "plays": "{count, plural, one {# play} other {# plays}}",
     "likes": "{count, plural, one {# like} other {# likes}}",
     "comments": "{count, plural, one {# comment} other {# comments}}",
@@ -416,15 +414,10 @@
       "shortDescriptionHint": "Up to 160 characters. It shows on the game cards.",
       "genre": "Genre",
       "genrePlaceholder": "Pick a genre",
-      "engine": "Engine",
-      "enginePlaceholder": "Pick an engine",
       "tags": "Tags",
       "tagsHint": "Separated by commas, up to 8 (for example: pixel art, retro, relaxing).",
       "controls": "How to play",
       "controlsHint": "The controls and what to do. Up to 500 characters.",
-      "displayRatio": "Screen ratio",
-      "worksOnMobile": "Works on mobile",
-      "isFirstGame": "It's my first game",
       "question": "Question {number}",
       "questionPlaceholder": "What would you like to know?",
       "zip": "Game .zip file",
@@ -433,12 +426,6 @@
       "coverHint": "PNG, JPG or WebP, at least 320×180 and up to 5 MB.",
       "screenshots": "Screenshots (optional)",
       "screenshotsHint": "Up to 6 PNG, JPG or WebP images, up to 5 MB each."
-    },
-    "ratios": {
-      "16:9": "16:9 (landscape)",
-      "4:3": "4:3 (classic)",
-      "1:1": "1:1 (square)",
-      "9:16": "9:16 (portrait)"
     },
     "selectedFile": "{name} · {size}",
     "submit": "Upload game",
@@ -455,11 +442,9 @@
       "invalidTitle": "Enter a title of up to 80 characters.",
       "descriptionTooLong": "The description must be 160 characters or fewer.",
       "invalidGenre": "Pick a genre from the list.",
-      "invalidEngine": "Pick an engine from the list.",
       "tooManyTags": "You can add up to 8 tags.",
       "tagTooLong": "Each tag can have up to 24 characters.",
       "controlsTooLong": "The how-to-play text must be 500 characters or fewer.",
-      "invalidRatio": "Pick a ratio from the list.",
       "tooManyQuestions": "You can ask up to 3 questions.",
       "questionLength": "Each question must be between 3 and 140 characters.",
       "zipRequired": "Pick your game's .zip file.",
@@ -471,7 +456,6 @@
       "coverAnimated": "The cover cannot be animated.",
       "screenshotsInvalid": "Screenshots must be valid, non-animated PNG, JPG or WebP images of up to 5 MB, between 320×180 and 4096×4096 pixels.",
       "tooManyScreenshots": "You can upload up to 6 screenshots.",
-      "firstGameTaken": "You already marked another game as your first.",
       "dailyLimit": "You reached the limit of 5 uploads per day. Try again tomorrow.",
       "accountRestricted": "Your account can't upload games right now.",
       "unauthenticated": "Log in to upload a game.",
@@ -575,16 +559,13 @@
     "subtitleResults": "Results for “{query}”",
     "count": "{count, plural, one {# game} other {# games}}",
     "emptyTitle": "We couldn't find games for “{query}”",
-    "emptyText": "Try another word, a genre (platformer, horror, puzzle) or an engine name.",
+    "emptyText": "Try another word or a genre (platformer, horror, puzzle).",
     "showAll": "See all games",
     "resultsTitle": "Search results",
     "gamesTitle": "Games",
     "filtersLabel": "Filters",
     "genre": "Genre",
     "genreAll": "All genres",
-    "engine": "Engine",
-    "engineAll": "All engines",
-    "mobileOnly": "Only games that work on mobile",
     "sort": "Sort by",
     "sorts": {
       "recent": "Newest",
@@ -651,7 +632,7 @@
     },
     "profile": {
       "title": "Edit profile",
-      "subtitle": "Tell the community who you are and what you make your games with.",
+      "subtitle": "Tell the community who you are and which genres you like.",
       "aboutTitle": "About you",
       "displayName": "Name",
       "bio": "Bio",
@@ -659,8 +640,6 @@
       "city": "City",
       "country": "Country",
       "countryPlaceholder": "Choose your country",
-      "enginesTitle": "Engines you use",
-      "enginesHint": "Pick up to 8.",
       "genresTitle": "Genres you like",
       "genresHint": "Tap the ones you like. Tap again to remove one. They show up on your profile.",
       "genresCount": "{count, plural, =0 {You haven't picked any yet.} one {You picked 1 genre.} other {You picked # genres.}}",
@@ -709,8 +688,6 @@
       "bioTooLong": "Your bio can be up to 280 characters.",
       "cityTooLong": "The city can be up to 80 characters.",
       "invalidCountry": "Choose a country from the list.",
-      "invalidEngine": "One of the chosen engines isn't valid.",
-      "tooManyEngines": "You can pick up to 8 engines.",
       "invalidGenre": "One of the chosen genres isn't valid.",
       "generic": "We couldn't save your changes. Please try again."
     },
@@ -761,17 +738,6 @@
       "text": "Your profile and everything you published were deleted. Thanks for stopping by Trafal.",
       "home": "Go to the home page"
     }
-  },
-  "engines": {
-    "godot": "Godot",
-    "unity": "Unity",
-    "gamemaker": "GameMaker",
-    "phaser": "Phaser",
-    "pico8": "PICO-8",
-    "scratch": "Scratch",
-    "twine": "Twine",
-    "construct": "Construct",
-    "other": "Other"
   },
   "genres": {
     "platformer": "Platformer",
@@ -1013,8 +979,6 @@
     "searchLabel": "Search creators",
     "searchPlaceholder": "Search by name or @username",
     "filtersLabel": "Search and filter creators",
-    "engine": "Engine they use",
-    "engineAll": "All engines",
     "genre": "Genre they like",
     "genreAll": "All genres",
     "sort": "Sort by",
@@ -1182,7 +1146,7 @@
     },
     "featured": {
       "title": "Game of the week",
-      "subtitle": "The banner of the landing page. Only a published game that its creator marked as their first game can be chosen, and each game can be the game of the week only once.",
+      "subtitle": "The banner of the landing page. Only a published game that is its creator's first can be chosen, and each game can be the game of the week only once.",
       "upcomingTitle": "This week and the coming ones",
       "previousTitle": "Latest earlier pick",
       "previousHint": "The landing page shows it while the current week has none chosen.",
@@ -1424,6 +1388,19 @@
     "markRead": "Mark as read",
     "markAllRead": "Mark all as read",
     "dismiss": "Dismiss",
+    "selectAll": "Select all",
+    "selectedCount": "{count, plural, one {# selected} other {# selected}}",
+    "selectOne": "Select: {text}",
+    "selectionActions": "Actions on the selection",
+    "markSelectedRead": "Mark as read",
+    "markSelectedUnread": "Mark as unread",
+    "deleteSelected": "Delete",
+    "confirmDelete": "Delete {count, plural, one {# notification} other {# notifications}}?",
+    "confirmDeleteYes": "Yes, delete",
+    "cancel": "Cancel",
+    "markedRead": "{count, plural, one {# notification marked as read} other {# notifications marked as read}}",
+    "markedUnread": "{count, plural, one {# notification marked as unread} other {# notifications marked as unread}}",
+    "deleted": "{count, plural, one {# notification deleted} other {# notifications deleted}}",
     "allRead": "Done, everything is marked as read",
     "error": "We couldn't do it. Try again.",
     "older": "See older",

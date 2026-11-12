@@ -3,10 +3,10 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import es from "@/messages/es.json";
-import { ENGINE_IDS, GENRE_IDS, countryOptions, isCountryCode } from "./catalog";
+import { GENRE_IDS, countryOptions, isCountryCode } from "./catalog";
 
 /** Filas `(id, sort, ...)` que las migraciones siembran en una tabla de catálogo, ordenadas por `sort` (como la grilla). */
-function seeded(table: "engines" | "genres"): string[] {
+function seeded(table: "genres"): string[] {
   const dir = path.resolve(process.cwd(), "../../supabase/migrations");
   const sql = readdirSync(dir)
     .filter((file) => file.endsWith(".sql"))
@@ -24,14 +24,11 @@ function seeded(table: "engines" | "genres"): string[] {
 
 describe("catálogos", () => {
   it("los ids coinciden con los nombres traducidos (es y en)", () => {
-    expect([...ENGINE_IDS].sort()).toEqual(Object.keys(es.engines).sort());
     expect([...GENRE_IDS].sort()).toEqual(Object.keys(es.genres).sort());
-    expect(Object.keys(en.engines).sort()).toEqual(Object.keys(es.engines).sort());
     expect(Object.keys(en.genres).sort()).toEqual(Object.keys(es.genres).sort());
   });
 
   it("coinciden con los que siembran las migraciones, y la grilla respeta el orden `sort` de la base", () => {
-    expect(seeded("engines")).toEqual([...ENGINE_IDS]);
     expect(seeded("genres")).toEqual([...GENRE_IDS]);
   });
 });

@@ -90,12 +90,8 @@ export async function createGameAction(formData: FormData): Promise<CreateGameRe
     title: readText(formData, "title"),
     shortDescription: readText(formData, "shortDescription"),
     genre: readText(formData, "genre"),
-    engine: readText(formData, "engine"),
     tags: readText(formData, "tags"),
     controls: readText(formData, "controls"),
-    displayRatio: readText(formData, "displayRatio"),
-    worksOnMobile: formData.get("worksOnMobile") === "on",
-    isFirstGame: formData.get("isFirstGame") === "on",
     questions: formData.getAll("questions").filter((value): value is string => typeof value === "string"),
   });
   const zip = zipDeclarationSchema.safeParse({ zipName: readText(formData, "zipName"), zipSize: readText(formData, "zipSize") });
@@ -130,7 +126,7 @@ export async function createGameAction(formData: FormData): Promise<CreateGameRe
   }
   if (!details.success || !zip.success || Object.keys(fieldErrors).length > 0) return { ok: false, fieldErrors };
 
-  const { title, shortDescription, genre, engine, tags, controls, displayRatio, worksOnMobile, isFirstGame, questions } = details.data;
+  const { title, shortDescription, genre, tags, controls, questions } = details.data;
   const supabase = await createClient();
 
   const { data: game, error: gameError } = await supabase
@@ -140,18 +136,13 @@ export async function createGameAction(formData: FormData): Promise<CreateGameRe
       title,
       short_description: shortDescription,
       genre_id: genre,
-      engine_id: engine,
       tags,
       controls,
-      display_ratio: displayRatio,
-      works_on_mobile: worksOnMobile,
-      is_first_game: isFirstGame,
     })
     .select("id, public_id")
     .single();
   if (gameError || !game) {
     if (isUsageLimitError(gameError)) return fail("rateLimited");
-    if (gameError?.code === "23505") return { ok: false, fieldErrors: { isFirstGame: message("firstGameTaken") } };
     if (gameError?.code === "42501") return fail("accountRestricted");
     console.error("[game upload] could not create the game", gameError);
     return fail("generic");

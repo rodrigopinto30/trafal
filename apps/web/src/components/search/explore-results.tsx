@@ -14,7 +14,7 @@ export function ExploreSearchBar({ query }: { query: ExploreQuery }) {
   return <GameSearch key={`${query.q ?? ""}|${keep}`} variant="page" defaultValue={query.q ?? ""} keep={keep} />;
 }
 
-/** Genre, engine, «works on mobile» and order. They go in the address, so the form is rebuilt when the view changes. */
+/** Genre and order. They go in the address, so the form is rebuilt when the view changes. */
 export function ExploreFilterBar({ query }: { query: ExploreQuery }) {
   return <ExploreFilters key={exploreHref({ ...query, page: 1 })} query={query} />;
 }

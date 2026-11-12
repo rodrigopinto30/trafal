@@ -60,11 +60,10 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
   const game = await findGameByPublicId(publicId);
   if (!game) notFound();
 
-  const [t, tPosts, tGenres, tEngines, locale, posts, comments, questions, versions, user] = await Promise.all([
+  const [t, tPosts, tGenres, locale, posts, comments, questions, versions, user] = await Promise.all([
     getTranslations("games"),
     getTranslations("posts"),
     getTranslations("genres"),
-    getTranslations("engines"),
     getLocale(),
     listPostsByGame(game.id),
     listCommentsByGame(game.id),
@@ -96,19 +95,9 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
               <Badge variant="cyan">{tGenres(game.genre_id as Parameters<typeof tGenres>[0])}</Badge>
             </li>
           ) : null}
-          {game.engine_id ? (
-            <li>
-              <Badge variant="soft">{tEngines(game.engine_id as Parameters<typeof tEngines>[0])}</Badge>
-            </li>
-          ) : null}
           {game.is_first_game ? (
             <li>
               <Badge variant="violet">{t("firstGame")}</Badge>
-            </li>
-          ) : null}
-          {game.works_on_mobile ? (
-            <li>
-              <Badge variant="outline">{t("mobileFriendly")}</Badge>
             </li>
           ) : null}
         </ul>

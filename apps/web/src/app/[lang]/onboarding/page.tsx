@@ -16,7 +16,7 @@ export async function generateMetadata() {
 export default async function OnboardingPage({ searchParams }: PageProps<"/[lang]/onboarding">) {
   const t = await getTranslations("onboarding");
   return (
-    <AuthShell title={t("title")} subtitle={t("subtitle")} namespaces={["auth", "onboarding", "settings", "genres", "engines"]}>
+    <AuthShell title={t("title")} subtitle={t("subtitle")} namespaces={["auth", "onboarding", "settings", "genres"]}>
       <Suspense fallback={<FormSkeleton />}>
         <OnboardingContent searchParams={searchParams} />
       </Suspense>

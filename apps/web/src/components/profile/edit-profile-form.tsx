@@ -4,7 +4,6 @@ import { useActionState } from "react";
 import { TopicGrid } from "@/components/profile/topic-grid";
 import { SettingsSection } from "@/components/settings/settings-section";
 import { Button } from "@/components/ui/button";
-import { ChipCheckbox } from "@/components/ui/chip-checkbox";
 import { Field } from "@/components/ui/field";
 import { FormMessage } from "@/components/ui/form-message";
 import { Input } from "@/components/ui/input";
@@ -14,7 +13,6 @@ import { useLocale, useTranslations } from "@/i18n/client";
 import { initialFormState } from "@/lib/forms";
 import { useSuccessToast } from "@/lib/use-success-toast";
 import { updateProfileAction } from "@/lib/profile/actions";
-import { ENGINE_IDS } from "@/lib/profile/catalog";
 
 type Props = {
   /** Países ya traducidos y ordenados. Se arman en el servidor: ver la nota en la página. */
@@ -23,7 +21,6 @@ type Props = {
   bio: string;
   city: string;
   country: string;
-  engines: string[];
   favoriteGenres: string[];
 };
 
@@ -31,7 +28,6 @@ type Props = {
 export function EditProfileForm({ countries, ...initial }: Props) {
   const t = useTranslations("settings");
   const tc = useTranslations("common");
-  const tEngines = useTranslations("engines");
   const locale = useLocale();
   const [state, formAction, pending] = useActionState(updateProfileAction, initialFormState);
 
@@ -42,12 +38,9 @@ export function EditProfileForm({ countries, ...initial }: Props) {
     bio: initial.bio,
     city: initial.city,
     country: initial.country,
-    engines: initial.engines.join(","),
     favoriteGenres: initial.favoriteGenres.join(","),
   };
-  const selectedEngines = values.engines ? values.engines.split(",") : [];
   const selectedGenres = values.favoriteGenres ? values.favoriteGenres.split(",") : [];
-  const enginesError = state.fieldErrors?.engines;
   const genresError = state.fieldErrors?.favoriteGenres;
 
   return (
@@ -83,26 +76,6 @@ export function EditProfileForm({ countries, ...initial }: Props) {
             {(control) => <Textarea {...control} name="bio" maxLength={280} rows={4} className="md:min-h-[216px]" defaultValue={values.bio} />}
           </Field>
         </div>
-      </SettingsSection>
-
-      <SettingsSection title={t("profile.enginesTitle")}>
-        <fieldset className="grid gap-3">
-          <legend className="sr-only">{t("profile.enginesTitle")}</legend>
-          <div className="flex flex-wrap gap-2">
-            {ENGINE_IDS.map((id) => (
-              <ChipCheckbox
-                key={id}
-                name="engines"
-                value={id}
-                defaultChecked={selectedEngines.includes(id)}
-                label={tEngines(id as Parameters<typeof tEngines>[0])}
-              />
-            ))}
-          </div>
-          <p className={`text-xs ${enginesError ? "font-medium text-[#ff8fa5]" : "text-text-3"}`} role={enginesError ? "alert" : undefined}>
-            {enginesError ?? t("profile.enginesHint")}
-          </p>
-        </fieldset>
       </SettingsSection>
 
       <SettingsSection title={t("profile.genresTitle")} description={t("profile.genresHint")}>

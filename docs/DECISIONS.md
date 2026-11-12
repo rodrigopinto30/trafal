@@ -454,6 +454,22 @@ Migración `20261111000200`: tabla `appeals` y las funciones `my_decisions`, `su
 | **No se avisa a los admins por notificación**, solo con el contador de la pestaña | Hoy los admins entran al panel a trabajar la cola. | Si no entran, no se enteran. |
 | **Se actualizó el texto legal** (`LEGAL_UPDATED` = 2026-11-11, `TERMS_VERSION` sigue igual) | Decía que no había trámite de apelación. | El cambio no pide aceptar de nuevo: no quita nada, agrega un trámite. |
 
+## Solo web, formulario de subida y bandeja de notificaciones (2026-11-12)
+
+Migraciones `20261112000100_web_only_games` y `20261112000200_notification_seen`. `components/games/new-game-form.tsx`, `lib/notifications/*`, `components/notifications/*` y `app/[lang]/notifications`; tests e2e `game-upload`, `notifications`, `creators` y `home-search`, pgTAP `23-notifications`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Un juego es un juego web: se quitan el motor, «funciona en celular» y la proporción de pantalla** (juegos, perfiles, filtros, tarjetas, buscador, worker y catálogo `engines`) | Pedido del producto: la plataforma se enfoca en la web y en que el diseño sea responsive; esas preguntas no cambian lo que ve quien juega. | La migración borra `games.engine_id`, `works_on_mobile`, `display_ratio`, `game_versions.detected_engine`, `profiles.engines` y la tabla `engines`, y recrea `explore_games`, `explore_creators`, `worker.complete_version` y el `search_doc`. Los datos de esas columnas se pierden. El marco del juego es siempre 16:9 y se adapta al ancho. |
+| **El worker conserva solo si el juego pide aislamiento entre orígenes** (`needs_isolation`, `isolation.py`) | Es un requisito de entrega (COOP/COEP) para Godot con hilos, no una etiqueta. | Ya no se «detecta el motor»: el módulo `engine.py` pasó a ser `isolation.py` y devuelve un booleano. |
+| **Los filtros de Creadores y la tarjeta usan los géneros que les gustan** | Sin motores, el género es lo único que cuenta el perfil. | La tarjeta muestra hasta 3 géneros; `/?engine=…`, `mobile=…` y `/creators?engine=…` se ignoran como cualquier valor raro. |
+| **`is_first_game` sigue en la base, pero el formulario ya no lo pregunta** | Pedido del producto: sacar la opción al crear. El juego de la semana todavía exige «primer juego publicado» (trigger de `featured_games`). | Los juegos nuevos ya no pueden ser «primer juego»: hasta que se decida cómo elegir el de la semana, solo entran los que ya lo tienen. |
+| **Se mantiene el proyecto de e2e de 360 px** | Es la prueba de que el diseño es responsive (sin scroll horizontal), no una opción de producto. | Sigue corriendo en escritorio y en 360 px. |
+| **Al crear un juego se abre la gestión arriba** | El formulario es largo y quien lo envía está abajo; Next conservaba esa posición. | `NewGameForm` hace `window.scrollTo(0, 0)` justo antes de abrir la gestión. |
+| **El formulario de subida se reinicia cada vez que se sale de la pantalla** (`NewGameForm` cambia la `key` del formulario real al dejar `/games/new`) | Next 16 deja montada (oculta) la pantalla anterior con su estado: al volver a «Subir juego» aparecían los datos del último juego. | Quien se va a mitad de un formulario lo pierde, como en cualquier formulario web. |
+| **La campanita cuenta lo «nuevo» (`seen_at`), no lo «sin leer» (`read_at`)** | Pedido del producto: al desplegar el menú el número desaparece (ya las viste), pero en la pantalla siguen resaltadas hasta que se abren. | `countUnseenNotifications` cuenta `seen_at is null and read_at is null`; abrir el menú llama `markNotificationsSeenAction`; leer una (abrirla o marcarla) también la ve, así que marcarla como no leída después no vuelve a subir el número. El texto accesible pasó de «sin leer» a «nuevas». |
+| **La pantalla de notificaciones tiene casillas y acciones en lote**, como un buzón | Pedido del producto: marcar varias como leídas o no leídas, o eliminarlas, sin ir una por una. | `setNotificationsReadAction` y `deleteNotificationsAction` reciben hasta 50 ids validados con Zod; la base sigue decidiendo qué filas son suyas (RLS). Eliminar pide confirmación porque no se puede deshacer. |
+
 ## Géneros que se desmarcaban, botón «Atrás» y seguir desde las listas (2026-11-11)
 
 Sin migraciones. `components/profile/{topic-grid,profile-list,follow-button}.tsx`, `components/layout/back-button.tsx` y `app/[lang]/u/[username]/{following,followers}`; test e2e `profile-lists-and-back.spec.ts`.

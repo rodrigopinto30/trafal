@@ -28,7 +28,7 @@ export default async function NewGamePage() {
 async function NewGameContent() {
   await requireProfile("/games/new");
   return (
-    <ExtraMessages namespaces={["gameForm", "genres", "engines"]}>
+    <ExtraMessages namespaces={["gameForm", "genres"]}>
       <NewGameForm />
     </ExtraMessages>
   );

@@ -1,16 +1,12 @@
 /**
- * Catálogos que la interfaz necesita conocer. Los ids son los de las tablas `engines` y `genres`
+ * Catálogos que la interfaz necesita conocer. Los ids son los de la tabla `genres`
  * (supabase/migrations/*_identity.sql); un test comprueba que coinciden con los nombres traducidos.
  */
-export const ENGINE_IDS: readonly string[] = ["godot", "unity", "gamemaker", "phaser", "pico8", "scratch", "twine", "construct", "other"];
 /** Géneros en el orden en que se muestran en la grilla (el mismo `sort` que la tabla `genres`). */
 export const GENRE_IDS: readonly string[] = [
   "platformer", "arcade", "puzzle", "narrative", "roguelike", "cozy", "horror", "rhythm", "racing", "adventure",
   "strategy", "shooter", "simulation", "sports", "fighting", "idle", "other",
 ];
-
-/** Tope de motores por perfil (lo exige también la base: profiles_engines_max). */
-export const MAX_ENGINES = 8;
 
 /** Países (ISO 3166-1 alfa-2, 249 códigos). Lista fija: Intl conoce también regiones que no son países (ZZ, EU, UN...). */
 const ISO_COUNTRY_CODES: readonly string[] = [

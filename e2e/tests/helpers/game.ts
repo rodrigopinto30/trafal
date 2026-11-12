@@ -7,7 +7,6 @@ export async function uploadGameZip(page: Page, title: string, zip: Buffer, file
   await page.getByLabel("Título").fill(title);
   await page.getByLabel("Descripción corta").fill("Un juego de prueba.");
   await page.getByLabel("Género").selectOption("arcade");
-  await page.getByLabel("Motor").selectOption("other");
   for (const [index, question] of questions.entries()) await page.getByLabel(`Pregunta ${index + 1}`).fill(question);
   await page.getByLabel("Archivo .zip del juego").setInputFiles({ name: fileName, mimeType: "application/zip", buffer: zip });
   await page.getByRole("button", { name: "Subir juego" }).click();

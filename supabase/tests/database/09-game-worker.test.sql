@@ -41,7 +41,7 @@ select throws_ok($$ select * from worker.claim_version('x') $$, '42501', null, '
 select tests.authenticate_as_anon();
 select throws_ok($$ select * from worker.claim_version('x') $$, '42501', null, 'a visitor cannot claim versions');
 select tests.clear_authentication();
-select ok(not has_function_privilege('anon', 'worker.complete_version(uuid, integer, bigint, bigint, text, boolean, jsonb)', 'execute'), 'anon cannot complete versions');
+select ok(not has_function_privilege('anon', 'worker.complete_version(uuid, integer, bigint, bigint, boolean, jsonb)', 'execute'), 'anon cannot complete versions');
 select ok(not has_function_privilege('authenticated', 'worker.fail_version(uuid, text, jsonb, jsonb)', 'execute'), 'authenticated cannot fail versions');
 select ok(not has_function_privilege('authenticated', 'worker.release_version(uuid)', 'execute'), 'authenticated cannot release versions');
 select ok(has_function_privilege('game_worker', 'worker.claim_version(text, interval, integer)', 'execute'), 'the worker role can claim');
@@ -85,23 +85,21 @@ select public.confirm_version_upload(pg_temp.version_id(2));
 select tests.clear_authentication();
 
 select is(pg_temp.claim('worker-1'), pg_temp.version_id(3), 'the oldest confirmed version goes first');
-select throws_ok(format('select pg_temp.as_worker(%L)', format('select worker.complete_version(%L, 1, 1, 1, ''godot'', false, ''[]''::jsonb)', pg_temp.version_id(4))), 'P0001', 'version_not_found', 'an unknown version is not found');
-select lives_ok(format('select pg_temp.as_worker(%L)', format('select worker.complete_version(%L, 3, 12046, 4180, ''godot'', true, ''["TOP_NAVIGATION_ATTEMPT"]''::jsonb)', pg_temp.version_id(3))), 'the worker completes a version');
+select throws_ok(format('select pg_temp.as_worker(%L)', format('select worker.complete_version(%L, 1, 1, 1, false, ''[]''::jsonb)', pg_temp.version_id(4))), 'P0001', 'version_not_found', 'an unknown version is not found');
+select lives_ok(format('select pg_temp.as_worker(%L)', format('select worker.complete_version(%L, 3, 12046, 4180, true, ''["TOP_NAVIGATION_ATTEMPT"]''::jsonb)', pg_temp.version_id(3))), 'the worker completes a version');
 select is((select status from public.game_versions where number = 3), 'ready', 'it is ready');
 select is((select file_count from public.game_versions where number = 3), 3, 'with its file count');
 select is((select unpacked_bytes from public.game_versions where number = 3), 12046::bigint, 'unpacked size');
 select is((select size_bytes from public.game_versions where number = 3), 4180::bigint, 'zip size');
-select is((select detected_engine from public.game_versions where number = 3), 'godot', 'detected engine');
 select is((select needs_isolation from public.game_versions where number = 3), true, 'isolation flag');
 select is((select scan_flags from public.game_versions where number = 3), '["TOP_NAVIGATION_ATTEMPT"]'::jsonb, 'scan flags');
 select is((select locked_at from public.game_versions where number = 3), null, 'the lock is cleared');
 select is((select active_version_id from public.games where title = 'Worker Game'), pg_temp.version_id(3), 'the first ready version becomes the active one');
 select is((select status from public.games where title = 'Worker Game'), 'draft', 'the game stays a draft: publishing is the owner''s choice');
-select throws_ok(format('select pg_temp.as_worker(%L)', format('select worker.complete_version(%L, 1, 1, 1, ''godot'', false, ''[]''::jsonb)', pg_temp.version_id(3))), 'P0001', 'invalid_state', 'a ready version cannot be completed twice');
+select throws_ok(format('select pg_temp.as_worker(%L)', format('select worker.complete_version(%L, 1, 1, 1, false, ''[]''::jsonb)', pg_temp.version_id(3))), 'P0001', 'invalid_state', 'a ready version cannot be completed twice');
 
 select is(pg_temp.claim('worker-1'), pg_temp.version_id(2), 'the next version is claimed');
-select lives_ok(format('select pg_temp.as_worker(%L)', format('select worker.complete_version(%L, 1, 10, 10, ''not-an-engine'', false, null)', pg_temp.version_id(2))), 'a second version completes');
-select is((select detected_engine from public.game_versions where number = 2), null, 'an unknown engine is stored as none');
+select lives_ok(format('select pg_temp.as_worker(%L)', format('select worker.complete_version(%L, 1, 10, 10, false, null)', pg_temp.version_id(2))), 'a second version completes');
 select is((select scan_flags from public.game_versions where number = 2), '[]'::jsonb, 'missing scan flags become an empty list');
 select is((select active_version_id from public.games where title = 'Worker Game'), pg_temp.version_id(3), 'the active version does not change by itself');
 

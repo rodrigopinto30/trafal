@@ -1,4 +1,4 @@
-import { ENGINE_IDS, GENRE_IDS } from "@/lib/profile/catalog";
+import { GENRE_IDS } from "@/lib/profile/catalog";
 import { parseSearchQuery } from "./search";
 
 export const CREATORS_SORTS = ["newest", "followers", "games"] as const;
@@ -9,13 +9,12 @@ export const CREATORS_MAX_PAGE = 400;
 
 export type CreatorsQuery = {
   q: string | null;
-  engine: string | null;
   genre: string | null;
   sort: CreatorsSort;
   page: number;
 };
 
-type RawCreators = { q?: string; engine?: string; genre?: string; sort?: string; page?: string };
+type RawCreators = { q?: string; genre?: string; sort?: string; page?: string };
 
 function parsePage(value: string | undefined): number {
   const page = value !== undefined && /^[0-9]{1,6}$/.test(value) ? Number(value) : 1;
@@ -29,7 +28,6 @@ export const DEFAULT_CREATORS_SORT: CreatorsSort = "newest";
 export function parseCreatorsQuery(raw: RawCreators): CreatorsQuery {
   return {
     q: parseSearchQuery(raw.q),
-    engine: ENGINE_IDS.find((id) => id === raw.engine) ?? null,
     genre: GENRE_IDS.find((id) => id === raw.genre) ?? null,
     sort: CREATORS_SORTS.find((candidate) => candidate === raw.sort) ?? DEFAULT_CREATORS_SORT,
     page: parsePage(raw.page),
@@ -40,7 +38,6 @@ export function parseCreatorsQuery(raw: RawCreators): CreatorsQuery {
 export function creatorsHref(query: CreatorsQuery): string {
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
-  if (query.engine) params.set("engine", query.engine);
   if (query.genre) params.set("genre", query.genre);
   if (query.sort !== DEFAULT_CREATORS_SORT) params.set("sort", query.sort);
   if (query.page > 1) params.set("page", String(query.page));
@@ -50,5 +47,5 @@ export function creatorsHref(query: CreatorsQuery): string {
 
 /** Whether the person narrowed the list with a filter (the text and the order are not filters). */
 export function hasCreatorFilters(query: CreatorsQuery): boolean {
-  return query.engine !== null || query.genre !== null;
+  return query.genre !== null;
 }

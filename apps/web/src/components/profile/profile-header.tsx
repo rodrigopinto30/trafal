@@ -17,7 +17,6 @@ export type ProfileRow = Pick<
   | "bio"
   | "city"
   | "country"
-  | "engines"
   | "favorite_genres"
   | "followers_count"
   | "following_count"
@@ -34,7 +33,6 @@ type Props = {
 
 export async function ProfileHeader({ profile, gamesCount, postsCount, action }: Props) {
   const t = await getTranslations("profile");
-  const tEngines = await getTranslations("engines");
   const tGenres = await getTranslations("genres");
   const locale = await getLocale();
   const countryName = profile.country ? new Intl.DisplayNames([locale], { type: "region" }).of(profile.country) : null;
@@ -59,21 +57,6 @@ export async function ProfileHeader({ profile, gamesCount, postsCount, action }:
               <MapPinIcon aria-hidden="true" className="size-4 text-cyan" />
               {location}
             </p>
-          ) : null}
-
-          {profile.engines.length > 0 ? (
-            <div className="mt-4">
-              <p className="sr-only">{t("enginesLabel")}</p>
-              <ul className="flex flex-wrap gap-2">
-                {profile.engines.map((engine) => (
-                  <li key={engine}>
-                    <Badge variant="soft" className="px-3 py-1.5 text-xs">
-                      {tEngines(engine as Parameters<typeof tEngines>[0])}
-                    </Badge>
-                  </li>
-                ))}
-              </ul>
-            </div>
           ) : null}
 
           {favoriteGenres.length > 0 ? (

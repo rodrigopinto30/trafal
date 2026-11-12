@@ -8,8 +8,8 @@ select tests.create_profile('a0000000-0000-0000-0000-000000000001', 'ana');
 select tests.create_profile('b0000000-0000-0000-0000-000000000002', 'bruno');
 select tests.create_profile('c0000000-0000-0000-0000-000000000003', 'carla');
 
-insert into public.games (id, owner_id, title, genre_id, engine_id) values
-  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Ana''s game', 'puzzle', 'phaser');
+insert into public.games (id, owner_id, title, genre_id) values
+  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Ana''s game', 'puzzle');
 insert into public.game_versions (id, game_id, number, label, status) values
   ('22222222-2222-2222-2222-222222222201', '11111111-1111-1111-1111-111111111101', 1, 'v1', 'ready'),
   ('22222222-2222-2222-2222-222222222202', '11111111-1111-1111-1111-111111111101', 2, 'v2', 'uploading'),
@@ -87,6 +87,11 @@ select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
 select is((select count(*) from public.notifications where read_at is null), 2::bigint, 'ana sees hers, unread');
 select is(tests.dml_count($$ update public.notifications set read_at = now() where read_at is null $$), 2::bigint, 'and marks them all as read in one go');
 select is((select count(*) from public.notifications where read_at is null), 0::bigint, 'none is left');
+select is((select count(*) from public.notifications where seen_at is null), 2::bigint, 'reading does not see them by itself: the bell counts seen_at');
+select is(tests.dml_count($$ update public.notifications set seen_at = now() where seen_at is null $$), 2::bigint, 'ana sees them all when she opens the bell');
+select is(tests.dml_count($$ update public.notifications set read_at = null $$), 2::bigint, 'and can mark them as unread again');
+select is((select count(*) from public.notifications where read_at is null and seen_at is not null), 2::bigint, 'seen and unread: not counted on the bell, still highlighted in the list');
+select throws_ok($$ update public.notifications set type = 'follow' $$, '42501', null, 'seen_at and read_at are the only columns that change');
 select throws_ok($$ insert into public.notifications (user_id, type) values ('a0000000-0000-0000-0000-000000000001', 'like') $$, '42501', null, 'nobody invents notifications');
 select is(tests.dml_count($$ delete from public.notifications $$), 2::bigint, 'ana dismisses hers');
 select tests.authenticate_as('b0000000-0000-0000-0000-000000000002');

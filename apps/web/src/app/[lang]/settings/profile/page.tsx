@@ -41,7 +41,6 @@ async function ProfileSettingsContent() {
         bio={profile.bio}
         city={profile.city ?? ""}
         country={profile.country ?? ""}
-        engines={profile.engines}
         favoriteGenres={profile.favorite_genres}
       />
     </>

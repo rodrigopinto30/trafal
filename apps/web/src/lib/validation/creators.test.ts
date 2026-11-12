@@ -5,13 +5,12 @@ import { CREATORS_MAX_PAGE, CREATORS_SORTS, creatorsHref, hasCreatorFilters, par
 
 describe("parseCreatorsQuery", () => {
   it("defaults to the newest members, from the first page", () => {
-    expect(parseCreatorsQuery({})).toEqual({ q: null, engine: null, genre: null, sort: "newest", page: 1 });
+    expect(parseCreatorsQuery({})).toEqual({ q: null, genre: null, sort: "newest", page: 1 });
   });
 
   it("keeps what is valid", () => {
-    expect(parseCreatorsQuery({ q: " sofi ", engine: "unity", genre: "puzzle", sort: "followers", page: "2" })).toEqual({
+    expect(parseCreatorsQuery({ q: " sofi ", genre: "puzzle", sort: "followers", page: "2" })).toEqual({
       q: "sofi",
-      engine: "unity",
       genre: "puzzle",
       sort: "followers",
       page: 2,
@@ -19,8 +18,6 @@ describe("parseCreatorsQuery", () => {
   });
 
   it.each([
-    [{ engine: "flash" }],
-    [{ engine: "GODOT" }],
     [{ genre: "terror2" }],
     [{ genre: "puzzle' or '1'='1" }],
     [{ sort: "random" }],
@@ -31,7 +28,7 @@ describe("parseCreatorsQuery", () => {
     [{ page: "abc" }],
     [{ page: String(CREATORS_MAX_PAGE + 1) }],
   ])("ignores %j", (raw) => {
-    expect(parseCreatorsQuery(raw)).toEqual({ q: null, engine: null, genre: null, sort: "newest", page: 1 });
+    expect(parseCreatorsQuery(raw)).toEqual({ q: null, genre: null, sort: "newest", page: 1 });
   });
 });
 
@@ -39,11 +36,11 @@ describe("creatorsHref", () => {
   it("leaves out the defaults", () => {
     expect(creatorsHref(parseCreatorsQuery({}))).toBe("/creators");
     expect(creatorsHref(parseCreatorsQuery({ q: "sofi" }))).toBe("/creators?q=sofi");
-    expect(creatorsHref(parseCreatorsQuery({ engine: "godot", genre: "cozy", sort: "games", page: "3" }))).toBe("/creators?engine=godot&genre=cozy&sort=games&page=3");
+    expect(creatorsHref(parseCreatorsQuery({ genre: "cozy", sort: "games", page: "3" }))).toBe("/creators?genre=cozy&sort=games&page=3");
   });
 
   it("round-trips through the parser", () => {
-    const query = parseCreatorsQuery({ q: "ana gómez", engine: "phaser", genre: "puzzle", sort: "followers", page: "2" });
+    const query = parseCreatorsQuery({ q: "ana gómez", genre: "puzzle", sort: "followers", page: "2" });
     const url = new URL(creatorsHref(query), "http://localhost");
     expect(parseCreatorsQuery(Object.fromEntries(url.searchParams))).toEqual(query);
   });
@@ -52,7 +49,6 @@ describe("creatorsHref", () => {
 describe("hasCreatorFilters", () => {
   it("the text and the order do not count as filters", () => {
     expect(hasCreatorFilters(parseCreatorsQuery({ q: "x", sort: "games" }))).toBe(false);
-    expect(hasCreatorFilters(parseCreatorsQuery({ engine: "godot" }))).toBe(true);
     expect(hasCreatorFilters(parseCreatorsQuery({ genre: "cozy" }))).toBe(true);
   });
 });
