@@ -2,7 +2,6 @@ import { z } from "zod";
 import {
   CONTROLS_MAX,
   DESCRIPTION_MAX,
-  DISPLAY_RATIOS,
   MAX_QUESTIONS,
   MAX_QUESTION_LENGTH,
   MAX_TAGS,
@@ -12,7 +11,7 @@ import {
   TITLE_MAX,
   looksLikeZip,
 } from "@/lib/games/upload-rules";
-import { ENGINE_IDS, GENRE_IDS } from "@/lib/profile/catalog";
+import { GENRE_IDS } from "@/lib/profile/catalog";
 import { charLength, sanitizeLine, sanitizeMultiline, unique } from "./text";
 
 /**
@@ -23,11 +22,9 @@ export const GAME_FORM_ERROR_KEYS = [
   "invalidTitle",
   "descriptionTooLong",
   "invalidGenre",
-  "invalidEngine",
   "tooManyTags",
   "tagTooLong",
   "controlsTooLong",
-  "invalidRatio",
   "tooManyQuestions",
   "questionLength",
   "zipRequired",
@@ -39,7 +36,6 @@ export const GAME_FORM_ERROR_KEYS = [
   "coverAnimated",
   "screenshotsInvalid",
   "tooManyScreenshots",
-  "firstGameTaken",
   "dailyLimit",
   "rateLimited",
   "accountRestricted",
@@ -90,15 +86,11 @@ export const gameDetailsSchema = z.object({
     .transform(sanitizeLine)
     .refine((value) => charLength(value) <= DESCRIPTION_MAX, "descriptionTooLong"),
   genre: catalogId(GENRE_IDS, "invalidGenre"),
-  engine: catalogId(ENGINE_IDS, "invalidEngine"),
   tags: tagList,
   controls: z
     .string()
     .transform(sanitizeMultiline)
     .refine((value) => charLength(value) <= CONTROLS_MAX, "controlsTooLong"),
-  displayRatio: z.enum(DISPLAY_RATIOS, "invalidRatio"),
-  worksOnMobile: z.boolean(),
-  isFirstGame: z.boolean(),
   questions: questionList,
 });
 

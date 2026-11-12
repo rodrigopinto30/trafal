@@ -18,7 +18,6 @@ export default async function Image({ params }: { params: Promise<{ lang: string
 
   const messages = getMessagesFor(locale);
   const genres = createTranslator(messages, locale, "genres");
-  const engines = createTranslator(messages, locale, "engines");
-  const kicker = [game.genre_id ? genres(game.genre_id as Parameters<typeof genres>[0]) : null, game.engine_id ? engines(game.engine_id as Parameters<typeof engines>[0]) : null].filter(Boolean).join(" · ");
+  const kicker = game.genre_id ? genres(game.genre_id as Parameters<typeof genres>[0]) : undefined;
   return renderCard({ kicker, title: game.title, subtitle: t("byAuthor", { name: game.owner.display_name }), footer: t("playFree"), footerTone: "play" });
 }

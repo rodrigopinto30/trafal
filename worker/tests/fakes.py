@@ -67,7 +67,6 @@ class FakeQueue:
         file_count: int,
         unpacked_bytes: int,
         size_bytes: int,
-        engine: str,
         needs_isolation: bool,
         scan_flags: list[str],
     ) -> None:
@@ -77,7 +76,6 @@ class FakeQueue:
                 "file_count": file_count,
                 "unpacked_bytes": unpacked_bytes,
                 "size_bytes": size_bytes,
-                "engine": engine,
                 "needs_isolation": needs_isolation,
                 "scan_flags": scan_flags,
             }

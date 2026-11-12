@@ -13,8 +13,6 @@ export const MAX_SCREENSHOTS = 6;
 export const TITLE_MAX = 80;
 export const DESCRIPTION_MAX = 160;
 export const CONTROLS_MAX = 500;
-export const DISPLAY_RATIOS = ["16:9", "4:3", "1:1", "9:16"] as const;
-export type DisplayRatio = (typeof DISPLAY_RATIOS)[number];
 export const UPLOAD_URL_TTL_SECONDS = 60 * 60;
 
 /** True when the file name looks like a zip. A hint for the browser only: the worker validates the real content. */

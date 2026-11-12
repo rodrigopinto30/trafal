@@ -49,14 +49,14 @@ test("quien no tiene sesión no ve la campanita y la página lo lleva a iniciar 
 test("la campanita se actualiza sola cuando llega un aviso", async () => {
   await gotoReady(creator, "/feed");
   await expect(bell(creator)).toBeVisible();
-  const before = Number(/(\d+) sin leer/.exec((await bell(creator).getAttribute("aria-label")) ?? "")?.[1] ?? 0);
+  const before = Number(/(\d+) nuevas/.exec((await bell(creator).getAttribute("aria-label")) ?? "")?.[1] ?? 0);
 
   await gotoReady(actor, GAME);
   await actor.getByLabel("Tu comentario").first().fill(`Qué lindo juego ${suffix}`);
   await actor.getByRole("button", { name: "Comentar" }).first().click();
   await expect(item(actor, `Qué lindo juego ${suffix}`).first()).toBeVisible();
 
-  await expect(bell(creator)).toHaveAttribute("aria-label", `Notificaciones: ${before + 1} sin leer`, { timeout: 20_000 });
+  await expect(bell(creator)).toHaveAttribute("aria-label", `Notificaciones: ${before + 1} nuevas`, { timeout: 20_000 });
 });
 
 test("se avisa de un me gusta y de un seguidor, y cada aviso dice quién, qué y dónde", async () => {
@@ -84,9 +84,11 @@ test("se avisa de un me gusta y de un seguidor, y cada aviso dice quién, qué y
 
 test("la campanita abre un menú con los últimos avisos y un enlace a todos", async () => {
   await gotoReady(creator, "/feed");
+  await expect(bell(creator)).toHaveAttribute("aria-label", /^Notificaciones: \d+ nuevas$/);
   await bell(creator).click();
   const menu = creator.getByRole("menu");
   await expect(menu).toBeVisible();
+  await expect(bell(creator)).toHaveAttribute("aria-label", "Notificaciones");
   await expect(menu.getByText("Notificaciones", { exact: true })).toBeVisible();
   const entries = menu.getByRole("menuitem").filter({ hasNot: creator.getByText("Ver todas las notificaciones") });
   await expect(entries.filter({ hasText: `${actorName} comentó en Órbita` })).toHaveCount(1);
@@ -98,6 +100,16 @@ test("la campanita abre un menú con los últimos avisos y un enlace a todos", a
   await menu.getByRole("menuitem", { name: "Ver todas las notificaciones" }).click();
   await expect(creator).toHaveURL(/\/notifications$/);
   await expect(creator.getByRole("heading", { level: 1, name: "Notificaciones" })).toBeVisible();
+  await expect(item(creator, `${actorName} comentó en Órbita`).getByText("Sin leer")).toBeAttached();
+  await expect(bell(creator)).toHaveAttribute("aria-label", "Notificaciones");
+});
+
+test("ver los avisos en el menú apaga el número de la campanita, también al recargar, pero siguen resaltados sin leer", async () => {
+  await gotoReady(creator, "/feed");
+  await expect(bell(creator)).toHaveAttribute("aria-label", "Notificaciones");
+  await gotoReady(creator, "/notifications");
+  await expect(item(creator, `A ${actorName} le gustó Órbita`).getByText("Sin leer")).toBeAttached();
+  await expect(item(creator, `${actorName} empezó a seguirte`).getByText("Sin leer")).toBeAttached();
 });
 
 test("abrir un aviso de comentario lleva al comentario, lo centra y lo resalta unos segundos", async () => {
@@ -140,6 +152,61 @@ test("se marca como leído, se quita y se marcan todos", async () => {
   await expect(creator.getByText("Listo, marcaste todo como leído")).toBeVisible();
   await expect(creator.getByText("Sin leer")).toHaveCount(0);
   await expect(bell(creator)).toHaveAttribute("aria-label", "Notificaciones");
+});
+
+test("como en un buzón: se eligen varios avisos con la casilla y se marcan como leídos o no leídos, o se eliminan", async () => {
+  for (const name of ["uno", "dos"]) {
+    await gotoReady(actor, GAME);
+    await actor.getByLabel("Tu comentario").first().fill(`Selección ${name} ${suffix}`);
+    await actor.getByRole("button", { name: "Comentar" }).first().click();
+    await expect(item(actor, `Selección ${name} ${suffix}`).first()).toBeVisible();
+  }
+
+  await gotoReady(creator, "/notifications");
+  const rows = creator.getByRole("article");
+  const total = await rows.count();
+  expect(total).toBeGreaterThanOrEqual(2);
+  await expect(creator.getByRole("button", { name: "Eliminar", exact: true })).toHaveCount(0);
+
+  await rows.nth(0).getByRole("checkbox").check();
+  await rows.nth(1).getByRole("checkbox").check();
+  await expect(creator.getByText("2 seleccionadas")).toBeVisible();
+  await expect(creator.getByRole("button", { name: "Marcar como no leídas" })).toHaveCount(0);
+
+  await creator.getByRole("button", { name: "Marcar como leídas", exact: true }).click();
+  await expect(creator.getByText("Marcaste 2 notificaciones como leídas")).toBeVisible();
+  await expect(rows.nth(0).getByText("Sin leer")).toHaveCount(0);
+  await expect(rows.nth(1).getByText("Sin leer")).toHaveCount(0);
+  await expect(creator.getByText("2 seleccionadas")).toHaveCount(0);
+
+  await rows.nth(0).getByRole("checkbox").check();
+  await rows.nth(1).getByRole("checkbox").check();
+  await creator.getByRole("button", { name: "Marcar como no leídas", exact: true }).click();
+  await expect(creator.getByText("Marcaste 2 notificaciones como no leídas")).toBeVisible();
+  await expect(rows.nth(0).getByText("Sin leer")).toBeAttached();
+  await expect(rows.nth(1).getByText("Sin leer")).toBeAttached();
+  await expect(bell(creator)).toHaveAttribute("aria-label", "Notificaciones");
+
+  await creator.getByRole("checkbox", { name: "Seleccionar todas" }).check();
+  await expect(creator.getByText(`${total} seleccionadas`)).toBeVisible();
+  await creator.getByRole("checkbox", { name: "Seleccionar todas" }).uncheck();
+  await expect(creator.getByRole("button", { name: "Eliminar", exact: true })).toHaveCount(0);
+
+  await rows.nth(0).getByRole("checkbox").check();
+  await rows.nth(1).getByRole("checkbox").check();
+  await creator.getByRole("button", { name: "Eliminar", exact: true }).click();
+  await expect(creator.getByText("¿Eliminar 2 notificaciones?")).toBeVisible();
+  await creator.getByRole("button", { name: "Cancelar" }).click();
+  await expect(creator.getByText("¿Eliminar 2 notificaciones?")).toHaveCount(0);
+  await expect(rows).toHaveCount(total);
+
+  await expect(creator.getByText(`Selección uno ${suffix}`)).toBeVisible();
+  await expect(creator.getByText(`Selección dos ${suffix}`)).toBeVisible();
+  await creator.getByRole("button", { name: "Eliminar", exact: true }).click();
+  await creator.getByRole("button", { name: "Sí, eliminar" }).click();
+  await expect(creator.getByText("Eliminaste 2 notificaciones")).toBeVisible();
+  await expect(creator.getByText(`Selección uno ${suffix}`)).toHaveCount(0);
+  await expect(creator.getByText(`Selección dos ${suffix}`)).toHaveCount(0);
 });
 
 test("nadie puede abrir ni tocar los avisos de otra persona", async () => {

@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { gotoReady } from "./helpers/session";
 
 /**
- * The search view of the home (`/?q=…&genre=…`): text search plus filters (genre, engine, works on mobile) and order, all kept in the
+ * The search view of the home (`/?q=…&genre=…`): text search plus filters (genre) and order, all kept in the
  * address, for visitors and for people signed in. It runs on the example games of supabase/seeds; games people create in the dev
  * database are ignored when the order matters.
  */
@@ -26,14 +26,12 @@ async function applyFilters(page: Page) {
 }
 
 test.describe("buscar en la portada", () => {
-  test("una búsqueda sin filtros deja elegir género, motor, celular y orden, y quitar filtros no aparece", async ({ page }) => {
+  test("una búsqueda sin filtros deja elegir género y orden, y quitar filtros no aparece", async ({ page }) => {
     await gotoReady(page, "/?sort=plays");
     const filters = page.getByRole("search", { name: "Filtros" });
     await expect(filters.getByLabel("Género")).toHaveValue("");
-    await expect(filters.getByLabel("Motor")).toHaveValue("");
     await expect(filters.getByLabel("Ordenar por")).toHaveValue("plays");
     await expect(filters.getByLabel("Ordenar por").locator("option")).toHaveText(["Más nuevos", "En tendencia", "Más jugados"]);
-    await expect(filters.getByRole("checkbox", { name: "Solo los que funcionan en celular" })).not.toBeChecked();
     await expect(filters.getByRole("link", { name: "Quitar filtros" })).toHaveCount(0);
     expect((await seedTitles(page)).slice(0, 2)).toEqual(["Neón Express", "Chancleta Run"]);
   });
@@ -47,18 +45,6 @@ test.describe("buscar en la portada", () => {
     expect(await seedTitles(page)).toHaveLength(3);
     await expect(cards(page).filter({ hasNotText: "Arcade" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Quitar filtros" })).toBeVisible();
-  });
-
-  test("filtrar por motor y por «funciona en celular» se combinan", async ({ page }) => {
-    await gotoReady(page, "/?engine=godot");
-    expect(await seedTitles(page)).toEqual(expect.arrayContaining(["Luciérnaga Valiente", "Pasillo 9", "Mazmorra 1-Bit", "Granja Cuántica"]));
-    await expect(cards(page).filter({ hasNotText: "Godot" })).toHaveCount(0);
-
-    await page.getByRole("checkbox", { name: "Solo los que funcionan en celular" }).check();
-    await applyFilters(page);
-    await expect(page).toHaveURL(/\/\?engine=godot&mobile=1$/);
-    const titles = await seedTitles(page);
-    expect(titles).toEqual(["Granja Cuántica"]);
   });
 
   test("ordenar por más jugados y por tendencia", async ({ page }) => {
@@ -101,7 +87,7 @@ test.describe("buscar en la portada", () => {
   });
 
   test("una dirección con valores raros no rompe nada: es la portada de siempre, y una página que no existe lo explica", async ({ page }) => {
-    await gotoReady(page, "/?genre=hack%27%20or%20%271%27%3D%271&engine=flash&sort=zzz&page=-3&mobile=si");
+    await gotoReady(page, "/?genre=hack%27%20or%20%271%27%3D%271&sort=zzz&page=-3");
     await expect(page.getByRole("search", { name: "Filtros" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Crear cuenta" }).first()).toBeVisible();
 

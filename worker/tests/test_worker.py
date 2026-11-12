@@ -77,7 +77,6 @@ class TestAcceptedGames:
             "file_count": 2,
             "unpacked_bytes": len(INDEX) + len(b"new CoinHive.Anonymous()"),
             "size_bytes": len(data),
-            "engine": "other",
             "needs_isolation": False,
             "scan_flags": ["CRYPTO_MINER"],
         }
@@ -148,13 +147,11 @@ class TestAcceptedGames:
         )
         assert storage.keys(GAMES) == ["moon-runner/v1/index.html"]
 
-    def test_detects_the_engine_and_the_isolation_requirement(
-        self, tmp_path: Path, rules: UploadRules, storage: FakeStorage
-    ) -> None:
+    def test_detects_the_isolation_requirement(self, tmp_path: Path, rules: UploadRules, storage: FakeStorage) -> None:
         html = b"<html><script>const GODOT_THREADS_ENABLED = true;</script></html>"
         files = {"index.html": html, "index.js": b"var Godot = 1", "index.pck": b"GDPC", "index.wasm": b"\x00asm"}
         queue = run(storage, claim_for(storage, simple_zip(tmp_path / "g.zip", files).read_bytes()), rules, tmp_path)
-        assert queue.completed[0]["engine"] == "godot" and queue.completed[0]["needs_isolation"] is True
+        assert queue.completed[0]["needs_isolation"] is True
 
     def test_the_work_directory_is_left_empty(self, tmp_path: Path, rules: UploadRules, storage: FakeStorage) -> None:
         run(

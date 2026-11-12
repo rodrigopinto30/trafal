@@ -16,7 +16,7 @@ type RawParams = Promise<Record<string, string | string[] | undefined>>;
 
 async function readQuery(searchParams: RawParams) {
   const raw = await searchParams;
-  return parseCreatorsQuery({ q: firstParam(raw.q), engine: firstParam(raw.engine), genre: firstParam(raw.genre), sort: firstParam(raw.sort), page: firstParam(raw.page) });
+  return parseCreatorsQuery({ q: firstParam(raw.q), genre: firstParam(raw.genre), sort: firstParam(raw.sort), page: firstParam(raw.page) });
 }
 
 export async function generateMetadata() {

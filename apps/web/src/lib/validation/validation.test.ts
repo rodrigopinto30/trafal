@@ -176,7 +176,7 @@ describe("usernameSchema y onboardingSchema", () => {
 });
 
 describe("updateProfileSchema", () => {
-  const base = { displayName: "Valen", bio: "", city: "", country: "", engines: [], favoriteGenres: [] };
+  const base = { displayName: "Valen", bio: "", city: "", country: "", favoriteGenres: [] };
 
   it("normaliza y convierte vacíos en null", () => {
     const result = updateProfileSchema.safeParse({ ...base, city: "  Rosario ", country: " ar ", bio: "Hola\r\n\r\n\r\nmundo" });
@@ -184,17 +184,15 @@ describe("updateProfileSchema", () => {
     const empty = updateProfileSchema.safeParse(base);
     expect(empty.success && empty.data).toMatchObject({ city: null, country: null });
   });
-  it("saca repetidos de motores y géneros", () => {
-    const result = updateProfileSchema.safeParse({ ...base, engines: ["godot", "godot", "unity"], favoriteGenres: ["arcade", "arcade"] });
-    expect(result.success && [result.data.engines, result.data.favoriteGenres]).toEqual([["godot", "unity"], ["arcade"]]);
+  it("saca repetidos de los géneros", () => {
+    const result = updateProfileSchema.safeParse({ ...base, favoriteGenres: ["arcade", "arcade"] });
+    expect(result.success && result.data.favoriteGenres).toEqual(["arcade"]);
   });
   it.each([
     [{ bio: "x".repeat(281) }, "bio", "bioTooLong"],
     [{ city: "x".repeat(81) }, "city", "cityTooLong"],
     [{ country: "ZZ" }, "country", "invalidCountry"],
     [{ country: "ARG" }, "country", "invalidCountry"],
-    [{ engines: ["nope"] }, "engines", "invalidEngine"],
-    [{ engines: ["godot", "unity", "gamemaker", "phaser", "pico8", "scratch", "twine", "construct", "other"] }, "engines", "tooManyEngines"],
     [{ favoriteGenres: ["nope"] }, "favoriteGenres", "invalidGenre"],
     [{ displayName: "   " }, "displayName", "invalid_display_name"],
   ])("rechaza %j", (patch, field, key) => {

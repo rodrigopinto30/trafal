@@ -97,7 +97,6 @@ export async function updateProfileAction(_prev: FormState, formData: FormData):
     bio: readText(formData, "bio"),
     city: readText(formData, "city"),
     country: readText(formData, "country"),
-    engines: formData.getAll("engines").filter((value): value is string => typeof value === "string"),
     favoriteGenres: formData.getAll("favoriteGenres").filter((value): value is string => typeof value === "string"),
   };
   // Para devolver el formulario como lo dejó la persona si hay errores.
@@ -106,7 +105,6 @@ export async function updateProfileAction(_prev: FormState, formData: FormData):
     bio: typed.bio,
     city: typed.city,
     country: typed.country,
-    engines: typed.engines.join(","),
     favoriteGenres: typed.favoriteGenres.join(","),
   };
 
@@ -121,13 +119,12 @@ export async function updateProfileAction(_prev: FormState, formData: FormData):
     return { status: "error", fieldErrors, values: typedValues };
   }
 
-  const { displayName, bio, city, country, engines, favoriteGenres } = parsed.data;
+  const { displayName, bio, city, country, favoriteGenres } = parsed.data;
   const values = {
     displayName,
     bio,
     city: city ?? "",
     country: country ?? "",
-    engines: engines.join(","),
     favoriteGenres: favoriteGenres.join(","),
   };
 
@@ -136,7 +133,7 @@ export async function updateProfileAction(_prev: FormState, formData: FormData):
   // filtró la fila (cuenta suspendida): en ese caso la actualización «funciona» pero no cambia nada.
   const { data, error } = await supabase
     .from("profiles")
-    .update({ display_name: displayName, bio, city, country, engines, favorite_genres: favoriteGenres })
+    .update({ display_name: displayName, bio, city, country, favorite_genres: favoriteGenres })
     .eq("id", user.id)
     .select("id");
 

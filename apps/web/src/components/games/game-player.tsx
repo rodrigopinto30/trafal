@@ -7,7 +7,6 @@ import { ReportDialog } from "@/components/reports/report-dialog";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "@/i18n/client";
 import { classifyDevice } from "@/lib/games/device";
-import { parseDisplayRatio } from "@/lib/games/ratio";
 import type { GameDetail } from "@/lib/games/types";
 import { loadBrowserClient } from "@/lib/supabase/load-client";
 
@@ -24,7 +23,7 @@ function fireAndForget(call: PromiseLike<unknown>): void {
 }
 
 type Props = {
-  game: Pick<GameDetail, "id" | "public_id" | "title" | "genre_id" | "cover_path" | "display_ratio">;
+  game: Pick<GameDetail, "id" | "public_id" | "title" | "genre_id" | "cover_path">;
   /** Where the game is served from, or null if it cannot be played (no games domain configured, or the game needs isolation). */
   frameUrl: string | null;
   needsIsolation: boolean;
@@ -46,7 +45,6 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn }: Props) 
   const [attempt, setAttempt] = useState(0);
   const [fullscreen, setFullscreen] = useState(false);
   const [overlay, setOverlay] = useState(false);
-  const { width, height } = parseDisplayRatio(game.display_ratio);
   const immersive = fullscreen || overlay;
 
   useEffect(() => {
@@ -121,7 +119,7 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn }: Props) 
             ? "fixed inset-0 z-50 bg-black"
             : "relative mx-auto overflow-hidden rounded-[28px] border border-white/10 shadow-[0_0_40px_rgb(139_92_255/0.2)]"
         }
-        style={overlay || fullscreen ? undefined : { aspectRatio: `${width} / ${height}`, width: `min(100%, calc(72vh * ${width} / ${height}))` }}
+        style={overlay || fullscreen ? undefined : { aspectRatio: "16 / 9", width: "min(100%, calc(72vh * 16 / 9))" }}
       >
         {playing && playable ? (
           <>

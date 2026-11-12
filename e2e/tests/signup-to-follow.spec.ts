@@ -90,7 +90,7 @@ test("una persona nueva se registra, completa su perfil, lo edita y sigue a otra
   await expect(page.getByRole("banner").getByRole("link", { name: "Completar perfil" })).toHaveCount(0);
   await expect(page.getByRole("button", { name: /^Seguir a/ })).toHaveCount(0); // no se sigue a sí misma
 
-  /* ---------- 5) Configuración → Perfil: datos, motores, géneros favoritos y foto ---------- */
+  /* ---------- 5) Configuración → Perfil: datos, géneros favoritos y foto ---------- */
   await page.getByRole("link", { name: "Editar perfil" }).click();
   await expect(page).toHaveURL(/\/settings\/profile$/);
   await page.waitForLoadState("networkidle");
@@ -99,10 +99,6 @@ test("una persona nueva se registra, completa su perfil, lo edita y sigue a otra
   await page.getByLabel("Bio").fill("Hago juegos de prueba. 🎮");
   await page.getByLabel("Ciudad").fill("Rosario");
   await page.getByLabel("País").selectOption("AR");
-  await page.getByText("Godot", { exact: true }).click();
-  await page.getByText("Phaser", { exact: true }).click();
-  await expect(page.getByLabel("Godot")).toBeChecked();
-
   // La grilla de géneros: tocar uno lo elige, tocarlo de nuevo lo saca.
   await expect(page.getByText("Todavía no elegiste ninguno.")).toBeVisible();
   const platformer = page.getByRole("checkbox", { name: "Plataformas" });
@@ -153,8 +149,6 @@ test("una persona nueva se registra, completa su perfil, lo edita y sigue a otra
   await page.goto(`/u/${username}`);
   await expect(page.getByText("Hago juegos de prueba. 🎮")).toBeVisible();
   await expect(page.getByText("Rosario, Argentina")).toBeVisible();
-  await expect(page.getByText("Godot", { exact: true })).toBeVisible();
-  await expect(page.getByText("Phaser", { exact: true })).toBeVisible();
   const genres = page.getByRole("list").filter({ hasText: "Arcade" }).first();
   await expect(genres).toContainText("Disparos");
   await expect(page.getByText("Plataformas", { exact: true })).toHaveCount(0);

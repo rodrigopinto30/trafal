@@ -9,12 +9,12 @@ select tests.create_profile('c0000000-0000-0000-0000-000000000003', 'carla');
 select tests.create_profile('e0000000-0000-0000-0000-000000000005', 'diego');
 select tests.create_profile('d0000000-0000-0000-0000-0000000000ad', 'admina', 'admin');
 
-insert into public.games (id, owner_id, title, genre_id, engine_id, is_first_game) values
-  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'First A', 'puzzle', 'phaser', true),
-  ('11111111-1111-1111-1111-111111111102', 'b0000000-0000-0000-0000-000000000002', 'First B', 'puzzle', 'phaser', true),
-  ('11111111-1111-1111-1111-111111111103', 'a0000000-0000-0000-0000-000000000001', 'Not first', 'puzzle', 'phaser', false),
-  ('11111111-1111-1111-1111-111111111104', 'e0000000-0000-0000-0000-000000000005', 'First draft', 'puzzle', 'phaser', true),
-  ('11111111-1111-1111-1111-111111111105', 'c0000000-0000-0000-0000-000000000003', 'First C', 'puzzle', 'phaser', true);
+insert into public.games (id, owner_id, title, genre_id, is_first_game) values
+  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'First A', 'puzzle', true),
+  ('11111111-1111-1111-1111-111111111102', 'b0000000-0000-0000-0000-000000000002', 'First B', 'puzzle', true),
+  ('11111111-1111-1111-1111-111111111103', 'a0000000-0000-0000-0000-000000000001', 'Not first', 'puzzle', false),
+  ('11111111-1111-1111-1111-111111111104', 'e0000000-0000-0000-0000-000000000005', 'First draft', 'puzzle', true),
+  ('11111111-1111-1111-1111-111111111105', 'c0000000-0000-0000-0000-000000000003', 'First C', 'puzzle', true);
 insert into public.game_versions (id, game_id, number, label, status)
 select ('22222222-2222-2222-2222-2222222222' || right(g.id::text, 2))::uuid, g.id, 1, 'v1', 'ready' from public.games g where g.title <> 'First draft';
 update public.games g set active_version_id = v.id, status = 'published' from public.game_versions v where v.game_id = g.id;

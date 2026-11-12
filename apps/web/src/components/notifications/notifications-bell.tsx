@@ -6,14 +6,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { useLocale, useTranslations } from "@/i18n/client";
 import { Link } from "@/i18n/link";
 import { unreadBadgeText } from "@/lib/notifications/unread";
-import { recentNotificationsAction, type BellEntry } from "@/lib/notifications/actions";
+import { markNotificationsSeenAction, recentNotificationsAction, type BellEntry } from "@/lib/notifications/actions";
 import { loadBrowserClient } from "@/lib/supabase/load-client";
 
 /**
- * The bell in the bar: a button with how many notifications are unread that opens a menu with the latest ones and a link to all of
- * them. While the page is open it listens to the database (realtime respects the same row rules, so it only hears about the person's
- * own notifications): a new one adds to the number at once. Reading or dismissing refreshes the page (see the notification actions).
- * If the connection cannot be made, the number is simply what the page loaded.
+ * The bell in the bar: a button with how many notifications are new (not seen yet) that opens a menu with the latest ones and a link to
+ * all of them. Opening the menu sees them: the number goes away at once, but they stay highlighted as unread in the notifications
+ * screen until they are opened. While the page is open it listens to the database (realtime respects the same row rules, so it only
+ * hears about the person's own notifications): a new one adds to the number at once. Reading or dismissing refreshes the page (see the
+ * notification actions). If the connection cannot be made, the number is simply what the page loaded.
  */
 export function NotificationsBell({ userId, unread }: { userId: string; unread: number }) {
   const t = useTranslations("nav");
@@ -23,9 +24,11 @@ export function NotificationsBell({ userId, unread }: { userId: string; unread: 
   const [failed, setFailed] = useState(false);
   const [seen, setSeen] = useState(unread);
   const [arrived, setArrived] = useState(0);
+  const [cleared, setCleared] = useState(0);
   if (seen !== unread) {
     setSeen(unread);
     setArrived(0);
+    setCleared(0);
   }
 
   useEffect(() => {
@@ -50,14 +53,16 @@ export function NotificationsBell({ userId, unread }: { userId: string; unread: 
     };
   }, [userId]);
 
-  const count = unread + arrived;
+  const count = Math.max(0, unread + arrived - cleared);
   const badge = unreadBadgeText(count);
-  const label = count > 0 ? t("notificationsUnread", { count: badge }) : t("notifications");
+  const label = count > 0 ? t("notificationsNew", { count: badge }) : t("notifications");
 
   function onOpenChange(next: boolean) {
     setOpen(next);
     if (!next) return;
     setFailed(false);
+    setCleared(unread + arrived);
+    markNotificationsSeenAction().catch(() => undefined);
     recentNotificationsAction(locale)
       .then((result) => (result.ok ? setEntries(result.entries) : setFailed(true)))
       .catch(() => setFailed(true));

@@ -17,7 +17,7 @@ export default async function SettingsLayout({ children }: { children: ReactNode
         <h1 className="font-display text-[clamp(28px,5vw,40px)] leading-tight font-bold text-glow-violet">{t("title")}</h1>
         <p className="mt-1 text-text-2">{t("subtitle")}</p>
       </header>
-      <ExtraMessages namespaces={["settings", "genres", "engines"]}>
+      <ExtraMessages namespaces={["settings", "genres"]}>
         <Suspense fallback={<Skeleton aria-hidden="true" className="h-[54px] w-[330px] max-w-full rounded-full" />}>
           <SettingsNav />
         </Suspense>

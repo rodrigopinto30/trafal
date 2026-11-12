@@ -18,10 +18,8 @@ select lives_ok($$ select 1 where private.is_valid_username('rodri') and private
 -- ---------------------------------------------------------------- visitantes
 select tests.authenticate_as_anon();
 select is((select count(*) from public.profiles), 3::bigint, 'los perfiles son públicos para cualquiera');
-select is((select count(*) from public.engines), 9::bigint, 'el catálogo de motores es público');
 select is((select count(*) from public.genres), 17::bigint, 'el catálogo de géneros es público');
 select throws_ok($$ select * from public.profile_private $$, '42501', null, 'anon NO puede leer datos privados');
-select throws_ok($$ insert into public.engines (id) values ('hack') $$, '42501', null, 'anon no escribe catálogos');
 select throws_ok($$ update public.profiles set bio = 'x' $$, '42501', null, 'anon no edita perfiles');
 select throws_ok($$ select public.complete_onboarding('zzz_user', 'Z', '2026-11', true, true) $$, '42501', null, 'anon no puede hacer onboarding');
 
@@ -51,11 +49,7 @@ select throws_ok($$ delete from public.profiles where username = 'ana' $$, '4250
 select throws_ok($$ update public.profiles set bio = repeat('x', 281) where username = 'ana' $$, '23514', null, 'bio de más de 280 caracteres');
 select throws_ok($$ update public.profiles set country = 'arg' where username = 'ana' $$, '23514', null, 'país: ISO-2 en mayúsculas');
 select throws_ok($$ update public.profiles set display_name = '   ' where username = 'ana' $$, '23514', null, 'nombre vacío');
-select lives_ok($$ update public.profiles set country = 'AR', city = 'Rosario', engines = array['unity', 'godot', 'unity'] where username = 'ana' $$, 'datos válidos');
-select is((select engines from public.profiles where username = 'ana'), array['godot', 'unity'], 'motores sin duplicados y ordenados');
-select throws_ok($$ update public.profiles set engines = array['nope'] where username = 'ana' $$, '22023', 'invalid_engine', 'motor inexistente');
-select throws_ok($$ update public.profiles set engines = array['godot','unity','gamemaker','phaser','pico8','scratch','twine','construct','other'] where username = 'ana' $$, '23514', null, 'más de 8 motores');
-select is((select engines from public.profiles where username = 'ana'), array['godot', 'unity'], 'los intentos fallidos no tocan los motores');
+select lives_ok($$ update public.profiles set country = 'AR', city = 'Rosario' where username = 'ana' $$, 'datos válidos');
 
 -- Géneros favoritos (la grilla del perfil)
 select lives_ok($$ update public.profiles set favorite_genres = array['strategy', 'arcade', 'strategy'] where username = 'ana' $$, 'géneros favoritos válidos');
@@ -138,6 +132,7 @@ select throws_ok($$ select public.complete_onboarding('abc.', 'Nuevo', '2026-11'
 select throws_ok($$ select public.complete_onboarding('trafal', 'Nuevo', '2026-11', true, true) $$, 'P0001', 'reserved_username', 'username reservado');
 select throws_ok($$ select public.complete_onboarding('Soporte', 'Nuevo', '2026-11', true, true) $$, 'P0001', 'reserved_username', 'username reservado (sin distinguir mayúsculas)');
 select throws_ok($$ select public.complete_onboarding('nuevo_user', '   ', '2026-11', true, true) $$, 'P0001', 'invalid_display_name', 'nombre vacío');
+select lives_ok($$ update public.profiles set country = 'AR', city = 'Rosario' where username = 'ana' $$, 'datos válidos');
 select throws_ok($$ select public.complete_onboarding('Ana', 'Otra Ana', '2026-11', true, true) $$, 'P0001', 'username_taken', 'username ocupado (sin distinguir mayúsculas)');
 select is((select count(*) from public.profiles where id = 'e0000000-0000-0000-0000-000000000005'), 0::bigint, 'los intentos fallidos no dejan perfiles a medias');
 

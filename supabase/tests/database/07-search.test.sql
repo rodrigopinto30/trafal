@@ -12,8 +12,8 @@ declare
   v_game uuid;
   v_version uuid;
 begin
-  insert into public.games (owner_id, title, short_description, genre_id, engine_id, tags)
-    values (p_owner, p_title, p_description, 'platformer', 'godot', p_tags)
+  insert into public.games (owner_id, title, short_description, genre_id, tags)
+    values (p_owner, p_title, p_description, 'platformer', p_tags)
     returning id into v_game;
   insert into public.game_versions (game_id, number, label, status) values (v_game, 1, 'v1', 'ready') returning id into v_version;
   if p_status = 'published' then
@@ -45,7 +45,6 @@ select is(pg_temp.titles('gatos'), 'Gato Láser', 'busca en las etiquetas');
 select is(pg_temp.titles('asteroides'), 'Órbita Roja', 'busca en la descripción');
 select is(pg_temp.titles('espacio'), 'Sonidos del Espacio | Órbita Roja', 'lo que está en el título pesa más que lo que está en una etiqueta');
 select is(pg_temp.titles('ana'), 'Gato Láser | Sonidos del Espacio | Órbita Roja', 'busca por creador; a igual relevancia, el más jugado primero');
-select is(pg_temp.titles('godot'), 'Gato Láser | Sonidos del Espacio | Órbita Roja', 'busca por motor');
 select is(pg_temp.titles('secreta'), '', 'los borradores no aparecen en la búsqueda pública');
 select is(pg_temp.titles('orbita laser'), '', 'si falta una palabra, no hay resultado');
 select is(pg_temp.titles('zzzz'), '', 'sin coincidencias');

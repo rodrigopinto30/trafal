@@ -19,9 +19,16 @@ async function fillDetails(page: Page, title: string) {
   await page.getByLabel("Título").fill(title);
   await page.getByLabel("Descripción corta").fill("Corré por la luna y esquivá los cráteres.");
   await page.getByLabel("Género").selectOption("platformer");
-  await page.getByLabel("Motor").selectOption("godot");
   await page.getByLabel("Etiquetas").fill("pixel art, Retro, relax");
   await page.getByLabel("Cómo se juega").fill("Flechas para moverte y espacio para saltar.");
+}
+
+async function goToUpload(page: Page) {
+  const open = page.getByRole("button", { name: "Abrir menú" });
+  if (await open.isVisible()) await open.click();
+  await page.getByRole("navigation", { name: /Principal|Menú móvil/ }).getByRole("link", { name: "Subir juego" }).click();
+  await expect(page).toHaveURL(/\/games\/new$/);
+  await page.waitForLoadState("networkidle");
 }
 
 async function attachZip(page: Page, name = "moon-runner.zip") {
@@ -40,8 +47,6 @@ test("subir un juego completo: queda como borrador en revisión y solo lo ve su 
   await gotoReady(page, "/games/new");
   await expect(page.getByRole("heading", { level: 1, name: "Subir un juego" })).toBeVisible();
   await fillDetails(page, "Moon Runner");
-  await page.getByRole("checkbox", { name: "Funciona en celular" }).check();
-  await page.getByRole("checkbox", { name: "Es mi primer juego" }).check();
   await page.getByLabel("Pregunta 1").fill("¿El salto se siente bien?");
   await page.getByLabel("Pregunta 2").fill("¿Qué cambiarías?");
   await attachZip(page);
@@ -92,6 +97,40 @@ test("subir un juego completo: queda como borrador en revisión y solo lo ve su 
   await stranger.close();
 });
 
+test("el formulario solo pide lo del juego web: no pregunta por motor, celular, proporción ni primer juego", async ({ page }, testInfo) => {
+  test.setTimeout(120_000);
+  await signUp(page, "soloweb", testInfo.project.name);
+  await gotoReady(page, "/games/new");
+  await expect(page.getByLabel("Título")).toBeVisible();
+  await expect(page.getByLabel("Género")).toBeVisible();
+  for (const label of [/Motor/, /Proporción/]) await expect(page.getByLabel(label)).toHaveCount(0);
+  for (const name of [/celular/i, /primer juego/i]) await expect(page.getByRole("checkbox", { name })).toHaveCount(0);
+});
+
+test("al terminar de subir, la gestión se abre arriba, y al volver a «Subir juego» el formulario está vacío", async ({ page }, testInfo) => {
+  test.setTimeout(180_000);
+  await signUp(page, "reinicio", testInfo.project.name);
+  await gotoReady(page, "/games/new");
+  await fillDetails(page, "Juego de una sola vez");
+  await attachZip(page);
+  await page.getByRole("button", { name: "Subir juego" }).click();
+
+  await expect(page).toHaveURL(/\/games\/[a-z0-9]+\/manage$/, { timeout: 60_000 });
+  const title = page.getByRole("heading", { level: 1, name: "Juego de una sola vez" });
+  await expect(title).toBeVisible();
+  await expect(title).toBeInViewport({ ratio: 1 });
+  expect(await page.evaluate(() => window.scrollY)).toBeLessThan(80);
+
+  await goToUpload(page);
+  await expect(page.getByLabel("Título")).toHaveValue("");
+  await expect(page.getByLabel("Descripción corta")).toHaveValue("");
+  await expect(page.getByLabel("Género")).toHaveValue("");
+  await expect(page.getByLabel("Etiquetas")).toHaveValue("");
+  await expect(page.getByLabel("Cómo se juega")).toHaveValue("");
+  await expect(page.getByText("moon-runner.zip ·")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Subir juego" })).toBeEnabled();
+});
+
 test("el servidor valida otra vez: campos vacíos, imágenes falsas y diminutas se rechazan sin crear nada", async ({ page }, testInfo) => {
   test.setTimeout(180_000);
   const username = await signUp(page, "valida", testInfo.project.name);
@@ -101,7 +140,6 @@ test("el servidor valida otra vez: campos vacíos, imágenes falsas y diminutas 
   await page.getByRole("button", { name: "Subir juego" }).click();
   await expect(page.getByText("Poné un título de hasta 80 caracteres.")).toBeVisible();
   await expect(page.getByText("Elegí un género de la lista.")).toBeVisible();
-  await expect(page.getByText("Elegí un motor de la lista.")).toBeVisible();
   await expect(page.getByLabel("Título")).toBeFocused();
 
   await fillDetails(page, "Con imágenes malas");

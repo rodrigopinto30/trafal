@@ -6,17 +6,17 @@ declare
 begin
   for u in
     select * from (values
-      ('5eed0000-0000-4000-8000-000000000001'::uuid, 'valen@trafal.test',  'valen_makes',   'Valentina Ruiz', 'user',  'Aprendiendo Godot de noche. Me encantan los plataformas difíciles.',        'Córdoba',      'AR', array['godot'],             array['platformer', 'roguelike', 'puzzle']),
-      ('5eed0000-0000-4000-8000-000000000002'::uuid, 'mateo@trafal.test',  'mateo_g',       'Mateo G.',       'user',  'De Scratch a Phaser. Hago juegos de naves con música chiptune.',            'Rosario',      'AR', array['phaser', 'scratch'], array['arcade', 'shooter', 'rhythm']),
-      ('5eed0000-0000-4000-8000-0000000000ad'::uuid, 'admin@trafal.test',  'equipo_trafal', 'Equipo Trafal',  'admin', 'Cuenta de moderación del equipo.',                                          null,           null, array[]::text[],            array[]::text[]),
-      ('5eed0000-0000-4000-8000-000000000003'::uuid, 'sofi@trafal.test',   'sofi_pixels',   'Sofi Pixels',    'user',  'Puzzles de física y planetas. Programo después del laburo.',                'Mendoza',      'AR', array['unity'],             array['puzzle', 'simulation']),
-      ('5eed0000-0000-4000-8000-000000000004'::uuid, 'nacho@trafal.test',  'nachodev',      'Nacho Dev',      'user',  'Historias interactivas con olor a mar y a mate.',                           'Montevideo',   'UY', array['twine'],             array['narrative', 'adventure']),
-      ('5eed0000-0000-4000-8000-000000000005'::uuid, 'juli@trafal.test',   'julistudio',    'Juli Studio',    'user',  'Hago juegos con gatos. Sí, otra vez gatos.',                                'La Plata',     'AR', array['gamemaker'],         array['puzzle', 'roguelike']),
-      ('5eed0000-0000-4000-8000-000000000006'::uuid, 'caro@trafal.test',   'caro_pixels',   'Caro Pixels',    'user',  'Fantasy console y mucho pan dulce.',                                        'Santiago',     'CL', array['pico8'],             array['cozy', 'adventure']),
-      ('5eed0000-0000-4000-8000-000000000007'::uuid, 'tomi@trafal.test',   'tomi_dev',      'Tomi',           'user',  'Mazmorras y pasillos raros, siempre en Godot.',                             'Bogotá',       'CO', array['godot'],             array['roguelike', 'horror']),
-      ('5eed0000-0000-4000-8000-000000000008'::uuid, 'male@trafal.test',   'male_beats',    'Male Beats',     'user',  'Ritmo, chiptune y tentáculos.',                                             'Buenos Aires', 'AR', array['phaser'],            array['rhythm', 'arcade']),
-      ('5eed0000-0000-4000-8000-000000000009'::uuid, 'santi@trafal.test',  'santi_unity',   'Santi',          'user',  'Autos de cartón y física divertida.',                                       'Lima',         'PE', array['unity'],             array['racing', 'sports'])
-    ) as t(id, email, username, display_name, role, bio, city, country, engines, favorite_genres)
+      ('5eed0000-0000-4000-8000-000000000001'::uuid, 'valen@trafal.test',  'valen_makes',   'Valentina Ruiz', 'user',  'Aprendiendo Godot de noche. Me encantan los plataformas difíciles.',        'Córdoba',      'AR', array['platformer', 'roguelike', 'puzzle']),
+      ('5eed0000-0000-4000-8000-000000000002'::uuid, 'mateo@trafal.test',  'mateo_g',       'Mateo G.',       'user',  'De Scratch a Phaser. Hago juegos de naves con música chiptune.',            'Rosario',      'AR', array['arcade', 'shooter', 'rhythm']),
+      ('5eed0000-0000-4000-8000-0000000000ad'::uuid, 'admin@trafal.test',  'equipo_trafal', 'Equipo Trafal',  'admin', 'Cuenta de moderación del equipo.',                                          null,           null, array[]::text[]),
+      ('5eed0000-0000-4000-8000-000000000003'::uuid, 'sofi@trafal.test',   'sofi_pixels',   'Sofi Pixels',    'user',  'Puzzles de física y planetas. Programo después del laburo.',                'Mendoza',      'AR', array['puzzle', 'simulation']),
+      ('5eed0000-0000-4000-8000-000000000004'::uuid, 'nacho@trafal.test',  'nachodev',      'Nacho Dev',      'user',  'Historias interactivas con olor a mar y a mate.',                           'Montevideo',   'UY', array['narrative', 'adventure']),
+      ('5eed0000-0000-4000-8000-000000000005'::uuid, 'juli@trafal.test',   'julistudio',    'Juli Studio',    'user',  'Hago juegos con gatos. Sí, otra vez gatos.',                                'La Plata',     'AR', array['puzzle', 'roguelike']),
+      ('5eed0000-0000-4000-8000-000000000006'::uuid, 'caro@trafal.test',   'caro_pixels',   'Caro Pixels',    'user',  'Fantasy console y mucho pan dulce.',                                        'Santiago',     'CL', array['cozy', 'adventure']),
+      ('5eed0000-0000-4000-8000-000000000007'::uuid, 'tomi@trafal.test',   'tomi_dev',      'Tomi',           'user',  'Mazmorras y pasillos raros, siempre en Godot.',                             'Bogotá',       'CO', array['roguelike', 'horror']),
+      ('5eed0000-0000-4000-8000-000000000008'::uuid, 'male@trafal.test',   'male_beats',    'Male Beats',     'user',  'Ritmo, chiptune y tentáculos.',                                             'Buenos Aires', 'AR', array['rhythm', 'arcade']),
+      ('5eed0000-0000-4000-8000-000000000009'::uuid, 'santi@trafal.test',  'santi_unity',   'Santi',          'user',  'Autos de cartón y física divertida.',                                       'Lima',         'PE', array['racing', 'sports'])
+    ) as t(id, email, username, display_name, role, bio, city, country, favorite_genres)
   loop
     insert into auth.users (
       instance_id, id, aud, role, email, encrypted_password, email_confirmed_at,
@@ -37,8 +37,8 @@ begin
       'email', now(), now(), now()
     );
 
-    insert into public.profiles (id, username, display_name, bio, city, country, engines, favorite_genres)
-    values (u.id, u.username, u.display_name, u.bio, u.city, u.country, u.engines, u.favorite_genres);
+    insert into public.profiles (id, username, display_name, bio, city, country, favorite_genres)
+    values (u.id, u.username, u.display_name, u.bio, u.city, u.country, u.favorite_genres);
 
     insert into public.profile_private (id, role, locale, terms_version, terms_accepted_at, age_confirmed_at)
     values (u.id, u.role, 'es', '2026-11-10', now(), now());

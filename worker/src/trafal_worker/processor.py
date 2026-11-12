@@ -7,8 +7,8 @@ from pathlib import Path
 
 from .config import WorkerConfig
 from .content_types import describe_file
-from .engine import READ_LIMIT_BYTES, EngineDetection, detect_engine
 from .errors import ErrorCode, UploadRejected
+from .isolation import READ_LIMIT_BYTES, needs_cross_origin_isolation
 from .rules import UploadRules
 from .sink import DirectorySink
 from .storage import ObjectStorage
@@ -27,7 +27,7 @@ class Processed:
     """A version that passed every check and whose files are published."""
 
     report: ValidationReport
-    engine: EngineDetection
+    needs_isolation: bool
     zip_bytes: int
 
 
@@ -103,9 +103,9 @@ def process_version(
 ) -> Processed:
     """
     Turns an uploaded zip into a published game: checks the real size, downloads it, validates it while extracting into
-    a temporary directory, detects the engine and only then copies the files to the games bucket. Nothing reaches that
-    bucket unless every check passed. Raises UploadRejected when the zip breaks a rule and TransientFailure for
-    infrastructure errors.
+    a temporary directory, checks whether it needs cross-origin isolation and only then copies the files to the games
+    bucket. Nothing reaches that bucket unless every check passed. Raises UploadRejected when the zip breaks a rule and
+    TransientFailure for infrastructure errors.
     """
     config.work_dir.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=config.work_dir, prefix="version-") as scratch:
@@ -116,6 +116,6 @@ def process_version(
         with DirectorySink(extracted) as sink:
             report = validate_archive(zip_path, rules, sink)
         files = list(report.files)
-        engine = detect_engine(files, _read_text(extracted, files))
+        needs_isolation = needs_cross_origin_isolation(files, _read_text(extracted, files))
         _publish(claimed, files, extracted, storage, config, rules)
-        return Processed(report=report, engine=engine, zip_bytes=report.zip_bytes)
+        return Processed(report=report, needs_isolation=needs_isolation, zip_bytes=report.zip_bytes)

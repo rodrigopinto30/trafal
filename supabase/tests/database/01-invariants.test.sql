@@ -55,7 +55,7 @@ select is(
         or column_name like '%\_at' escape '\'
       )
       and not (table_name = 'games' and column_name = 'status' and privilege_type = 'UPDATE')
-      and not (table_name = 'notifications' and column_name = 'read_at' and privilege_type = 'UPDATE')
+      and not (table_name = 'notifications' and column_name in ('read_at', 'seen_at') and privilege_type = 'UPDATE')
   ),
   '',
   'ninguna columna protegida (rol, estado, contadores, is_helpful, versión activa, fechas...) es escribible desde el cliente'

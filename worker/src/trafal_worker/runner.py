@@ -53,16 +53,14 @@ class Worker:
             report.file_count,
             report.unpacked_bytes,
             processed.zip_bytes,
-            processed.engine.engine,
-            processed.engine.needs_isolation,
+            processed.needs_isolation,
             list(report.scan_flags),
         )
         self._discard_upload(claimed)
         LOGGER.info(
-            "published %s v%s (%s, %d files)",
+            "published %s v%s (%d files)",
             claimed.public_id,
             claimed.version_number,
-            processed.engine.engine,
             report.file_count,
         )
         return True

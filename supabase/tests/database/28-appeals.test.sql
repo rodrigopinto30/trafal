@@ -10,9 +10,9 @@ select tests.create_profile('b0000000-0000-0000-0000-000000000002', 'bruno');
 select tests.create_profile('c0000000-0000-0000-0000-000000000003', 'carla');
 select tests.create_profile('d0000000-0000-0000-0000-0000000000ad', 'admina', 'admin');
 
-insert into public.games (id, owner_id, title, short_description, genre_id, engine_id) values
-  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Ana''s game', 'A nice game', 'puzzle', 'phaser'),
-  ('11111111-1111-1111-1111-111111111102', 'a0000000-0000-0000-0000-000000000001', 'Ana''s other game', 'Another', 'puzzle', 'phaser');
+insert into public.games (id, owner_id, title, short_description, genre_id) values
+  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Ana''s game', 'A nice game', 'puzzle'),
+  ('11111111-1111-1111-1111-111111111102', 'a0000000-0000-0000-0000-000000000001', 'Ana''s other game', 'Another', 'puzzle');
 insert into public.game_versions (id, game_id, number, label, status) values
   ('22222222-2222-2222-2222-222222222201', '11111111-1111-1111-1111-111111111101', 1, 'v1', 'ready'),
   ('22222222-2222-2222-2222-222222222202', '11111111-1111-1111-1111-111111111102', 1, 'v1', 'ready');
@@ -141,8 +141,8 @@ select is((select action || '|' || coalesce(reason, '') from public.moderation_l
 
 -- ------------------------------------------------------------------ the limit of open appeals
 select tests.clear_authentication();
-insert into public.games (id, owner_id, title, short_description, genre_id, engine_id)
-select ('aaaaaaaa-0000-0000-0000-00000000000' || n)::uuid, 'c0000000-0000-0000-0000-000000000003', 'Carla ' || n, 'x', 'puzzle', 'phaser' from generate_series(1, 6) n;
+insert into public.games (id, owner_id, title, short_description, genre_id)
+select ('aaaaaaaa-0000-0000-0000-00000000000' || n)::uuid, 'c0000000-0000-0000-0000-000000000003', 'Carla ' || n, 'x', 'puzzle' from generate_series(1, 6) n;
 update public.games set status = 'hidden' where owner_id = 'c0000000-0000-0000-0000-000000000003';
 insert into public.moderation_log (admin_id, admin_username, action, target_type, target_id, reason)
 select 'd0000000-0000-0000-0000-0000000000ad', 'admina', 'hide_game', 'game', id, 'Test' from public.games where owner_id = 'c0000000-0000-0000-0000-000000000003';

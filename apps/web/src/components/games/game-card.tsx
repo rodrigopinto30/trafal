@@ -15,12 +15,7 @@ type GameCardProps = {
 
 export async function GameCard({ game, rank, headingLevel = 3 }: GameCardProps) {
   const Heading = headingLevel === 3 ? "h3" : "h4";
-  const [t, tGenres, tEngines, locale] = await Promise.all([
-    getTranslations("games"),
-    getTranslations("genres"),
-    getTranslations("engines"),
-    getLocale(),
-  ]);
+  const [t, tGenres, locale] = await Promise.all([getTranslations("games"), getTranslations("genres"), getLocale()]);
 
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/8 bg-card transition-shadow duration-200 focus-within:shadow-card-hover hover:shadow-card-hover">
@@ -53,11 +48,6 @@ export async function GameCard({ game, rank, headingLevel = 3 }: GameCardProps) 
           {game.genre_id ? (
             <li>
               <Badge variant="cyan">{tGenres(game.genre_id as Parameters<typeof tGenres>[0])}</Badge>
-            </li>
-          ) : null}
-          {game.engine_id ? (
-            <li>
-              <Badge variant="soft">{tEngines(game.engine_id as Parameters<typeof tEngines>[0])}</Badge>
             </li>
           ) : null}
         </ul>

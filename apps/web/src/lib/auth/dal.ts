@@ -19,7 +19,7 @@ export const getAuthUser = cache(async (): Promise<User | null> => {
 });
 
 export const PROFILE_COLUMNS =
-  "id, username, display_name, avatar_path, bio, city, country, engines, favorite_genres, followers_count, following_count, created_at" as const;
+  "id, username, display_name, avatar_path, bio, city, country, favorite_genres, followers_count, following_count, created_at" as const;
 
 /** Perfil de la persona con sesión iniciada, o null si no hay sesión o todavía no hizo el onboarding. */
 export const getMyProfile = cache(async () => {

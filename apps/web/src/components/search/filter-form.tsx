@@ -12,7 +12,7 @@ type Props = { kind: "explore" | "creators"; label: string; action: string; chil
 /**
  * The form of the filters of the explore and creators pages. It is a normal GET form (it has an address and fields), but when it is sent it builds the
  * address from the checked values instead of the raw fields, so a link never carries empty or default parameters
- * («/?genre=arcade», not «/?genre=arcade&engine=&sort=recent») and any change starts again from the first page.
+ * («/?genre=arcade», not «/?genre=arcade&sort=recent») and any change starts again from the first page.
  */
 export function FilterForm({ kind, label, action, children }: Props) {
   const router = useRouter();
@@ -25,8 +25,8 @@ export function FilterForm({ kind, label, action, children }: Props) {
       const value = data.get(name);
       return typeof value === "string" ? value : undefined;
     };
-    const raw = { q: text("q"), genre: text("genre"), engine: text("engine"), sort: text("sort") };
-    const href = kind === "creators" ? creatorsHref(parseCreatorsQuery(raw)) : exploreHref(parseExploreQuery({ ...raw, mobile: text("mobile") }));
+    const raw = { q: text("q"), genre: text("genre"), sort: text("sort") };
+    const href = kind === "creators" ? creatorsHref(parseCreatorsQuery(raw)) : exploreHref(parseExploreQuery(raw));
     router.push(localizePath(locale, href));
   }
 

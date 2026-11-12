@@ -10,12 +10,9 @@ export type GameSummary = {
   title: string;
   short_description: string;
   genre_id: string | null;
-  engine_id: string | null;
   tags: string[];
   cover_path: string | null;
-  works_on_mobile: boolean;
   is_first_game: boolean;
-  display_ratio: string;
   play_count: number;
   like_count: number;
   comment_count: number;

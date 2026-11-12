@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import en from "@/messages/en.json";
 import es from "@/messages/es.json";
-import { ENGINE_IDS, GENRE_IDS } from "@/lib/profile/catalog";
+import { GENRE_IDS } from "@/lib/profile/catalog";
 import { parse } from "./format";
 
 type Json = { [key: string]: string | Json };
@@ -74,8 +74,7 @@ describe("mensajes es/en", () => {
     expect(offenders).toEqual([]);
   });
 
-  it("los catálogos tienen un nombre para cada motor y género (ids verificados contra las migraciones en catalog.test.ts)", () => {
-    expect(Object.keys(es.engines).sort()).toEqual([...ENGINE_IDS].sort());
+  it("los catálogos tienen un nombre para cada género (ids verificados contra las migraciones en catalog.test.ts)", () => {
     expect(Object.keys(es.genres).sort()).toEqual([...GENRE_IDS].sort());
   });
 });

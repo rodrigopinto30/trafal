@@ -21,10 +21,14 @@ export type NotificationItem = {
 const SELECT =
   "id, type, read_at, created_at, data, actor:profiles!notifications_actor_id_fkey(username, display_name), game:games!notifications_game_id_fkey(public_id, title), post:posts!notifications_post_id_fkey(id, body), comment:comments!notifications_comment_id_fkey(id, body, post_id, game:games!comments_game_id_fkey(public_id)), version:game_versions!notifications_version_id_fkey(label)";
 
-/** How many notifications the signed-in person has not read (the number on the bell). Zero without a session: the database only shows their own. */
-export async function countUnreadNotifications(): Promise<number> {
+/**
+ * How many notifications the signed-in person has neither seen nor read (the number on the bell). Opening the bell's menu sees them,
+ * so the number goes away, but they stay unread in the notifications screen until they are opened. Zero without a session: the
+ * database only shows their own.
+ */
+export async function countUnseenNotifications(): Promise<number> {
   const supabase = await createClient();
-  const { count } = await supabase.from("notifications").select("id", { count: "exact", head: true }).is("read_at", null);
+  const { count } = await supabase.from("notifications").select("id", { count: "exact", head: true }).is("seen_at", null).is("read_at", null);
   return count ?? 0;
 }
 

@@ -13,7 +13,7 @@ function publishableKey(): string {
 const API = process.env.E2E_SUPABASE_URL ?? "http://127.0.0.1:54321";
 
 /** Lee columnas públicas de un perfil directo de la API REST (lo mismo que vería cualquier visitante). */
-export async function publicProfile(username: string, columns = "avatar_path,favorite_genres,engines"): Promise<Record<string, unknown>> {
+export async function publicProfile(username: string, columns = "avatar_path,favorite_genres"): Promise<Record<string, unknown>> {
   const response = await fetch(`${API}/rest/v1/profiles?username=eq.${encodeURIComponent(username)}&select=${columns}`, {
     headers: { apikey: publishableKey() },
   });

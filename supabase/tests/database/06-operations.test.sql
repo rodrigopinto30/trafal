@@ -8,9 +8,9 @@ select tests.create_profile('b0000000-0000-0000-0000-000000000002', 'bruno');
 select tests.create_profile('d0000000-0000-0000-0000-0000000000ad', 'admina', 'admin');
 
 -- Preparación (como el sistema): un juego publicado de ana (su primer juego), un avance, un comentario.
-insert into public.games (id, owner_id, title, genre_id, engine_id, is_first_game) values
-  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Juego de Ana', 'puzzle', 'phaser', true),
-  ('11111111-1111-1111-1111-111111111102', 'b0000000-0000-0000-0000-000000000002', 'Juego de Bruno', 'arcade', 'godot', false);
+insert into public.games (id, owner_id, title, genre_id, is_first_game) values
+  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Juego de Ana', 'puzzle', true),
+  ('11111111-1111-1111-1111-111111111102', 'b0000000-0000-0000-0000-000000000002', 'Juego de Bruno', 'arcade', false);
 insert into public.game_versions (id, game_id, number, label, status) values
   ('22222222-2222-2222-2222-222222222201', '11111111-1111-1111-1111-111111111101', 1, 'v0.1', 'ready'),
   ('22222222-2222-2222-2222-222222222202', '11111111-1111-1111-1111-111111111102', 1, 'v0.1', 'ready');
@@ -133,7 +133,6 @@ select throws_ok($$ select * from public.plays $$, '42501', null, 'anon no lee p
 -- =================================================================== CATÁLOGOS
 select tests.authenticate_as('d0000000-0000-0000-0000-0000000000ad');
 select throws_ok($$ insert into public.genres (id) values ('nuevo') $$, '42501', null, 'los catálogos se cambian con migraciones, no desde la app (ni la admin)');
-select throws_ok($$ update public.engines set sort = 0 $$, '42501', null, 'ni se reordenan');
 
 select * from finish();
 rollback;

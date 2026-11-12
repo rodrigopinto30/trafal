@@ -9,8 +9,8 @@ select tests.create_profile('d0000000-0000-0000-0000-0000000000ad', 'admina', 'a
 
 -- ------------------------------------------------------------------ crear (ana)
 select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
-select lives_ok($$ insert into public.games (owner_id, title, short_description, genre_id, engine_id, tags)
-                   values ('a0000000-0000-0000-0000-000000000001', '  Luciérnaga Valiente ', 'Plataformas corto en una cueva', 'platformer', 'godot', array['  Retro ', 'RETRO', 'pixel', '']) $$,
+select lives_ok($$ insert into public.games (owner_id, title, short_description, genre_id, tags)
+                   values ('a0000000-0000-0000-0000-000000000001', '  Luciérnaga Valiente ', 'Plataformas corto en una cueva', 'platformer', array['  Retro ', 'RETRO', 'pixel', '']) $$,
                 'ana crea un juego');
 select is((select status from public.games where owner_id = 'a0000000-0000-0000-0000-000000000001'), 'draft', 'nace como borrador');
 select is((select title from public.games where owner_id = 'a0000000-0000-0000-0000-000000000001'), 'Luciérnaga Valiente', 'el título se guarda sin espacios sobrantes');
@@ -19,7 +19,6 @@ select matches((select public_id from public.games where owner_id = 'a0000000-00
 select ok((select search_doc @@ to_tsquery('simple', 'luciernaga') from public.games where owner_id = 'a0000000-0000-0000-0000-000000000001'), 'el buscador ignora tildes');
 select ok((select search_doc @@ to_tsquery('simple', 'plataformas') from public.games where owner_id = 'a0000000-0000-0000-0000-000000000001'), 'busca por género (en español)');
 select ok((select search_doc @@ to_tsquery('simple', 'platformer') from public.games where owner_id = 'a0000000-0000-0000-0000-000000000001'), 'busca por género (en inglés)');
-select ok((select search_doc @@ to_tsquery('simple', 'godot') from public.games where owner_id = 'a0000000-0000-0000-0000-000000000001'), 'busca por motor');
 select ok((select search_doc @@ to_tsquery('simple', 'ana') from public.games where owner_id = 'a0000000-0000-0000-0000-000000000001'), 'busca por creador');
 
 select throws_ok($$ insert into public.games (owner_id, title) values ('b0000000-0000-0000-0000-000000000002', 'A nombre de bruno') $$, '42501', null, 'ana NO crea juegos a nombre de otra persona');
@@ -27,7 +26,6 @@ select throws_ok($$ insert into public.games (owner_id, title, status) values ('
 select throws_ok($$ insert into public.games (owner_id, title, like_count) values ('a0000000-0000-0000-0000-000000000001', 'Con likes', 500) $$, '42501', null, 'los contadores no se escriben');
 select throws_ok($$ insert into public.games (owner_id, title, public_id) values ('a0000000-0000-0000-0000-000000000001', 'Con id elegido', 'admin') $$, '42501', null, 'el subdominio (public_id) no se elige');
 select throws_ok($$ insert into public.games (owner_id, title, tags) values ('a0000000-0000-0000-0000-000000000001', 'Muchas tags', array['a1','a2','a3','a4','a5','a6','a7','a8','a9']) $$, 'P0001', 'too_many_tags', 'máximo 8 etiquetas');
-select throws_ok($$ insert into public.games (owner_id, title, display_ratio) values ('a0000000-0000-0000-0000-000000000001', 'Ratio raro', '21:9') $$, '23514', null, 'relación de aspecto inválida');
 select throws_ok($$ insert into public.games (owner_id, title, external_url) values ('a0000000-0000-0000-0000-000000000001', 'Link malo', 'javascript:alert(1)') $$, '23514', null, 'el link externo solo admite http(s)');
 select lives_ok($$ insert into public.games (owner_id, title, external_url) values ('a0000000-0000-0000-0000-000000000001', 'Link bueno', 'https://miusuario.itch.io/juego') $$, 'link externo válido');
 select throws_ok($$ insert into public.games (owner_id, title, genre_id) values ('a0000000-0000-0000-0000-000000000001', 'Género falso', 'inexistente') $$, '23503', null, 'el género debe existir');

@@ -19,10 +19,10 @@ import type {
 } from "./types";
 
 const GAME_COLUMNS =
-  "id, public_id, title, short_description, genre_id, engine_id, tags, cover_path, works_on_mobile, is_first_game, display_ratio, play_count, like_count, comment_count, published_at, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
+  "id, public_id, title, short_description, genre_id, tags, cover_path, is_first_game, play_count, like_count, comment_count, published_at, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
 
 const GAME_DETAIL_COLUMNS =
-  "id, public_id, title, short_description, genre_id, engine_id, tags, cover_path, works_on_mobile, is_first_game, display_ratio, play_count, like_count, comment_count, published_at, controls, save_count, active_version_id, owner_id, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
+  "id, public_id, title, short_description, genre_id, tags, cover_path, is_first_game, play_count, like_count, comment_count, published_at, controls, save_count, active_version_id, owner_id, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
 
 const POST_COLUMNS =
   "id, kind, body, highlight, created_at, like_count, comment_count, author_id, author:profiles!posts_author_id_fkey(username, display_name, avatar_path), game:games!posts_game_id_fkey(public_id, title), media:post_media(id, kind, path, mime, width, height, alt_text, position)" as const;
@@ -31,7 +31,7 @@ const COMMENT_COLUMNS =
   "id, question_id, author_id, updated_at, parent_id, body, label, is_helpful, created_at, author:profiles!comments_author_id_fkey(username, display_name, avatar_path)" as const;
 
 const FEATURED_COLUMNS =
-  "quote, game:games!featured_games_game_id_fkey(id, public_id, title, short_description, genre_id, engine_id, tags, cover_path, works_on_mobile, is_first_game, display_ratio, play_count, like_count, comment_count, published_at, status, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path))" as const;
+  "quote, game:games!featured_games_game_id_fkey(id, public_id, title, short_description, genre_id, tags, cover_path, is_first_game, play_count, like_count, comment_count, published_at, status, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path))" as const;
 
 const PUBLISHED_GAMES_LIMIT = 200;
 
@@ -224,8 +224,6 @@ export async function exploreGames(query: ExploreQuery, limit: number): Promise<
   const { data } = await supabase.rpc("explore_games", {
     p_query: query.q ?? undefined,
     p_genre: query.genre ?? undefined,
-    p_engine: query.engine ?? undefined,
-    p_mobile_only: query.mobile,
     p_sort: query.sort,
     p_limit: limit,
     p_offset: (query.page - 1) * limit,
@@ -251,7 +249,6 @@ export type CreatorCard = {
   bio: string;
   city: string | null;
   country: string | null;
-  engines: string[];
   favorite_genres: string[];
   followers_count: number;
   games_count: number;
@@ -264,7 +261,6 @@ export async function exploreCreators(query: CreatorsQuery, limit: number): Prom
   const supabase = await createClient();
   const { data } = await supabase.rpc("explore_creators", {
     p_query: query.q ?? undefined,
-    p_engine: query.engine ?? undefined,
     p_genre: query.genre ?? undefined,
     p_sort: query.sort,
     p_limit: limit,
@@ -275,7 +271,7 @@ export async function exploreCreators(query: CreatorsQuery, limit: number): Prom
 
   const ids = rows.map((row) => row.id);
   const [profiles, games] = await Promise.all([
-    supabase.from("profiles").select("id, username, display_name, avatar_path, bio, city, country, engines, favorite_genres, followers_count").in("id", ids),
+    supabase.from("profiles").select("id, username, display_name, avatar_path, bio, city, country, favorite_genres, followers_count").in("id", ids),
     supabase.from("games").select("owner_id").eq("status", "published").in("owner_id", ids),
   ]);
   const gamesBy = new Map<string, number>();
@@ -338,7 +334,6 @@ export type OwnGame = {
   public_id: string;
   title: string;
   status: string;
-  works_on_mobile: boolean;
   active_version_id: string | null;
 };
 
@@ -359,7 +354,7 @@ export async function findOwnGame(publicId: string, ownerId: string): Promise<Ow
   const supabase = await createClient();
   const { data } = await supabase
     .from("games")
-    .select("id, public_id, title, status, works_on_mobile, active_version_id")
+    .select("id, public_id, title, status, active_version_id")
     .eq("public_id", publicId)
     .eq("owner_id", ownerId)
     .maybeSingle();
@@ -381,7 +376,7 @@ export async function listOwnUnpublishedGames(ownerId: string): Promise<OwnGame[
   const supabase = await createClient();
   const { data } = await supabase
     .from("games")
-    .select("id, public_id, title, status, works_on_mobile, active_version_id")
+    .select("id, public_id, title, status, active_version_id")
     .eq("owner_id", ownerId)
     .neq("status", "published")
     .order("created_at", { ascending: false });

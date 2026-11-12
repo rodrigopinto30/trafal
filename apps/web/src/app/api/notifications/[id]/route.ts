@@ -3,6 +3,7 @@ import { localizePath } from "@/i18n/path";
 import { publicEnv } from "@/lib/env";
 import { notificationHref } from "@/lib/notifications/href";
 import { findNotification } from "@/lib/notifications/queries";
+import { readMarkNow } from "@/lib/notifications/read-mark";
 import { createClient } from "@/lib/supabase/server";
 import { parseLocale } from "@/lib/validation/common";
 import { parseNotificationId } from "@/lib/validation/notifications";
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
   let path = "/notifications";
   if (item) {
     const supabase = await createClient();
-    await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", item.id).is("read_at", null);
+    await supabase.from("notifications").update(readMarkNow()).eq("id", item.id).is("read_at", null);
     path = notificationHref(item) ?? path;
   }
   const response = NextResponse.redirect(new URL(localizePath(locale, path), publicEnv.siteUrl), 307);

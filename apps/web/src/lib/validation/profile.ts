@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { AVATAR_FORMATS, MAX_AVATAR_BYTES } from "@/lib/media/avatar";
-import { ENGINE_IDS, GENRE_IDS, MAX_ENGINES, isCountryCode } from "@/lib/profile/catalog";
+import { GENRE_IDS, isCountryCode } from "@/lib/profile/catalog";
 import { checkUsernameFormat, normalizeUsername } from "@/lib/username";
 import { localeSchema } from "./common";
 import { charLength, sanitizeLine, sanitizeMultiline, unique } from "./text";
@@ -19,8 +19,6 @@ export const SETTINGS_FORM_ERROR_KEYS = [
   "bioTooLong",
   "cityTooLong",
   "invalidCountry",
-  "invalidEngine",
-  "tooManyEngines",
   "invalidGenre",
   "generic",
 ] as const;
@@ -51,14 +49,13 @@ export const onboardingSchema = z.object({
   displayName: displayNameSchema,
 });
 
-/** Lista de ids de un catálogo cerrado: sin repetidos, todos conocidos y, si corresponde, con tope. */
-function catalogList(allowed: readonly string[], invalidKey: string, limit?: { max: number; key: string }) {
+/** Lista de ids de un catálogo cerrado: sin repetidos y todos conocidos. */
+function catalogList(allowed: readonly string[], invalidKey: string) {
   return z
     .array(z.string())
     .transform((values) => unique(values.map((value) => value.trim())))
     .superRefine((values, ctx) => {
       if (values.some((value) => !allowed.includes(value))) ctx.addIssue({ code: "custom", message: invalidKey });
-      else if (limit && values.length > limit.max) ctx.addIssue({ code: "custom", message: limit.key });
     });
 }
 
@@ -78,7 +75,6 @@ export const updateProfileSchema = z.object({
     .transform((value) => sanitizeLine(value).toUpperCase())
     .refine((value) => value === "" || isCountryCode(value), "invalidCountry")
     .transform((value) => value || null),
-  engines: catalogList(ENGINE_IDS, "invalidEngine", { max: MAX_ENGINES, key: "tooManyEngines" }),
   favoriteGenres: catalogList(GENRE_IDS, "invalidGenre"),
 });
 

@@ -7,11 +7,11 @@ select tests.create_profile('a0000000-0000-0000-0000-000000000001', 'ana');
 select tests.create_profile('b0000000-0000-0000-0000-000000000002', 'bruno');
 
 select is(public.random_game(), null, 'with no games there is nothing to show');
-insert into public.games (id, public_id, owner_id, title, genre_id, engine_id) values
-  ('11111111-1111-1111-1111-111111111101', 'uno', 'a0000000-0000-0000-0000-000000000001', 'Uno', 'puzzle', 'phaser'),
-  ('11111111-1111-1111-1111-111111111102', 'dos', 'a0000000-0000-0000-0000-000000000001', 'Dos', 'puzzle', 'phaser'),
-  ('11111111-1111-1111-1111-111111111103', 'tres', 'b0000000-0000-0000-0000-000000000002', 'Tres', 'puzzle', 'phaser'),
-  ('11111111-1111-1111-1111-111111111104', 'borrador', 'b0000000-0000-0000-0000-000000000002', 'Borrador', 'puzzle', 'phaser');
+insert into public.games (id, public_id, owner_id, title, genre_id) values
+  ('11111111-1111-1111-1111-111111111101', 'uno', 'a0000000-0000-0000-0000-000000000001', 'Uno', 'puzzle'),
+  ('11111111-1111-1111-1111-111111111102', 'dos', 'a0000000-0000-0000-0000-000000000001', 'Dos', 'puzzle'),
+  ('11111111-1111-1111-1111-111111111103', 'tres', 'b0000000-0000-0000-0000-000000000002', 'Tres', 'puzzle'),
+  ('11111111-1111-1111-1111-111111111104', 'borrador', 'b0000000-0000-0000-0000-000000000002', 'Borrador', 'puzzle');
 insert into public.game_versions (id, game_id, number, label, status)
 select ('22222222-2222-2222-2222-2222222222' || right(g.id::text, 2))::uuid, g.id, 1, 'v1', 'ready' from public.games g where g.title <> 'Borrador';
 update public.games g set active_version_id = v.id, status = 'published' from public.game_versions v where v.game_id = g.id;

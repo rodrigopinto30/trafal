@@ -47,7 +47,7 @@
     "saved": "Guardados",
     "admin": "Administración",
     "notifications": "Notificaciones",
-    "notificationsUnread": "Notificaciones: {count} sin leer",
+    "notificationsNew": "Notificaciones: {count} nuevas",
     "notificationsMenu": {
       "title": "Notificaciones",
       "loading": "Cargando…",
@@ -121,7 +121,7 @@
     "steps": {
       "upload": {
         "title": "Subí tu juego",
-        "text": "Un .zip con tu build web y listo: se juega al instante en PC y celular. Godot, Unity, GameMaker, Phaser, PICO-8 o Scratch."
+        "text": "Un .zip con tu build web y listo: se juega al instante en el navegador."
       },
       "share": {
         "title": "Posteá tus avances",
@@ -271,7 +271,6 @@
     "unfollowAction": "Dejar de seguir a @{username}",
     "edit": "Editar perfil",
     "memberOf": "Usa",
-    "enginesLabel": "Motores que usa",
     "genresLabel": "Géneros que le gustan",
     "tabs": {
       "label": "Secciones del perfil",
@@ -304,7 +303,6 @@
   "games": {
     "play": "Jugar gratis",
     "firstGame": "Primer juego",
-    "mobileFriendly": "Funciona en celular",
     "plays": "{count, plural, one {# partida} other {# partidas}}",
     "likes": "{count, plural, one {# me gusta} other {# me gusta}}",
     "comments": "{count, plural, one {# comentario} other {# comentarios}}",
@@ -416,15 +414,10 @@
       "shortDescriptionHint": "Hasta 160 caracteres. Es lo que se ve en las tarjetas.",
       "genre": "Género",
       "genrePlaceholder": "Elegí un género",
-      "engine": "Motor",
-      "enginePlaceholder": "Elegí un motor",
       "tags": "Etiquetas",
       "tagsHint": "Separadas por comas, hasta 8 (por ejemplo: pixel art, retro, relax).",
       "controls": "Cómo se juega",
       "controlsHint": "Los controles y qué hay que hacer. Hasta 500 caracteres.",
-      "displayRatio": "Proporción de la pantalla",
-      "worksOnMobile": "Funciona en celular",
-      "isFirstGame": "Es mi primer juego",
       "question": "Pregunta {number}",
       "questionPlaceholder": "¿Qué te gustaría saber?",
       "zip": "Archivo .zip del juego",
@@ -433,12 +426,6 @@
       "coverHint": "PNG, JPG o WebP, de 320×180 como mínimo y hasta 5 MB.",
       "screenshots": "Capturas (opcional)",
       "screenshotsHint": "Hasta 6 imágenes PNG, JPG o WebP, de hasta 5 MB cada una."
-    },
-    "ratios": {
-      "16:9": "16:9 (horizontal)",
-      "4:3": "4:3 (clásica)",
-      "1:1": "1:1 (cuadrada)",
-      "9:16": "9:16 (vertical)"
     },
     "selectedFile": "{name} · {size}",
     "submit": "Subir juego",
@@ -455,11 +442,9 @@
       "invalidTitle": "Poné un título de hasta 80 caracteres.",
       "descriptionTooLong": "La descripción tiene que tener 160 caracteres o menos.",
       "invalidGenre": "Elegí un género de la lista.",
-      "invalidEngine": "Elegí un motor de la lista.",
       "tooManyTags": "Podés poner hasta 8 etiquetas.",
       "tagTooLong": "Cada etiqueta puede tener hasta 24 caracteres.",
       "controlsTooLong": "El texto de cómo se juega tiene que tener 500 caracteres o menos.",
-      "invalidRatio": "Elegí una proporción de la lista.",
       "tooManyQuestions": "Podés hacer hasta 3 preguntas.",
       "questionLength": "Cada pregunta tiene que tener entre 3 y 140 caracteres.",
       "zipRequired": "Elegí el archivo .zip de tu juego.",
@@ -471,7 +456,6 @@
       "coverAnimated": "La portada no puede ser animada.",
       "screenshotsInvalid": "Las capturas tienen que ser imágenes PNG, JPG o WebP válidas, sin animar, de hasta 5 MB y entre 320×180 y 4096×4096 píxeles.",
       "tooManyScreenshots": "Podés subir hasta 6 capturas.",
-      "firstGameTaken": "Ya marcaste otro juego como tu primero.",
       "dailyLimit": "Llegaste al límite de 5 subidas por día. Probá de nuevo mañana.",
       "accountRestricted": "Tu cuenta no puede subir juegos por ahora.",
       "unauthenticated": "Iniciá sesión para subir un juego.",
@@ -575,16 +559,13 @@
     "subtitleResults": "Resultados para «{query}»",
     "count": "{count, plural, one {# juego} other {# juegos}}",
     "emptyTitle": "No encontramos juegos para «{query}»",
-    "emptyText": "Probá con otra palabra, con un género (plataformas, terror, puzzle) o con el nombre de un motor.",
+    "emptyText": "Probá con otra palabra o con un género (plataformas, terror, puzzle).",
     "showAll": "Ver todos los juegos",
     "resultsTitle": "Resultados de la búsqueda",
     "gamesTitle": "Juegos",
     "filtersLabel": "Filtros",
     "genre": "Género",
     "genreAll": "Todos los géneros",
-    "engine": "Motor",
-    "engineAll": "Todos los motores",
-    "mobileOnly": "Solo los que funcionan en celular",
     "sort": "Ordenar por",
     "sorts": {
       "recent": "Más nuevos",
@@ -651,7 +632,7 @@
     },
     "profile": {
       "title": "Editar perfil",
-      "subtitle": "Contale a la comunidad quién sos y con qué hacés tus juegos.",
+      "subtitle": "Contale a la comunidad quién sos y qué géneros te gustan.",
       "aboutTitle": "Sobre vos",
       "displayName": "Nombre",
       "bio": "Bio",
@@ -659,8 +640,6 @@
       "city": "Ciudad",
       "country": "País",
       "countryPlaceholder": "Elegí tu país",
-      "enginesTitle": "Motores que usás",
-      "enginesHint": "Elegí hasta 8.",
       "genresTitle": "Géneros que te gustan",
       "genresHint": "Tocá los que te gusten. Si tocás uno de nuevo, se saca. Se muestran en tu perfil.",
       "genresCount": "{count, plural, =0 {Todavía no elegiste ninguno.} one {Elegiste 1 género.} other {Elegiste # géneros.}}",
@@ -709,8 +688,6 @@
       "bioTooLong": "La bio puede tener hasta 280 caracteres.",
       "cityTooLong": "La ciudad puede tener hasta 80 caracteres.",
       "invalidCountry": "Elegí un país de la lista.",
-      "invalidEngine": "Uno de los motores elegidos no es válido.",
-      "tooManyEngines": "Podés elegir hasta 8 motores.",
       "invalidGenre": "Uno de los géneros elegidos no es válido.",
       "generic": "No pudimos guardar los cambios. Probá de nuevo."
     },
@@ -761,17 +738,6 @@
       "text": "Se borraron tu perfil y todo lo que habías publicado. Gracias por haber pasado por Trafal.",
       "home": "Ir al inicio"
     }
-  },
-  "engines": {
-    "godot": "Godot",
-    "unity": "Unity",
-    "gamemaker": "GameMaker",
-    "phaser": "Phaser",
-    "pico8": "PICO-8",
-    "scratch": "Scratch",
-    "twine": "Twine",
-    "construct": "Construct",
-    "other": "Otro"
   },
   "genres": {
     "platformer": "Plataformas",
@@ -1013,8 +979,6 @@
     "searchLabel": "Buscar creadores",
     "searchPlaceholder": "Buscá por nombre o @usuario",
     "filtersLabel": "Buscar y filtrar creadores",
-    "engine": "Motor que usan",
-    "engineAll": "Todos los motores",
     "genre": "Género que les gusta",
     "genreAll": "Todos los géneros",
     "sort": "Ordenar por",
@@ -1182,7 +1146,7 @@
     },
     "featured": {
       "title": "Juego de la semana",
-      "subtitle": "El banner de la portada. Solo se puede elegir un juego publicado que su creador marcó como primer juego, y cada juego puede ser el de la semana una sola vez.",
+      "subtitle": "El banner de la portada. Solo se puede elegir un juego publicado que sea el primero de su creador, y cada juego puede ser el de la semana una sola vez.",
       "upcomingTitle": "Esta semana y las que vienen",
       "previousTitle": "Última elección anterior",
       "previousHint": "La portada la muestra mientras la semana actual no tenga una elegida.",
@@ -1424,6 +1388,19 @@
     "markRead": "Marcar como leída",
     "markAllRead": "Marcar todas como leídas",
     "dismiss": "Quitar",
+    "selectAll": "Seleccionar todas",
+    "selectedCount": "{count, plural, one {# seleccionada} other {# seleccionadas}}",
+    "selectOne": "Seleccionar: {text}",
+    "selectionActions": "Acciones sobre lo seleccionado",
+    "markSelectedRead": "Marcar como leídas",
+    "markSelectedUnread": "Marcar como no leídas",
+    "deleteSelected": "Eliminar",
+    "confirmDelete": "¿Eliminar {count, plural, one {# notificación} other {# notificaciones}}?",
+    "confirmDeleteYes": "Sí, eliminar",
+    "cancel": "Cancelar",
+    "markedRead": "{count, plural, one {Marcaste # notificación como leída} other {Marcaste # notificaciones como leídas}}",
+    "markedUnread": "{count, plural, one {Marcaste # notificación como no leída} other {Marcaste # notificaciones como no leídas}}",
+    "deleted": "{count, plural, one {Eliminaste # notificación} other {Eliminaste # notificaciones}}",
     "allRead": "Listo, marcaste todo como leído",
     "error": "No pudimos hacerlo. Probá de nuevo.",
     "older": "Ver más antiguas",

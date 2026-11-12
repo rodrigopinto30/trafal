@@ -24,10 +24,10 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 **Hoy**
 - **@usuario** de 3 a 30 caracteres con letras, números, punto y guion bajo. **No hace falta ningún número**: si está libre, es tuyo. Podés escribirlo con mayúsculas o acentos y se guarda normalizado («Ñandú» pasa a `nandu`). El punto no puede ir al principio, al final ni repetido.
 - **Disponibilidad en vivo** mientras escribís. Si el nombre está ocupado, te sugiere alternativas libres sin números (`_dev`, `_games`, `.codes`…). Hay una lista corta de nombres reservados para que nadie se haga pasar por el equipo. El @usuario no se puede cambiar, así los links nunca se rompen.
-- **Datos del perfil**: nombre (hasta 50 caracteres), bio (hasta 280), ciudad, país (lista de 249 países en tu idioma), hasta 8 **motores** que usás (Godot, Unity, GameMaker, Phaser, PICO-8, Scratch, Twine, Construct, Otro) y los **géneros de juegos que te gustan**.
+- **Datos del perfil**: nombre (hasta 50 caracteres), bio (hasta 280), ciudad, país (lista de 249 países en tu idioma) y los **géneros de juegos que te gustan**.
 - **Géneros favoritos**: una grilla de 17 géneros con ícono (plataformas, arcade, puzzle, narrativo, roguelike, cozy, terror, ritmo, carreras, aventura, estrategia, disparos, simulación, deportes, lucha, incremental y otro). Tocás uno para elegirlo y lo tocás de nuevo para sacarlo; se muestran en tu perfil.
 - **Foto de perfil** que reemplaza la letra de colores. Elegís una imagen (JPG, PNG o WebP, hasta 15 MB), la encuadrás arrastrándola con el dedo o el mouse, o con las flechas del teclado, y hacés zoom. Se guarda cuadrada de 256 px, en WebP (o JPEG si tu navegador no sabe generar WebP). El servidor la vuelve a verificar: formato real, tamaño exacto, que no sea animada y que no traiga datos escondidos. Al cambiarla o quitarla, la anterior se borra. Si no subís foto, tu avatar es tu inicial sobre un degradé único.
-- **Página pública del perfil**: avatar, nombre, @usuario, bio, ubicación, motores y géneros; contadores de seguidores, seguidos, juegos y avances; pestañas con **tus juegos** y **tus avances**. Si te falta la foto o los géneros, te aparece un aviso para terminar el perfil.
+- **Página pública del perfil**: avatar, nombre, @usuario, bio, ubicación y géneros; contadores de seguidores, seguidos, juegos y avances; pestañas con **tus juegos** y **tus avances**. Si te falta la foto o los géneros, te aparece un aviso para terminar el perfil.
 - **Seguir y dejar de seguir** a otras personas con respuesta inmediata y contador actualizado. Las listas de seguidores y seguidos muestran avatar, nombre y bio, y **un botón de seguir o dejar de seguir en cada persona** (menos en tu propia cuenta), sin tener que entrar a su perfil; al cambiarlo la persona queda en su lugar, así se puede volver a seguir. Quien no tiene cuenta, al tocar «Seguir» pasa por el login y vuelve al perfil.
 
 ### Avances
@@ -62,8 +62,8 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Buscar y filtrar (la antigua «Explorar»)
 
 **Hoy**
-- **Búsqueda y filtros en la portada** (`/?q=…`, para visitantes y para quien inició sesión; la pantalla «Explorar» ya no existe y `/explore` redirige a la portada con la misma búsqueda): la búsqueda de texto de siempre más **filtros por género, por motor y «solo los que funcionan en celular»**, y **orden** por más nuevos, **en tendencia** (más partidas en los últimos 7 días; a igual cantidad, más me gusta), más jugados y, cuando buscaste algo, más relevantes. Muestra la cantidad total de juegos que coinciden y pasa de a **24 por página**.
-- Todo queda en la dirección (`/?q=…&genre=…&engine=…&mobile=1&sort=…&page=…`): se puede compartir y funciona el botón de atrás. Los enlaces salen cortos (sin parámetros vacíos ni por defecto), cambiar un filtro vuelve a la primera página, buscar otro texto **conserva los filtros** y cualquier valor raro en la dirección se ignora.
+- **Búsqueda y filtros en la portada** (`/?q=…`, para visitantes y para quien inició sesión; la pantalla «Explorar» ya no existe y `/explore` redirige a la portada con la misma búsqueda): la búsqueda de texto de siempre más **filtro por género**, y **orden** por más nuevos, **en tendencia** (más partidas en los últimos 7 días; a igual cantidad, más me gusta), más jugados y, cuando buscaste algo, más relevantes. Muestra la cantidad total de juegos que coinciden y pasa de a **24 por página**.
+- Todo queda en la dirección (`/?q=…&genre=…&sort=…&page=…`): se puede compartir y funciona el botón de atrás. Los enlaces salen cortos (sin parámetros vacíos ni por defecto), cambiar un filtro vuelve a la primera página, buscar otro texto **conserva los filtros** y cualquier valor raro en la dirección se ignora.
 - Solo aparecen juegos publicados: la base lo garantiza, también para quien tiene cuenta.
 
 - **Sorprendeme**: un botón (en la portada, en la búsqueda y en la página de cada juego) que te lleva a un **juego publicado al azar**, con la misma chance para todos (sin favorecer a los más jugados) y sin repetir el juego en el que estás. Es un enlace común: funciona sin JavaScript y cada vez elige de nuevo.
@@ -111,8 +111,8 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Notificaciones
 
 **Hoy**
-- Una **campanita** en la barra (solo con cuenta) con cuántos avisos hay sin leer. Se actualiza **sola** mientras la página está abierta: si alguien comenta o te sigue, el número sube al instante. Al tocarla **se despliega un menú con los últimos 5 avisos** (los sin leer, resaltados) y un enlace **«Ver todas las notificaciones»**; cada aviso se abre igual que en la pantalla (se marca como leído y lleva a lo que pasó).
-- La pantalla **Notificaciones** (`/notifications`) lista los avisos, de más nuevo a más viejo (20 por página). Cada uno dice quién, qué y dónde; al abrirlo se marca como leído y lleva a lo que pasó: si es sobre un comentario, **te deja en ese comentario** (lo centra en la pantalla) y lo **resalta unos segundos**. Se puede **marcar como leído**, **quitar**, o **marcar todos como leídos**.
+- Una **campanita** en la barra (solo con cuenta) con cuántos avisos **nuevos** hay (los que todavía no viste). Se actualiza **sola** mientras la página está abierta: si alguien comenta o te sigue, el número sube al instante. Al tocarla **se despliega un menú con los últimos 5 avisos** (los sin leer, resaltados) y **el número desaparece**: verlos en el menú no los marca como leídos, siguen resaltados en la pantalla Notificaciones hasta que los abrís. El menú trae un enlace **«Ver todas las notificaciones»**; cada aviso se abre igual que en la pantalla (se marca como leído y lleva a lo que pasó).
+- La pantalla **Notificaciones** (`/notifications`) lista los avisos, de más nuevo a más viejo (20 por página). Cada uno dice quién, qué y dónde; al abrirlo se marca como leído y lleva a lo que pasó: si es sobre un comentario, **te deja en ese comentario** (lo centra en la pantalla) y lo **resalta unos segundos**. Se puede **marcar como leído**, **quitar**, o **marcar todos como leídos**. Como en un buzón, cada aviso tiene una **casilla**: elegís varios (o todos los de la página) y los marcás como **leídos** o **no leídos**, o los **eliminás** (pide confirmar antes).
 - Se avisa de: un **comentario** en tu juego o avance; una **respuesta** a tu comentario; un **me gusta** en tu juego o avance (una vez por persona); un **seguidor** nuevo (una vez por persona); que el creador marcó tu comentario como **«Me sirvió»** (una vez por comentario); que una **versión** que subiste quedó lista o fue rechazada; y las decisiones de **moderación** sobre tu contenido o tu cuenta (con el motivo).
 - Nadie recibe avisos de lo que hace él mismo. Solo dentro del sitio: no se manda nada por email.
 
@@ -160,9 +160,9 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Creadores
 
 **Hoy**
-- **Creadores** (`/creators`, abierta a cualquier persona): un directorio de **quienes tienen al menos un juego publicado** (quien solo juega todavía no es creador), con foto, nombre, @usuario, ubicación, bio, motores que usan, cantidad de juegos y de seguidores, y un botón para **seguir** desde la misma tarjeta. Quien no tiene cuenta pasa por el inicio de sesión y vuelve.
-- **Buscar** por nombre o @usuario (sin importar tildes ni mayúsculas; cada palabra tiene que empezar una palabra del nombre o del @usuario), **filtrar** por el motor que usan y por el género que les gusta, y **ordenar** por más nuevos (el orden por defecto: Trafal es para quienes recién empiezan), más seguidos o con más juegos. De a 12 por página.
-- La vista vive en la dirección (`/creators?q=…&engine=…&genre=…&sort=…&page=…`), con los mismos cuidados que Explorar: enlaces cortos, valores raros ignorados y páginas que no existen explicadas.
+- **Creadores** (`/creators`, abierta a cualquier persona): un directorio de **quienes tienen al menos un juego publicado** (quien solo juega todavía no es creador), con foto, nombre, @usuario, ubicación, bio, los géneros que les gustan, cantidad de juegos y de seguidores, y un botón para **seguir** desde la misma tarjeta. Quien no tiene cuenta pasa por el inicio de sesión y vuelve.
+- **Buscar** por nombre o @usuario (sin importar tildes ni mayúsculas; cada palabra tiene que empezar una palabra del nombre o del @usuario), **filtrar** por el género que les gusta, y **ordenar** por más nuevos (el orden por defecto: Trafal es para quienes recién empiezan), más seguidos o con más juegos. De a 12 por página.
+- La vista vive en la dirección (`/creators?q=…&genre=…&sort=…&page=…`), con los mismos cuidados que Explorar: enlaces cortos, valores raros ignorados y páginas que no existen explicadas.
 
 ### Comunidad y compartir
 
@@ -186,7 +186,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Hoy**
 - Se llega desde el menú de tu cuenta. Tiene tres secciones en pestañas, con el mismo ancho que el perfil:
-  - **Perfil**: foto, datos personales, motores y géneros favoritos.
+  - **Perfil**: foto, datos personales y géneros favoritos.
   - **Preferencias**: idioma de la interfaz.
   - **Cuenta**: eliminar tu cuenta.
 
@@ -201,18 +201,18 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Hoy**
 - **Página de cada juego** (`/games/<id>`), abierta a cualquier persona, sin cuenta:
-  - portada, título, creador, etiquetas de género y motor, insignias «Primer juego» y «Funciona en celular», y contadores de partidas, me gusta y comentarios;
+  - portada, título, creador, etiqueta de género, insignia «Primer juego» en los juegos que la tienen, y contadores de partidas, me gusta y comentarios;
   - **me gusta y guardar** (también en cada avance): responden al instante y el contador es el real; quien no tiene cuenta pasa por el login y vuelve al mismo lugar. Los me gusta y los guardados son privados: el público ve solo los contadores;
   - **Sobre este juego** (descripción corta) y **Cómo se juega** (controles), más hasta 8 etiquetas;
   - tarjeta del creador con acceso a su perfil;
   - los **avances** de ese juego y los **comentarios** con sus respuestas;
   - una invitación a crear cuenta para quien no tiene.
-- **Jugar en el navegador, sin cuenta** (botón «Jugar gratis» de la página del juego): el juego corre en un marco aislado, con la proporción propia de cada juego (16:9, 4:3, 1:1 o 9:16), y se sirve desde un **dominio distinto al de Trafal** (`<id>.games…`), de modo que no puede leer tu sesión ni tu almacenamiento. El marco no puede navegar la ventana de Trafal, abrir ventanas, enviar formularios ni descargar archivos. Trae **pantalla completa** (con salida en pantalla y, donde el navegador no la permite, un modo que ocupa toda la ventana), **reiniciar**, un aviso de que el juego puede tener sonido y el conteo de partidas, que no guarda IP ni datos del navegador, solo si se jugó desde computadora, celular o tableta.
+- **Jugar en el navegador, sin cuenta** (botón «Jugar gratis» de la página del juego): el juego corre en un marco aislado, en proporción 16:9 que se adapta al ancho de la pantalla (el diseño es responsive; no hay opciones de medida ni de dispositivo), y se sirve desde un **dominio distinto al de Trafal** (`<id>.games…`), de modo que no puede leer tu sesión ni tu almacenamiento. El marco no puede navegar la ventana de Trafal, abrir ventanas, enviar formularios ni descargar archivos. Trae **pantalla completa** (con salida en pantalla y, donde el navegador no la permite, un modo que ocupa toda la ventana), **reiniciar**, un aviso de que el juego puede tener sonido y el conteo de partidas, que no guarda IP ni datos del navegador, solo si se jugó desde computadora, celular o tableta.
 - **Reportar** un juego (desde el reproductor), un avance, un comentario o un perfil (con cuenta; quien no la tiene es llevado a iniciar sesión y vuelve): motivo y detalles. «No funciona» es solo para juegos. Lo mismo no se puede reportar dos veces mientras el primer reporte siga abierto, solo se reporta lo que está **publicado**, y el equipo conserva una copia de cómo era al reportarlo. No hay botón de reporte en lo propio.
 - **Versiones de un juego**: desde la pantalla de estado, el creador sube un `.zip` nuevo con un nombre (v0.2…) y lo que cambió; la nueva versión pasa por la misma revisión y **la gente sigue jugando la actual hasta que el creador elige otra** («Usar esta versión», y también se puede volver a una anterior). Se puede renombrar cualquier versión y editar su registro de cambios. La página pública del juego muestra una sección **Versiones** con las listas, la actual marcada y sus cambios. Hasta 5 subidas por día entre todos tus juegos.
 - **Servidor de juegos**: solo responde a `GET` y `HEAD`; entrega siempre la versión activa, con tipo de contenido y codificación correctos y soporte de rangos (audio y video). Cada respuesta lleva una política que deja al juego hablar solo con su propio origen (sin pedidos externos, sin formularios, sin plugins, sin marcos anidados) y solo permite que lo muestre Trafal. Las páginas HTML solo se entregan dentro de un marco: abrir la dirección del juego directamente lleva a su página en Trafal, para que ningún juego pueda hacerse pasar por una página propia. Un juego oculto o dado de baja deja de servirse a los pocos segundos.
 - **Portadas**: la imagen que suba el creador o, mientras no haya, un arte generado con el color e ícono de su género.
-- **Subir un juego** (`/games/new`, con cuenta): título, descripción corta, género, motor, hasta 8 etiquetas, cómo se juega, proporción de pantalla, «funciona en celular», «es mi primer juego», hasta 3 preguntas para quienes jueguen, portada y hasta 6 capturas (PNG, JPG o WebP de hasta 5 MB; el servidor mira los bytes reales y rechaza imágenes falsas, animadas o fuera de medida). El `.zip` (hasta 200 MB) viaja **directo del navegador a un espacio de cuarentena** con una dirección firmada que vence en una hora, con barra de progreso y la posibilidad de reintentar si se corta. Hasta 5 subidas por día por persona.
+- **Subir un juego** (`/games/new`, con cuenta): título, descripción corta, género, hasta 8 etiquetas, cómo se juega, hasta 3 preguntas para quienes jueguen, portada y hasta 6 capturas (PNG, JPG o WebP de hasta 5 MB; el servidor mira los bytes reales y rechaza imágenes falsas, animadas o fuera de medida). El `.zip` (hasta 200 MB) viaja **directo del navegador a un espacio de cuarentena** con una dirección firmada que vence en una hora, con barra de progreso y la posibilidad de reintentar si se corta. Hasta 5 subidas por día por persona.
 - **Revisión automática del `.zip`**: un proceso aparte (el *worker*) toma cada subida, comprueba su tamaño real, la descomprime en una carpeta temporal y la valida: rechaza rutas peligrosas, ejecutables (también los disfrazados con otra extensión), archivos comprimidos adentro, tipos no permitidos, bombas de descompresión y zips sin `index.html`, y marca (sin bloquear) minería, campos de contraseña e intentos de navegar la ventana superior. Detecta el motor (Godot, Unity, GameMaker, Phaser, PICO-8, Scratch, Twine, Construct) y si necesita aislamiento. **Solo si todo pasa** copia los archivos al espacio de juegos, con su tipo de contenido y su codificación (`.wasm.br`, `.gz`), y borra el zip de la cuarentena. Si algo falla por un problema nuestro, lo reintenta hasta 3 veces.
 - **Estado del juego** (`/games/<id>/manage`, solo para su dueño): el juego nace como borrador, que solo ve su creador, y cada versión muestra si está subiendo, en revisión, lista o con un error explicado para principiantes («Falta el archivo index.html», «No aceptamos programas ejecutables»…). La página se actualiza sola. Cuando una versión está lista, el creador puede **publicar el juego** o **volver a dejarlo en borrador**. Los juegos sin publicar aparecen en el propio perfil.
 
@@ -236,7 +236,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Descubrir juegos
 
 **Hoy**
-- **Buscador de juegos** al inicio de la portada, justo debajo del título y antes de todo lo demás. Mientras escribís sugiere hasta 5 juegos (con su portada y su creador); buscás por título, descripción, etiquetas, género, motor o creador, sin importar tildes ni mayúsculas, y escribir solo el comienzo de una palabra alcanza («orb» encuentra «Órbita»). Se maneja con el teclado (flechas, Enter, Escape) y con lector de pantalla. Al enviar lleva a **Explorar** (`/explore?q=…`), que muestra los resultados con las mismas tarjetas, o todos los juegos si el campo está vacío.
+- **Buscador de juegos** al inicio de la portada, justo debajo del título y antes de todo lo demás. Mientras escribís sugiere hasta 5 juegos (con su portada y su creador); buscás por título, descripción, etiquetas, género o creador, sin importar tildes ni mayúsculas, y escribir solo el comienzo de una palabra alcanza («orb» encuentra «Órbita»). Se maneja con el teclado (flechas, Enter, Escape) y con lector de pantalla. Al enviar lleva a **Explorar** (`/explore?q=…`), que muestra los resultados con las mismas tarjetas, o todos los juegos si el campo está vacío.
 - **Portada** pensada para quien llega sin cuenta y puede jugar gratis. De arriba abajo:
   - un **banner grande** del juego más jugado, con botón «Jugar gratis»;
   - **Recién publicados** (8 juegos);
@@ -246,7 +246,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
   - **Primeros juegos**, de gente que acaba de publicar el suyo;
   - **Por género**, con los tres géneros más poblados;
   - **Novedades de los creadores** (6 avances recientes).
-- **Tarjetas de juego** con portada, título, descripción, género, motor, creador, partidas y me gusta. Toda la tarjeta lleva a la página del juego. En celular, cada fila se desliza con el dedo.
+- **Tarjetas de juego** con portada, título, descripción, género, creador, partidas y me gusta. Toda la tarjeta lleva a la página del juego. En celular, cada fila se desliza con el dedo.
 
 **Próximamente**
 
@@ -265,10 +265,10 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Estética oscura con neón moderado e inspiración retro/pixel**: tipografías Oxanium, Space Grotesk y Pixelify Sans, botones en forma de píldora, barra de navegación flotante con borde neón y un fondo con aurora y píxeles flotantes que se apagan en celular y si pedís menos movimiento.
 - **Menú superior mínimo**: el nombre de la app, «Creadores», «Comunidad» y «Subir juego», y tu cuenta (Mi perfil, Configuración, Cerrar sesión). En celular se abre con una hamburguesa.
 - **Marca**: el ícono de Trafal (un **gamepad en pixel art** sobre el degradé violeta-cian) está en el logo, en la pestaña del navegador (`icon.svg`) y como ícono de pantalla de inicio (`apple-icon.png`). El título de cada pestaña es **«Trafal - <página>»** (por ejemplo «Trafal - Comunidad»).
-- **Botones y etiquetas con más contraste**: el botón principal es un degradé de violeta a azul profundos con texto blanco (≥ 5,5:1), y las etiquetas (**1ER JUEGO**, géneros, motores, estados) van rellenas o con borde claro (≥ 7:1).
+- **Botones y etiquetas con más contraste**: el botón principal es un degradé de violeta a azul profundos con texto blanco (≥ 5,5:1), y las etiquetas (**1ER JUEGO**, géneros, estados) van rellenas o con borde claro (≥ 7:1).
 - **Botón «Atrás»** debajo de la barra de arriba en todas las secciones (menos la portada): vuelve a la pantalla anterior y, si la sección se abrió directamente en una pestaña nueva, lleva a la portada.
 - **Cursor propio**: flecha pixelada, y la manita en todo lo que se puede apretar.
-- **Hecho para celular primero**, desde pantallas de 360 px, sin scroll horizontal y con botón para volver arriba.
+- **Responsive**: se adapta a cualquier ancho, desde pantallas de 360 px, sin scroll horizontal y con botón para volver arriba. No hay opciones por dispositivo.
 - **Accesible**: contraste de texto de al menos 4,5:1, objetivos táctiles de al menos 44 px, uso completo con teclado, enlace «Saltar al contenido», etiquetas y errores conectados para lectores de pantalla, y una auditoría automática WCAG 2.2 AA sobre las pantallas principales.
 - **Los colores tienen un significado fijo**: el lima es solo para acciones de jugar y el coral solo para me gusta y errores.
 

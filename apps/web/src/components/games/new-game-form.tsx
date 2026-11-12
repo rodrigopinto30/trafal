@@ -1,32 +1,29 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useRef, useState, type FormEvent } from "react";
 import { UploadProgress } from "@/components/games/upload-progress";
 import { SettingsSection } from "@/components/settings/settings-section";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Field } from "@/components/ui/field";
 import { FormMessage } from "@/components/ui/form-message";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocale, useTranslations } from "@/i18n/client";
-import { localizePath } from "@/i18n/path";
+import { localizePath, stripLocale } from "@/i18n/path";
 import { formatBytes } from "@/lib/format";
 import { createGameAction } from "@/lib/games/upload-actions";
 import {
   CONTROLS_MAX,
   DESCRIPTION_MAX,
-  DISPLAY_RATIOS,
   MAX_QUESTIONS,
   MAX_ZIP_BYTES,
   TITLE_MAX,
   looksLikeZip,
 } from "@/lib/games/upload-rules";
 import { useZipUpload } from "@/lib/games/use-zip-upload";
-import { ENGINE_IDS, GENRE_IDS } from "@/lib/profile/catalog";
+import { GENRE_IDS } from "@/lib/profile/catalog";
 
 type Phase = "idle" | "creating" | "uploading" | "confirming" | "done";
 
@@ -34,14 +31,29 @@ const IMAGE_TYPES = "image/png,image/jpeg,image/webp";
 const ZIP_TYPES = ".zip,application/zip,application/x-zip-compressed";
 
 /**
- * "Upload a game" form. It creates the game as a draft on the server, then uploads the zip straight to quarantine with a
+ * "Upload a game" form with its own state, started again every time the person leaves the page: Next keeps the previous screen
+ * mounted, so without this a form that was already used would come back filled with the last game.
+ */
+export function NewGameForm() {
+  const pathname = usePathname();
+  const onThisPage = stripLocale(pathname).path === "/games/new";
+  const [wasOnThisPage, setWasOnThisPage] = useState(onThisPage);
+  const [visits, setVisits] = useState(0);
+  if (wasOnThisPage !== onThisPage) {
+    setWasOnThisPage(onThisPage);
+    if (!onThisPage) setVisits((count) => count + 1);
+  }
+  return <GameUploadForm key={visits} />;
+}
+
+/**
+ * The fields and the three steps of the upload. It creates the game as a draft on the server, then uploads the zip straight to quarantine with a
  * presigned URL (with progress) and finally confirms the upload so the version enters the review queue. The server
  * validates everything again; the checks here only save a round trip.
  */
-export function NewGameForm() {
+function GameUploadForm() {
   const t = useTranslations("gameForm");
   const tGenres = useTranslations("genres");
-  const tEngines = useTranslations("engines");
   const locale = useLocale();
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
@@ -56,7 +68,10 @@ export function NewGameForm() {
     locale,
     uploadFailedMessage: t("uploadFailed"),
     genericErrorMessage: t("errors.generic"),
-    onUploaded: () => router.push(localizePath(locale, `/games/${publicIdRef.current}/manage`)),
+    onUploaded: () => {
+      window.scrollTo(0, 0);
+      router.push(localizePath(locale, `/games/${publicIdRef.current}/manage`));
+    },
   });
   const phase: Phase = creating ? "creating" : upload.phase;
   const busy = phase !== "idle";
@@ -136,70 +151,24 @@ export function NewGameForm() {
             <Field id="shortDescription" label={t("fields.shortDescription")} hint={t("fields.shortDescriptionHint")} error={fieldErrors.shortDescription}>
               {(control) => <Input {...control} name="shortDescription" maxLength={DESCRIPTION_MAX} autoComplete="off" />}
             </Field>
-            <div className="grid gap-6 md:grid-cols-2 md:gap-x-8">
-              <Field id="genre" label={t("fields.genre")} error={fieldErrors.genre}>
-                {(control) => (
-                  <NativeSelect {...control} name="genre" required defaultValue="">
-                    <option value="">{t("fields.genrePlaceholder")}</option>
-                    {GENRE_IDS.map((id) => (
-                      <option key={id} value={id}>
-                        {tGenres(id as Parameters<typeof tGenres>[0])}
-                      </option>
-                    ))}
-                  </NativeSelect>
-                )}
-              </Field>
-              <Field id="engine" label={t("fields.engine")} error={fieldErrors.engine}>
-                {(control) => (
-                  <NativeSelect {...control} name="engine" required defaultValue="">
-                    <option value="">{t("fields.enginePlaceholder")}</option>
-                    {ENGINE_IDS.map((id) => (
-                      <option key={id} value={id}>
-                        {tEngines(id as Parameters<typeof tEngines>[0])}
-                      </option>
-                    ))}
-                  </NativeSelect>
-                )}
-              </Field>
-            </div>
+            <Field id="genre" label={t("fields.genre")} error={fieldErrors.genre}>
+              {(control) => (
+                <NativeSelect {...control} name="genre" required defaultValue="">
+                  <option value="">{t("fields.genrePlaceholder")}</option>
+                  {GENRE_IDS.map((id) => (
+                    <option key={id} value={id}>
+                      {tGenres(id as Parameters<typeof tGenres>[0])}
+                    </option>
+                  ))}
+                </NativeSelect>
+              )}
+            </Field>
             <Field id="tags" label={t("fields.tags")} hint={t("fields.tagsHint")} error={fieldErrors.tags}>
               {(control) => <Input {...control} name="tags" autoComplete="off" />}
             </Field>
             <Field id="controls" label={t("fields.controls")} hint={t("fields.controlsHint")} error={fieldErrors.controls}>
               {(control) => <Textarea {...control} name="controls" maxLength={CONTROLS_MAX} rows={4} />}
             </Field>
-            <Field id="displayRatio" label={t("fields.displayRatio")} error={fieldErrors.displayRatio}>
-              {(control) => (
-                <NativeSelect {...control} name="displayRatio" defaultValue="16:9">
-                  {DISPLAY_RATIOS.map((ratio) => (
-                    <option key={ratio} value={ratio}>
-                      {t(`ratios.${ratio}`)}
-                    </option>
-                  ))}
-                </NativeSelect>
-              )}
-            </Field>
-            <div className="grid gap-3">
-              <div className="flex items-center gap-3">
-                <Checkbox id="worksOnMobile" name="worksOnMobile" />
-                <Label htmlFor="worksOnMobile" className="font-normal text-text-2">
-                  {t("fields.worksOnMobile")}
-                </Label>
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center gap-3">
-                  <Checkbox id="isFirstGame" name="isFirstGame" aria-invalid={fieldErrors.isFirstGame ? true : undefined} />
-                  <Label htmlFor="isFirstGame" className="font-normal text-text-2">
-                    {t("fields.isFirstGame")}
-                  </Label>
-                </div>
-                {fieldErrors.isFirstGame ? (
-                  <p role="alert" className="text-sm font-medium text-[#ff8fa5]">
-                    {fieldErrors.isFirstGame}
-                  </p>
-                ) : null}
-              </div>
-            </div>
           </div>
         </SettingsSection>
 

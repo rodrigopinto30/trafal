@@ -61,8 +61,8 @@ test("la manito también está en la configuración, el menú de la cuenta, las 
 
   await gotoReady(page, "/settings/profile");
   expect(await clickablesWithoutPointer(page)).toEqual([]);
-  // Los chips de motores y las baldosas de géneros son <label> sin «for» que envuelven una casilla.
-  for (const label of ["Godot", "Plataformas", "Arcade"]) {
+  // Las baldosas de géneros son <label> sin «for» que envuelven una casilla.
+  for (const label of ["Plataformas", "Arcade"]) {
     const cursor = await page.getByText(label, { exact: true }).evaluate((el) => getComputedStyle(el).cursor);
     expect(cursor, label).toBe("pointer");
   }

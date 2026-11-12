@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { gotoReady, lettersOnly, registerAccount, uniqueSuffix } from "./helpers/session";
 
-/** The creators directory: people with a published game, searched by name, engine or favorite genre, and followed from their card. Runs on the example accounts of supabase/seeds. */
+/** The creators directory: people with a published game, searched by name or favorite genre, and followed from their card. Runs on the example accounts of supabase/seeds. */
 function cards(page: Page) {
   return page.getByRole("article").filter({ visible: true });
 }
@@ -36,28 +36,23 @@ test.describe("creadores", () => {
 
     const card = cards(page).filter({ hasText: "@mateo_g" });
     await expect(card.getByRole("link", { name: /Ver el perfil de/ })).toHaveAttribute("href", "/u/mateo_g");
-    await expect(card).toContainText("Phaser");
+    await expect(card).toContainText("Arcade");
+    await expect(card).toContainText("Ritmo");
     await expect(card).toContainText("3 juegos");
   });
 
-  test("filtrar por motor y por género", async ({ page }) => {
+  test("filtrar por género", async ({ page }) => {
     await gotoReady(page, "/creators");
-    await page.getByRole("search", { name: "Buscar y filtrar creadores" }).getByLabel("Motor que usan").selectOption("godot");
+    await page.getByRole("search", { name: "Buscar y filtrar creadores" }).getByLabel("Género que les gusta").selectOption("roguelike");
     await applyFilters(page);
-    await expect(page).toHaveURL(/\/creators\?engine=godot$/);
-    const godot = await usernames(page);
-    expect(godot).toEqual(expect.arrayContaining(["@valen_makes", "@tomi_dev"]));
-    expect(godot).not.toContain("@sofi_pixels");
-    await expect(cards(page).filter({ hasNotText: "Godot" })).toHaveCount(0);
+    await expect(page).toHaveURL(/\/creators\?genre=roguelike$/);
+    const roguelike = await usernames(page);
+    expect(roguelike).toEqual(expect.arrayContaining(["@valen_makes", "@tomi_dev"]));
+    expect(roguelike).not.toContain("@mateo_g");
 
     await gotoReady(page, "/creators?genre=puzzle");
     expect(await usernames(page)).toEqual(expect.arrayContaining(["@valen_makes", "@sofi_pixels", "@julistudio"]));
     expect(await usernames(page)).not.toContain("@mateo_g");
-
-    await gotoReady(page, "/creators?engine=godot&genre=puzzle");
-    const both = await usernames(page);
-    expect(both).toContain("@valen_makes");
-    expect(both).not.toContain("@tomi_dev");
     await page.getByRole("link", { name: "Quitar filtros" }).click();
     await expect(page).toHaveURL(/\/creators$/);
   });
@@ -84,7 +79,7 @@ test.describe("creadores", () => {
     await gotoReady(page, "/creators?q=pixels");
     expect(await usernames(page)).toEqual(expect.arrayContaining(["@sofi_pixels", "@caro_pixels"]));
 
-    await gotoReady(page, "/creators?q=pixels&engine=pico8");
+    await gotoReady(page, "/creators?q=pixels&genre=cozy");
     expect(await usernames(page)).toEqual(["@caro_pixels"]);
 
     await gotoReady(page, "/creators?q=zzzz");
@@ -94,7 +89,7 @@ test.describe("creadores", () => {
   });
 
   test("una dirección con valores raros muestra la vista por defecto, y una página que no existe lo explica", async ({ page }) => {
-    await gotoReady(page, "/creators?engine=flash&genre=%27%20or%201%3D1&sort=zzz&page=-3");
+    await gotoReady(page, "/creators?genre=%27%20or%201%3D1&sort=zzz&page=-3");
     await expect(page.getByLabel("Ordenar por")).toHaveValue("newest");
     expect((await usernames(page)).length).toBeGreaterThan(3);
 

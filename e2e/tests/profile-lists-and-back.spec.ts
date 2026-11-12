@@ -8,7 +8,7 @@ import { followsPerson } from "./helpers/supabase";
  */
 const VALEN = { email: "valen@trafal.test", password: "trafal123", username: "valen_makes" };
 
-test("los géneros y los motores elegidos quedan marcados al guardar, sin recargar, y después de recargar", async ({ page }, testInfo) => {
+test("los géneros elegidos quedan marcados al guardar, sin recargar, y después de recargar", async ({ page }, testInfo) => {
   test.setTimeout(150_000);
   const suffix = uniqueSuffix(testInfo.project.name);
   await registerAccount(page, { email: `e2e_genres_${suffix}@trafal.test`, username: `genres_${lettersOnly(suffix)}`, displayName: "Persona Géneros" });
@@ -16,11 +16,9 @@ test("los géneros y los motores elegidos quedan marcados al guardar, sin recarg
 
   const arcade = page.getByRole("checkbox", { name: "Arcade" });
   const puzzle = page.getByRole("checkbox", { name: "Puzzle" });
-  const phaser = page.getByRole("checkbox", { name: "Phaser" });
   const tile = (name: string) => page.locator("label").filter({ hasText: new RegExp(`^${name}$`) });
   await tile("Arcade").click();
   await tile("Puzzle").click();
-  await tile("Phaser").click();
   await expect(arcade).toBeChecked();
   await expect(page.getByText("Elegiste 2 géneros.")).toBeVisible();
   await page.getByRole("button", { name: "Guardar cambios", exact: true }).click();
@@ -28,7 +26,6 @@ test("los géneros y los motores elegidos quedan marcados al guardar, sin recarg
 
   await expect(arcade).toBeChecked();
   await expect(puzzle).toBeChecked();
-  await expect(phaser).toBeChecked();
   await expect(page.getByText("Elegiste 2 géneros.")).toBeVisible();
 
   await tile("Puzzle").click();
@@ -42,7 +39,6 @@ test("los géneros y los motores elegidos quedan marcados al guardar, sin recarg
   await gotoReady(page, "/settings/profile");
   await expect(arcade).toBeChecked();
   await expect(puzzle).not.toBeChecked();
-  await expect(phaser).toBeChecked();
 });
 
 test("cada sección tiene el botón «Atrás»: vuelve a la pantalla anterior, y abierta directamente lleva a la portada", async ({ page, browser }, testInfo) => {

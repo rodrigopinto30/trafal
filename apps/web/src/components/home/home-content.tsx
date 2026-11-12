@@ -31,7 +31,7 @@ const SECTION_CLASS = "mx-0 w-full max-w-none px-0 pt-0";
  */
 export async function HomeContent({ searchParams }: { searchParams: RawParams }) {
   const raw = await searchParams;
-  const query = parseExploreQuery({ q: firstParam(raw.q), genre: firstParam(raw.genre), engine: firstParam(raw.engine), mobile: firstParam(raw.mobile), sort: firstParam(raw.sort), page: firstParam(raw.page) });
+  const query = parseExploreQuery({ q: firstParam(raw.q), genre: firstParam(raw.genre), sort: firstParam(raw.sort), page: firstParam(raw.page) });
   const exploring = isExploring(query) || EXPLORE_SORTS.some((sort) => sort === firstParam(raw.sort));
   const user = await getAuthUser();
   if (!user && !exploring) return <VisitorHome />;

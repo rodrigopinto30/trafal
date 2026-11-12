@@ -24,8 +24,8 @@ export async function logout(page: Page) {
   // reintenta todo (abrir y hacer clic en «Cerrar sesión») hasta que funcione.
   await expect(async () => {
     if (!(await logoutItem.isVisible())) {
-      if (await account.isVisible()) await account.click();
-      else await burger.click();
+      if (await burger.isVisible()) await burger.click({ timeout: 3_000 });
+      else await account.click({ timeout: 3_000 });
     }
     await logoutItem.click({ timeout: 3_000 });
   }).toPass({ timeout: 20_000 });

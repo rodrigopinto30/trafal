@@ -6,10 +6,10 @@ select tests.wipe_app_data();
 select tests.create_profile('a0000000-0000-0000-0000-000000000001', 'ana');
 select tests.create_profile('b0000000-0000-0000-0000-000000000002', 'bruno');
 
-insert into public.games (id, owner_id, title, genre_id, engine_id, is_first_game) values
-  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Juego publicado', 'puzzle', 'phaser', true),
-  ('11111111-1111-1111-1111-111111111102', 'a0000000-0000-0000-0000-000000000001', 'Juego en borrador', 'arcade', 'godot', false),
-  ('11111111-1111-1111-1111-111111111103', 'a0000000-0000-0000-0000-000000000001', 'Juego oculto', 'arcade', 'godot', false);
+insert into public.games (id, owner_id, title, genre_id, is_first_game) values
+  ('11111111-1111-1111-1111-111111111101', 'a0000000-0000-0000-0000-000000000001', 'Juego publicado', 'puzzle', true),
+  ('11111111-1111-1111-1111-111111111102', 'a0000000-0000-0000-0000-000000000001', 'Juego en borrador', 'arcade', false),
+  ('11111111-1111-1111-1111-111111111103', 'a0000000-0000-0000-0000-000000000001', 'Juego oculto', 'arcade', false);
 insert into public.game_versions (id, game_id, number, label, status) values
   ('22222222-2222-2222-2222-222222222201', '11111111-1111-1111-1111-111111111101', 1, 'v0.1', 'ready'),
   ('22222222-2222-2222-2222-222222222203', '11111111-1111-1111-1111-111111111103', 1, 'v0.1', 'ready');

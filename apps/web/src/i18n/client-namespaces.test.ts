@@ -41,7 +41,7 @@ describe("textos que viajan al navegador", () => {
   });
 
   it("los namespaces de los formularios y de las pantallas de la cuenta no viajan en todas las páginas", () => {
-    for (const heavy of ["auth", "onboarding", "settings", "gameForm", "gameVersions", "gamePlayer", "comments", "genres", "engines"]) {
+    for (const heavy of ["auth", "onboarding", "settings", "gameForm", "gameVersions", "gamePlayer", "comments", "genres"]) {
       expect((BASE_CLIENT_NAMESPACES as readonly string[]).includes(heavy), heavy).toBe(false);
     }
   });

@@ -5,12 +5,8 @@ const valid = {
   title: "  Moon   Runner ",
   shortDescription: "Run on the moon",
   genre: "platformer",
-  engine: "godot",
   tags: "Pixel Art, RETRO, retro,  ",
   controls: "Arrows to move\n\n\n\nSpace to jump",
-  displayRatio: "16:9",
-  worksOnMobile: false,
-  isFirstGame: true,
   questions: ["", "  Does the jump feel good? ", ""],
 };
 
@@ -38,10 +34,9 @@ describe("gameDetailsSchema", () => {
     expect(issues({ shortDescription: "a".repeat(161) })).toEqual(["descriptionTooLong"]);
   });
 
-  it("only accepts known genres and engines", () => {
+  it("only accepts known genres", () => {
     expect(issues({ genre: "nope" })).toEqual(["invalidGenre"]);
     expect(issues({ genre: "" })).toEqual(["invalidGenre"]);
-    expect(issues({ engine: "unreal" })).toEqual(["invalidEngine"]);
   });
 
   it("limits tags to 8 of up to 24 characters", () => {
@@ -52,11 +47,6 @@ describe("gameDetailsSchema", () => {
 
   it("limits how-to-play to 500 characters", () => {
     expect(issues({ controls: "a".repeat(501) })).toEqual(["controlsTooLong"]);
-  });
-
-  it("only accepts the four display ratios", () => {
-    expect(issues({ displayRatio: "21:9" })).toEqual(["invalidRatio"]);
-    expect(issues({ displayRatio: "9:16" })).toEqual([]);
   });
 
   it("accepts up to 3 questions of 3 to 140 characters, ignoring empty ones", () => {
