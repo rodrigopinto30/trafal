@@ -105,6 +105,17 @@ export async function deleteNotificationsSince(token: string, sinceIso: string):
   });
 }
 
+/** A game of the person of the token (drafts included, which no visitor can read), found by its exact title. */
+export async function ownGame(token: string, title: string): Promise<{ id: string; public_id: string }> {
+  const response = await fetch(`${API}/rest/v1/games?title=eq.${encodeURIComponent(title)}&select=id,public_id`, {
+    headers: { apikey: publishableKey(), authorization: `Bearer ${token}` },
+  });
+  const rows = (await response.json()) as { id: string; public_id: string }[];
+  const game = rows[0];
+  if (!game) throw new Error(`No se encontró el juego «${title}»`);
+  return game;
+}
+
 /** The id of the person a token belongs to (the `sub` of the access token). */
 export function userIdOf(token: string): string {
   const payload = JSON.parse(Buffer.from(token.split(".")[1] ?? "", "base64url").toString("utf8")) as { sub: string };

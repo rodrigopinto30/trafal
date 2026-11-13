@@ -33,6 +33,8 @@ const PAGES: readonly Target[] = [
   { name: "reclamo-de-derechos-de-autor", path: "/legal/copyright/claim" },
   { name: "no-encontrado", path: "/pagina-que-no-existe" },
   { name: "subir-juego", path: "/games/new", login: true },
+  { name: "editar-juego", path: "/games/neon-express/edit", login: true },
+  { name: "gestionar-juego", path: "/games/neon-express/manage", login: true },
   { name: "guardados", path: "/saved", login: true },
   { name: "notificaciones", path: "/notifications", login: true },
   { name: "publicar-avance", path: "/posts/new", login: true },

@@ -28,6 +28,7 @@ export const CLIENT_NAMESPACES = [
   "gameForm",
   "gamePlayer",
   "gameVersions",
+  "gameEdit",
   "comments",
   "admin",
   "notifications",

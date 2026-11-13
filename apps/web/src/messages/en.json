@@ -338,7 +338,8 @@
     "questionsHint": "{name} wants your opinion on these things.",
     "answersCount": "{count, plural, =0 {No answers yet} one {# answer} other {# answers}}",
     "alreadyAnswered": "You already answered this question: your answer is below and you can edit it.",
-    "ownQuestions": "These are your questions: people's answers show up below."
+    "ownQuestions": "These are your questions: people's answers show up below.",
+    "edit": "Edit game"
   },
   "gamePlayer": {
     "play": "Play for free",
@@ -456,13 +457,21 @@
       "coverAnimated": "The cover cannot be animated.",
       "screenshotsInvalid": "Screenshots must be valid, non-animated PNG, JPG or WebP images of up to 5 MB, between 320×180 and 4096×4096 pixels.",
       "tooManyScreenshots": "You can upload up to 6 screenshots.",
-      "dailyLimit": "You reached the limit of 5 uploads per day. Try again tomorrow.",
+      "dailyLimit": "You reached the limit of 5 uploads per day (new games and new versions both count). You can't upload any more today: try again tomorrow.",
       "accountRestricted": "Your account can't upload games right now.",
       "unauthenticated": "Log in to upload a game.",
       "storage": "We couldn't save your files. Try again in a while.",
       "generic": "Something went wrong. Check your details and try again.",
-      "rateLimited": "You created too many games today. Try again tomorrow."
-    }
+      "rateLimited": "You created too many games today. Try again tomorrow.",
+      "gameNotEditable": "We couldn't find that game, or it can no longer be edited."
+    },
+    "submitting": "Uploading your game…",
+    "stepLabels": {
+      "creating": "Prepare",
+      "uploading": "Upload the .zip",
+      "confirming": "Finish"
+    },
+    "leaveWarning": "Don't close or reload this page until it finishes."
   },
   "gameManage": {
     "title": "Your game",
@@ -508,7 +517,35 @@
     "versionsHint": "The version «in use» is the one people play. The others stay saved.",
     "changelogLabel": "What changed",
     "noChangelog": "No details.",
-    "newVersionHint": "Until the new version passes the review, people keep playing the current one."
+    "newVersionHint": "Until the new version passes the review, people keep playing the current one.",
+    "editDetails": "Edit game details",
+    "progress": {
+      "title": "Your publishing status",
+      "steps": {
+        "uploaded": "File upload",
+        "review": "Review",
+        "publish": "Publish"
+      },
+      "stepState": {
+        "done": "done",
+        "current": "in progress",
+        "waiting": "waiting",
+        "failed": "with errors"
+      },
+      "uploading": {
+        "title": "The upload did not finish",
+        "text": "We haven't received the whole .zip yet. If you closed the page, upload a new version from below."
+      },
+      "processing": {
+        "title": "We're checking your file",
+        "text": "It usually takes a minute. This page updates by itself, no need to reload it. As soon as it finishes, the publish button shows up here."
+      },
+      "failed": {
+        "title": "Your game can't be published yet",
+        "text": "No version passed the review. Check the reason below and upload a new version."
+      },
+      "publishHint": "This button turns on when a version passes the review."
+    }
   },
   "gameVersions": {
     "newTitle": "Upload a new version",
@@ -535,7 +572,7 @@
       "zipRequired": "Pick the version's .zip file.",
       "zipNotZip": "The file must be a .zip.",
       "zipTooLarge": "The .zip is too big: the maximum is 200 MB.",
-      "dailyLimit": "You reached the limit of 5 uploads per day. Try again tomorrow.",
+      "dailyLimit": "You reached the limit of 5 uploads per day (new games and new versions both count). You can't upload any more today: try again tomorrow.",
       "gameNotFound": "We couldn't find that game.",
       "versionNotFound": "We couldn't find that version.",
       "versionNotReady": "That version hasn't passed the review yet, so it can't be used.",
@@ -543,7 +580,8 @@
       "unauthenticated": "Log in to continue.",
       "storage": "We couldn't prepare the upload. Try again in a while.",
       "generic": "Something went wrong. Try again."
-    }
+    },
+    "submitting": "Uploading the version…"
   },
   "search": {
     "label": "Search games",
@@ -1567,5 +1605,23 @@
     "kind": {
       "counter_notice": "Counter-notice"
     }
+  },
+  "gameEdit": {
+    "title": "Edit your game",
+    "subtitle": "Change the details, the cover, the screenshots and the questions. To change the game itself, upload a new version from the game page.",
+    "currentCover": "Current cover",
+    "noCover": "It has no cover yet: a generated one in its genre's color is shown.",
+    "coverReplace": "Replace the cover",
+    "coverReplaceHint": "PNG, JPG or WebP, at least 320×180 and up to 5 MB. If you pick none, the current one stays.",
+    "removeCover": "Remove the cover",
+    "currentScreenshots": "Current screenshots",
+    "removeScreenshot": "Remove screenshot {number}",
+    "screenshotAlt": "Screenshot {number} of your game",
+    "screenshotsAdd": "Add screenshots",
+    "screenshotsAddHint": "Up to 6 in total: you can add {left} more. PNG, JPG or WebP, up to 5 MB each.",
+    "submit": "Save changes",
+    "submitting": "Saving…",
+    "cancel": "Cancel",
+    "saved": "Your game changes were saved."
   }
 }

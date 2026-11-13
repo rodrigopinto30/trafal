@@ -83,7 +83,7 @@ select is(
   (select coalesce(string_agg(p.proname, ', ' order by p.proname), '')
      from pg_proc p join pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'execute')),
-  'accept_terms, account_files, check_usage, clear_featured_game, complete_onboarding, confirm_version_upload, create_game_version, delete_my_account, edit_post, explore_creators, explore_games, game_delivery, lift_suspension, moderate_content, my_decisions, play_heartbeat, random_game, resolve_appeal, resolve_claim, resolve_report, search_games, set_active_version, set_comment_helpful, set_featured_game, start_play, submit_appeal, submit_copyright_claim, submit_counter_notice, suspend_account, take_claim, take_report, username_available',
+  'accept_terms, account_files, check_usage, clear_featured_game, complete_onboarding, confirm_version_upload, create_game_version, delete_my_account, edit_game, edit_post, explore_creators, explore_games, game_delivery, lift_suspension, moderate_content, my_decisions, play_heartbeat, random_game, resolve_appeal, resolve_claim, resolve_report, search_games, set_active_version, set_comment_helpful, set_featured_game, start_play, submit_appeal, submit_copyright_claim, submit_counter_notice, suspend_account, take_claim, take_report, username_available',
   'authenticated solo puede ejecutar las funciones públicas previstas'
 );
 

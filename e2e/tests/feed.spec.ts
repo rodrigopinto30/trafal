@@ -21,6 +21,19 @@ test.describe("feed", () => {
     await expect(kinds.getByRole("link", { name: "Todo" })).toHaveAttribute("aria-current", "page");
   });
 
+  test("las tarjetas van una debajo de la otra, en una sola columna", async ({ page }) => {
+    await gotoReady(page, "/feed");
+    await expect(cards(page)).toHaveCount(PAGE_SIZE);
+    const boxes = await Promise.all([0, 1, 2].map((index) => cards(page).nth(index).boundingBox()));
+    for (const [index, box] of boxes.entries()) {
+      expect(box).not.toBeNull();
+      if (index === 0 || !box) continue;
+      const above = boxes[index - 1];
+      expect(Math.abs(box.x - (above?.x ?? 0))).toBeLessThan(1);
+      expect(box.y).toBeGreaterThanOrEqual((above?.y ?? 0) + (above?.height ?? 0));
+    }
+  });
+
   test("cada filtro muestra solo publicaciones de ese tipo y queda en la dirección", async ({ page }) => {
     await gotoReady(page, "/feed");
     await page.getByRole("navigation", { name: "Filtrar por tipo" }).getByRole("link", { name: "Hitos" }).click();

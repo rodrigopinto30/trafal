@@ -338,7 +338,8 @@
     "questionsHint": "{name} quiere saber tu opinión sobre estas cosas.",
     "answersCount": "{count, plural, =0 {Sin respuestas todavía} one {# respuesta} other {# respuestas}}",
     "alreadyAnswered": "Ya respondiste esta pregunta: tu respuesta aparece abajo y la podés editar.",
-    "ownQuestions": "Estas son tus preguntas: las respuestas de la gente aparecen abajo."
+    "ownQuestions": "Estas son tus preguntas: las respuestas de la gente aparecen abajo.",
+    "edit": "Editar juego"
   },
   "gamePlayer": {
     "play": "Jugar gratis",
@@ -456,13 +457,21 @@
       "coverAnimated": "La portada no puede ser animada.",
       "screenshotsInvalid": "Las capturas tienen que ser imágenes PNG, JPG o WebP válidas, sin animar, de hasta 5 MB y entre 320×180 y 4096×4096 píxeles.",
       "tooManyScreenshots": "Podés subir hasta 6 capturas.",
-      "dailyLimit": "Llegaste al límite de 5 subidas por día. Probá de nuevo mañana.",
+      "dailyLimit": "Llegaste al límite de 5 subidas por día (cuentan los juegos nuevos y las versiones nuevas). No podés subir más hoy: probá de nuevo mañana.",
       "accountRestricted": "Tu cuenta no puede subir juegos por ahora.",
       "unauthenticated": "Iniciá sesión para subir un juego.",
       "storage": "No pudimos guardar tus archivos. Probá de nuevo en un rato.",
       "generic": "Algo salió mal. Revisá los datos y probá de nuevo.",
-      "rateLimited": "Creaste demasiados juegos hoy. Probá de nuevo mañana."
-    }
+      "rateLimited": "Creaste demasiados juegos hoy. Probá de nuevo mañana.",
+      "gameNotEditable": "No encontramos ese juego o ya no se puede editar."
+    },
+    "submitting": "Subiendo tu juego…",
+    "stepLabels": {
+      "creating": "Preparar",
+      "uploading": "Subir el .zip",
+      "confirming": "Terminar"
+    },
+    "leaveWarning": "No cierres ni recargues esta página hasta que termine."
   },
   "gameManage": {
     "title": "Tu juego",
@@ -508,7 +517,35 @@
     "versionsHint": "La versión «en uso» es la que juega la gente. Las demás quedan guardadas.",
     "changelogLabel": "Qué cambió",
     "noChangelog": "Sin detalles.",
-    "newVersionHint": "Hasta que la nueva versión pase la revisión, la gente sigue jugando la actual."
+    "newVersionHint": "Hasta que la nueva versión pase la revisión, la gente sigue jugando la actual.",
+    "editDetails": "Editar datos del juego",
+    "progress": {
+      "title": "Estado de tu publicación",
+      "steps": {
+        "uploaded": "Subida del archivo",
+        "review": "Revisión",
+        "publish": "Publicar"
+      },
+      "stepState": {
+        "done": "hecho",
+        "current": "en curso",
+        "waiting": "pendiente",
+        "failed": "con errores"
+      },
+      "uploading": {
+        "title": "La subida no terminó",
+        "text": "Todavía no recibimos el .zip completo. Si cerraste la página, subí una versión nueva desde más abajo."
+      },
+      "processing": {
+        "title": "Estamos revisando tu archivo",
+        "text": "Suele tardar un minuto. Esta página se actualiza sola, no hace falta recargarla. Apenas termine, acá aparece el botón para publicar."
+      },
+      "failed": {
+        "title": "Tu juego todavía no se puede publicar",
+        "text": "Ninguna versión pasó la revisión. Mirá el motivo más abajo y subí una versión nueva."
+      },
+      "publishHint": "Este botón se habilita cuando una versión pase la revisión."
+    }
   },
   "gameVersions": {
     "newTitle": "Subir una versión nueva",
@@ -535,7 +572,7 @@
       "zipRequired": "Elegí el archivo .zip de la versión.",
       "zipNotZip": "El archivo tiene que ser un .zip.",
       "zipTooLarge": "El .zip pesa demasiado: el máximo es 200 MB.",
-      "dailyLimit": "Llegaste al límite de 5 subidas por día. Probá de nuevo mañana.",
+      "dailyLimit": "Llegaste al límite de 5 subidas por día (cuentan los juegos nuevos y las versiones nuevas). No podés subir más hoy: probá de nuevo mañana.",
       "gameNotFound": "No encontramos ese juego.",
       "versionNotFound": "No encontramos esa versión.",
       "versionNotReady": "Esa versión todavía no pasó la revisión, así que no se puede usar.",
@@ -543,7 +580,8 @@
       "unauthenticated": "Iniciá sesión para continuar.",
       "storage": "No pudimos preparar la subida. Probá de nuevo en un rato.",
       "generic": "Algo salió mal. Probá de nuevo."
-    }
+    },
+    "submitting": "Subiendo la versión…"
   },
   "search": {
     "label": "Buscar juegos",
@@ -1567,5 +1605,23 @@
     "kind": {
       "counter_notice": "Contranotificación"
     }
+  },
+  "gameEdit": {
+    "title": "Editar tu juego",
+    "subtitle": "Cambiá los datos, la portada, las capturas y las preguntas. Para cambiar el juego en sí, subí una versión nueva desde la gestión.",
+    "currentCover": "Portada actual",
+    "noCover": "Todavía no tiene portada: se muestra una generada con el color de su género.",
+    "coverReplace": "Reemplazar la portada",
+    "coverReplaceHint": "PNG, JPG o WebP, de 320×180 como mínimo y hasta 5 MB. Si no elegís ninguna, queda la actual.",
+    "removeCover": "Quitar la portada",
+    "currentScreenshots": "Capturas actuales",
+    "removeScreenshot": "Quitar la captura {number}",
+    "screenshotAlt": "Captura {number} de tu juego",
+    "screenshotsAdd": "Agregar capturas",
+    "screenshotsAddHint": "Hasta 6 en total: podés sumar {left} más. PNG, JPG o WebP, de hasta 5 MB cada una.",
+    "submit": "Guardar cambios",
+    "submitting": "Guardando…",
+    "cancel": "Cancelar",
+    "saved": "Guardamos los cambios de tu juego."
   }
 }

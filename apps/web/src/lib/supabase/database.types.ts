@@ -655,6 +655,9 @@ isOneToOne: false
 "delete_my_account":
 { Args: Record<PropertyKey, never>; Returns: undefined
                            },
+"edit_game":
+{ Args: { "p_controls": string,"p_cover_path": string,"p_game_id": string,"p_genre_id": string,"p_questions": (string)[],"p_screenshots": Json,"p_short_description": string,"p_tags": (string)[],"p_title": string }; Returns: undefined
+                           },
 "edit_post":
 { Args: { "p_body": string,"p_game_id": string,"p_highlight": string,"p_kind": string,"p_media": Json,"p_post_id": string }; Returns: undefined
                            },

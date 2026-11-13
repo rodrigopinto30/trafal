@@ -1,12 +1,13 @@
 "use client";
 
+import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { UploadProgress } from "@/components/games/upload-progress";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
-import { FormMessage } from "@/components/ui/form-message";
 import { Input } from "@/components/ui/input";
+import { RevealedMessage } from "@/components/ui/revealed-message";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocale, useTranslations } from "@/i18n/client";
 import { formatBytes } from "@/lib/format";
@@ -46,10 +47,15 @@ export function NewVersionForm({ gameId }: { gameId: string }) {
     return null;
   }
 
+  const [errorRound, setErrorRound] = useState(0);
+  useEffect(() => {
+    if (errorRound > 0) formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+  }, [errorRound]);
+
   function showErrors(errors: Record<string, string>, general?: string) {
     setFieldErrors(errors);
     setFormMessage(general);
-    requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
+    setErrorRound((round) => round + 1);
   }
 
   function finish() {
@@ -104,8 +110,6 @@ export function NewVersionForm({ gameId }: { gameId: string }) {
 
   return (
     <form ref={formRef} onSubmit={onSubmit} noValidate className="grid gap-5">
-      {message ? <FormMessage>{message}</FormMessage> : null}
-      {notice ? <FormMessage tone="info">{notice}</FormMessage> : null}
       <fieldset disabled={busy || upload.canRetry} className="grid min-w-0 gap-5">
         <Field id="version-label" label={t("label")} hint={t("labelHint")} error={fieldErrors.label}>
           {(control) => <Input {...control} name="label" maxLength={VERSION_LABEL_MAX} autoComplete="off" />}
@@ -117,7 +121,16 @@ export function NewVersionForm({ gameId }: { gameId: string }) {
           {(control) => <Input {...control} ref={zipRef} name="zip" type="file" accept={ZIP_TYPES} required className="py-2.5" />}
         </Field>
       </fieldset>
-      <UploadProgress phase={phase} percent={upload.percent} stepText={stepText} progressLabel={tForm("progressLabel")} />
+      {message ? <RevealedMessage>{message}</RevealedMessage> : null}
+      {notice ? <RevealedMessage tone="info">{notice}</RevealedMessage> : null}
+      <UploadProgress
+        phase={phase}
+        percent={upload.percent}
+        stepText={stepText}
+        progressLabel={tForm("progressLabel")}
+        steps={{ creating: tForm("stepLabels.creating"), uploading: tForm("stepLabels.uploading"), confirming: tForm("stepLabels.confirming") }}
+        warning={tForm("leaveWarning")}
+      />
       <div className="flex flex-wrap gap-3">
         {upload.canRetry ? (
           <Button type="button" size="lg" onClick={retry}>
@@ -125,7 +138,14 @@ export function NewVersionForm({ gameId }: { gameId: string }) {
           </Button>
         ) : (
           <Button type="submit" size="lg" disabled={busy}>
-            {t("submit")}
+            {busy ? (
+              <>
+                <Loader2Icon className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                {t("submitting")}
+              </>
+            ) : (
+              t("submit")
+            )}
           </Button>
         )}
       </div>
