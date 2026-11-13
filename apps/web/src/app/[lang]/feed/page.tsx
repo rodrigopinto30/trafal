@@ -21,7 +21,7 @@ export async function generateMetadata() {
 export default async function FeedPage({ searchParams }: PageProps<"/[lang]/feed">) {
   const t = await getTranslations("feed");
   return (
-    <div className="mx-auto grid max-w-[960px] grid-cols-[minmax(0,1fr)] gap-6 px-5 pt-[clamp(24px,5vw,48px)]">
+    <div className="mx-auto grid max-w-[720px] grid-cols-[minmax(0,1fr)] gap-6 px-5 pt-[clamp(24px,5vw,48px)]">
       <header>
         <h1 className="font-display text-[clamp(30px,5vw,46px)] leading-[1.05] font-bold text-glow-violet">{t("title")}</h1>
         <p className="mt-2 max-w-[640px] text-text-2">{t("subtitle")}</p>
@@ -62,7 +62,7 @@ async function FeedContent({ searchParams }: { searchParams: PageProps<"/[lang]/
       </div>
 
       {page.posts.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4">
           {page.posts.map((post, index) => (
             <PostCard key={post.id} post={post} now={now} viewer={viewer} eagerMedia={index === 0} />
           ))}
@@ -98,8 +98,7 @@ async function FeedContent({ searchParams }: { searchParams: PageProps<"/[lang]/
 
 function FeedSkeleton() {
   return (
-    <div className="grid min-h-svh content-start gap-4 md:grid-cols-2" aria-hidden="true">
-      <Skeleton className="h-52 rounded-3xl" />
+    <div className="grid min-h-svh content-start gap-4" aria-hidden="true">
       <Skeleton className="h-52 rounded-3xl" />
       <Skeleton className="h-52 rounded-3xl" />
       <Skeleton className="h-52 rounded-3xl" />

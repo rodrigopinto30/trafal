@@ -1,14 +1,15 @@
 "use client";
 
+import { Loader2Icon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { UploadProgress } from "@/components/games/upload-progress";
 import { SettingsSection } from "@/components/settings/settings-section";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
-import { FormMessage } from "@/components/ui/form-message";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
+import { RevealedMessage } from "@/components/ui/revealed-message";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocale, useTranslations } from "@/i18n/client";
 import { localizePath, stripLocale } from "@/i18n/path";
@@ -80,10 +81,15 @@ function GameUploadForm() {
   const percent = upload.percent;
   const message = formMessage ?? upload.message;
 
+  const [errorRound, setErrorRound] = useState(0);
+  useEffect(() => {
+    if (errorRound > 0) formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+  }, [errorRound]);
+
   function showErrors(errors: Record<string, string>, general?: string) {
     setFieldErrors(errors);
     setFormMessage(general);
-    requestAnimationFrame(() => formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
+    setErrorRound((round) => round + 1);
   }
 
   function checkZip(file: File | undefined): string | null {
@@ -140,8 +146,6 @@ function GameUploadForm() {
 
   return (
     <form ref={formRef} onSubmit={onSubmit} noValidate className="grid gap-6">
-      {message ? <FormMessage>{message}</FormMessage> : null}
-
       <fieldset disabled={busy || created !== null} className="grid min-w-0 gap-6">
         <SettingsSection title={t("detailsTitle")}>
           <div className="grid gap-6">
@@ -219,7 +223,15 @@ function GameUploadForm() {
       </fieldset>
 
       <div className="grid gap-3">
-        <UploadProgress phase={phase} percent={percent} stepText={stepText} progressLabel={t("progressLabel")} />
+        {message ? <RevealedMessage>{message}</RevealedMessage> : null}
+        <UploadProgress
+          phase={phase}
+          percent={percent}
+          stepText={stepText}
+          progressLabel={t("progressLabel")}
+          steps={{ creating: t("stepLabels.creating"), uploading: t("stepLabels.uploading"), confirming: t("stepLabels.confirming") }}
+          warning={t("leaveWarning")}
+        />
         <div className="flex flex-wrap gap-3">
           {canRetry ? (
             <Button type="button" size="lg" onClick={retryUpload}>
@@ -227,7 +239,14 @@ function GameUploadForm() {
             </Button>
           ) : (
             <Button type="submit" size="lg" disabled={busy || created !== null}>
-              {t("submit")}
+              {busy ? (
+                <>
+                  <Loader2Icon className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
+                  {t("submitting")}
+                </>
+              ) : (
+                t("submit")
+              )}
             </Button>
           )}
         </div>

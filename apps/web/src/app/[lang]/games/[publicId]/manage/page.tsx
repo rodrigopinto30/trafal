@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { AutoRefresh } from "@/components/games/auto-refresh";
 import { NewVersionForm } from "@/components/games/new-version-form";
 import { PublishControls } from "@/components/games/publish-controls";
+import { PublishStatus, type PublishStage } from "@/components/games/publish-status";
 import { VersionControls } from "@/components/games/version-controls";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -61,6 +62,12 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
   const gameStatus = (["draft", "published", "hidden", "removed"] as const).find((status) => status === game.status) ?? "draft";
   const hasReadyVersion = game.active_version_id !== null && versions.some((version) => version.id === game.active_version_id && version.status === "ready");
   const canToggle = (gameStatus === "draft" && hasReadyVersion) || gameStatus === "published";
+  const canEdit = gameStatus === "draft" || gameStatus === "published";
+  const waitingStage: PublishStage = versions.some((version) => version.status === "processing")
+    ? "processing"
+    : versions.some((version) => version.status === "uploading")
+      ? "uploading"
+      : "failed";
 
   return (
     <div className="grid gap-8">
@@ -69,6 +76,11 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
         <h1 className="font-display text-[clamp(30px,5vw,44px)] leading-[1.1] font-bold text-glow-violet">{game.title}</h1>
         <div className="flex flex-wrap items-center gap-3">
           <StatusBadge tone={GAME_TONE[gameStatus]}>{t(`status.${gameStatus}`)}</StatusBadge>
+          {canEdit ? (
+            <Button asChild variant="outline">
+              <Link href={`/games/${game.public_id}/edit`}>{t("editDetails")}</Link>
+            </Button>
+          ) : null}
         </div>
         <p className="text-text-2">{t(`note.${gameStatus === "draft" && hasReadyVersion ? "draftReady" : gameStatus}`)}</p>
         {canToggle ? (
@@ -78,6 +90,24 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
             publishLabel={t("publish")}
             unpublishLabel={t("unpublish")}
             pendingLabel={t("saving")}
+          />
+        ) : null}
+        {gameStatus === "draft" && !hasReadyVersion ? (
+          <PublishStatus
+            stage={waitingStage}
+            labels={{
+              title: t(`progress.${waitingStage}.title`),
+              text: t(`progress.${waitingStage}.text`),
+              steps: { uploaded: t("progress.steps.uploaded"), review: t("progress.steps.review"), publish: t("progress.steps.publish") },
+              stepState: {
+                done: t("progress.stepState.done"),
+                current: t("progress.stepState.current"),
+                waiting: t("progress.stepState.waiting"),
+                failed: t("progress.stepState.failed"),
+              },
+              publishLabel: t("publish"),
+              publishHint: t("progress.publishHint"),
+            }}
           />
         ) : null}
       </header>

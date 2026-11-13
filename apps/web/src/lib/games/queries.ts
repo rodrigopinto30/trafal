@@ -361,6 +361,39 @@ export async function findOwnGame(publicId: string, ownerId: string): Promise<Ow
   return data;
 }
 
+export type EditableGame = {
+  id: string;
+  public_id: string;
+  title: string;
+  short_description: string;
+  genre_id: string | null;
+  tags: string[];
+  controls: string;
+  cover_path: string | null;
+  status: string;
+  updated_at: string;
+  screenshots: { id: string; path: string; alt_text: string }[];
+  questions: string[];
+};
+
+/** Everything the edit form needs about one of the signed-in person's games, or null when it is not theirs or moderation closed it. */
+export async function findEditableGame(publicId: string, ownerId: string): Promise<EditableGame | null> {
+  const supabase = await createClient();
+  const { data: game } = await supabase
+    .from("games")
+    .select("id, public_id, title, short_description, genre_id, tags, controls, cover_path, status, updated_at")
+    .eq("public_id", publicId)
+    .eq("owner_id", ownerId)
+    .in("status", ["draft", "published"])
+    .maybeSingle();
+  if (!game) return null;
+  const [screenshots, questions] = await Promise.all([
+    supabase.from("game_screenshots").select("id, path, alt_text").eq("game_id", game.id).order("position"),
+    supabase.from("game_questions").select("question").eq("game_id", game.id).order("position"),
+  ]);
+  return { ...game, screenshots: screenshots.data ?? [], questions: (questions.data ?? []).map((row) => row.question) };
+}
+
 export async function listVersionsOfGame(gameId: string): Promise<OwnGameVersion[]> {
   const supabase = await createClient();
   const { data } = await supabase

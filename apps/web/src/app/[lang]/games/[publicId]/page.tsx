@@ -131,6 +131,11 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
           />
           <ShareButton path={`/games/${game.public_id}`} title={game.title} />
           <SurpriseButton exclude={game.public_id} variant="ghost" />
+          {user?.id === game.owner_id ? (
+            <Button asChild variant="outline">
+              <Link href={`/games/${game.public_id}/edit`}>{t("edit")}</Link>
+            </Button>
+          ) : null}
         </div>
       </header>
 

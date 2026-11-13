@@ -6,17 +6,9 @@ import { getTranslationsFor } from "@/i18n/server";
 import { getAuthUser } from "@/lib/auth/dal";
 import { readText } from "@/lib/forms";
 import { UPLOAD_URL_TTL_SECONDS, MAX_SCREENSHOTS } from "@/lib/games/upload-rules";
-import {
-  GAME_IMAGE_FORMATS,
-  GAME_IMAGE_MAX_BYTES,
-  GAME_IMAGE_MAX_SIDE,
-  GAME_IMAGE_MIN_HEIGHT,
-  GAME_IMAGE_MIN_WIDTH,
-  coverObjectKey,
-  screenshotObjectKey,
-} from "@/lib/media/game-image";
-import { inspectImage } from "@/lib/media/image-sniff";
-import { createQuarantineUploadUrl, deleteMediaObject, putMediaObject } from "@/lib/storage/s3.server";
+import { COVER_PROBLEM_KEYS, checkGameImage, discardObjects, filesOf, type CheckedImage } from "@/lib/games/game-media.server";
+import { GAME_IMAGE_FORMATS, coverObjectKey, screenshotObjectKey } from "@/lib/media/game-image";
+import { createQuarantineUploadUrl, putMediaObject } from "@/lib/storage/s3.server";
 import { createClient } from "@/lib/supabase/server";
 import { isUsageLimitError } from "@/lib/usage/limit";
 import { parseLocale } from "@/lib/validation/common";
@@ -34,39 +26,6 @@ export type CreateGameResult =
   | { ok: false; fieldErrors: Record<string, string>; message?: string };
 
 export type UploadStepResult = { ok: true; uploadUrl?: string } | { ok: false; message: string };
-
-type ImageProblem = "invalid" | "tooLarge" | "dimensions" | "animated";
-type CheckedImage = { bytes: Uint8Array; format: keyof typeof GAME_IMAGE_FORMATS };
-
-/** Checks an uploaded image from its real bytes, ignoring the name and the declared type the browser sent. */
-async function checkImage(file: File): Promise<CheckedImage | ImageProblem> {
-  if (file.size > GAME_IMAGE_MAX_BYTES) return "tooLarge";
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  const info = inspectImage(bytes);
-  if (!info || GAME_IMAGE_FORMATS[info.format].mime !== file.type) return "invalid";
-  if (info.animated) return "animated";
-  const { width, height } = info;
-  if (width < GAME_IMAGE_MIN_WIDTH || height < GAME_IMAGE_MIN_HEIGHT || width > GAME_IMAGE_MAX_SIDE || height > GAME_IMAGE_MAX_SIDE) {
-    return "dimensions";
-  }
-  return { bytes, format: info.format };
-}
-
-function filesOf(formData: FormData, name: string): File[] {
-  return formData.getAll(name).filter((value): value is File => value instanceof File && value.size > 0);
-}
-
-async function discardObjects(keys: string[]): Promise<void> {
-  await Promise.all(
-    keys.map(async (key) => {
-      try {
-        await deleteMediaObject(key);
-      } catch (error) {
-        console.error("[game upload] could not delete an object", key, error);
-      }
-    }),
-  );
-}
 
 /**
  * Creates the game as a draft with its details, images and feedback questions, registers the first version and returns a
@@ -108,15 +67,14 @@ export async function createGameAction(formData: FormData): Promise<CreateGameRe
   let cover: CheckedImage | undefined;
   const screenshots: CheckedImage[] = [];
   if (coverFile) {
-    const checked = await checkImage(coverFile);
-    if (typeof checked === "string") {
-      fieldErrors.cover = message(({ invalid: "coverInvalid", tooLarge: "coverTooLarge", dimensions: "coverDimensions", animated: "coverAnimated" } as const)[checked]);
-    } else cover = checked;
+    const checked = await checkGameImage(coverFile);
+    if (typeof checked === "string") fieldErrors.cover = message(COVER_PROBLEM_KEYS[checked]);
+    else cover = checked;
   }
   if (screenshotFiles.length > MAX_SCREENSHOTS) fieldErrors.screenshots = message("tooManyScreenshots");
   else {
     for (const file of screenshotFiles) {
-      const checked = await checkImage(file);
+      const checked = await checkGameImage(file);
       if (typeof checked === "string") {
         fieldErrors.screenshots = message("screenshotsInvalid");
         break;

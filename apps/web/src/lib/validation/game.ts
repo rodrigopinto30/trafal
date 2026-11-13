@@ -40,6 +40,7 @@ export const GAME_FORM_ERROR_KEYS = [
   "rateLimited",
   "accountRestricted",
   "unauthenticated",
+  "gameNotEditable",
   "storage",
   "generic",
 ] as const;
