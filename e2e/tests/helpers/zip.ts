@@ -46,11 +46,26 @@ export function validGameZip(): Buffer {
   return makeZip({ "index.html": "<!doctype html><title>Moon Runner</title><script src=game.js></script>", "game.js": "console.log('hi')" });
 }
 
-/** A tiny game that proves it is running: its script writes into the page. */
+/**
+ * A tiny game that proves it is running: its script writes into the page. It also reports whether the platform bridge reached it
+ * (`#bridge`, `#patched`: the speakers' connect() was wrapped) and the last message the player sent to the frame (`#last`).
+ */
 export function playableGameZip(marker = ""): Buffer {
   return makeZip({
-    "index.html": '<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Moon Runner</title></head><body><h1>Moon Runner</h1><p id="status">cargando</p><script src="game.js"></script></body></html>',
-    "game.js": `document.getElementById("status").textContent = "corriendo${marker}";`,
+    "index.html":
+      '<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Moon Runner</title></head><body><h1>Moon Runner</h1><p id="status">cargando</p><p id="bridge">no</p><p id="patched">no</p><p id="last">nada</p><script src="game.js"></script></body></html>',
+    "game.js": `document.getElementById("status").textContent = "corriendo${marker}";
+document.getElementById("bridge").textContent = window.__trafalBridge === 1 ? "si" : "no";
+const Context = window.AudioContext || window.webkitAudioContext;
+if (Context) {
+  const context = new Context();
+  const tone = context.createOscillator();
+  tone.connect(context.destination);
+  document.getElementById("patched").textContent = String(AudioNode.prototype.connect).includes("[native code]") ? "native" : "si";
+}
+window.addEventListener("message", (event) => {
+  if (event.data && event.data.trafal === 1) document.getElementById("last").textContent = JSON.stringify(event.data);
+});`,
   });
 }
 
