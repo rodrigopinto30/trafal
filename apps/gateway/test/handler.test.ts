@@ -39,7 +39,9 @@ describe("serving a game", () => {
   it("serves the entry file inside a frame of Trafal", async () => {
     const response = await handle(request(HOST, "/", { headers: IFRAME }));
     expect(response.status).toBe(200);
-    expect(await response.text()).toBe("<h1>hola</h1>");
+    const body = await response.text();
+    expect(body).toContain("<h1>hola</h1>");
+    expect(body).toContain("data-trafal-bridge");
     expect(response.headers.get("content-type")).toBe(HTML);
     await expectSecure(response);
   });
@@ -59,7 +61,7 @@ describe("serving a game", () => {
 
   it("serves a folder's index.html", async () => {
     const response = await handle(request(HOST, "/levels/", { headers: IFRAME }));
-    expect(await response.text()).toBe("<p>levels</p>");
+    expect(await response.text()).toContain("<p>levels</p>");
   });
 
   it("every response carries the security headers: assets, errors, redirects and method errors", async () => {

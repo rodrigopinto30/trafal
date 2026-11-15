@@ -1,3 +1,4 @@
+import { BRIDGE_VERSION, injectBridge } from "./bridge.ts";
 import type { GatewayConfig } from "./config.ts";
 import { DeliveryUnavailable, type DeliveryLookup } from "./delivery.ts";
 import { securityHeaders } from "./headers.ts";
@@ -18,8 +19,8 @@ function text(config: GatewayConfig, status: number, body: string, extra: Record
   return new Response(head ? null : body, { status, headers });
 }
 
-function entityTag(versionNumber: number, etag: string | null): string | null {
-  return etag ? `"v${versionNumber}-${etag.replaceAll('"', "")}"` : null;
+function entityTag(versionNumber: number, etag: string | null, bridged = false): string | null {
+  return etag ? `"v${versionNumber}-${etag.replaceAll('"', "")}${bridged ? `-b${BRIDGE_VERSION}` : ""}"` : null;
 }
 
 function matchesEntityTag(ifNoneMatch: string | null, current: string | null): boolean {
@@ -48,6 +49,8 @@ function deliveryHeaders(config: GatewayConfig, meta: ObjectMeta, etag: string |
  *
  * HTML is only served inside a frame of Trafal (Sec-Fetch-Dest: iframe) or to the game's own scripts (empty): opening a game
  * URL directly sends the person to the game's page on Trafal, so a game can never pose as a page of its own to phish.
+ * The HTML that does go into a frame carries the platform bridge (see bridge.ts), streamed in at the top of the page, so the player's
+ * own controls (mute) work for every game; it is not added to ranges, encoded bodies or the game's own fetches.
  * Service worker scripts are never served (Sec-Fetch-Dest: serviceworker): a worker would outlive the game being hidden or
  * replaced and keep answering for its origin.
  */
@@ -83,7 +86,8 @@ export function createGatewayHandler({ config, delivery, storage }: GatewayDepen
     if (isHtml(meta.contentType) && !HTML_ALLOWED_DESTINATIONS.has(destination ?? "")) {
       return text(config, 302, "", { Location: `${config.siteUrl}/games/${publicId}` }, true);
     }
-    const etag = entityTag(found.versionNumber, meta.etag);
+    const bridged = isHtml(meta.contentType) && destination === "iframe" && !meta.contentEncoding && !request.headers.has("range");
+    const etag = entityTag(found.versionNumber, meta.etag, bridged);
     if (matchesEntityTag(ifNoneMatch, etag)) {
       const headers = deliveryHeaders(config, meta, etag);
       headers.delete("Content-Type");
@@ -91,13 +95,19 @@ export function createGatewayHandler({ config, delivery, storage }: GatewayDepen
     }
     if (head) {
       const headers = deliveryHeaders(config, meta, etag);
-      headers.set("Content-Length", String(meta.contentLength));
+      if (bridged) headers.set("Accept-Ranges", "none");
+      else headers.set("Content-Length", String(meta.contentLength));
       return new Response(null, { status: 200, headers });
     }
 
     const object = await storage.get(key, request.headers.get("range"));
     if (!object) return text(config, 404, "Not found");
     if ("rangeNotSatisfiable" in object) return text(config, 416, "Range not satisfiable", { "Content-Range": `bytes */${meta.contentLength}` });
+    if (bridged && object.status === 200) {
+      const headers = deliveryHeaders(config, object, entityTag(found.versionNumber, object.etag, true));
+      headers.set("Accept-Ranges", "none");
+      return new Response(injectBridge(object.body), { status: 200, headers });
+    }
     const headers = deliveryHeaders(config, object, entityTag(found.versionNumber, object.etag));
     headers.set("Content-Length", String(object.contentLength));
     if (object.contentRange) headers.set("Content-Range", object.contentRange);
