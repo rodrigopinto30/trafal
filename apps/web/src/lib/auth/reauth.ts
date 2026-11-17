@@ -2,7 +2,7 @@ export type ReauthMethod = "password" | "email";
 
 /**
  * How someone proves it is them before something that cannot be undone: with their password if the account has one, or, for an
- * account that only signs in with a provider such as Google (which has no password here), by typing their email.
+ * account that only signs in with a provider such as Google or Discord (which has no password here), by typing their email.
  */
 export function reauthMethodOf(user: { app_metadata?: { providers?: unknown } | null }): ReauthMethod {
   const providers = user.app_metadata?.providers;

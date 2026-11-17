@@ -169,6 +169,7 @@
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "google": "Continue with Google",
+    "discord": "Continue with Discord",
     "login": {
       "title": "Welcome back",
       "subtitle": "Pick up where you left off: your games, your devlogs and your community are waiting.",
@@ -218,7 +219,7 @@
       "consentRequired": "To create your account, confirm that you're {age} or older and accept the terms.",
       "rateLimited": "Too many attempts in a row. Wait a few minutes and try again.",
       "linkExpired": "That link has expired or was already used. Ask for a new one.",
-      "oauthFailed": "We couldn't log you in with Google. Try again or use your email.",
+      "oauthFailed": "We couldn't log you in with that account. Try again or use your email.",
       "generic": "We couldn't complete that. Please try again in a few seconds.",
       "captchaFailed": "We couldn't check that you are a person. Wait for the check to finish and try again."
     }
@@ -338,8 +339,7 @@
     "questionsHint": "{name} wants your opinion on these things.",
     "answersCount": "{count, plural, =0 {No answers yet} one {# answer} other {# answers}}",
     "alreadyAnswered": "You already answered this question: your answer is below and you can edit it.",
-    "ownQuestions": "These are your questions: people's answers show up below.",
-    "edit": "Edit game"
+    "ownQuestions": "These are your questions: people's answers show up below."
   },
   "gamePlayer": {
     "play": "Play for free",
@@ -355,7 +355,9 @@
     "unavailableTitle": "This game can't be played yet",
     "unavailableText": "We couldn't find the game's files. If it's yours, check its status from your profile.",
     "isolationTitle": "This game needs features we don't offer yet",
-    "isolationText": "It uses a technology (WebAssembly threads) that the player doesn't support yet. We're working on it."
+    "isolationText": "It uses a technology (WebAssembly threads) that the player doesn't support yet. We're working on it.",
+    "draftTitle": "Publish your game to play it here",
+    "draftText": "While it's a draft it can't be opened. Once you publish it, it plays in this frame."
   },
   "report": {
     "button": "Report",
@@ -433,17 +435,23 @@
     },
     "selectedFile": "{name} · {size}",
     "submit": "Upload game",
+    "submitAnotherZip": "Upload another .zip",
     "steps": {
       "creating": "Preparing your game…",
       "uploading": "Uploading the .zip… {percent}%",
       "confirming": "Finishing…",
+      "reviewing": "Reviewing your game… it usually takes a few seconds.",
+      "reviewingSlow": "The review is taking longer than usual. You can wait here or go on to the game's page: the review keeps going.",
       "done": "Done! Taking you to your game."
     },
     "progressLabel": "Upload progress",
     "retryUpload": "Retry the upload",
+    "goToGame": "Go to the game's page",
     "uploadFailed": "The upload was interrupted. Your game is already created: you can retry with the same file.",
+    "reviewRejected": "Your .zip didn't pass the review. {reason}",
     "errors": {
       "invalidTitle": "Enter a title of up to 80 characters.",
+      "titleTaken": "There is already a game with that name. Choose another one.",
       "descriptionTooLong": "The description must be 160 characters or fewer.",
       "invalidGenre": "Pick a genre from the list.",
       "tooManyTags": "You can add up to 8 tags.",
@@ -469,10 +477,12 @@
       "gameNotEditable": "We couldn't find that game, or it can no longer be edited."
     },
     "submitting": "Uploading your game…",
+    "reviewingButton": "Reviewing your game…",
     "stepLabels": {
       "creating": "Prepare",
       "uploading": "Upload the .zip",
-      "confirming": "Finish"
+      "confirming": "Finish",
+      "reviewing": "Review"
     },
     "leaveWarning": "Don't close or reload this page until it finishes."
   },
@@ -510,8 +520,6 @@
       "removed": "Your game was taken down by moderation."
     },
     "publish": "Publish game",
-    "unpublish": "Back to draft",
-    "saving": "Saving…",
     "errors": {
       "notReady": "There is no ready version to publish yet.",
       "generic": "We couldn't change the game's status. Try again."
@@ -549,6 +557,33 @@
       },
       "publishHint": "This button turns on when a version passes the review."
     }
+  },
+  "gameOwner": {
+    "title": "Your game",
+    "status": {
+      "draft": "Draft",
+      "published": "Published"
+    },
+    "note": {
+      "published": "It's published: anyone can see it and play it on Trafal.",
+      "ready": "It passed the review. For now it's a draft and only you can see this page: publish it so the community can play it.",
+      "reviewing": "We're reviewing your .zip. Once it passes you'll be able to publish it (this page updates by itself).",
+      "failed": "Your .zip didn't pass the review. Upload a fixed version from \"Versions\"."
+    },
+    "publish": "Publish game",
+    "publishing": "Publishing…",
+    "unpublish": "Take game down",
+    "unpublishing": "Taking it down…",
+    "publishedToast": "You published your game! Anyone can play it now.",
+    "unpublishedToast": "You took your game down. Now only you can see it.",
+    "cancel": "Cancel",
+    "unpublishTitle": "Take your game down?",
+    "unpublishText": "It stops showing on Trafal and nobody can play it until you publish it again. Comments, likes and plays are kept.",
+    "readyTitle": "Your game is ready!",
+    "readyText": "It passed the review and has its own page. Nobody can see it yet: publish it so the community can play it.",
+    "readyLater": "Not now",
+    "edit": "Edit",
+    "versions": "Versions"
   },
   "gameVersions": {
     "newTitle": "Upload a new version",

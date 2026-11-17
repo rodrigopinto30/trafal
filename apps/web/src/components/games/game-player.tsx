@@ -7,6 +7,7 @@ import { ReportDialog } from "@/components/reports/report-dialog";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "@/i18n/client";
 import { classifyDevice } from "@/lib/games/device";
+import { PLAYER_WIDTH } from "@/lib/games/player-size";
 import { helloMessage, isBridgeReady, lockGameKeys, muteMessage, readMutedPreference, saveMutedPreference, unlockGameKeys } from "@/lib/games/frame-bridge";
 import type { GameDetail } from "@/lib/games/types";
 import { loadBrowserClient } from "@/lib/supabase/load-client";
@@ -14,8 +15,6 @@ import { loadBrowserClient } from "@/lib/supabase/load-client";
 const HEARTBEAT_MS = 30_000;
 const FRAME_SANDBOX = "allow-scripts allow-same-origin allow-pointer-lock allow-modals";
 const FRAME_PERMISSIONS = "fullscreen; autoplay; gamepad; accelerometer; gyroscope";
-/** The frame is as wide as the page allows (up to 1280 px) but never so tall that it, with its control bar, falls below the fold: the 13.5 rem are the header, the gap above and the bar. */
-const FRAME_WIDTH = "min(100%, 1280px, calc((100svh - 13.5rem) * 16 / 9))";
 
 /** Sends a Supabase call and ignores the outcome (statistics must never get in the way of playing). Calls are lazy: nothing is sent until the builder is awaited. */
 function fireAndForget(call: PromiseLike<unknown>): void {
@@ -31,6 +30,8 @@ type Props = {
   frameUrl: string | null;
   needsIsolation: boolean;
   signedIn: boolean;
+  /** The owner looking at their own draft: it cannot be played until it is published. */
+  draft?: boolean;
 };
 
 function originOf(url: string | null): string | null {
@@ -47,9 +48,10 @@ function originOf(url: string | null): string | null {
  * control bar under it (restart, sound, fullscreen), the same for every game. The frame points to the games domain (a different site
  * from Trafal) and is sandboxed without top navigation, popups, forms or downloads, so a game cannot touch the visitor's session or
  * leave the frame. Sound is muted through the bridge the gateway adds to the game's page (see apps/gateway/src/bridge.ts); in
- * fullscreen the game also gets the keys the browser would keep for itself. Counts the play and keeps a heartbeat while the tab is visible.
+ * fullscreen the game also gets the keys the browser would keep for itself, Escape included: fullscreen (or the maximized view
+ * used where there is none) is left with the same button that entered it. Counts the play and keeps a heartbeat while the tab is visible.
  */
-export function GamePlayer({ game, frameUrl, needsIsolation, signedIn }: Props) {
+export function GamePlayer({ game, frameUrl, needsIsolation, signedIn, draft = false }: Props) {
   const t = useTranslations("gamePlayer");
   const frameBox = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLIFrameElement>(null);
@@ -108,15 +110,6 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn }: Props) 
     }, HEARTBEAT_MS);
     return () => clearInterval(timer);
   }, [playing, game.public_id]);
-
-  useEffect(() => {
-    if (!overlay) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOverlay(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [overlay]);
 
   useEffect(() => {
     if (!playing || !frameOrigin) return;
@@ -188,7 +181,7 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn }: Props) 
 
   return (
     <div className="grid gap-3">
-      <div ref={frameBox} className={shellClass} style={immersive ? undefined : { width: FRAME_WIDTH }}>
+      <div ref={frameBox} className={shellClass} style={immersive ? undefined : { width: PLAYER_WIDTH }}>
         <div className={immersive ? "relative min-h-0 flex-1" : "relative aspect-video"}>
           {playing && playable ? (
             <>
@@ -228,6 +221,11 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn }: Props) 
                         <Volume2Icon aria-hidden="true" className="size-4 shrink-0" />
                         {t("soundNotice")}
                       </p>
+                    </>
+                  ) : draft ? (
+                    <>
+                      <h2 className="font-display text-xl font-bold text-white sm:text-2xl">{t("draftTitle")}</h2>
+                      <p className="text-sm text-white/85 sm:text-base">{t("draftText")}</p>
                     </>
                   ) : (
                     <>
@@ -269,9 +267,11 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn }: Props) 
         ) : null}
       </div>
 
-      <div className="mx-auto flex w-full flex-wrap items-center justify-center gap-2">
-        <ReportDialog targetType="game" targetId={game.id} signedIn={signedIn} loginHref={`/login?next=${encodeURIComponent(`/games/${game.public_id}`)}`} />
-      </div>
+      {draft ? null : (
+        <div className="mx-auto flex w-full flex-wrap items-center justify-center gap-2">
+          <ReportDialog targetType="game" targetId={game.id} signedIn={signedIn} loginHref={`/login?next=${encodeURIComponent(`/games/${game.public_id}`)}`} />
+        </div>
+      )}
     </div>
   );
 }

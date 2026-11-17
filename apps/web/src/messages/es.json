@@ -169,6 +169,7 @@
     "showPassword": "Mostrar contraseña",
     "hidePassword": "Ocultar contraseña",
     "google": "Continuar con Google",
+    "discord": "Continuar con Discord",
     "login": {
       "title": "Volvé a entrar",
       "subtitle": "Seguí donde lo dejaste: tus juegos, tus avances y tu comunidad te esperan.",
@@ -218,7 +219,7 @@
       "consentRequired": "Para crear tu cuenta tenés que confirmar que tenés {age} años o más y aceptar los términos.",
       "rateLimited": "Hiciste muchos intentos seguidos. Esperá unos minutos y probá de nuevo.",
       "linkExpired": "Ese link venció o ya se usó. Pedí uno nuevo.",
-      "oauthFailed": "No pudimos iniciar sesión con Google. Probá de nuevo o usá tu email.",
+      "oauthFailed": "No pudimos iniciar sesión con esa cuenta. Probá de nuevo o usá tu email.",
       "generic": "No pudimos completar la acción. Probá de nuevo en unos segundos.",
       "captchaFailed": "No pudimos comprobar que sos una persona. Esperá a que termine la verificación y probá de nuevo."
     }
@@ -338,8 +339,7 @@
     "questionsHint": "{name} quiere saber tu opinión sobre estas cosas.",
     "answersCount": "{count, plural, =0 {Sin respuestas todavía} one {# respuesta} other {# respuestas}}",
     "alreadyAnswered": "Ya respondiste esta pregunta: tu respuesta aparece abajo y la podés editar.",
-    "ownQuestions": "Estas son tus preguntas: las respuestas de la gente aparecen abajo.",
-    "edit": "Editar juego"
+    "ownQuestions": "Estas son tus preguntas: las respuestas de la gente aparecen abajo."
   },
   "gamePlayer": {
     "play": "Jugar gratis",
@@ -355,7 +355,9 @@
     "unavailableTitle": "Este juego todavía no se puede jugar",
     "unavailableText": "No encontramos los archivos del juego. Si es tuyo, revisá su estado desde tu perfil.",
     "isolationTitle": "Este juego necesita funciones que todavía no ofrecemos",
-    "isolationText": "Usa una tecnología (hilos de WebAssembly) que el reproductor todavía no soporta. Estamos trabajando en eso."
+    "isolationText": "Usa una tecnología (hilos de WebAssembly) que el reproductor todavía no soporta. Estamos trabajando en eso.",
+    "draftTitle": "Publicá tu juego para jugarlo acá",
+    "draftText": "Mientras sea un borrador no se puede abrir. Cuando lo publiques, se juega en este recuadro."
   },
   "report": {
     "button": "Reportar",
@@ -433,17 +435,23 @@
     },
     "selectedFile": "{name} · {size}",
     "submit": "Subir juego",
+    "submitAnotherZip": "Subir otro .zip",
     "steps": {
       "creating": "Preparando tu juego…",
       "uploading": "Subiendo el .zip… {percent}%",
       "confirming": "Terminando…",
+      "reviewing": "Revisando tu juego… suele tardar unos segundos.",
+      "reviewingSlow": "La revisión está tardando más de lo normal. Podés esperar acá o seguir en la página del juego: la revisión sigue igual.",
       "done": "¡Listo! Te llevamos a tu juego."
     },
     "progressLabel": "Progreso de la subida",
     "retryUpload": "Reintentar la subida",
+    "goToGame": "Ir a la página del juego",
     "uploadFailed": "La subida se cortó. Tu juego ya está creado: podés reintentar con el mismo archivo.",
+    "reviewRejected": "Tu .zip no pasó la revisión. {reason}",
     "errors": {
       "invalidTitle": "Poné un título de hasta 80 caracteres.",
+      "titleTaken": "Ya hay un juego con ese nombre. Elegí otro.",
       "descriptionTooLong": "La descripción tiene que tener 160 caracteres o menos.",
       "invalidGenre": "Elegí un género de la lista.",
       "tooManyTags": "Podés poner hasta 8 etiquetas.",
@@ -469,10 +477,12 @@
       "gameNotEditable": "No encontramos ese juego o ya no se puede editar."
     },
     "submitting": "Subiendo tu juego…",
+    "reviewingButton": "Revisando tu juego…",
     "stepLabels": {
       "creating": "Preparar",
       "uploading": "Subir el .zip",
-      "confirming": "Terminar"
+      "confirming": "Terminar",
+      "reviewing": "Revisar"
     },
     "leaveWarning": "No cierres ni recargues esta página hasta que termine."
   },
@@ -510,8 +520,6 @@
       "removed": "Tu juego fue dado de baja por moderación."
     },
     "publish": "Publicar juego",
-    "unpublish": "Volver a borrador",
-    "saving": "Guardando…",
     "errors": {
       "notReady": "Todavía no hay una versión lista para publicar.",
       "generic": "No pudimos cambiar el estado del juego. Probá de nuevo."
@@ -549,6 +557,33 @@
       },
       "publishHint": "Este botón se habilita cuando una versión pase la revisión."
     }
+  },
+  "gameOwner": {
+    "title": "Tu juego",
+    "status": {
+      "draft": "Borrador",
+      "published": "Publicado"
+    },
+    "note": {
+      "published": "Está publicado: cualquiera lo puede ver y jugar en Trafal.",
+      "ready": "Pasó la revisión. Por ahora es un borrador y esta página solo la ves vos: publicalo para que la comunidad lo pueda jugar.",
+      "reviewing": "Estamos revisando tu .zip. Cuando pase la revisión vas a poder publicarlo (esta página se actualiza sola).",
+      "failed": "Tu .zip no pasó la revisión. Subí una versión corregida desde «Versiones»."
+    },
+    "publish": "Publicar juego",
+    "publishing": "Publicando…",
+    "unpublish": "Bajar juego",
+    "unpublishing": "Bajando…",
+    "publishedToast": "¡Publicaste tu juego! Ya lo puede jugar cualquiera.",
+    "unpublishedToast": "Bajaste tu juego. Ahora solo lo ves vos.",
+    "cancel": "Cancelar",
+    "unpublishTitle": "¿Bajar tu juego?",
+    "unpublishText": "Deja de verse en Trafal y nadie lo va a poder jugar hasta que lo vuelvas a publicar. Los comentarios, los me gusta y las partidas se conservan.",
+    "readyTitle": "¡Tu juego está listo!",
+    "readyText": "Pasó la revisión y ya tiene su página. Todavía no lo ve nadie: publicalo para que la comunidad lo pueda jugar.",
+    "readyLater": "Ahora no",
+    "edit": "Editar",
+    "versions": "Versiones"
   },
   "gameVersions": {
     "newTitle": "Subir una versión nueva",

@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { AuthShell, OrDivider } from "@/components/auth/auth-shell";
-import { GoogleButton } from "@/components/auth/google-button";
+import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { LoginForm } from "@/components/auth/login-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
 import { localizePath } from "@/i18n/path";
 import { getLocale, getTranslations } from "@/i18n/server";
 import { getAuthUser } from "@/lib/auth/dal";
-import { publicEnv } from "@/lib/env";
+import { enabledOAuthProviders } from "@/lib/auth/oauth-providers";
 import { firstParam, parseLoginError, parseNextPath } from "@/lib/validation/common";
 
 export async function generateMetadata() {
@@ -43,10 +43,10 @@ async function LoginContent({ searchParams }: { searchParams: PageProps<"/[lang]
   return (
     <>
       <LoginForm next={next} initialError={initialError} />
-      {publicEnv.googleEnabled ? (
+      {enabledOAuthProviders().length > 0 ? (
         <>
           <OrDivider label={tc("or")} />
-          <GoogleButton next={next} />
+          <OAuthButtons next={next} />
         </>
       ) : null}
       <p className="text-center text-sm text-text-2">

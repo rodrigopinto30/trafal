@@ -63,6 +63,7 @@ Qué cubren los tests:
 | `SITE_URL` | URL pública del sitio (links de los mails, redirecciones, metadatos) | `http://localhost:3000` |
 | `WEB_PORT` | Puerto donde se publica la web | `3000` |
 | `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` / `_SECRET` | Login con Google (opcional) | vacío (botón oculto) |
+| `SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID` / `_SECRET` | Login con Discord (opcional) | vacío (botón oculto) |
 | `LEGAL_OPERATOR_NAME` / `LEGAL_CONTACT_EMAIL` / `LEGAL_JURISDICTION` | Quién opera el sitio, cómo contactarlo y qué leyes y tribunales rigen: los nombran los documentos legales. Son texto público y entran **al compilar** (argumentos de build) | vacías (los textos muestran un hueco «a completar») |
 | `TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Captcha de Cloudflare Turnstile del registro y de los reclamos (la clave del sitio es pública; la secreta la ve solo el servidor) | vacías (sin captcha, solo en un sitio no público) |
 | `GAMES_BASE_URL` | Origen del dominio de juegos sin el id; cada juego se sirve en `<id>.<ese host>`, que tiene que ser **otro sitio** que `SITE_URL` | `http://games.localhost:4000` (lo escribe `./start.sh`; el puerto sale de `GAMES_PORT`) |
@@ -77,6 +78,16 @@ Las claves y URLs de Supabase **no** se configuran a mano: `start.sh` las lee de
 2. Agregá como URI de redirección autorizado: `http://127.0.0.1:54321/auth/v1/callback`.
 3. Pegá el ID y el secreto en `.env` (`SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` y `…_SECRET`).
 4. Reiniciá: `./stop.sh && ./start.sh`. El botón «Continuar con Google» aparece solo.
+
+### Login con Discord
+
+1. En el [Discord Developer Portal](https://discord.com/developers/applications) creá una aplicación (**New Application**).
+2. En **OAuth2** copiá el *Client ID* y generá el *Client Secret* (**Reset Secret**).
+3. En **OAuth2 → Redirects** agregá `http://127.0.0.1:54321/auth/v1/callback` y guardá.
+4. Pegá los dos valores en `.env` (`SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID` y `…_SECRET`).
+5. Reiniciá: `./stop.sh && ./start.sh`. El botón «Continuar con Discord» aparece solo.
+
+En producción, la dirección de retorno es la de tu proyecto de Supabase (`https://<proyecto>.supabase.co/auth/v1/callback`), en Google y en Discord, y las credenciales se cargan en el panel de Supabase (*Authentication → Providers*). Discord pide los permisos `identify` y `email`: quien entra por primera vez pasa por el onboarding (elige su @usuario, confirma los 18+ y acepta los términos), igual que con Google.
 
 ### Captcha (Turnstile)
 
@@ -137,7 +148,7 @@ Las decisiones de diseño y por qué se tomaron están en [docs/DECISIONS.md](DE
 | «Docker no responde» | Arrancá Docker; en Linux tu usuario tiene que estar en el grupo `docker`. |
 | Un puerto está ocupado (3000, 54321–54324) | Cambiá `WEB_PORT` en `.env`; para Supabase, cerrá lo que use esos puertos. |
 | Quedó un estado raro | `./stop.sh --purge && ./start.sh` (empieza de cero). |
-| El login con Google no aparece | Revisá que las dos variables de Google estén en `.env` y reiniciá. |
+| El login con Google o con Discord no aparece | Revisá que las dos variables de ese proveedor estén en `.env` y reiniciá (`./stop.sh && ./start.sh`: Supabase lee los proveedores al arrancar). |
 | «No pudimos guardar la foto» | El servidor guarda las imágenes en el S3 de Supabase Storage: tiene que estar corriendo (`./start.sh`) y el contenedor web necesita `host.docker.internal` (ya está en `docker-compose.yml`). `./start.sh` también crea el bucket `media`. |
 
 > **Aviso (solo desarrollo):** Supabase local publica sus puertos en todas las interfaces y Studio no tiene contraseña. No lo uses en redes que no sean de confianza.

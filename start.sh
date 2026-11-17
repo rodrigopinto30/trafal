@@ -81,6 +81,16 @@ else
 fi
 export SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET
 
+# Lo mismo con Discord.
+if [ -n "${SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID:-}" ] && [ -n "${SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET:-}" ]; then
+  DISCORD_AUTH_ENABLED="true"
+else
+  DISCORD_AUTH_ENABLED="false"
+  export SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID="disabled-placeholder"
+  export SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET="disabled-placeholder"
+fi
+export SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET
+
 # ---------------------------------------------------------------------------------------------
 step "Levantando Supabase (base de datos, auth, tiempo real, correo de pruebas)"
 if sb status >/dev/null 2>&1; then
@@ -117,6 +127,7 @@ cat > .env.supabase <<EOF
 SUPABASE_PUBLIC_URL=$API_URL
 SUPABASE_PUBLISHABLE_KEY=$PUBLISHABLE_KEY
 GOOGLE_AUTH_ENABLED=$GOOGLE_AUTH_ENABLED
+DISCORD_AUTH_ENABLED=$DISCORD_AUTH_ENABLED
 HOST_UID=$(id -u)
 HOST_GID=$(id -g)
 # Almacenamiento de imágenes: en local, el endpoint S3 de Supabase Storage hace de Cloudflare R2. El servidor entra por

@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { oauthCallbackQuerySchema } from "@/lib/validation/auth";
 import { parseNextPath } from "@/lib/validation/common";
 
-/** Destino del login con Google (OAuth con PKCE): canjea el código por una sesión. Redirige a la URL pública (SITE_URL), no a la interna. */
+/** Destino del login con Google o Discord (OAuth con PKCE): canjea el código por una sesión. Redirige a la URL pública (SITE_URL), no a la interna. */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const query = oauthCallbackQuerySchema.safeParse({ code: searchParams.get("code") });

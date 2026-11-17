@@ -6,6 +6,7 @@ import { getTranslationsFor } from "@/i18n/server";
 import { getAuthUser } from "@/lib/auth/dal";
 import { readText } from "@/lib/forms";
 import { COVER_PROBLEM_KEYS, checkGameImage, discardObjects, filesOf, type CheckedImage } from "@/lib/games/game-media.server";
+import { isTitleTaken } from "@/lib/games/title";
 import { MAX_SCREENSHOTS } from "@/lib/games/upload-rules";
 import { GAME_IMAGE_FORMATS, coverObjectKey, screenshotObjectKey } from "@/lib/media/game-image";
 import { putMediaObject } from "@/lib/storage/s3.server";
@@ -124,6 +125,7 @@ export async function updateGameAction(formData: FormData): Promise<EditGameResu
   if (error) {
     await discardObjects(uploadedKeys);
     if (error.code === "42501") return fail("accountRestricted");
+    if (isTitleTaken(error)) return fail("titleTaken", "title");
     if (error.message === "game_not_found") return fail("gameNotEditable");
     console.error("[game edit] could not save the game", error);
     return fail("generic");

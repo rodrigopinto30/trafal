@@ -6,12 +6,14 @@ import type { Locale } from "@/i18n/config";
 import { localizePath } from "@/i18n/path";
 import { getTranslationsFor } from "@/i18n/server";
 import { publicEnv } from "@/lib/env";
+import { serverEnv } from "@/lib/env.server";
 import { readText, type FormState } from "@/lib/forms";
 import { createClient } from "@/lib/supabase/server";
 import {
   AUTH_FORM_ERROR_KEYS,
   forgotPasswordSchema,
   loginSchema,
+  oauthProviderSchema,
   resetPasswordSchema,
   signupSchema,
 } from "@/lib/validation/auth";
@@ -21,6 +23,8 @@ import { fieldErrorsFrom, sanitizeLine } from "@/lib/validation/text";
 import { getAuthUser } from "./dal";
 import { authErrorKey } from "./errors";
 import { syncLocaleFromAccount } from "./locale";
+import { enabledOAuthProviders } from "./oauth-providers";
+import { browserAuthUrl } from "./oauth-url";
 import { MIN_AGE, TERMS_VERSION } from "./terms";
 
 /* ---------------------------------------------------------------------------------------------
@@ -188,19 +192,21 @@ export async function resetPasswordAction(_prev: FormState, formData: FormData):
   redirect(localizePath(locale, "/"));
 }
 
-export async function googleAction(formData: FormData): Promise<void> {
+/** «Continuar con Google / Discord»: manda a la persona a la cuenta de afuera elegida, que vuelve a /auth/callback. Solo los proveedores con credenciales configuradas. */
+export async function oauthAction(formData: FormData): Promise<void> {
   const locale = readLocale(formData);
   const next = localizePath(locale, readNext(formData));
+  const provider = oauthProviderSchema.safeParse(formData.get("provider"));
 
-  if (!publicEnv.googleEnabled) redirect(localizePath(locale, "/login?error=oauthFailed"));
+  if (!provider.success || !enabledOAuthProviders().includes(provider.data)) redirect(localizePath(locale, "/login?error=oauthFailed"));
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
+    provider: provider.data,
     options: { redirectTo: `${publicEnv.siteUrl}/auth/callback?next=${encodeURIComponent(next)}` },
   });
   if (error || !data.url) redirect(localizePath(locale, "/login?error=oauthFailed"));
-  redirect(data.url);
+  redirect(browserAuthUrl(data.url, serverEnv.supabaseUrl, publicEnv.supabaseUrl));
 }
 
 export async function signOutAction(formData: FormData): Promise<void> {

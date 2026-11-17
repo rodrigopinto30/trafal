@@ -110,6 +110,27 @@ export const findGameByPublicId = cache(async (publicId: string): Promise<GameDe
   return data && hasOwner(data) ? data : null;
 });
 
+export type GameVisibility = "published" | "draft";
+export type ViewableGame = GameDetail & { status: GameVisibility };
+
+/**
+ * The game a page shows to this viewer: a published game for anyone, and a draft only for its owner (the database already
+ * hides other people's drafts; this also keeps an admin from landing on one). Hidden and removed games are not shown here.
+ */
+export const findViewableGame = cache(async (publicId: string, viewerId: string | null): Promise<ViewableGame | null> => {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("games")
+    .select(`${GAME_DETAIL_COLUMNS}, status`)
+    .eq("public_id", publicId)
+    .in("status", viewerId ? ["published", "draft"] : ["published"])
+    .maybeSingle();
+  if (!data || !hasOwner(data)) return null;
+  if (data.status === "published") return { ...data, status: "published" };
+  if (data.status === "draft" && data.owner_id === viewerId) return { ...data, status: "draft" };
+  return null;
+});
+
 /** The first game of the week: this week's pick or, if this week has none yet, the latest one before it. A pick chosen ahead for a coming week stays hidden until its week starts. */
 export async function findFeaturedGame(): Promise<FeaturedGame | null> {
   const supabase = await createClient();

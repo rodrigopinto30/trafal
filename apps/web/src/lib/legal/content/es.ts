@@ -152,7 +152,7 @@ export const legalEs: LegalContent = {
         title: "Qué datos guardamos",
         blocks: [
           [
-            "Cuenta: tu email y tu contraseña (la guarda el servicio de autenticación de forma cifrada; nosotros nunca la vemos). Si entrás con Google, recibimos el dato básico de esa cuenta que hace falta para identificarte, como tu email.",
+            "Cuenta: tu email y tu contraseña (la guarda el servicio de autenticación de forma cifrada; nosotros nunca la vemos). Si entrás con Google o con Discord, recibimos el dato básico de esa cuenta que hace falta para identificarte, como tu email.",
             "Consentimiento: la versión de los términos que aceptaste, cuándo la aceptaste y cuándo confirmaste que tenés {minAge} años o más.",
             "Perfil (lo completás vos): @usuario, nombre, bio, ciudad, país, foto, motores y géneros favoritos. Tu perfil es público: se ve sin iniciar sesión.",
             "Lo que publicás: juegos (con sus versiones, portadas y capturas), avances con sus imágenes o videos, y comentarios. Es público, salvo lo que esté en borrador.",
@@ -185,7 +185,7 @@ export const legalEs: LegalContent = {
           [
             "Supabase: base de datos y autenticación.",
             "Cloudflare: almacenamiento de archivos (R2) y el captcha (Turnstile). Turnstile puede usar datos del navegador para distinguir personas de programas.",
-            "Google, solo si elegís entrar con tu cuenta de Google.",
+            "Google o Discord, solo si elegís entrar con tu cuenta de alguno de ellos.",
             "El proveedor que aloja el sitio y el que envía los emails de confirmación y de recuperación de contraseña.",
           ],
           "Lo que publicás y tu perfil son públicos y los puede ver cualquiera, incluidos buscadores. Podemos compartir datos si lo exige una autoridad con competencia, o si hace falta para proteger a las personas o el servicio. En un reclamo de derechos de autor, podemos compartir con la otra parte lo necesario para resolverlo.",

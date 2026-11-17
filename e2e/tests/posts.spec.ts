@@ -1,5 +1,5 @@
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
-import { uploadGameZip, unpublishGame } from "./helpers/game";
+import { uniqueTitle, unpublishGame, uploadAndPublishGame } from "./helpers/game";
 import { makePng } from "./helpers/images";
 import { makeGif, makeMp4 } from "./helpers/post-media";
 import { gotoReady, lettersOnly, loginAndWait, registerAccount, uniqueSuffix } from "./helpers/session";
@@ -17,6 +17,7 @@ let context: BrowserContext;
 let author: Page;
 let username = "";
 let publicId = "";
+let gameTitle = "";
 
 const FILES = {
   png: { name: "nivel-2.png", mimeType: "image/png", buffer: makePng(64, 48) },
@@ -40,12 +41,8 @@ test.beforeAll(async ({ browser }, testInfo) => {
   const suffix = uniqueSuffix(testInfo.project.name);
   username = `posts_${lettersOnly(suffix)}`;
   await registerAccount(author, { email: `e2e_posts_${suffix}@trafal.test`, username, displayName: "Persona Avances" });
-  await uploadGameZip(author, "Juego de avances", playableGameZip());
-  await expect(author.getByText("Lista", { exact: true })).toBeVisible({ timeout: 45_000 });
-  await author.getByRole("button", { name: "Publicar juego" }).click();
-  await expect(author.getByText("Tu juego está publicado")).toBeVisible();
-  publicId = /\/games\/([a-z0-9]+)\/manage$/.exec(author.url())?.[1] ?? "";
-  expect(publicId).not.toBe("");
+  gameTitle = uniqueTitle("Juego de avances");
+  publicId = await uploadAndPublishGame(author, gameTitle, playableGameZip());
 });
 
 test.afterAll(async () => {
@@ -153,7 +150,7 @@ test("un avance de un juego propio se muestra en la página del juego, y no se p
   await author.waitForLoadState("networkidle");
   const gameSelect = author.getByRole("combobox", { name: "Juego", exact: true });
   await expect(gameSelect).toHaveValue(/.+/);
-  await expect(gameSelect.locator("option")).toHaveText(["Ninguno (un avance general)", "Juego de avances"]);
+  await expect(gameSelect.locator("option")).toHaveText(["Ninguno (un avance general)", gameTitle]);
 
   await author.getByLabel("Tipo de publicación").selectOption("hito");
   await author.getByLabel("Dato destacado").fill("100");
@@ -208,7 +205,7 @@ test("el autor edita todo: tipo, juego, texto y archivos (quitar, agregar, reord
   await expect(files.getByText("Archivo actual")).toHaveCount(3);
 
   await author.getByLabel("Tipo de publicación").selectOption("pide_feedback");
-  await author.getByRole("combobox", { name: "Juego", exact: true }).selectOption({ label: "Juego de avances" });
+  await author.getByRole("combobox", { name: "Juego", exact: true }).selectOption({ label: gameTitle });
   await author.getByLabel("Qué querés contar").fill("Texto nuevo: ¿se entiende el nivel 2?");
 
   await author.getByRole("button", { name: "Quitar Archivo 2" }).click();
