@@ -1,5 +1,5 @@
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
-import { uploadGameZip, unpublishGame } from "./helpers/game";
+import { uniqueTitle, unpublishGame, uploadAndPublishGame } from "./helpers/game";
 import { lettersOnly, registerAccount, uniqueSuffix, gotoReady } from "./helpers/session";
 import { playableGameZip } from "./helpers/zip";
 
@@ -14,6 +14,7 @@ let answererContext: BrowserContext;
 let creator: Page;
 let answerer: Page;
 let publicId = "";
+let gameTitle = "";
 let tag = "";
 
 const question = (n: number) => `Pregunta ${n} del creador [${tag}]`;
@@ -37,12 +38,8 @@ test.beforeAll(async ({ browser }, testInfo) => {
 
   await registerAccount(answerer, { email: `e2e_answerer_${tag}@trafal.test`, username: `answerer_${lettersOnly(tag)}`, displayName: "Persona Respuestas" });
   await registerAccount(creator, { email: `e2e_asker_${tag}@trafal.test`, username: `asker_${lettersOnly(tag)}`, displayName: "Persona Preguntas" });
-  await uploadGameZip(creator, "Juego con preguntas", playableGameZip(), "game.zip", [question(1), question(2)]);
-  await expect(creator.getByText("Lista", { exact: true })).toBeVisible({ timeout: 45_000 });
-  await creator.getByRole("button", { name: "Publicar juego" }).click();
-  await expect(creator.getByText("Tu juego está publicado")).toBeVisible();
-  publicId = /\/games\/([a-z0-9]+)\/manage$/.exec(creator.url())?.[1] ?? "";
-  expect(publicId).not.toBe("");
+  gameTitle = uniqueTitle("Juego con preguntas");
+  publicId = await uploadAndPublishGame(creator, gameTitle, playableGameZip(), "game.zip", [question(1), question(2)]);
 });
 
 test.afterAll(async () => {

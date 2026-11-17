@@ -138,6 +138,17 @@ url = ""
 skip_nonce_check = false
 email_optional = false
 
+[auth.external.discord]
+# Igual que Google: solo funciona con credenciales reales (ver docs/DESARROLLO.md → "Login con Discord"). Sin ellas el
+# botón queda oculto (NEXT_PUBLIC_DISCORD_AUTH_ENABLED=false).
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_DISCORD_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_DISCORD_SECRET)"
+redirect_uri = ""
+url = ""
+skip_nonce_check = false
+email_optional = false
+
 [auth.sms]
 enabled = false
 

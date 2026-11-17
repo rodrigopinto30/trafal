@@ -8,6 +8,7 @@ import { CommentList, type CommentViewer } from "@/components/games/comment-list
 import { CreatorQuestions } from "@/components/games/creator-questions";
 import { GamePlayerShell } from "@/components/games/game-player-shell";
 import { JoinCard } from "@/components/games/join-card";
+import { OwnerPanel } from "@/components/games/owner-panel";
 import { PostCard } from "@/components/games/post-card";
 import { ShareButton } from "@/components/games/share-button";
 import { SurpriseButton } from "@/components/games/surprise-button";
@@ -21,9 +22,10 @@ import { getLocale, getTranslations } from "@/i18n/server";
 import { getAuthUser } from "@/lib/auth/dal";
 import { formatCompactNumber } from "@/lib/format";
 import { groupComments } from "@/lib/games/comments";
-import { findGameByPublicId, listCommentsByGame, listPostsByGame, listQuestionsByGame, listReadyVersions } from "@/lib/games/queries";
+import { findViewableGame, listCommentsByGame, listPostsByGame, listQuestionsByGame, listReadyVersions, listVersionsOfGame } from "@/lib/games/queries";
+import { PLAYER_WIDTH } from "@/lib/games/player-size";
 import { listMyReactions, type MyReactions } from "@/lib/games/reaction-queries";
-import { parsePublicIdParam } from "@/lib/validation/common";
+import { firstParam, parsePublicIdParam, parseUploadedFlag } from "@/lib/validation/common";
 import { JsonLd } from "@/components/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { excerpt } from "@/lib/seo/site";
@@ -36,31 +38,36 @@ type GamePageProps = PageProps<"/[lang]/games/[publicId]">;
 
 export async function generateMetadata({ params }: GamePageProps) {
   const publicId = parsePublicIdParam((await params).publicId);
-  const game = publicId ? await findGameByPublicId(publicId) : null;
+  const user = publicId ? await getAuthUser() : null;
+  const game = publicId ? await findViewableGame(publicId, user?.id ?? null) : null;
   if (!game) return {};
+  if (game.status === "draft") return { title: game.title, robots: { index: false, follow: false } };
   const locale = await getLocale();
   return pageMetadata({ title: game.title, description: excerpt(game.short_description, 160), path: `/games/${game.public_id}`, locale });
 }
 
-export default function GamePage({ params }: GamePageProps) {
+export default function GamePage({ params, searchParams }: GamePageProps) {
   return (
     <div className="mx-auto max-w-[1280px] px-5 pt-3 sm:pt-4">
       <ExtraMessages namespaces={["gamePlayer", "comments"]}>
         <Suspense fallback={<GamePageSkeleton />}>
-          <GameContent params={params} />
+          <GameContent params={params} searchParams={searchParams} />
         </Suspense>
       </ExtraMessages>
     </div>
   );
 }
 
-async function GameContent({ params }: { params: GamePageProps["params"] }) {
+async function GameContent({ params, searchParams }: { params: GamePageProps["params"]; searchParams: GamePageProps["searchParams"] }) {
   const publicId = parsePublicIdParam((await params).publicId);
   if (!publicId) notFound();
-  const game = await findGameByPublicId(publicId);
+  const user = await getAuthUser();
+  const game = await findViewableGame(publicId, user?.id ?? null);
   if (!game) notFound();
+  const isOwner = user?.id === game.owner_id;
+  const isDraft = game.status === "draft";
 
-  const [t, tPosts, tGenres, locale, posts, comments, questions, versions, user] = await Promise.all([
+  const [t, tPosts, tGenres, locale, posts, comments, questions, versions, ownVersions] = await Promise.all([
     getTranslations("games"),
     getTranslations("posts"),
     getTranslations("genres"),
@@ -69,8 +76,9 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
     listCommentsByGame(game.id),
     listQuestionsByGame(game.id),
     listReadyVersions(game.id),
-    getAuthUser(),
+    isOwner ? listVersionsOfGame(game.id) : Promise.resolve([]),
   ]);
+  const justUploaded = isOwner && parseUploadedFlag(firstParam((await searchParams).uploaded));
   const [myGame, myPosts] = user
     ? await Promise.all([listMyReactions("game", [game.id]), listMyReactions("post", posts.map((post) => post.id))])
     : [NO_REACTIONS, NO_REACTIONS];
@@ -85,8 +93,15 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
 
   return (
     <div className="grid gap-10">
-      <JsonLd data={gameData({ ...game, genre: game.genre_id, owner }, locale)} />
-      <GamePlayerShell game={game} />
+      {isDraft ? null : <JsonLd data={gameData({ ...game, genre: game.genre_id, owner }, locale)} />}
+      {isOwner ? (
+        <div className="grid gap-4">
+          <OwnerPanel game={game} versionStatuses={ownVersions.map((version) => version.status)} justUploaded={justUploaded} />
+          <GamePlayerShell game={game} draft={isDraft} />
+        </div>
+      ) : (
+        <GamePlayerShell game={game} draft={isDraft} />
+      )}
 
       <div className="mx-auto grid w-full max-w-[960px] gap-10">
         <header className="grid gap-4">
@@ -110,33 +125,32 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
               <UserAvatar username={owner.username} displayName={owner.display_name} avatarPath={owner.avatar_path} size="sm" alt="" />
               {owner.display_name}
             </Link>
-            <span className="flex items-center gap-1.5">
-              <PlayIcon aria-hidden="true" className="size-4" />
-              {formatCompactNumber(locale, game.play_count)}
-              <span className="sr-only">{t("plays", { count: game.play_count })}</span>
-            </span>
-            <span className="flex items-center gap-1.5">
-              <MessageCircleIcon aria-hidden="true" className="size-4" />
-              {comments.length}
-              <span className="sr-only">{t("comments", { count: comments.length })}</span>
-            </span>
-            <ReactionButtons
-              target="game"
-              id={game.id}
-              likeCount={game.like_count}
-              initialLiked={myGame.liked.has(game.id)}
-              initialSaved={myGame.saved.has(game.id)}
-              signedIn={Boolean(user)}
-              loginHref={loginHref}
-              locale={locale}
-            />
-            <ShareButton path={`/games/${game.public_id}`} title={game.title} />
-            <SurpriseButton exclude={game.public_id} variant="ghost" />
-            {user?.id === game.owner_id ? (
-              <Button asChild variant="outline">
-                <Link href={`/games/${game.public_id}/edit`}>{t("edit")}</Link>
-              </Button>
-            ) : null}
+            {isDraft ? null : (
+              <>
+                <span className="flex items-center gap-1.5">
+                  <PlayIcon aria-hidden="true" className="size-4" />
+                  {formatCompactNumber(locale, game.play_count)}
+                  <span className="sr-only">{t("plays", { count: game.play_count })}</span>
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <MessageCircleIcon aria-hidden="true" className="size-4" />
+                  {comments.length}
+                  <span className="sr-only">{t("comments", { count: comments.length })}</span>
+                </span>
+                <ReactionButtons
+                  target="game"
+                  id={game.id}
+                  likeCount={game.like_count}
+                  initialLiked={myGame.liked.has(game.id)}
+                  initialSaved={myGame.saved.has(game.id)}
+                  signedIn={Boolean(user)}
+                  loginHref={loginHref}
+                  locale={locale}
+                />
+                <ShareButton path={`/games/${game.public_id}`} title={game.title} />
+                <SurpriseButton exclude={game.public_id} variant="ghost" />
+              </>
+            )}
           </div>
         </header>
 
@@ -169,44 +183,48 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
 
             {versions.length > 0 ? <VersionList versions={versions} activeVersionId={game.active_version_id} /> : null}
 
-            <section aria-labelledby="devlogs">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <h2 id="devlogs" className="font-display text-2xl font-bold">
-                  {t("devlogsTitle")}
-                </h2>
-                {user?.id === game.owner_id ? (
-                  <Button asChild variant="outline">
-                    <Link href={`/posts/new?game=${game.public_id}`}>{tPosts("publish")}</Link>
-                  </Button>
-                ) : null}
-              </div>
-              {posts.length > 0 ? (
-                <div className="mt-4 grid gap-4">
-                  {posts.map((post) => (
-                    <PostCard key={post.id} post={post} now={now} showGame={false} viewer={viewer} />
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-3 text-text-2">{t("noDevlogs")}</p>
-              )}
-            </section>
+            {isDraft ? null : (
+              <>
+                <section aria-labelledby="devlogs">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h2 id="devlogs" className="font-display text-2xl font-bold">
+                      {t("devlogsTitle")}
+                    </h2>
+                    {user?.id === game.owner_id ? (
+                      <Button asChild variant="outline">
+                        <Link href={`/posts/new?game=${game.public_id}`}>{tPosts("publish")}</Link>
+                      </Button>
+                    ) : null}
+                  </div>
+                  {posts.length > 0 ? (
+                    <div className="mt-4 grid gap-4">
+                      {posts.map((post) => (
+                        <PostCard key={post.id} post={post} now={now} showGame={false} viewer={viewer} />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="mt-3 text-text-2">{t("noDevlogs")}</p>
+                  )}
+                </section>
 
-            <CreatorQuestions questions={questions} answers={answers} creatorName={owner.display_name} now={now} viewer={commentViewer} />
+                <CreatorQuestions questions={questions} answers={answers} creatorName={owner.display_name} now={now} viewer={commentViewer} />
 
-            <section aria-labelledby="comments">
-              <CommentHighlight />
-              <h2 id="comments" className="font-display text-2xl font-bold">
-                {t("commentsTitle")}
-              </h2>
-              <div className="mt-4 grid gap-6">
-                <CommentForm target="game" id={game.id} signedIn={Boolean(user)} loginHref={loginHref} />
-                {threads.length > 0 ? (
-                  <CommentList threads={threads} now={now} viewer={commentViewer} />
-                ) : (
-                  <p className="text-text-2">{user ? t("noCommentsSignedIn") : t("noComments")}</p>
-                )}
-              </div>
-            </section>
+                <section aria-labelledby="comments">
+                  <CommentHighlight />
+                  <h2 id="comments" className="font-display text-2xl font-bold">
+                    {t("commentsTitle")}
+                  </h2>
+                  <div className="mt-4 grid gap-6">
+                    <CommentForm target="game" id={game.id} signedIn={Boolean(user)} loginHref={loginHref} />
+                    {threads.length > 0 ? (
+                      <CommentList threads={threads} now={now} viewer={commentViewer} />
+                    ) : (
+                      <p className="text-text-2">{user ? t("noCommentsSignedIn") : t("noComments")}</p>
+                    )}
+                  </div>
+                </section>
+              </>
+            )}
           </div>
 
           <aside className="grid gap-4 lg:sticky lg:top-28">
@@ -244,7 +262,7 @@ async function GameContent({ params }: { params: GamePageProps["params"] }) {
 function GamePageSkeleton() {
   return (
     <div className="grid min-h-svh content-start gap-8" aria-hidden="true">
-      <Skeleton className="mx-auto aspect-video rounded-[28px]" style={{ width: "min(100%, 1280px, calc((100svh - 13.5rem) * 16 / 9))" }} />
+      <Skeleton className="mx-auto aspect-video rounded-[28px]" style={{ width: PLAYER_WIDTH }} />
       <Skeleton className="mx-auto h-12 w-2/3 max-w-[640px]" />
       <Skeleton className="mx-auto h-40 w-full max-w-[960px]" />
     </div>

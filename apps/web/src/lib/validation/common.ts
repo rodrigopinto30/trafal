@@ -40,6 +40,13 @@ export function parseLoginError(value: unknown) {
   return result.success ? result.data : undefined;
 }
 
+/** ?uploaded=1 en la página de un juego: la persona llega recién terminada la subida (se le ofrece publicarlo). */
+const uploadedFlagSchema = z.literal("1");
+
+export function parseUploadedFlag(value: unknown): boolean {
+  return uploadedFlagSchema.safeParse(value).success;
+}
+
 /**
  * El @usuario de la URL (/u/<usuario>). Un percent-encoding roto («%E0%A4%A») haría lanzar a decodeURIComponent;
  * un valor con forma imposible no puede existir. En ambos casos devuelve null y la página responde 404 sin consultar la base.

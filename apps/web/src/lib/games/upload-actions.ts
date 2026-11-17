@@ -10,6 +10,8 @@ import { COVER_PROBLEM_KEYS, checkGameImage, discardObjects, filesOf, type Check
 import { GAME_IMAGE_FORMATS, coverObjectKey, screenshotObjectKey } from "@/lib/media/game-image";
 import { createQuarantineUploadUrl, putMediaObject } from "@/lib/storage/s3.server";
 import { createClient } from "@/lib/supabase/server";
+import { isTitleTaken } from "@/lib/games/title";
+import { isUploadErrorCode, uploadErrorParams } from "@/lib/games/upload-error";
 import { isUsageLimitError } from "@/lib/usage/limit";
 import { parseLocale } from "@/lib/validation/common";
 import {
@@ -26,6 +28,8 @@ export type CreateGameResult =
   | { ok: false; fieldErrors: Record<string, string>; message?: string };
 
 export type UploadStepResult = { ok: true; uploadUrl?: string } | { ok: false; message: string };
+
+export type ReviewStatus = { status: "pending" } | { status: "ready" } | { status: "rejected"; message: string };
 
 /**
  * Creates the game as a draft with its details, images and feedback questions, registers the first version and returns a
@@ -102,6 +106,7 @@ export async function createGameAction(formData: FormData): Promise<CreateGameRe
   if (gameError || !game) {
     if (isUsageLimitError(gameError)) return fail("rateLimited");
     if (gameError?.code === "42501") return fail("accountRestricted");
+    if (isTitleTaken(gameError)) return fail("titleTaken", "title");
     console.error("[game upload] could not create the game", gameError);
     return fail("generic");
   }
@@ -205,4 +210,32 @@ export async function renewUploadUrlAction(rawVersionId: unknown, rawLocale: unk
     console.error("[game upload] could not renew the upload URL", error);
     return { ok: false, message: t("errors.storage") };
   }
+}
+
+/**
+ * How the review of one of the caller's versions is going: still pending, ready to publish, or rejected with the reason the
+ * worker gave, already translated. A failed read counts as pending, so the form simply asks again.
+ */
+export async function reviewStatusAction(rawVersionId: unknown, rawLocale: unknown): Promise<ReviewStatus> {
+  const locale = parseLocale(rawLocale);
+  const t = getTranslationsFor(locale, "gameForm");
+  const versionId = uuidSchema.safeParse(rawVersionId);
+  if (!versionId.success) return { status: "rejected", message: t("errors.generic") };
+  if (!(await getAuthUser())) return { status: "rejected", message: t("errors.unauthenticated") };
+
+  const supabase = await createClient();
+  const { data: version, error } = await supabase
+    .from("game_versions")
+    .select("status, error_code, error_params")
+    .eq("id", versionId.data)
+    .maybeSingle();
+  if (error) return { status: "pending" };
+  if (!version) return { status: "rejected", message: t("errors.generic") };
+  if (version.status === "ready") return { status: "ready" };
+  if (version.status !== "error") return { status: "pending" };
+
+  const reason = isUploadErrorCode(version.error_code)
+    ? getTranslationsFor(locale, "uploadErrors")(version.error_code, uploadErrorParams(locale, version.error_code, version.error_params))
+    : getTranslationsFor(locale, "gameManage")("unknownError");
+  return { status: "rejected", message: t("reviewRejected", { reason }) };
 }

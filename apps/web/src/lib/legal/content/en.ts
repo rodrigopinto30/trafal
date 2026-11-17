@@ -152,7 +152,7 @@ export const legalEn: LegalContent = {
         title: "What data we keep",
         blocks: [
           [
-            "Account: your email and your password (the authentication service stores it encrypted; we never see it). If you sign in with Google, we receive the basic data of that account that is needed to identify you, such as your email.",
+            "Account: your email and your password (the authentication service stores it encrypted; we never see it). If you sign in with Google or Discord, we receive the basic data of that account that is needed to identify you, such as your email.",
             "Consent: the version of the terms you accepted, when you accepted it and when you confirmed that you are {minAge} or older.",
             "Profile (you fill it in): @username, name, bio, city, country, photo, engines and favourite genres. Your profile is public: it can be seen without signing in.",
             "What you publish: games (with their versions, covers and screenshots), updates with their images or videos, and comments. It is public, except what is a draft.",
@@ -185,7 +185,7 @@ export const legalEn: LegalContent = {
           [
             "Supabase: database and authentication.",
             "Cloudflare: file storage (R2) and the captcha (Turnstile). Turnstile may use browser data to tell people from programs.",
-            "Google, only if you choose to sign in with your Google account.",
+            "Google or Discord, only if you choose to sign in with your account on one of them.",
             "The provider that hosts the site and the one that sends the confirmation and password-recovery emails.",
           ],
           "What you publish and your profile are public and anyone can see them, including search engines. We may share data if a competent authority requires it, or if it is needed to protect people or the service. In a copyright claim, we may share with the other party what is needed to resolve it.",

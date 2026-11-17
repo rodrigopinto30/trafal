@@ -33,7 +33,8 @@ async function OnboardingContent({ searchParams }: { searchParams: PageProps<"/[
   if (profile) redirect(localizePath(locale, next ?? `/u/${profile.username}`));
 
   const meta = user.user_metadata as Record<string, unknown>;
-  const suggestedName = [meta.full_name, meta.name].find((value): value is string => typeof value === "string" && value.trim() !== "");
+  const discordName = (meta.custom_claims as Record<string, unknown> | undefined)?.global_name;
+  const suggestedName = [discordName, meta.full_name, meta.name].find((value): value is string => typeof value === "string" && value.trim() !== "");
   const defaultDisplayName = suggestedName ?? user.email?.split("@")[0] ?? "";
 
   return <OnboardingForm next={next} defaultDisplayName={defaultDisplayName} askConsent={!consentedAtSignup(user)} />;

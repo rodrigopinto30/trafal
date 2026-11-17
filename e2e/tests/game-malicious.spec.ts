@@ -1,5 +1,5 @@
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
-import { uploadGameZip, unpublishGame } from "./helpers/game";
+import { uniqueTitle, unpublishGame, uploadAndPublishGame } from "./helpers/game";
 import { lettersOnly, registerAccount, uniqueSuffix } from "./helpers/session";
 import { maliciousGameZip } from "./helpers/zip";
 
@@ -12,11 +12,11 @@ import { maliciousGameZip } from "./helpers/zip";
 test.describe.configure({ mode: "serial" });
 
 const TRAP = "stolen=1";
-const TITLE = "Totally Fine Game";
 
 let context: BrowserContext;
 let player: Page;
 let publicId = "";
+let gameTitle = "";
 let report: Record<string, string> = {};
 const answeredTrapRequests: string[] = [];
 const cookieHeadersToGames: string[] = [];
@@ -31,12 +31,8 @@ test.beforeAll(async ({ browser }, testInfo) => {
   player = await context.newPage();
   const suffix = uniqueSuffix(testInfo.project.name);
   await registerAccount(player, { email: `e2e_malicious_${suffix}@trafal.test`, username: `malicious_${lettersOnly(suffix)}`, displayName: "Persona Hostil" });
-  await uploadGameZip(player, TITLE, maliciousGameZip());
-  await expect(player.getByText("Lista", { exact: true })).toBeVisible({ timeout: 45_000 });
-  await player.getByRole("button", { name: "Publicar juego" }).click();
-  await expect(player.getByText("Tu juego está publicado")).toBeVisible();
-  publicId = /\/games\/([a-z0-9]+)\/manage$/.exec(player.url())?.[1] ?? "";
-  expect(publicId).not.toBe("");
+  gameTitle = uniqueTitle("Totally Fine Game");
+  publicId = await uploadAndPublishGame(player, gameTitle, maliciousGameZip());
 });
 
 test.afterAll(async () => {
@@ -71,16 +67,16 @@ test("the game runs its whole attack battery and the person keeps playing on Tra
   player.on("download", (download) => downloads.push(download.suggestedFilename()));
 
   await player.getByRole("button", { name: "Jugar gratis" }).click();
-  const frame = player.locator(`iframe[title="Juego: ${TITLE}"]`);
+  const frame = player.locator(`iframe[title="Juego: ${gameTitle}"]`);
   await expect(frame).toHaveAttribute("src", `http://${publicId}.games.localhost:4000/`);
-  await expect(player.frameLocator(`iframe[title="Juego: ${TITLE}"]`).locator("#status")).toHaveText("done", { timeout: 60_000 });
-  report = JSON.parse((await player.frameLocator(`iframe[title="Juego: ${TITLE}"]`).locator("#report").textContent()) ?? "{}") as Record<string, string>;
+  await expect(player.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#status")).toHaveText("done", { timeout: 60_000 });
+  report = JSON.parse((await player.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#report").textContent()) ?? "{}") as Record<string, string>;
   await player.waitForTimeout(1_500);
   framedUrlsAfterRun = player.frames().filter((candidate) => candidate !== player.mainFrame()).map((candidate) => candidate.url());
 
   expect(Object.keys(report).length).toBeGreaterThan(25);
   await expect(player).toHaveURL(`/games/${publicId}`);
-  await expect(player.getByRole("heading", { name: TITLE, level: 1 })).toBeVisible();
+  await expect(player.getByRole("heading", { name: gameTitle, level: 1 })).toBeVisible();
 });
 
 test("every attack that can be observed from inside the game was blocked", () => {

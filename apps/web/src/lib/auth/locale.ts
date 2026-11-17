@@ -11,7 +11,7 @@ export async function setLocaleCookie(locale: Locale): Promise<void> {
 }
 
 /**
- * Al iniciar sesión (con contraseña, con el link del mail o con Google), el idioma guardado en la cuenta pasa a ser el
+ * Al iniciar sesión (con contraseña, con el link del mail, con Google o con Discord), el idioma guardado en la cuenta pasa a ser el
  * que se usa en este dispositivo. Sin esto, quien eligió inglés en la configuración y entra desde una compu nueva vería
  * el idioma del sistema hasta volver a cambiarlo. Devuelve el idioma de la cuenta, o null si todavía no tiene perfil.
  */

@@ -21,8 +21,12 @@ describe("the keys handed to the game in fullscreen", () => {
     for (const key of ["KeyA", "KeyW", "KeyZ", "Digit0", "Digit9", "Space", "Tab", "ArrowLeft", "Backquote", "F5"]) expect(LOCKED_KEYS).toContain(key);
   });
 
-  it("leaves Escape and F11 to the browser so there is always a way out", () => {
-    for (const key of ["Escape", "F11", "F12", "ControlLeft", "MetaLeft"]) expect(LOCKED_KEYS).not.toContain(key);
+  it("hands Escape to the game, so a press does not leave fullscreen (holding it still does, the browser keeps that)", () => {
+    expect(LOCKED_KEYS).toContain("Escape");
+  });
+
+  it("leaves F11, the modifiers and the system keys to the browser", () => {
+    for (const key of ["F11", "F12", "ControlLeft", "MetaLeft"]) expect(LOCKED_KEYS).not.toContain(key);
     expect(new Set(LOCKED_KEYS).size).toBe(LOCKED_KEYS.length);
   });
 });

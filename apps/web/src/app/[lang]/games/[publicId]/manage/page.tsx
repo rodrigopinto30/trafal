@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AutoRefresh } from "@/components/games/auto-refresh";
 import { NewVersionForm } from "@/components/games/new-version-form";
-import { PublishControls } from "@/components/games/publish-controls";
+import { GameVisibilityControls } from "@/components/games/game-visibility-controls";
+import { gameVisibilityLabels } from "@/components/games/owner-panel";
 import { PublishStatus, type PublishStage } from "@/components/games/publish-status";
 import { VersionControls } from "@/components/games/version-controls";
 import { Button } from "@/components/ui/button";
@@ -51,12 +52,13 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
   const game = await findOwnGame(publicId, user.id);
   if (!game) notFound();
 
-  const [t, tVersions, tErrors, locale, versions] = await Promise.all([
+  const [t, tVersions, tErrors, locale, versions, visibilityLabels] = await Promise.all([
     getTranslations("gameManage"),
     getTranslations("gameVersions"),
     getTranslations("uploadErrors"),
     getLocale(),
     listVersionsOfGame(game.id),
+    gameVisibilityLabels(),
   ]);
   const inProgress = versions.some((version) => version.status === "uploading" || version.status === "processing");
   const gameStatus = (["draft", "published", "hidden", "removed"] as const).find((status) => status === game.status) ?? "draft";
@@ -84,13 +86,9 @@ async function ManageContent({ params }: { params: ManagePageProps["params"] }) 
         </div>
         <p className="text-text-2">{t(`note.${gameStatus === "draft" && hasReadyVersion ? "draftReady" : gameStatus}`)}</p>
         {canToggle ? (
-          <PublishControls
-            gameId={game.id}
-            published={gameStatus === "published"}
-            publishLabel={t("publish")}
-            unpublishLabel={t("unpublish")}
-            pendingLabel={t("saving")}
-          />
+          <div className="flex flex-wrap items-center gap-3">
+            <GameVisibilityControls gameId={game.id} published={gameStatus === "published"} labels={visibilityLabels} />
+          </div>
         ) : null}
         {gameStatus === "draft" && !hasReadyVersion ? (
           <PublishStatus

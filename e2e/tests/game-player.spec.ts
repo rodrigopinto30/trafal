@@ -1,5 +1,5 @@
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
-import { uploadGameZip } from "./helpers/game";
+import { uniqueTitle, unpublishGame, uploadAndPublishGame } from "./helpers/game";
 import { lettersOnly, registerAccount, uniqueSuffix } from "./helpers/session";
 import { publicGame } from "./helpers/supabase";
 import { playableGameZip } from "./helpers/zip";
@@ -17,6 +17,7 @@ const SANDBOX = "allow-scripts allow-same-origin allow-pointer-lock allow-modals
 let ownerContext: BrowserContext;
 let owner: Page;
 let publicId = "";
+let gameTitle = "";
 
 function frameHeaders(destination: string): Record<string, string> {
   return { host: `${publicId}.games.localhost:4000`, "sec-fetch-dest": destination };
@@ -28,12 +29,8 @@ test.beforeAll(async ({ browser }, testInfo) => {
   owner = await ownerContext.newPage();
   const suffix = uniqueSuffix(testInfo.project.name);
   await registerAccount(owner, { email: `e2e_player_${suffix}@trafal.test`, username: `player_${lettersOnly(suffix)}`, displayName: "Persona Juegos" });
-  await uploadGameZip(owner, "Moon Runner", playableGameZip());
-  await expect(owner.getByText("Lista", { exact: true })).toBeVisible({ timeout: 45_000 });
-  await owner.getByRole("button", { name: "Publicar juego" }).click();
-  await expect(owner.getByText("Tu juego está publicado")).toBeVisible();
-  publicId = /\/games\/([a-z0-9]+)\/manage$/.exec(owner.url())?.[1] ?? "";
-  expect(publicId).not.toBe("");
+  gameTitle = uniqueTitle("Moon Runner");
+  publicId = await uploadAndPublishGame(owner, gameTitle, playableGameZip());
 });
 
 test.afterAll(async () => {
@@ -48,7 +45,7 @@ test("una persona sin cuenta juega: el juego corre en un marco aislado del domin
   await expect(visitor.locator("iframe")).toHaveCount(0);
 
   await visitor.getByRole("button", { name: "Jugar gratis" }).click();
-  const frame = visitor.locator('iframe[title="Juego: Moon Runner"]');
+  const frame = visitor.locator(`iframe[title="Juego: ${gameTitle}"]`);
   await expect(frame).toHaveAttribute("src", `http://${publicId}.games.localhost:4000/`);
   await expect(frame).toHaveAttribute("sandbox", SANDBOX);
   await expect(frame).toHaveAttribute("allow", /fullscreen/);
@@ -56,12 +53,12 @@ test("una persona sin cuenta juega: el juego corre en un marco aislado del domin
   for (const forbidden of ["allow-top-navigation", "allow-popups", "allow-forms", "allow-downloads"]) {
     expect(await frame.getAttribute("sandbox")).not.toContain(forbidden);
   }
-  await expect(visitor.frameLocator('iframe[title="Juego: Moon Runner"]').locator("#status")).toHaveText("corriendo");
+  await expect(visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#status")).toHaveText("corriendo");
 
   await expect.poll(async () => (await publicGame(publicId))?.play_count, { timeout: 15_000 }).toBe(1);
   await visitor.reload();
   await visitor.getByRole("button", { name: "Jugar gratis" }).click();
-  await expect(visitor.frameLocator('iframe[title="Juego: Moon Runner"]').locator("#status")).toHaveText("corriendo");
+  await expect(visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#status")).toHaveText("corriendo");
   await expect.poll(async () => (await publicGame(publicId))?.play_count, { timeout: 15_000 }).toBe(2);
   await context.close();
 });
@@ -71,7 +68,7 @@ test("pantalla completa y reiniciar", async ({ browser }, testInfo) => {
   const visitor = await context.newPage();
   await visitor.goto(`/games/${publicId}`);
   await visitor.getByRole("button", { name: "Jugar gratis" }).click();
-  const inner = visitor.frameLocator('iframe[title="Juego: Moon Runner"]');
+  const inner = visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`);
   await expect(inner.locator("#status")).toHaveText("corriendo");
 
   await visitor.getByRole("button", { name: "Pantalla completa", exact: true }).click();
@@ -92,10 +89,10 @@ test("el reproductor se ajusta a la pantalla y trae sus propios controles abajo 
   const visitor = await context.newPage();
   await visitor.goto(`/games/${publicId}`);
   await visitor.getByRole("button", { name: "Jugar gratis" }).click();
-  const inner = visitor.frameLocator('iframe[title="Juego: Moon Runner"]');
+  const inner = visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`);
   await expect(inner.locator("#status")).toHaveText("corriendo");
 
-  const frame = visitor.locator('iframe[title="Juego: Moon Runner"]');
+  const frame = visitor.locator(`iframe[title="Juego: ${gameTitle}"]`);
   const bar = visitor.getByRole("toolbar", { name: "Controles del reproductor" });
   await expect(bar).toBeVisible();
   const [frameBox, barBox, viewport] = await Promise.all([frame.boundingBox(), bar.boundingBox(), visitor.evaluate(() => ({ height: window.innerHeight, scrollY: window.scrollY }))]);
@@ -119,7 +116,7 @@ test("el sonido se silencia desde la plataforma, para cualquier juego, y se recu
   const visitor = await context.newPage();
   await visitor.goto(`/games/${publicId}`);
   await visitor.getByRole("button", { name: "Jugar gratis" }).click();
-  const inner = visitor.frameLocator('iframe[title="Juego: Moon Runner"]');
+  const inner = visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`);
   await expect(inner.locator("#status")).toHaveText("corriendo");
   await expect(inner.locator("#bridge")).toHaveText("si");
   await expect(inner.locator("#patched")).toHaveText("si");
@@ -130,14 +127,35 @@ test("el sonido se silencia desde la plataforma, para cualquier juego, y se recu
   await mute.click();
   await expect(visitor.getByRole("button", { name: "Activar sonido", exact: true })).toBeVisible();
   await expect.poll(async () => inner.locator("#last").textContent()).toBe('{"trafal":1,"type":"mute","muted":true}');
-  await expect(visitor.locator('iframe[title="Juego: Moon Runner"]'), "the keyboard goes back to the game after pressing a player button").toBeFocused();
+  await expect(visitor.locator(`iframe[title="Juego: ${gameTitle}"]`), "the keyboard goes back to the game after pressing a player button").toBeFocused();
 
   await visitor.reload();
   await visitor.getByRole("button", { name: "Jugar gratis" }).click();
   await expect(visitor.getByRole("button", { name: "Activar sonido", exact: true })).toBeVisible();
-  await expect.poll(async () => visitor.frameLocator('iframe[title="Juego: Moon Runner"]').locator("#last").textContent()).toBe('{"trafal":1,"type":"mute","muted":true}');
+  await expect.poll(async () => visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#last").textContent()).toBe('{"trafal":1,"type":"mute","muted":true}');
   await visitor.getByRole("button", { name: "Activar sonido", exact: true }).click();
-  await expect.poll(async () => visitor.frameLocator('iframe[title="Juego: Moon Runner"]').locator("#last").textContent()).toBe('{"trafal":1,"type":"mute","muted":false}');
+  await expect.poll(async () => visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#last").textContent()).toBe('{"trafal":1,"type":"mute","muted":false}');
+  await context.close();
+});
+
+test("la vista maximizada (sin pantalla completa del navegador) no se cierra con Esc: se sale con el mismo botón", async ({ browser }, testInfo) => {
+  const context = await browser.newContext({ ...testInfo.project.use });
+  await context.addInitScript(() => {
+    Object.defineProperty(Document.prototype, "fullscreenEnabled", { configurable: true, get: () => false });
+  });
+  const visitor = await context.newPage();
+  await visitor.goto(`/games/${publicId}`);
+  await visitor.getByRole("button", { name: "Jugar gratis" }).click();
+  await expect(visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#status")).toHaveText("corriendo");
+
+  await visitor.getByRole("button", { name: "Pantalla completa", exact: true }).click();
+  const exit = visitor.getByRole("button", { name: "Salir de pantalla completa", exact: true });
+  await expect(exit).toBeVisible();
+  await visitor.keyboard.press("Escape");
+  await visitor.locator("body").press("Escape");
+  await expect(exit, "Escape does not leave the maximized view").toBeVisible();
+  await exit.click();
+  await expect(visitor.getByRole("button", { name: "Pantalla completa", exact: true })).toBeVisible();
   await context.close();
 });
 
@@ -152,14 +170,14 @@ test("en pantalla completa el juego recibe las teclas que el navegador se guarda
   const visitor = await context.newPage();
   await visitor.goto(`/games/${publicId}`);
   await visitor.getByRole("button", { name: "Jugar gratis" }).click();
-  await expect(visitor.frameLocator('iframe[title="Juego: Moon Runner"]').locator("#status")).toHaveText("corriendo");
+  await expect(visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#status")).toHaveText("corriendo");
   await visitor.getByRole("button", { name: "Pantalla completa", exact: true }).click();
   const fullscreenWorked = await visitor.evaluate(() => Boolean(document.fullscreenElement));
   if (fullscreenWorked) {
     const calls = await visitor.evaluate(() => (window as unknown as { __keyboardLock: { calls: string[][] } }).__keyboardLock.calls);
     expect(calls).toHaveLength(1);
     expect(calls[0]).toEqual(expect.arrayContaining(["KeyW", "KeyR", "Digit1", "Space"]));
-    expect(calls[0]).not.toContain("Escape");
+    expect(calls[0], "a press of Escape goes to the game instead of leaving fullscreen").toContain("Escape");
     await visitor.getByRole("button", { name: "Salir de pantalla completa", exact: true }).click();
     await expect.poll(() => visitor.evaluate(() => (window as unknown as { __keyboardLock: { unlocked: number } }).__keyboardLock.unlocked)).toBeGreaterThan(0);
   }
@@ -226,8 +244,6 @@ test("el gateway responde con cabeceras estrictas y solo sirve HTML dentro de un
 });
 
 test("un juego que se vuelve borrador deja de servirse en pocos segundos", async ({ request }) => {
-  await owner.goto(`/games/${publicId}/manage`);
-  await owner.getByRole("button", { name: "Volver a borrador" }).click();
-  await expect(owner.getByText("Tu juego pasó la revisión y sigue siendo un borrador")).toBeVisible();
+  await unpublishGame(owner, publicId);
   await expect.poll(async () => (await request.get(`${GATEWAY}/`, { headers: frameHeaders("iframe") })).status(), { timeout: 20_000, intervals: [1000] }).toBe(404);
 });

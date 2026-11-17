@@ -22,8 +22,14 @@ export function isBridgeReady(data: unknown): boolean {
   return message.trafal === BRIDGE_PROTOCOL && message.type === "ready";
 }
 
-/** Keys the player asks the browser to hand to the game in fullscreen (Keyboard Lock API), so combinations like Ctrl+W or Ctrl+R reach the game instead of closing or reloading the tab. Escape and F11 stay with the browser, as the way out. */
+/**
+ * Keys the player asks the browser to hand to the game in fullscreen (Keyboard Lock API), so combinations like Ctrl+W or Ctrl+R
+ * reach the game instead of closing or reloading the tab. Escape is among them: a press goes to the game (a pause menu, say)
+ * instead of leaving fullscreen, which is left with the player's own button. The browser still lets the person out by holding
+ * Escape for a moment (it says so on screen) and F11 stays with it; browsers without the API keep Escape as their way out.
+ */
 export const LOCKED_KEYS: readonly string[] = [
+  "Escape",
   ...Array.from({ length: 26 }, (_, index) => `Key${String.fromCharCode(65 + index)}`),
   ...Array.from({ length: 10 }, (_, index) => `Digit${index}`),
   ...Array.from({ length: 10 }, (_, index) => `F${index + 1}`),

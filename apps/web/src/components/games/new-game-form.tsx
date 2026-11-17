@@ -12,9 +12,11 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { RevealedMessage } from "@/components/ui/revealed-message";
 import { Textarea } from "@/components/ui/textarea";
 import { useLocale, useTranslations } from "@/i18n/client";
+import { Link } from "@/i18n/link";
 import { localizePath, stripLocale } from "@/i18n/path";
 import { formatBytes } from "@/lib/format";
 import { createGameAction } from "@/lib/games/upload-actions";
+import { createVersionAction } from "@/lib/games/version-actions";
 import {
   CONTROLS_MAX,
   DESCRIPTION_MAX,
@@ -26,7 +28,8 @@ import {
 import { useZipUpload } from "@/lib/games/use-zip-upload";
 import { GENRE_IDS } from "@/lib/profile/catalog";
 
-type Phase = "idle" | "creating" | "uploading" | "confirming" | "done";
+type Phase = "idle" | "creating" | "uploading" | "confirming" | "reviewing" | "done";
+type CreatedGame = { id: string; publicId: string };
 
 const IMAGE_TYPES = "image/png,image/jpeg,image/webp";
 const ZIP_TYPES = ".zip,application/zip,application/x-zip-compressed";
@@ -48,9 +51,11 @@ export function NewGameForm() {
 }
 
 /**
- * The fields and the three steps of the upload. It creates the game as a draft on the server, then uploads the zip straight to quarantine with a
- * presigned URL (with progress) and finally confirms the upload so the version enters the review queue. The server
- * validates everything again; the checks here only save a round trip.
+ * The fields and the steps of the upload. It creates the game as a draft on the server, uploads the zip straight to quarantine
+ * with a presigned URL (with progress), confirms the upload and waits for the review, all in the card next to the button. Once
+ * the zip passes, it takes the person to the game's page, which offers to publish it. If the zip does not pass, the reason
+ * shows here and another zip can be sent as a new version of the same draft. The server validates everything again; the
+ * checks here only save a round trip.
  */
 function GameUploadForm() {
   const t = useTranslations("gameForm");
@@ -59,7 +64,8 @@ function GameUploadForm() {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const zipRef = useRef<HTMLInputElement>(null);
-  const publicIdRef = useRef<string | null>(null);
+  const createdRef = useRef<CreatedGame | null>(null);
+  const [createdGame, setCreatedGame] = useState<CreatedGame | null>(null);
   const [creating, setCreating] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formMessage, setFormMessage] = useState<string | undefined>();
@@ -69,14 +75,16 @@ function GameUploadForm() {
     locale,
     uploadFailedMessage: t("uploadFailed"),
     genericErrorMessage: t("errors.generic"),
+    waitForReview: true,
     onUploaded: () => {
       window.scrollTo(0, 0);
-      router.push(localizePath(locale, `/games/${publicIdRef.current}/manage`));
+      router.push(localizePath(locale, `/games/${createdRef.current?.publicId}?uploaded=1`));
     },
   });
   const phase: Phase = creating ? "creating" : upload.phase;
   const busy = phase !== "idle";
-  const created = upload.pending;
+  const locked = busy || createdGame !== null;
+  const zipLocked = busy || (createdGame !== null && !upload.rejected);
   const canRetry = upload.canRetry;
   const percent = upload.percent;
   const message = formMessage ?? upload.message;
@@ -109,6 +117,10 @@ function GameUploadForm() {
       showErrors({ zip: zipError ?? t("errors.zipRequired") });
       return;
     }
+    if (createdGame) {
+      await uploadAnotherZip(createdGame, file);
+      return;
+    }
     const data = new FormData(event.currentTarget);
     data.delete("zip");
     data.set("zipName", file.name);
@@ -124,7 +136,27 @@ function GameUploadForm() {
       showErrors(result.fieldErrors, result.message);
       return;
     }
-    publicIdRef.current = result.publicId;
+    const game = { id: result.gameId, publicId: result.publicId };
+    createdRef.current = game;
+    setCreatedGame(game);
+    await upload.run({ versionId: result.versionId, uploadUrl: result.uploadUrl }, file);
+  }
+
+  async function uploadAnotherZip(game: CreatedGame, file: File) {
+    const data = new FormData();
+    data.set("gameId", game.id);
+    data.set("zipName", file.name);
+    data.set("zipSize", String(file.size));
+    data.set("lang", locale);
+    setFormMessage(undefined);
+    setFieldErrors({});
+    setCreating(true);
+    const result = await createVersionAction(data);
+    setCreating(false);
+    if (!result.ok) {
+      showErrors(result.fieldErrors.zip ? { zip: result.fieldErrors.zip } : {}, result.message);
+      return;
+    }
     await upload.run({ versionId: result.versionId, uploadUrl: result.uploadUrl }, file);
   }
 
@@ -140,13 +172,15 @@ function GameUploadForm() {
         ? t("steps.uploading", { percent })
         : phase === "confirming"
           ? t("steps.confirming")
-          : phase === "done"
-            ? t("steps.done")
-            : "";
+          : phase === "reviewing"
+            ? t(upload.reviewSlow ? "steps.reviewingSlow" : "steps.reviewing")
+            : phase === "done"
+              ? t("steps.done")
+              : "";
 
   return (
     <form ref={formRef} onSubmit={onSubmit} noValidate className="grid gap-6">
-      <fieldset disabled={busy || created !== null} className="grid min-w-0 gap-6">
+      <fieldset disabled={locked} className="grid min-w-0 gap-6">
         <SettingsSection title={t("detailsTitle")}>
           <div className="grid gap-6">
             <Field id="title" label={t("fields.title")} error={fieldErrors.title}>
@@ -175,37 +209,40 @@ function GameUploadForm() {
             </Field>
           </div>
         </SettingsSection>
+      </fieldset>
 
-        <SettingsSection title={t("filesTitle")}>
-          <div className="grid gap-6">
-            <Field id="zip" label={t("fields.zip")} hint={t("fields.zipHint", { limit: formatBytes(locale, MAX_ZIP_BYTES) })} error={fieldErrors.zip}>
-              {(control) => (
-                <Input
-                  {...control}
-                  ref={zipRef}
-                  name="zip"
-                  type="file"
-                  accept={ZIP_TYPES}
-                  className="py-2.5"
-                  required
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    setZipInfo(file ? t("selectedFile", { name: file.name, size: formatBytes(locale, file.size) }) : null);
-                    setFieldErrors((current) => ({ ...current, zip: checkZip(file) ?? "" }));
-                  }}
-                />
-              )}
-            </Field>
-            {zipInfo ? <p className="-mt-3 text-sm text-text-2">{zipInfo}</p> : null}
-            <Field id="cover" label={t("fields.cover")} hint={t("fields.coverHint")} error={fieldErrors.cover}>
-              {(control) => <Input {...control} name="cover" type="file" accept={IMAGE_TYPES} className="py-2.5" />}
-            </Field>
-            <Field id="screenshots" label={t("fields.screenshots")} hint={t("fields.screenshotsHint")} error={fieldErrors.screenshots}>
-              {(control) => <Input {...control} name="screenshots" type="file" accept={IMAGE_TYPES} multiple className="py-2.5" />}
-            </Field>
-          </div>
-        </SettingsSection>
+      <SettingsSection title={t("filesTitle")}>
+        <div className="grid gap-6">
+          <Field id="zip" label={t("fields.zip")} hint={t("fields.zipHint", { limit: formatBytes(locale, MAX_ZIP_BYTES) })} error={fieldErrors.zip}>
+            {(control) => (
+              <Input
+                {...control}
+                ref={zipRef}
+                name="zip"
+                type="file"
+                accept={ZIP_TYPES}
+                className="py-2.5"
+                required
+                disabled={zipLocked}
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  setZipInfo(file ? t("selectedFile", { name: file.name, size: formatBytes(locale, file.size) }) : null);
+                  setFieldErrors((current) => ({ ...current, zip: checkZip(file) ?? "" }));
+                }}
+              />
+            )}
+          </Field>
+          {zipInfo ? <p className="-mt-3 text-sm text-text-2">{zipInfo}</p> : null}
+          <Field id="cover" label={t("fields.cover")} hint={t("fields.coverHint")} error={fieldErrors.cover}>
+            {(control) => <Input {...control} name="cover" type="file" accept={IMAGE_TYPES} className="py-2.5" disabled={locked} />}
+          </Field>
+          <Field id="screenshots" label={t("fields.screenshots")} hint={t("fields.screenshotsHint")} error={fieldErrors.screenshots}>
+            {(control) => <Input {...control} name="screenshots" type="file" accept={IMAGE_TYPES} multiple className="py-2.5" disabled={locked} />}
+          </Field>
+        </div>
+      </SettingsSection>
 
+      <fieldset disabled={locked} className="grid min-w-0 gap-6">
         <SettingsSection title={t("feedbackTitle")} description={t("feedbackHint")}>
           <div className="grid gap-5">
             {Array.from({ length: MAX_QUESTIONS }, (_, index) => (
@@ -229,21 +266,31 @@ function GameUploadForm() {
           percent={percent}
           stepText={stepText}
           progressLabel={t("progressLabel")}
-          steps={{ creating: t("stepLabels.creating"), uploading: t("stepLabels.uploading"), confirming: t("stepLabels.confirming") }}
+          steps={{ creating: t("stepLabels.creating"), uploading: t("stepLabels.uploading"), reviewing: t("stepLabels.reviewing") }}
           warning={t("leaveWarning")}
-        />
+        >
+          {phase === "reviewing" && upload.reviewSlow && createdGame ? (
+            <p className="text-sm text-text-2">
+              <Link href={`/games/${createdGame.publicId}`} className="font-semibold text-cyan underline underline-offset-4">
+                {t("goToGame")}
+              </Link>
+            </p>
+          ) : null}
+        </UploadProgress>
         <div className="flex flex-wrap gap-3">
           {canRetry ? (
             <Button type="button" size="lg" onClick={retryUpload}>
               {t("retryUpload")}
             </Button>
           ) : (
-            <Button type="submit" size="lg" disabled={busy || created !== null}>
+            <Button type="submit" size="lg" disabled={zipLocked}>
               {busy ? (
                 <>
                   <Loader2Icon className="animate-spin motion-reduce:animate-none" aria-hidden="true" />
-                  {t("submitting")}
+                  {phase === "reviewing" ? t("reviewingButton") : t("submitting")}
                 </>
+              ) : upload.rejected ? (
+                t("submitAnotherZip")
               ) : (
                 t("submit")
               )}

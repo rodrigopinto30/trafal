@@ -30,7 +30,7 @@ export async function onboardingAction(_prev: FormState, formData: FormData): Pr
   const user = await getAuthUser();
   if (!user) redirect(localizePath(locale, "/login"));
 
-  // Quien se registró con la casilla ya aceptó; quien entró con Google la marca acá.
+  // Quien se registró con la casilla ya aceptó; quien entró con Google o Discord la marca acá.
   const consented = formData.get("consent") === "on" || consentedAtSignup(user);
 
   const typed = {

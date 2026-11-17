@@ -2,12 +2,14 @@ import { expect, test, type Page } from "@playwright/test";
 import { makePng } from "./helpers/images";
 import { gotoReady, lettersOnly, registerAccount, uniqueSuffix } from "./helpers/session";
 import { accessTokenOf, callRpc, insertRow, ownGame, userIdOf } from "./helpers/supabase";
+import { GAME_PAGE_URL, publicIdOf, uniqueTitle } from "./helpers/game";
 import { validGameZip } from "./helpers/zip";
 
 /**
- * Uploading a game: the form creates the draft, the browser uploads the zip straight to quarantine with a presigned URL, and
- * the upload is confirmed so the version enters the review queue; the worker then publishes its files («Lista») and the owner
- * decides when to publish the game. Accounts are new on every run so the daily quota is never shared.
+ * Uploading a game: the form creates the draft, the browser uploads the zip straight to quarantine with a presigned URL, the
+ * upload is confirmed so the version enters the review queue and the form waits for the review; once the zip passes, the owner
+ * lands on the game's page, which offers to publish it. Accounts are new on every run so the daily quota is never shared, and
+ * game names are unique on every run because two games cannot share a name.
  */
 async function signUp(page: Page, testName: string, projectName: string) {
   const suffix = uniqueSuffix(projectName);
@@ -20,8 +22,8 @@ async function fillDetails(page: Page, title: string) {
   await page.getByLabel("Título").fill(title);
   await page.getByLabel("Descripción corta").fill("Corré por la luna y esquivá los cráteres.");
   await page.getByLabel("Género").selectOption("platformer");
-  await page.getByLabel("Etiquetas").fill("pixel art, Retro, relax");
-  await page.getByLabel("Cómo se juega").fill("Flechas para moverte y espacio para saltar.");
+  await page.getByRole("textbox", { name: "Etiquetas" }).fill("pixel art, Retro, relax");
+  await page.getByRole("textbox", { name: "Cómo se juega" }).fill("Flechas para moverte y espacio para saltar.");
 }
 
 async function goToUpload(page: Page) {
@@ -41,13 +43,14 @@ test("hay que iniciar sesión para subir un juego y se vuelve al formulario desp
   await expect(page).toHaveURL(/\/login\?next=%2Fgames%2Fnew/);
 });
 
-test("subir un juego completo: queda como borrador en revisión y solo lo ve su dueño", async ({ page, browser }, testInfo) => {
+test("subir un juego completo: la revisión se espera abajo, después se llega a su página y se publica o se baja desde ahí", async ({ page, browser }, testInfo) => {
   test.setTimeout(180_000);
   const username = await signUp(page, "subida", testInfo.project.name);
+  const title = uniqueTitle("Moon Runner");
 
   await gotoReady(page, "/games/new");
   await expect(page.getByRole("heading", { level: 1, name: "Subir un juego" })).toBeVisible();
-  await fillDetails(page, "Moon Runner");
+  await fillDetails(page, title);
   await page.getByLabel("Pregunta 1").fill("¿El salto se siente bien?");
   await page.getByLabel("Pregunta 2").fill("¿Qué cambiarías?");
   await attachZip(page);
@@ -59,43 +62,86 @@ test("subir un juego completo: queda como borrador en revisión y solo lo ve su 
   await expect(page.getByText("moon-runner.zip ·")).toBeVisible();
   await page.getByRole("button", { name: "Subir juego" }).click();
 
-  await expect(page).toHaveURL(/\/games\/[a-z0-9]+\/manage$/, { timeout: 60_000 });
-  await expect(page.getByRole("heading", { level: 1, name: "Moon Runner" })).toBeVisible();
-  await expect(page.getByText("Borrador", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { level: 3, name: "Versión v1" })).toBeVisible();
-  await expect(page.getByText("Lista", { exact: true })).toBeVisible({ timeout: 45_000 });
-  await expect(page.getByText("Tu juego pasó la revisión y sigue siendo un borrador")).toBeVisible();
-  const publicUrl = page.url().replace("/manage", "");
+  const progress = page.getByRole("status").filter({ hasText: "Revisando tu juego" });
+  await expect(progress).toBeVisible({ timeout: 60_000 });
+  await expect(progress.getByRole("listitem")).toHaveCount(3);
+  await expect(progress.getByRole("listitem").nth(2)).toHaveAttribute("data-state", "current");
+  const [progressBox, buttonBox] = await Promise.all([progress.boundingBox(), page.getByRole("button", { name: "Revisando tu juego…" }).boundingBox()]);
+  expect(progressBox && buttonBox && progressBox.y < buttonBox.y, "the only progress card is the one next to the button").toBe(true);
+
+  await expect(page).toHaveURL(GAME_PAGE_URL, { timeout: 60_000 });
+  const ready = page.getByRole("dialog", { name: "¡Tu juego está listo!" });
+  await expect(ready).toBeVisible();
+  await expect(ready.getByRole("button", { name: "Publicar juego" })).toBeVisible();
+  const publicId = publicIdOf(page);
+  const publicUrl = `/games/${publicId}`;
+  await ready.getByRole("button", { name: "Ahora no" }).click();
+  await expect(ready).toBeHidden();
+
+  const panel = page.getByRole("region", { name: "Tu juego" });
+  await expect(page.getByRole("heading", { level: 1, name: title })).toBeVisible();
+  await expect(panel.getByText("Borrador", { exact: true })).toBeVisible();
+  await expect(panel.getByText("Por ahora es un borrador y esta página solo la ves vos")).toBeVisible();
+  await expect(page.getByText("Publicá tu juego para jugarlo acá")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Comentarios" })).toHaveCount(0);
+  await page.reload();
+  await expect(panel).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 
   await page.goto(`/u/${username}`);
   await expect(page.getByRole("heading", { name: "Tus juegos en preparación" })).toBeVisible();
-  await expect(page.getByText("Moon Runner")).toBeVisible();
+  await expect(page.getByText(title)).toBeVisible();
   await page.getByRole("link", { name: "Ver estado" }).click();
   await expect(page).toHaveURL(/\/manage$/);
+  await expect(page.getByText("Lista", { exact: true })).toBeVisible();
 
   const stranger = await browser.newContext();
   const visitor = await stranger.newPage();
   await visitor.goto(publicUrl);
   await expect(visitor.getByRole("heading", { name: "No encontramos esa página" })).toBeVisible();
-  await expect(visitor.getByText("Moon Runner")).toHaveCount(0);
+  await expect(visitor.getByText(title)).toHaveCount(0);
   await visitor.goto(`${publicUrl}/manage`);
   await expect(visitor).toHaveURL(/\/login/);
 
-  await page.getByRole("button", { name: "Publicar juego" }).click();
-  await expect(page.getByText("Tu juego está publicado")).toBeVisible();
-  await expect(page.getByText("Publicado", { exact: true })).toBeVisible();
+  await gotoReady(page, publicUrl);
+  await panel.getByRole("button", { name: "Publicar juego" }).click();
+  await expect(page.getByText("¡Publicaste tu juego! Ya lo puede jugar cualquiera.")).toBeVisible();
+  await expect(panel.getByText("Publicado", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Jugar gratis" })).toBeVisible();
   await visitor.goto(publicUrl);
-  await expect(visitor.getByRole("heading", { level: 1, name: "Moon Runner" })).toBeVisible();
+  await expect(visitor.getByRole("heading", { level: 1, name: title })).toBeVisible();
+  await expect(visitor.getByRole("region", { name: "Tu juego" })).toHaveCount(0);
   await page.goto(`/u/${username}`);
   await expect(page.getByRole("heading", { name: "Tus juegos en preparación" })).toHaveCount(0);
-  await expect(page.getByRole("article").filter({ hasText: "Moon Runner" })).toBeVisible();
+  await expect(page.getByRole("article").filter({ hasText: title })).toBeVisible();
 
-  await page.goto(`${publicUrl}/manage`);
-  await page.getByRole("button", { name: "Volver a borrador" }).click();
-  await expect(page.getByText("Tu juego pasó la revisión y sigue siendo un borrador")).toBeVisible();
+  await gotoReady(page, publicUrl);
+  await panel.getByRole("button", { name: "Bajar juego" }).click();
+  const confirm = page.getByRole("dialog", { name: "¿Bajar tu juego?" });
+  await confirm.getByRole("button", { name: "Cancelar" }).click();
+  await expect(panel.getByText("Publicado", { exact: true })).toBeVisible();
+  await panel.getByRole("button", { name: "Bajar juego" }).click();
+  await confirm.getByRole("button", { name: "Bajar juego" }).click();
+  await expect(page.getByText("Bajaste tu juego. Ahora solo lo ves vos.")).toBeVisible();
+  await expect(panel.getByText("Borrador", { exact: true })).toBeVisible();
+  await expect(panel.getByRole("button", { name: "Publicar juego" })).toBeVisible();
   await visitor.goto(publicUrl);
   await expect(visitor.getByRole("heading", { name: "No encontramos esa página" })).toBeVisible();
   await stranger.close();
+});
+
+test("dos juegos no pueden llamarse igual, aunque cambien las mayúsculas, y se avisa antes de subir el .zip", async ({ page }, testInfo) => {
+  test.setTimeout(120_000);
+  const username = await signUp(page, "nombre", testInfo.project.name);
+  await gotoReady(page, "/games/new");
+  await fillDetails(page, "ÓRBITA");
+  await attachZip(page);
+  await page.getByRole("button", { name: "Subir juego" }).click();
+  await expect(page.getByText("Ya hay un juego con ese nombre. Elegí otro.")).toBeVisible();
+  await expect(page.getByLabel("Título")).toBeFocused();
+  await expect(page).toHaveURL(/\/games\/new$/);
+  await page.goto(`/u/${username}`);
+  await expect(page.getByRole("heading", { name: "Tus juegos en preparación" })).toHaveCount(0);
 });
 
 test("el formulario solo pide lo del juego web: no pregunta por motor, celular, proporción ni primer juego", async ({ page }, testInfo) => {
@@ -108,26 +154,28 @@ test("el formulario solo pide lo del juego web: no pregunta por motor, celular, 
   for (const name of [/celular/i, /primer juego/i]) await expect(page.getByRole("checkbox", { name })).toHaveCount(0);
 });
 
-test("al terminar de subir, la gestión se abre arriba, y al volver a «Subir juego» el formulario está vacío", async ({ page }, testInfo) => {
+test("al terminar de subir, la página del juego se abre arriba con el aviso, y al volver a «Subir juego» el formulario está vacío", async ({ page }, testInfo) => {
   test.setTimeout(180_000);
   await signUp(page, "reinicio", testInfo.project.name);
   await gotoReady(page, "/games/new");
-  await fillDetails(page, "Juego de una sola vez");
+  await fillDetails(page, uniqueTitle("Juego de una sola vez"));
   await attachZip(page);
   await page.getByRole("button", { name: "Subir juego" }).click();
 
-  await expect(page).toHaveURL(/\/games\/[a-z0-9]+\/manage$/, { timeout: 60_000 });
-  const title = page.getByRole("heading", { level: 1, name: "Juego de una sola vez" });
-  await expect(title).toBeVisible();
-  await expect(title).toBeInViewport({ ratio: 1 });
+  await expect(page).toHaveURL(GAME_PAGE_URL, { timeout: 90_000 });
+  const ready = page.getByRole("dialog", { name: "¡Tu juego está listo!" });
+  await expect(ready).toBeVisible();
+  await expect(ready.getByRole("button", { name: "Publicar juego" })).toBeInViewport({ ratio: 1 });
+  await ready.getByRole("button", { name: "Ahora no" }).click();
   expect(await page.evaluate(() => window.scrollY)).toBeLessThan(80);
 
   await goToUpload(page);
-  await expect(page.getByLabel("Título")).toHaveValue("");
-  await expect(page.getByLabel("Descripción corta")).toHaveValue("");
-  await expect(page.getByLabel("Género")).toHaveValue("");
-  await expect(page.getByLabel("Etiquetas")).toHaveValue("");
-  await expect(page.getByLabel("Cómo se juega")).toHaveValue("");
+  const form = page.getByRole("main");
+  await expect(form.getByRole("textbox", { name: "Título" })).toHaveValue("");
+  await expect(form.getByRole("textbox", { name: "Descripción corta" })).toHaveValue("");
+  await expect(form.getByRole("combobox", { name: "Género" })).toHaveValue("");
+  await expect(form.getByRole("textbox", { name: "Etiquetas" })).toHaveValue("");
+  await expect(form.getByRole("textbox", { name: "Cómo se juega" })).toHaveValue("");
   await expect(page.getByText("moon-runner.zip ·")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Subir juego" })).toBeEnabled();
 });
@@ -143,13 +191,13 @@ test("el servidor valida otra vez: campos vacíos, imágenes falsas y diminutas 
   await expect(page.getByText("Elegí un género de la lista.")).toBeVisible();
   await expect(page.getByLabel("Título")).toBeFocused();
 
-  await fillDetails(page, "Con imágenes malas");
+  await fillDetails(page, uniqueTitle("Con imágenes malas"));
   await page.getByLabel("Portada (opcional)").setInputFiles({ name: "cover.png", mimeType: "image/png", buffer: Buffer.from("<html>no soy una imagen</html>") });
   await page.getByLabel("Capturas (opcional)").setInputFiles({ name: "chica.png", mimeType: "image/png", buffer: makePng(100, 100) });
   await page.getByRole("button", { name: "Subir juego" }).click();
   await expect(page.getByText("La portada tiene que ser una imagen PNG, JPG o WebP válida.")).toBeVisible();
   await expect(page.getByText(/Las capturas tienen que ser imágenes/)).toBeVisible();
-  await expect(page.getByLabel("Título")).toHaveValue("Con imágenes malas");
+  await expect(page.getByLabel("Título")).toHaveValue(/^Con imágenes malas /);
 
   await page.getByLabel("Portada (opcional)").setInputFiles({ name: "animada.png", mimeType: "image/png", buffer: makePng(640, 360, { animated: true }) });
   await page.getByLabel("Capturas (opcional)").setInputFiles([]);
@@ -172,7 +220,7 @@ test("si la subida se corta, el juego ya creado se puede reintentar con el mismo
   test.setTimeout(180_000);
   await signUp(page, "reintento", testInfo.project.name);
   await gotoReady(page, "/games/new");
-  await fillDetails(page, "Se corta y sigue");
+  await fillDetails(page, uniqueTitle("Se corta y sigue"));
   await attachZip(page);
 
   let blocked = true;
@@ -183,8 +231,8 @@ test("si la subida se corta, el juego ya creado se puede reintentar con el mismo
 
   blocked = false;
   await page.getByRole("button", { name: "Reintentar la subida" }).click();
-  await expect(page).toHaveURL(/\/games\/[a-z0-9]+\/manage$/, { timeout: 60_000 });
-  await expect(page.getByText("Lista", { exact: true })).toBeVisible({ timeout: 45_000 });
+  await expect(page).toHaveURL(GAME_PAGE_URL, { timeout: 90_000 });
+  await expect(page.getByRole("dialog", { name: "¡Tu juego está listo!" })).toBeVisible();
 });
 
 const PASSWORD = "Trafal12345";
@@ -203,7 +251,7 @@ test("mientras el juego no se puede publicar, la gestión dice por qué, muestra
   const suffix = uniqueSuffix(testInfo.project.name);
   const email = `e2e_estado_${suffix}@trafal.test`;
   await registerAccount(page, { email, username: `estado_${lettersOnly(suffix)}`, displayName: "Persona Estado" });
-  const { game } = await draftWithUnfinishedUpload(email, "Juego a medio subir");
+  const { game } = await draftWithUnfinishedUpload(email, uniqueTitle("Juego a medio subir"));
 
   await gotoReady(page, `/games/${game.public_id}/manage`);
   const status = page.getByRole("region", { name: "La subida no terminó" });
@@ -220,11 +268,12 @@ test("al llegar al límite de subidas por día, el aviso aparece pegado al botó
   const suffix = uniqueSuffix(testInfo.project.name);
   const email = `e2e_limite_${suffix}@trafal.test`;
   await registerAccount(page, { email, username: `limite_${lettersOnly(suffix)}`, displayName: "Persona Límite" });
-  const { token, game } = await draftWithUnfinishedUpload(email, "Juego que gasta las subidas");
+  const { token, game } = await draftWithUnfinishedUpload(email, uniqueTitle("Juego que gasta las subidas"));
   for (let n = 2; n <= 5; n++) expect((await callRpc("create_game_version", { p_game_id: game.id, p_declared_size_bytes: 1000 }, token)).status).toBe(200);
 
   await gotoReady(page, "/games/new");
-  await fillDetails(page, "Una subida de más");
+  const extraTitle = uniqueTitle("Una subida de más");
+  await fillDetails(page, extraTitle);
   await attachZip(page);
   const submit = page.getByRole("button", { name: "Subir juego" });
   await submit.click();
@@ -235,7 +284,7 @@ test("al llegar al límite de subidas por día, el aviso aparece pegado al botó
   await expect(submit).toBeInViewport();
   const [noticeBox, buttonBox] = await Promise.all([notice.boundingBox(), submit.boundingBox()]);
   expect(noticeBox && buttonBox && noticeBox.y < buttonBox.y && buttonBox.y - noticeBox.y < 400).toBe(true);
-  await expect(page.getByLabel("Título")).toHaveValue("Una subida de más");
+  await expect(page.getByLabel("Título")).toHaveValue(extraTitle);
 });
 
 test("editar un juego ya subido: cambia los datos, la portada, las capturas y las preguntas, y se guarda todo junto", async ({ page, browser, request }, testInfo) => {
@@ -243,7 +292,9 @@ test("editar un juego ya subido: cambia los datos, la portada, las capturas y la
   const username = await signUp(page, "editar", testInfo.project.name);
 
   await gotoReady(page, "/games/new");
-  await fillDetails(page, "Juego para editar");
+  const title = uniqueTitle("Juego para editar");
+  const editedTitle = uniqueTitle("Juego editado");
+  await fillDetails(page, title);
   await page.getByLabel("Pregunta 1").fill("¿El salto se siente bien?");
   await page.getByLabel("Pregunta 2").fill("¿Qué cambiarías?");
   await attachZip(page);
@@ -253,18 +304,19 @@ test("editar un juego ya subido: cambia los datos, la portada, las capturas y la
     { name: "b.png", mimeType: "image/png", buffer: makePng(640, 360, { color: [100, 255, 100] }) },
   ]);
   await page.getByRole("button", { name: "Subir juego" }).click();
-  await expect(page).toHaveURL(/\/games\/[a-z0-9]+\/manage$/, { timeout: 60_000 });
-  const publicId = /\/games\/([a-z0-9]+)\/manage$/.exec(page.url())?.[1] ?? "";
+  await expect(page).toHaveURL(GAME_PAGE_URL, { timeout: 90_000 });
+  const publicId = publicIdOf(page);
+  await page.getByRole("dialog", { name: "¡Tu juego está listo!" }).getByRole("button", { name: "Ahora no" }).click();
 
-  await page.getByRole("link", { name: "Editar datos del juego" }).click();
+  await page.getByRole("region", { name: "Tu juego" }).getByRole("link", { name: "Editar" }).click();
   await expect(page).toHaveURL(new RegExp(`/games/${publicId}/edit$`));
   await page.waitForLoadState("networkidle");
   await expect(page.getByRole("heading", { level: 1, name: "Editar tu juego" })).toBeVisible();
-  await expect(page.getByLabel("Título")).toHaveValue("Juego para editar");
+  await expect(page.getByLabel("Título")).toHaveValue(title);
   await expect(page.getByLabel("Descripción corta")).toHaveValue("Corré por la luna y esquivá los cráteres.");
   await expect(page.getByLabel("Género")).toHaveValue("platformer");
-  await expect(page.getByLabel("Etiquetas")).toHaveValue("pixel art, relax, retro");
-  await expect(page.getByLabel("Cómo se juega")).toHaveValue("Flechas para moverte y espacio para saltar.");
+  await expect(page.getByRole("textbox", { name: "Etiquetas" })).toHaveValue("pixel art, relax, retro");
+  await expect(page.getByRole("textbox", { name: "Cómo se juega" })).toHaveValue("Flechas para moverte y espacio para saltar.");
   await expect(page.getByLabel("Pregunta 1")).toHaveValue("¿El salto se siente bien?");
   await expect(page.getByLabel("Pregunta 2")).toHaveValue("¿Qué cambiarías?");
   await expect(page.getByLabel("Pregunta 3")).toHaveValue("");
@@ -281,10 +333,15 @@ test("editar un juego ya subido: cambia los datos, la portada, las capturas y la
   await expect(page.getByText("Poné un título de hasta 80 caracteres.")).toBeVisible();
   await expect(page.getByLabel("Título")).toBeFocused();
 
-  await page.getByLabel("Título").fill("Juego editado");
+  await page.getByLabel("Título").fill("órbita");
+  await page.getByRole("button", { name: "Guardar cambios" }).click();
+  await expect(page.getByText("Ya hay un juego con ese nombre. Elegí otro.")).toBeVisible();
+  await expect(page.getByLabel("Título")).toBeFocused();
+
+  await page.getByLabel("Título").fill(editedTitle);
   await page.getByLabel("Descripción corta").fill("Ahora con otra descripción.");
   await page.getByLabel("Género").selectOption("puzzle");
-  await page.getByLabel("Etiquetas").fill("relax, nuevo");
+  await page.getByRole("textbox", { name: "Etiquetas" }).fill("relax, nuevo");
   await page.getByLabel("Pregunta 1").fill("¿El salto se siente mejor?");
   await page.getByLabel("Pregunta 2").fill("");
   await page.getByLabel("Pregunta 3").fill("¿Cuánto tardaste en terminarlo?");
@@ -295,14 +352,14 @@ test("editar un juego ya subido: cambia los datos, la portada, las capturas y la
 
   await expect(page.getByText("Guardamos los cambios de tu juego.")).toBeVisible();
   await expect(page).toHaveURL(new RegExp(`/games/${publicId}/manage$`));
-  await expect(page.getByRole("heading", { level: 1, name: "Juego editado" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: editedTitle })).toBeVisible();
 
   await page.getByRole("link", { name: "Editar datos del juego" }).click();
   await page.waitForLoadState("networkidle");
-  await expect(page.getByLabel("Título")).toHaveValue("Juego editado");
+  await expect(page.getByLabel("Título")).toHaveValue(editedTitle);
   await expect(page.getByLabel("Descripción corta")).toHaveValue("Ahora con otra descripción.");
   await expect(page.getByLabel("Género")).toHaveValue("puzzle");
-  await expect(page.getByLabel("Etiquetas")).toHaveValue("nuevo, relax");
+  await expect(page.getByRole("textbox", { name: "Etiquetas" })).toHaveValue("nuevo, relax");
   await expect(page.getByLabel("Pregunta 1")).toHaveValue("¿El salto se siente mejor?");
   await expect(page.getByLabel("Pregunta 2")).toHaveValue("¿Cuánto tardaste en terminarlo?");
   await expect(page.getByLabel("Pregunta 3")).toHaveValue("");

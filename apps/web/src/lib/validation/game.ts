@@ -20,6 +20,7 @@ import { charLength, sanitizeLine, sanitizeMultiline, unique } from "./text";
  */
 export const GAME_FORM_ERROR_KEYS = [
   "invalidTitle",
+  "titleTaken",
   "descriptionTooLong",
   "invalidGenre",
   "tooManyTags",

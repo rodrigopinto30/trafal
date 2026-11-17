@@ -71,5 +71,10 @@ export const confirmQuerySchema = z.object({
   type: z.enum(OTP_TYPES),
 });
 
+/** Cuentas de afuera con las que se puede entrar (OAuth). */
+export const OAUTH_PROVIDERS = ["google", "discord"] as const;
+export type OAuthProvider = (typeof OAUTH_PROVIDERS)[number];
+export const oauthProviderSchema = z.enum(OAUTH_PROVIDERS);
+
 /** Query de /auth/callback (OAuth con PKCE): el código es opaco; se acota su forma. */
 export const oauthCallbackQuerySchema = z.object({ code: z.string().min(8).max(2048) });

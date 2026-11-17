@@ -1,6 +1,6 @@
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
-import { uploadGameZip, unpublishGame } from "./helpers/game";
-import { lettersOnly, registerAccount, uniqueSuffix } from "./helpers/session";
+import { uniqueTitle, unpublishGame, uploadAndPublishGame } from "./helpers/game";
+import { gotoReady, lettersOnly, registerAccount, uniqueSuffix } from "./helpers/session";
 import { playableGameZip } from "./helpers/zip";
 
 /**
@@ -14,6 +14,7 @@ const GATEWAY = "http://127.0.0.1:4000";
 let ownerContext: BrowserContext;
 let owner: Page;
 let publicId = "";
+let gameTitle = "";
 
 /** The new-version form. The page of the previous step (the upload form) can still be mounted but hidden, so labels are searched inside this section. */
 function newVersionSection(page: Page) {
@@ -31,12 +32,9 @@ test.beforeAll(async ({ browser }, testInfo) => {
   owner = await ownerContext.newPage();
   const suffix = uniqueSuffix(testInfo.project.name);
   await registerAccount(owner, { email: `e2e_versions_${suffix}@trafal.test`, username: `versions_${lettersOnly(suffix)}`, displayName: "Persona Versiones" });
-  await uploadGameZip(owner, "Moon Runner", playableGameZip());
-  await expect(owner.getByText("Lista", { exact: true })).toBeVisible({ timeout: 45_000 });
-  await owner.getByRole("button", { name: "Publicar juego" }).click();
-  await expect(owner.getByText("Tu juego está publicado")).toBeVisible();
-  publicId = /\/games\/([a-z0-9]+)\/manage$/.exec(owner.url())?.[1] ?? "";
-  expect(publicId).not.toBe("");
+  gameTitle = uniqueTitle("Moon Runner");
+  publicId = await uploadAndPublishGame(owner, gameTitle, playableGameZip());
+  await gotoReady(owner, `/games/${publicId}/manage`);
 });
 
 test.afterAll(async () => {
