@@ -353,6 +353,7 @@
     "mute": "Silenciar",
     "unmute": "Activar sonido",
     "controls": "Controles del reproductor",
+    "keyboardHint": "Mantené Esc apretado para volver a estos controles",
     "unavailableTitle": "Este juego todavía no se puede jugar",
     "unavailableText": "No encontramos los archivos del juego. Si es tuyo, revisá su estado desde tu perfil.",
     "isolationTitle": "Este juego necesita funciones que todavía no ofrecemos",
@@ -1773,6 +1774,7 @@
       "cannotWindows": "Abrir ventanas o pestañas, ni cambiar la página de Tradfal.",
       "cannotForms": "Enviar formularios, descargar archivos ni instalar service workers.",
       "cannotData": "Pedir contraseñas, tarjetas ni datos personales.",
+      "keyboard": "Mantener Esc apretado un segundo es de Tradfal: le devuelve el teclado a los controles del reproductor, para que nadie quede atrapado si un juego se queda con la tecla Tab. Una pulsación corta de Esc le sigue llegando a tu juego (usala para pausar), pero no uses «mantener Esc» para otra cosa.",
       "flags": "La revisión también marca señales sospechosas, como un campo de contraseña, un minero de criptomonedas o un intento de salir del marco, para que el equipo lo revise."
     },
     "fixes": {

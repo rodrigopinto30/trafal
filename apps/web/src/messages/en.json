@@ -353,6 +353,7 @@
     "mute": "Mute",
     "unmute": "Turn sound on",
     "controls": "Player controls",
+    "keyboardHint": "Hold Esc to come back to these controls",
     "unavailableTitle": "This game can't be played yet",
     "unavailableText": "We couldn't find the game's files. If it's yours, check its status from your profile.",
     "isolationTitle": "This game needs features we don't offer yet",
@@ -1773,6 +1774,7 @@
       "cannotWindows": "Open windows or tabs, or change Tradfal's page.",
       "cannotForms": "Submit forms, download files or install service workers.",
       "cannotData": "Ask for passwords, cards or personal data.",
+      "keyboard": "Holding Esc for a second belongs to Tradfal: it hands the keyboard back to the player's controls, so nobody gets stuck if a game keeps the Tab key. A short Esc press still reaches your game (use it to pause), but do not use «hold Esc» for anything else.",
       "flags": "The review also flags suspicious signs, like a password field, a cryptocurrency miner or an attempt to break out of the frame, for the team to look at."
     },
     "fixes": {

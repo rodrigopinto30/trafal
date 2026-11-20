@@ -1,6 +1,7 @@
 /**
  * What the player and the gateway's platform bridge say to each other (see apps/gateway/src/bridge.ts). The player only ever sends
- * `hello` and `mute`, and only ever trusts one message from the game's frame: `ready`.
+ * `hello` and `mute`, and only ever listens to two messages from the game's frame: `ready` and `leave` (Escape held, so the player
+ * takes the keyboard back). Neither can do harm if a game sends it on its own.
  */
 export const BRIDGE_PROTOCOL = 1;
 
@@ -15,18 +16,28 @@ export function helloMessage(): HelloMessage {
   return { tradfal: BRIDGE_PROTOCOL, type: "hello" };
 }
 
-/** True only for the bridge's own «ready» message: anything else a game posts is ignored. */
-export function isBridgeReady(data: unknown): boolean {
+function isBridgeMessage(data: unknown, type: "ready" | "leave"): boolean {
   if (typeof data !== "object" || data === null) return false;
   const message = data as Record<string, unknown>;
-  return message.tradfal === BRIDGE_PROTOCOL && message.type === "ready";
+  return message.tradfal === BRIDGE_PROTOCOL && message.type === type;
+}
+
+/** True only for the bridge's own «ready» message: anything else a game posts is ignored. */
+export function isBridgeReady(data: unknown): boolean {
+  return isBridgeMessage(data, "ready");
+}
+
+/** True for the bridge's «leave» message: the person held Escape inside the game and wants the keyboard back on the player's controls. */
+export function isLeaveRequest(data: unknown): boolean {
+  return isBridgeMessage(data, "leave");
 }
 
 /**
  * Keys the player asks the browser to hand to the game in fullscreen (Keyboard Lock API), so combinations like Ctrl+W or Ctrl+R
  * reach the game instead of closing or reloading the tab. Escape is among them: a press goes to the game (a pause menu, say)
- * instead of leaving fullscreen, which is left with the player's own button. The browser still lets the person out by holding
- * Escape for a moment (it says so on screen) and F11 stays with it; browsers without the API keep Escape as their way out.
+ * instead of leaving fullscreen, which is left with the player's own button. Holding Escape hands the keyboard back to those
+ * controls (the bridge's `leave`) and, held longer, the browser leaves fullscreen (it says so on screen); F11 stays with it, and
+ * browsers without the API keep Escape as their way out.
  */
 export const LOCKED_KEYS: readonly string[] = [
   "Escape",

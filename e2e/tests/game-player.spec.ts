@@ -159,6 +159,48 @@ test("la vista maximizada (sin pantalla completa del navegador) no se cierra con
   await context.close();
 });
 
+test("mantener Esc apretado dentro del juego devuelve el teclado a los controles, aunque el juego se quede con Tab", async ({ browser }, testInfo) => {
+  const context = await browser.newContext({ ...testInfo.project.use });
+  const visitor = await context.newPage();
+  await visitor.goto(`/games/${publicId}`);
+  await visitor.getByRole("button", { name: "Jugar gratis" }).click();
+  await expect(visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#status")).toHaveText("corriendo");
+
+  const frame = visitor.locator(`iframe[title="Juego: ${gameTitle}"]`);
+  const hint = visitor.locator(`[id="${await frame.getAttribute("aria-describedby")}"]`);
+  await expect(hint, "the frame tells screen readers how to get out").toHaveText("Mantené Esc apretado para volver a estos controles");
+  if (testInfo.project.name === "desktop") await expect(hint).toBeVisible();
+
+  const game = await (await frame.elementHandle())?.contentFrame();
+  if (!game) throw new Error("no game frame");
+  await game.evaluate(() => {
+    window.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key !== "Tab" && event.key !== "Escape") return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      },
+      true,
+    );
+  });
+  await visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("body").click();
+  await visitor.keyboard.press("Tab");
+  await visitor.keyboard.press("Shift+Tab");
+  await expect(frame, "this game keeps the Tab key: the focus cannot leave by tabbing").toBeFocused();
+
+  await visitor.keyboard.press("Escape");
+  await visitor.waitForTimeout(1500);
+  await expect(frame, "a short Escape still belongs to the game").toBeFocused();
+
+  await visitor.keyboard.down("Escape");
+  await expect(visitor.getByRole("button", { name: "Reiniciar", exact: true }), "held Escape brings the keyboard back to the controls").toBeFocused({ timeout: 4000 });
+  await visitor.keyboard.up("Escape");
+  await visitor.keyboard.press("Tab");
+  await expect(frame).not.toBeFocused();
+  await context.close();
+});
+
 test("en pantalla completa el juego recibe las teclas que el navegador se guardaría", async ({ browser }, testInfo) => {
   const context = await browser.newContext({ ...testInfo.project.use });
   await context.addInitScript(() => {

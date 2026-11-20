@@ -1,14 +1,14 @@
 "use client";
 
 import { MaximizeIcon, MinimizeIcon, PlayIcon, RotateCcwIcon, Volume2Icon, VolumeXIcon } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { GameCover } from "@/components/games/game-cover";
 import { ReportDialog } from "@/components/reports/report-dialog";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "@/i18n/client";
 import { classifyDevice } from "@/lib/games/device";
 import { PLAYER_WIDTH } from "@/lib/games/player-size";
-import { helloMessage, isBridgeReady, lockGameKeys, muteMessage, readMutedPreference, saveMutedPreference, unlockGameKeys } from "@/lib/games/frame-bridge";
+import { helloMessage, isBridgeReady, isLeaveRequest, lockGameKeys, muteMessage, readMutedPreference, saveMutedPreference, unlockGameKeys } from "@/lib/games/frame-bridge";
 import type { GameDetail } from "@/lib/games/types";
 import { loadBrowserClient } from "@/lib/supabase/load-client";
 
@@ -49,12 +49,16 @@ function originOf(url: string | null): string | null {
  * from Tradfal) and is sandboxed without top navigation, popups, forms or downloads, so a game cannot touch the visitor's session or
  * leave the frame. Sound is muted through the bridge the gateway adds to the game's page (see apps/gateway/src/bridge.ts); in
  * fullscreen the game also gets the keys the browser would keep for itself, Escape included: fullscreen (or the maximized view
- * used where there is none) is left with the same button that entered it. Counts the play and keeps a heartbeat while the tab is visible.
+ * used where there is none) is left with the same button that entered it. Holding Escape inside any game brings the keyboard back to
+ * the control bar (the bridge's `leave`), so a game that keeps the Tab key cannot trap anyone; the bar says so, and the frame points
+ * to that hint for screen readers. Counts the play and keeps a heartbeat while the tab is visible.
  */
 export function GamePlayer({ game, frameUrl, needsIsolation, signedIn, draft = false }: Props) {
   const t = useTranslations("gamePlayer");
   const frameBox = useRef<HTMLDivElement>(null);
   const frame = useRef<HTMLIFrameElement>(null);
+  const controls = useRef<HTMLDivElement>(null);
+  const keyboardHintId = useId();
   const sessionId = useRef<string | null>(null);
   const mutedRef = useRef(false);
   const [playing, setPlaying] = useState(false);
@@ -115,7 +119,12 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn, draft = f
     if (!playing || !frameOrigin) return;
     const onMessage = (event: MessageEvent) => {
       const target = frame.current?.contentWindow;
-      if (event.origin !== frameOrigin || !target || event.source !== target || !isBridgeReady(event.data)) return;
+      if (event.origin !== frameOrigin || !target || event.source !== target) return;
+      if (isLeaveRequest(event.data)) {
+        controls.current?.querySelector<HTMLButtonElement>("button")?.focus();
+        return;
+      }
+      if (!isBridgeReady(event.data)) return;
       setBridgeReady(true);
       target.postMessage(muteMessage(mutedRef.current), frameOrigin);
     };
@@ -190,6 +199,7 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn, draft = f
                 ref={frame}
                 src={frameUrl}
                 title={t("frameTitle", { title: game.title })}
+                aria-describedby={keyboardHintId}
                 sandbox={FRAME_SANDBOX}
                 allow={FRAME_PERMISSIONS}
                 referrerPolicy="no-referrer"
@@ -240,11 +250,14 @@ export function GamePlayer({ game, frameUrl, needsIsolation, signedIn, draft = f
         </div>
 
         {playing && playable ? (
-          <div role="toolbar" aria-label={t("controls")} className="flex shrink-0 items-center justify-between gap-2 border-t border-white/10 bg-black/70 px-2 py-1.5">
+          <div ref={controls} role="toolbar" aria-label={t("controls")} className="flex shrink-0 items-center justify-between gap-2 border-t border-white/10 bg-black/70 px-2 py-1.5">
             <Button type="button" variant="ghost" aria-label={t("restart")} onClick={restart}>
               <RotateCcwIcon aria-hidden="true" />
               <span className="hidden sm:inline">{t("restart")}</span>
             </Button>
+            <p id={keyboardHintId} className="hidden min-w-0 text-center text-xs text-white/80 pointer-fine:md:block">
+              {t("keyboardHint")}
+            </p>
             <div className="flex items-center gap-1">
               {bridgeReady ? (
                 <Button type="button" variant="ghost" size="icon" aria-label={muted ? t("unmute") : t("mute")} title={muted ? t("unmute") : t("mute")} onClick={toggleMute}>

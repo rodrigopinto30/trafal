@@ -1,6 +1,6 @@
 import { runInNewContext } from "node:vm";
 import { beforeEach, describe, expect, it } from "vitest";
-import { BRIDGE_SCRIPT, BRIDGE_VERSION, findInsertionPoint, injectBridge } from "../src/bridge.ts";
+import { BRIDGE_SCRIPT, BRIDGE_VERSION, LEAVE_HOLD_MS, findInsertionPoint, injectBridge } from "../src/bridge.ts";
 import { createGatewayHandler } from "../src/handler.ts";
 import { FakeDelivery, FakeStorage, makeConfig, request } from "./helpers.ts";
 
@@ -146,9 +146,12 @@ describe("what the gateway does with it", () => {
 });
 
 type Listener = (event: { source: unknown; data: unknown }) => void;
+type KeyListener = (event: { key?: string; repeat?: boolean }) => void;
 
 function sandbox() {
   const listeners: Listener[] = [];
+  const keyListeners: Record<string, Array<{ listener: KeyListener; capture: boolean }>> = {};
+  const clock = { now: 0, timers: new Map<number, { at: number; run: () => void }>(), next: 1 };
   const posted: unknown[] = [];
   const parent = { postMessage: (message: unknown) => posted.push(message) };
   const gains: Array<{ value: number; target: number | null; context: unknown }> = [];
@@ -214,12 +217,30 @@ function sandbox() {
     WeakMap,
     parent,
     document: { querySelectorAll: () => media },
-    addEventListener: (type: string, listener: Listener) => {
+    addEventListener: (type: string, listener: Listener & KeyListener, capture?: boolean) => {
       if (type === "message") listeners.push(listener);
+      else (keyListeners[type] ??= []).push({ listener, capture: capture === true });
     },
+    setTimeout: (run: () => void, delay: number) => {
+      const id = clock.next++;
+      clock.timers.set(id, { at: clock.now + delay, run });
+      return id;
+    },
+    clearTimeout: (id: number) => void clock.timers.delete(id),
   };
   window.window = window;
-  return { window, listeners, posted, parent, gains, connections, FakeContext, FakeOffline, FakeNode, media, mutedValues };
+  const key = (type: "keydown" | "keyup" | "blur", event: { key?: string; repeat?: boolean } = {}) => {
+    for (const { listener } of keyListeners[type] ?? []) listener(event);
+  };
+  const advance = (milliseconds: number) => {
+    clock.now += milliseconds;
+    for (const [id, timer] of [...clock.timers]) {
+      if (timer.at > clock.now) continue;
+      clock.timers.delete(id);
+      timer.run();
+    }
+  };
+  return { window, listeners, keyListeners, key, advance, posted, parent, gains, connections, FakeContext, FakeOffline, FakeNode, media, mutedValues };
 }
 
 describe("the bridge script", () => {
@@ -290,5 +311,42 @@ describe("the bridge script", () => {
     expect(env.gains[0]?.target ?? 1).toBe(1);
     for (const listener of env.listeners) listener({ source: env.parent, data: { tradfal: 1, type: "hello" } });
     expect(env.posted).toHaveLength(2);
+  });
+
+  it("asks the player to take the keyboard back when Escape is held, and only then", () => {
+    const env = sandbox();
+    runInNewContext(BRIDGE_SCRIPT, env.window);
+    expect(env.keyListeners.keydown?.every((entry) => entry.capture)).toBe(true);
+    const leave = { tradfal: 1, type: "leave" };
+
+    env.key("keydown", { key: "Escape" });
+    env.advance(LEAVE_HOLD_MS - 100);
+    env.key("keyup", { key: "Escape" });
+    env.advance(1000);
+    expect(env.posted, "a short press stays with the game").not.toContainEqual(leave);
+
+    env.key("keydown", { key: "Escape" });
+    env.advance(300);
+    env.key("keydown", { key: "Escape", repeat: true });
+    env.advance(LEAVE_HOLD_MS);
+    expect(env.posted.filter((message) => JSON.stringify(message) === JSON.stringify(leave))).toHaveLength(1);
+    env.key("keyup", { key: "Escape" });
+
+    env.key("keydown", { key: "Escape" });
+    env.key("blur");
+    env.advance(LEAVE_HOLD_MS * 2);
+    env.key("keydown", { key: "Enter" });
+    env.advance(LEAVE_HOLD_MS * 2);
+    expect(env.posted.filter((message) => JSON.stringify(message) === JSON.stringify(leave)), "leaving the window or other keys do not count").toHaveLength(1);
+  });
+
+  it("keeps its own timer even if the game replaces the window's", () => {
+    const env = sandbox();
+    runInNewContext(BRIDGE_SCRIPT, env.window);
+    env.window.setTimeout = () => 0;
+    env.window.clearTimeout = () => undefined;
+    env.key("keydown", { key: "Escape" });
+    env.advance(LEAVE_HOLD_MS);
+    expect(env.posted).toContainEqual({ tradfal: 1, type: "leave" });
   });
 });
