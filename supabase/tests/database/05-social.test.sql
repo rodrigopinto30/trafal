@@ -86,29 +86,28 @@ select is((select count(*) from public.post_media), 1::bigint, 'el público ve l
 
 -- =================================================================== COMENTARIOS
 select tests.authenticate_as('b0000000-0000-0000-0000-000000000002');
-select lives_ok($$ insert into public.comments (author_id, post_id, body, label) select 'b0000000-0000-0000-0000-000000000002', id, 'Me encantó la música', 'liked' from public.posts where body = 'Día 12: sonidos nuevos' $$, 'bruno comenta un avance con etiqueta "Me gustó"');
+select lives_ok($$ insert into public.comments (author_id, post_id, body) select 'b0000000-0000-0000-0000-000000000002', id, 'Me encantó la música' from public.posts where body = 'Día 12: sonidos nuevos' $$, 'bruno comenta un avance');
 select throws_ok($$ insert into public.comments (author_id, post_id, body) select 'c0000000-0000-0000-0000-000000000003', id, 'a nombre de carla' from public.posts where body = 'Día 12: sonidos nuevos' $$, '42501', null, 'no se comenta a nombre de otra persona');
-select throws_ok($$ insert into public.comments (author_id, post_id, body, label) select 'b0000000-0000-0000-0000-000000000002', id, 'x', 'meh' from public.posts where body = 'Día 12: sonidos nuevos' $$, '23514', null, 'etiqueta inválida');
+select throws_ok($$ insert into public.comments (author_id, post_id, body, label) select 'b0000000-0000-0000-0000-000000000002', id, 'x', 'liked' from public.posts where body = 'Día 12: sonidos nuevos' $$, '42501', null, 'los comentarios ya no tienen tipo');
 select throws_ok($$ insert into public.comments (author_id, post_id, game_id, body) select 'b0000000-0000-0000-0000-000000000002', p.id, '11111111-1111-1111-1111-111111111101', 'dos destinos' from public.posts p where p.body = 'Día 12: sonidos nuevos' $$, '23514', null, 'un comentario tiene un solo destino');
 select throws_ok($$ insert into public.comments (author_id, body) values ('b0000000-0000-0000-0000-000000000002', 'sin destino') $$, '42501', null, 'y al menos uno (la policy lo frena antes)');
 select throws_ok($$ insert into public.comments (author_id, post_id, body, is_helpful) select 'b0000000-0000-0000-0000-000000000002', id, 'x', true from public.posts where body = 'Día 12: sonidos nuevos' $$, '42501', null, 'nadie se marca a sí mismo "Me sirvió"');
-select throws_ok($$ update public.comments set is_helpful = true where label = 'liked' $$, '42501', null, 'el autor tampoco puede marcar su propio comentario');
+select throws_ok($$ update public.comments set is_helpful = true where body = 'Me encantó la música' $$, '42501', null, 'el autor tampoco puede marcar su propio comentario');
 
 select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
-select throws_ok($$ update public.comments set is_helpful = true where label = 'liked' $$, '42501', null, 'ni siquiera la autora del avance por UPDATE directo ("Me sirvió" va por una función)');
-select lives_ok($$ insert into public.comments (author_id, post_id, parent_id, body) select 'a0000000-0000-0000-0000-000000000001', c.post_id, c.id, '¡Gracias!' from public.comments c where c.label = 'liked' $$, 'ana responde (un nivel)');
+select throws_ok($$ update public.comments set is_helpful = true where body = 'Me encantó la música' $$, '42501', null, 'ni siquiera la autora del avance por UPDATE directo ("Me sirvió" va por una función)');
+select lives_ok($$ insert into public.comments (author_id, post_id, parent_id, body) select 'a0000000-0000-0000-0000-000000000001', c.post_id, c.id, '¡Gracias!' from public.comments c where c.body = 'Me encantó la música' $$, 'ana responde (un nivel)');
 select throws_ok($$ insert into public.comments (author_id, post_id, parent_id, body) select 'a0000000-0000-0000-0000-000000000001', c.post_id, c.id, 'respuesta a la respuesta' from public.comments c where c.body = '¡Gracias!' $$, 'P0001', 'reply_depth_exceeded', 'no hay respuestas de segundo nivel');
-select throws_ok($$ insert into public.comments (author_id, post_id, parent_id, body, label) select 'a0000000-0000-0000-0000-000000000001', c.post_id, c.id, 'con etiqueta', 'liked' from public.comments c where c.label = 'liked' $$, 'P0001', 'reply_cannot_have_label', 'las respuestas no llevan etiqueta');
-select throws_ok($$ insert into public.comments (author_id, post_id, parent_id, body) select 'a0000000-0000-0000-0000-000000000001', p.id, c.id, 'de otro avance' from public.comments c, public.posts p where c.label = 'liked' and p.body = 'Mi avance' $$, 'P0001', 'parent_target_mismatch', 'la respuesta debe ser del mismo avance');
-select is(tests.dml_count($$ update public.comments set body = 'editado por la autora del avance' where label = 'liked' $$), 0::bigint, 'la dueña del avance NO edita comentarios ajenos');
-select is(tests.dml_count($$ delete from public.comments where label = 'liked' $$), 0::bigint, 'ni los borra (para eso están los reportes)');
+select throws_ok($$ insert into public.comments (author_id, post_id, parent_id, body) select 'a0000000-0000-0000-0000-000000000001', p.id, c.id, 'de otro avance' from public.comments c, public.posts p where c.body = 'Me encantó la música' and p.body = 'Mi avance' $$, 'P0001', 'parent_target_mismatch', 'la respuesta debe ser del mismo avance');
+select is(tests.dml_count($$ update public.comments set body = 'editado por la autora del avance' where body = 'Me encantó la música' $$), 0::bigint, 'la dueña del avance NO edita comentarios ajenos');
+select is(tests.dml_count($$ delete from public.comments where body = 'Me encantó la música' $$), 0::bigint, 'ni los borra (para eso están los reportes)');
 select is((select comment_count from public.posts where body = 'Día 12: sonidos nuevos'), 2, 'el contador del avance cuenta comentario + respuesta');
 
 select tests.authenticate_as('c0000000-0000-0000-0000-000000000003');
 select is(tests.dml_count($$ update public.comments set body = 'hack' $$), 0::bigint, 'carla NO edita comentarios ajenos');
 select is(tests.dml_count($$ delete from public.comments $$), 0::bigint, 'ni los borra');
 select tests.authenticate_as('b0000000-0000-0000-0000-000000000002');
-select is(tests.dml_count($$ update public.comments set body = 'Me encantó la música y el arte', label = 'suggestion' where label = 'liked' $$), 1::bigint, 'bruno edita su comentario');
+select is(tests.dml_count($$ update public.comments set body = 'Me encantó la música y el arte' where body = 'Me encantó la música' $$), 1::bigint, 'bruno edita su comentario');
 select tests.authenticate_as_anon();
 select is((select count(*) from public.comments), 2::bigint, 'el público lee los comentarios');
 select throws_ok($$ insert into public.comments (author_id, post_id, body) select 'a0000000-0000-0000-0000-000000000001', id, 'anónimo' from public.posts limit 1 $$, '42501', null, 'anon no comenta');
@@ -124,7 +123,7 @@ select is((select comment_count from public.posts where body = 'Día 12: sonidos
 
 -- =================================================================== FEEDBACK EN LA PÁGINA DEL JUEGO
 select tests.authenticate_as('c0000000-0000-0000-0000-000000000003');
-select lives_ok($$ insert into public.comments (author_id, game_id, body, label) values ('c0000000-0000-0000-0000-000000000003', '11111111-1111-1111-1111-111111111101', 'El nivel 3 es muy difícil', 'suggestion') $$, 'carla deja una sugerencia en el juego');
+select lives_ok($$ insert into public.comments (author_id, game_id, body) values ('c0000000-0000-0000-0000-000000000003', '11111111-1111-1111-1111-111111111101', 'El nivel 3 es muy difícil') $$, 'carla deja un comentario en el juego');
 select lives_ok($$ insert into public.comments (author_id, game_id, question_id, body) values ('c0000000-0000-0000-0000-000000000003', '11111111-1111-1111-1111-111111111101', '44444444-4444-4444-4444-444444444401', 'Sí, se entiende') $$, 'carla responde una pregunta de feedback');
 select throws_ok($$ insert into public.comments (author_id, game_id, question_id, body) values ('c0000000-0000-0000-0000-000000000003', '11111111-1111-1111-1111-111111111101', '44444444-4444-4444-4444-444444444401', 'Otra respuesta') $$, '23505', null, 'una respuesta por persona y pregunta');
 select throws_ok($$ insert into public.comments (author_id, game_id, question_id, body) values ('c0000000-0000-0000-0000-000000000003', '11111111-1111-1111-1111-111111111102', '44444444-4444-4444-4444-444444444401', 'Pregunta de otro juego') $$, 'P0001', 'question_mismatch', 'la pregunta debe ser de ese juego');

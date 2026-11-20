@@ -21,7 +21,7 @@ function failureOfDatabase(error: { code?: string; message: string }): CommentRe
   if (/own_comment|reply_cannot_be_helpful/.test(error.message)) return fail("helpfulNotAllowed");
   if (/comment_not_found|question_mismatch/.test(error.message)) return fail("notFound");
   if (error.message.includes("parent_not_found")) return fail("parentNotFound");
-  if (/reply_depth_exceeded|parent_target_mismatch|reply_cannot_have_label|reply_cannot_answer_question/.test(error.message)) return fail("replyNotAllowed");
+  if (/reply_depth_exceeded|parent_target_mismatch|reply_cannot_answer_question/.test(error.message)) return fail("replyNotAllowed");
   if (error.code === "42501") return fail("accountRestricted");
   console.error("[comment] database error", error);
   return fail("generic");
@@ -30,7 +30,7 @@ function failureOfDatabase(error: { code?: string; message: string }): CommentRe
 /**
  * Writes a comment on a game or an update, a reply to a comment, or the answer to one of the creator's questions (one answer per person and question). The text is cleaned and checked here; the database decides
  * the rest: the author is the caller, the target has to be visible to them, an account that cannot write is refused, a reply
- * answers a published comment of the same target, only one level deep, and carries no label.
+ * answers a published comment of the same target, only one level deep.
  */
 export async function addCommentAction(rawInput: unknown): Promise<CommentResult> {
   const user = await getAuthUser();
@@ -38,7 +38,7 @@ export async function addCommentAction(rawInput: unknown): Promise<CommentResult
 
   const parsed = newCommentSchema.safeParse(rawInput);
   if (!parsed.success) return failureOfSchema(parsed.error.issues[0]);
-  const { target, id, parentId, questionId, label, body } = parsed.data;
+  const { target, id, parentId, questionId, body } = parsed.data;
 
   const supabase = await createClient();
   const { data: visible } =
@@ -53,7 +53,6 @@ export async function addCommentAction(rawInput: unknown): Promise<CommentResult
     post_id: target === "post" ? id : null,
     parent_id: parentId,
     question_id: questionId,
-    label,
     body,
   });
   if (error) return failureOfDatabase(error);
@@ -61,7 +60,7 @@ export async function addCommentAction(rawInput: unknown): Promise<CommentResult
   return { ok: true };
 }
 
-/** Edits the text and the label of the author's own published comment. The database refuses anyone else's, a moderated one, and a label on a reply. */
+/** Edits the text of the author's own published comment. The database refuses anyone else's and a moderated one. */
 export async function updateCommentAction(rawInput: unknown): Promise<CommentResult> {
   const user = await getAuthUser();
   if (!user) return fail("unauthenticated");
@@ -72,7 +71,7 @@ export async function updateCommentAction(rawInput: unknown): Promise<CommentRes
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("comments")
-    .update({ body: parsed.data.body, label: parsed.data.label })
+    .update({ body: parsed.data.body })
     .eq("id", parsed.data.id)
     .select("id");
   if (error) return failureOfDatabase(error);

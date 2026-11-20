@@ -65,8 +65,6 @@ export type PostSummary = {
   media: PostMediaItem[];
 };
 
-export type CommentLabel = "liked" | "suggestion";
-
 export type QuestionSummary = {
   id: string;
   position: number;
@@ -80,7 +78,6 @@ export type CommentSummary = {
   updated_at: string;
   parent_id: string | null;
   body: string;
-  label: CommentLabel | null;
   is_helpful: boolean;
   created_at: string;
   author: Creator;

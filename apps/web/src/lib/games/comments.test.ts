@@ -10,7 +10,6 @@ function comment(id: string, createdAt: string, parentId: string | null = null):
     updated_at: createdAt,
     parent_id: parentId,
     body: id,
-    label: null,
     is_helpful: false,
     created_at: createdAt,
     author: { username: "a", display_name: "A", avatar_path: null },

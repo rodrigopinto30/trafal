@@ -9,16 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { FormMessage } from "@/components/ui/form-message";
-import { NativeSelect } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
 import { useTranslations } from "@/i18n/client";
 import { deleteCommentAction, setCommentHelpfulAction, updateCommentAction } from "@/lib/games/comment-actions";
-import { COMMENT_BODY_MAX, COMMENT_ERROR_KEYS, COMMENT_LABELS, type CommentErrorKey, type CommentTarget } from "@/lib/validation/comment-rules";
+import { COMMENT_BODY_MAX, COMMENT_ERROR_KEYS, type CommentErrorKey, type CommentTarget } from "@/lib/validation/comment-rules";
 
 type Props = {
   commentId: string;
   body: string;
-  label: string | null;
   authorName: string;
   isReply: boolean;
   isOwn: boolean;
@@ -38,14 +36,13 @@ function isErrorKey(value: string): value is CommentErrorKey {
  * What a person can do with a comment: reply to it (only top-level comments get replies) and, when it is theirs, edit it or
  * delete it. Everything is enforced by the database; hiding the buttons from other people is a courtesy.
  */
-export function CommentActions({ commentId, body, label, authorName, isReply, isOwn, canMarkHelpful, helpful, target, targetId, signedIn, loginHref }: Props) {
+export function CommentActions({ commentId, body, authorName, isReply, isOwn, canMarkHelpful, helpful, target, targetId, signedIn, loginHref }: Props) {
   const t = useTranslations("comments");
   const tc = useTranslations("common");
   const router = useRouter();
   const [replying, setReplying] = useState(false);
   const [dialog, setDialog] = useState<"edit" | "delete" | null>(null);
   const [text, setText] = useState(body);
-  const [chosen, setChosen] = useState(label ?? "");
   const [message, setMessage] = useState<string | undefined>();
   const [pending, startTransition] = useTransition();
 
@@ -55,14 +52,13 @@ export function CommentActions({ commentId, body, label, authorName, isReply, is
     if (open) return;
     setDialog(null);
     setText(body);
-    setChosen(label ?? "");
     setMessage(undefined);
   }
 
   function save() {
     setMessage(undefined);
     startTransition(async () => {
-      const result = await updateCommentAction({ id: commentId, body: text, label: isReply ? "" : chosen });
+      const result = await updateCommentAction({ id: commentId, body: text });
       if (result.ok) {
         setDialog(null);
         toast.success(t("saved"));
@@ -140,20 +136,6 @@ export function CommentActions({ commentId, body, label, authorName, isReply, is
             <Field id={`edit-body-${commentId}`} label={t("bodyLabel")} hint={t("bodyCount", { count: Array.from(text).length, max: COMMENT_BODY_MAX })}>
               {(control) => <Textarea {...control} value={text} rows={5} disabled={pending} onChange={(event) => setText(event.target.value)} />}
             </Field>
-            {isReply ? null : (
-              <Field id={`edit-label-${commentId}`} label={t("label")}>
-                {(control) => (
-                  <NativeSelect {...control} value={chosen} disabled={pending} onChange={(event) => setChosen(event.target.value)}>
-                    <option value="">{t("labels.none")}</option>
-                    {COMMENT_LABELS.map((value) => (
-                      <option key={value} value={value}>
-                        {t(`labels.${value}`)}
-                      </option>
-                    ))}
-                  </NativeSelect>
-                )}
-              </Field>
-            )}
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => closeDialog(false)} disabled={pending}>

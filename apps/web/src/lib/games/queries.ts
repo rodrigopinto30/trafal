@@ -28,7 +28,7 @@ const POST_COLUMNS =
   "id, kind, body, highlight, created_at, like_count, comment_count, author_id, author:profiles!posts_author_id_fkey(username, display_name, avatar_path), game:games!posts_game_id_fkey(public_id, title), media:post_media(id, kind, path, mime, width, height, alt_text, position)" as const;
 
 const COMMENT_COLUMNS =
-  "id, question_id, author_id, updated_at, parent_id, body, label, is_helpful, created_at, author:profiles!comments_author_id_fkey(username, display_name, avatar_path)" as const;
+  "id, question_id, author_id, updated_at, parent_id, body, is_helpful, created_at, author:profiles!comments_author_id_fkey(username, display_name, avatar_path)" as const;
 
 const FEATURED_COLUMNS =
   "quote, game:games!featured_games_game_id_fkey(id, public_id, title, short_description, genre_id, tags, cover_path, gif_path, is_first_game, play_count, like_count, comment_count, published_at, status, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path))" as const;
@@ -207,7 +207,7 @@ export async function listCommentsByGame(gameId: string): Promise<CommentSummary
     .eq("game_id", gameId)
     .eq("status", "published")
     .order("created_at", { ascending: false });
-  return (data ?? []).filter(hasAuthor).map((row) => ({ ...row, label: row.label as CommentSummary["label"] }));
+  return (data ?? []).filter(hasAuthor);
 }
 
 export type FeedPage = { posts: PostSummary[]; nextBefore: string | null };
@@ -325,7 +325,7 @@ export async function listCommentsByPost(postId: string): Promise<CommentSummary
     .eq("post_id", postId)
     .eq("status", "published")
     .order("created_at", { ascending: false });
-  return (data ?? []).filter(hasAuthor).map((row) => ({ ...row, label: row.label as CommentSummary["label"] }));
+  return (data ?? []).filter(hasAuthor);
 }
 
 /** A published update by id, for its own page. */
@@ -335,19 +335,19 @@ export async function findPostById(postId: string): Promise<PostSummary | null> 
   return data && hasAuthor(data) ? toPost(data) : null;
 }
 
+/** The latest comments people left on games, for the landing: only top-level ones (no replies, no answers to the creator's questions). */
 export async function listCommunityHighlights(limit: number): Promise<CommunityHighlight[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("comments")
     .select(`${COMMENT_COLUMNS}, game:games!comments_game_id_fkey(public_id, title)`)
-    .eq("label", "liked")
     .eq("status", "published")
     .not("game_id", "is", null)
+    .is("parent_id", null)
+    .is("question_id", null)
     .order("created_at", { ascending: false })
     .limit(limit);
-  return (data ?? []).flatMap((row) =>
-    row.author && row.game ? [{ ...row, author: row.author, game: row.game, label: row.label as CommentSummary["label"] }] : [],
-  );
+  return (data ?? []).flatMap((row) => (row.author && row.game ? [{ ...row, author: row.author, game: row.game }] : []));
 }
 
 export type OwnGame = {

@@ -15,7 +15,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Confirmación por email.** Llega un mail bilingüe con un link que funciona aunque lo abras en otro dispositivo o navegador.
 - **Entrar con Google o con Discord** (opcionales: cada botón aparece al configurar sus credenciales).
 - **Completar el perfil al entrar por primera vez**: elegís tu @usuario y tu nombre. Quien llega con Google o Discord confirma ahí los 18+ y los términos.
-- **Iniciar y cerrar sesión**, y **recuperar la contraseña** con un link por mail. La pantalla de recuperación responde igual exista o no la cuenta, para no revelar qué emails están registrados.
+- **Iniciar y cerrar sesión**, **cambiar la contraseña** desde *Configuración → Cuenta* (pide la actual) y **recuperarla** con un link por mail. La pantalla de recuperación responde igual exista o no la cuenta, para no revelar qué emails están registrados.
 - **Pantallas protegidas**: si no tenés sesión te mandan a iniciar sesión y, al entrar, volvés a donde ibas. Solo se aceptan destinos internos del sitio, nunca links a otras páginas. Quien ya tiene sesión no ve el login ni el registro.
 - **Errores claros y sin perder lo escrito**: si algo falla, el formulario conserva el email, las contraseñas y la casilla de términos.
 
@@ -41,7 +41,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Comentarios
 
 **Hoy**
-- **Comentar un juego** (sección «Comentarios» de su página) y **un avance** (cada avance tiene su propia página, `/posts/<id>`, a la que lleva su contador de comentarios). Hasta 1000 caracteres y una etiqueta opcional: **Me gustó** o **Sugerencia**.
+- **Comentar un juego** (sección «Comentarios» de su página) y **un avance** (cada avance tiene su propia página, `/posts/<id>`, a la que lleva su contador de comentarios). Hasta 1000 caracteres; un comentario es solo texto, sin tipo ni etiqueta.
 - **Responder** a un comentario, en **un solo nivel** (no se responde a una respuesta) y sin etiqueta. Quien no tiene cuenta ve la invitación a iniciar sesión y vuelve al mismo lugar.
 - **Editar y borrar lo propio**: el texto y la etiqueta se pueden cambiar mientras el comentario esté publicado (si moderación lo oculta, deja de poder tocarlo), y se puede borrar con sus respuestas. Nadie edita ni borra comentarios ajenos; la base tampoco se lo permite.
 - Los contadores de comentarios de juegos y avances son los reales (los mantiene la base).
@@ -185,10 +185,12 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Configuración
 
 **Hoy**
-- Se llega desde el menú de tu cuenta. Tiene tres secciones en pestañas, con el mismo ancho que el perfil:
+- Se llega con **Editar perfil**, en tu propio perfil (el menú de la cuenta ya no tiene «Configuración»). Tiene cuatro secciones en pestañas, con el mismo ancho que el perfil:
   - **Perfil**: foto, datos personales y géneros favoritos.
   - **Preferencias**: idioma de la interfaz.
-  - **Cuenta**: eliminar tu cuenta.
+  - **Cuenta**: cambiar la contraseña y eliminar tu cuenta.
+  - **Moderación**: lo que se decidió sobre tu contenido o tu cuenta, y las apelaciones.
+- **Cambiar la contraseña** pide la actual, y la nueva dos veces (mismas reglas que al registrarse, y distinta de la actual). Quedás con la sesión abierta en ese dispositivo y se cierra en todos los demás. Una cuenta que entra solo con Google o Discord no tiene contraseña que cambiar; si no te acordás de la actual, está el link de «Olvidé mi contraseña».
 
 ### Idioma
 
@@ -226,8 +228,8 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Hoy**
 - **Avances de cuatro tipos**: avance, nuevo juego, pide feedback e hito (con una etiqueta destacada, como «1000 jugadas»). Se ven en la portada, en la página del juego y en el perfil de cada creador.
-- **Comentarios** en juegos y avances, con dos etiquetas («Me gustó» y «Sugerencia»), respuestas de un nivel y la marca «Le sirvió al creador».
-- **Lo que dice la comunidad**: en la portada se muestran los mensajes de quienes jugaron, con nombre, foto y el juego del que hablan.
+- **Comentarios** en juegos y avances, con respuestas de un nivel y la marca «Le sirvió al creador».
+- **Lo que dice la comunidad**: en la portada se muestran los últimos comentarios que se dejaron en los juegos (no las respuestas), con nombre, foto y el juego del que hablan.
 
 **Próximamente**
 - **Publicar avances** (hasta 2000 caracteres y hasta 4 imágenes, GIF o videos cortos), **comentar y responder**, contestar las preguntas del creador y marcar qué comentarios te sirvieron.
@@ -265,7 +267,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Hoy**
 - **Estética oscura con neón moderado e inspiración retro/pixel**: tipografías Oxanium, Space Grotesk y Pixelify Sans, botones en forma de píldora, barra de navegación flotante con borde neón y un fondo con aurora y píxeles flotantes que se apagan en celular y si pedís menos movimiento.
-- **Menú superior mínimo**: el nombre de la app, «Creadores», «Comunidad» y «Subir juego», y tu cuenta (Mi perfil, Configuración, Cerrar sesión). En celular se abre con una hamburguesa.
+- **Menú superior mínimo**: el nombre de la app, «Creadores», «Comunidad» y «Subir juego», y tu cuenta (Mi perfil, Guardados, Cerrar sesión; Administración si sos admin). En celular se abre con una hamburguesa.
 - **Marca**: el ícono de Tradfal (un **gamepad en pixel art** sobre el degradé violeta-cian) está en el logo, en la pestaña del navegador (`icon.svg`) y como ícono de pantalla de inicio (`apple-icon.png`). El título de cada pestaña es **«Tradfal - <página>»** (por ejemplo «Tradfal - Comunidad»).
 - **Botones y etiquetas con más contraste**: el botón principal es un degradé de violeta a azul profundos con texto blanco (≥ 5,5:1), y las etiquetas (**1ER JUEGO**, géneros, estados) van rellenas o con borde claro (≥ 7:1).
 - **Botón «Atrás»** debajo de la barra de arriba en todas las secciones (menos la portada): vuelve a la pantalla anterior y, si la sección se abrió directamente en una pestaña nueva, lleva a la portada.

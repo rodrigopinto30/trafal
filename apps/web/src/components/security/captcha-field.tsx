@@ -40,7 +40,7 @@ function loadTurnstile(): Promise<TurnstileApi> {
 export const captchaEnabled = publicEnv.turnstileSiteKey !== "";
 
 /** The forms that ask for a captcha: each one solves its own, and the server refuses an answer solved for another. */
-export type CaptchaAction = "signup" | "login" | "recover" | "claim" | "delete_account";
+export type CaptchaAction = "signup" | "login" | "recover" | "claim" | "delete_account" | "change_password";
 
 type Props = {
   /** Which form this captcha protects. */

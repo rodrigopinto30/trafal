@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { ReauthMethod } from "@/lib/auth/reauth";
 import { DELETE_SECRET_MAX } from "./account-rules";
+import { passwordSchema } from "./auth";
 import { sanitizeLine } from "./text";
 
 export const ACCOUNT_ERROR_KEYS = [
@@ -37,6 +38,39 @@ export function deleteAccountSchemaFor(method: ReauthMethod) {
       .refine((value) => value.trim() !== "", missing),
   });
 }
+
+export const PASSWORD_CHANGE_ERROR_KEYS = [
+  "currentRequired",
+  "wrongPassword",
+  "weakPassword",
+  "confirmRequired",
+  "passwordsDontMatch",
+  "samePassword",
+  "noPassword",
+  "rateLimited",
+  "captchaFailed",
+  "changeFailed",
+  "generic",
+] as const;
+export type PasswordChangeErrorKey = (typeof PASSWORD_CHANGE_ERROR_KEYS)[number];
+
+/**
+ * Changing the password from Settings: the current one, to prove it is them (an open session is not enough), and the new one twice.
+ * Passwords are kept exactly as typed; the new one follows the same rules as at sign-up and has to be different from the current one.
+ */
+export const changePasswordSchema = z
+  .object({
+    current: z
+      .string("currentRequired")
+      .max(DELETE_SECRET_MAX, "wrongPassword")
+      .refine((value) => value !== "", "currentRequired"),
+    password: z.string("weakPassword").pipe(passwordSchema),
+    confirm: z.string("confirmRequired").min(1, "confirmRequired"),
+  })
+  .superRefine((data, context) => {
+    if (data.password !== data.confirm) context.addIssue({ code: "custom", message: "passwordsDontMatch", path: ["confirm"] });
+    else if (data.password === data.current) context.addIssue({ code: "custom", message: "samePassword", path: ["password"] });
+  });
 
 const FOLDER = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}(\/[A-Za-z0-9][A-Za-z0-9_-]{0,63}){0,2}\/$/;
 

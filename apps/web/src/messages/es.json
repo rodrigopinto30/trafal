@@ -43,7 +43,6 @@
     "closeMenu": "Cerrar menú",
     "account": "Tu cuenta",
     "myProfile": "Mi perfil",
-    "settings": "Configuración",
     "completeProfile": "Completar perfil",
     "logout": "Cerrar sesión",
     "saved": "Guardados",
@@ -317,10 +316,6 @@
     "noDevlogs": "Todavía no hay avances publicados de este juego.",
     "commentsTitle": "Comentarios",
     "noComments": "Todavía no hay comentarios. Creá tu cuenta y sé la primera persona en dejar uno.",
-    "commentLabels": {
-      "liked": "Me gustó",
-      "suggestion": "Sugerencia"
-    },
     "helpful": "Le sirvió al creador",
     "rank": "Puesto {position}",
     "join": {
@@ -773,7 +768,7 @@
     },
     "account": {
       "title": "Cuenta",
-      "subtitle": "Lo que se guarda de vos y cómo irte si querés.",
+      "subtitle": "Tu contraseña, lo que se guarda de vos y cómo irte si querés.",
       "deleteTitle": "Eliminar tu cuenta",
       "deleteText": "Es definitivo: no podemos recuperarla ni devolverte nada de lo que se borre.",
       "removesTitle": "Se borra para siempre:",
@@ -816,6 +811,34 @@
       "hidePassword": "Ocultar contraseña",
       "reauthTitle": "Primero confirmá que sos vos",
       "reauthText": "Tu cuenta entra con {providers}. Para eliminarla, volvé a entrar con esa cuenta: después tenés unos minutos para confirmarlo acá."
+    },
+    "password": {
+      "title": "Contraseña",
+      "description": "Para cambiarla te pedimos la actual. Al guardarla, se cierra tu sesión en los demás dispositivos.",
+      "noPasswordText": "Tu cuenta entra con {providers}, así que no tiene contraseña en Tradfal.",
+      "current": "Contraseña actual",
+      "new": "Contraseña nueva",
+      "newHint": "Mínimo 8 caracteres, con letras y números.",
+      "confirm": "Repetí la contraseña nueva",
+      "submit": "Cambiar contraseña",
+      "submitting": "Cambiando…",
+      "changed": "¡Contraseña cambiada! Cerramos tu sesión en los demás dispositivos.",
+      "forgot": "No me acuerdo de la actual",
+      "show": "Mostrar contraseña",
+      "hide": "Ocultar contraseña",
+      "errors": {
+        "currentRequired": "Escribí tu contraseña actual.",
+        "wrongPassword": "Esa no es tu contraseña actual.",
+        "weakPassword": "La contraseña nueva es muy débil. Usá al menos 8 caracteres, con letras y números.",
+        "confirmRequired": "Repetí la contraseña nueva.",
+        "passwordsDontMatch": "Las contraseñas no coinciden.",
+        "samePassword": "La contraseña nueva tiene que ser distinta de la actual.",
+        "noPassword": "Tu cuenta no tiene contraseña: entra con Google o Discord.",
+        "rateLimited": "Hiciste demasiados intentos. Esperá un rato y probá de nuevo.",
+        "captchaFailed": "No pudimos comprobar que sos una persona. Esperá a que termine la verificación y probá de nuevo.",
+        "changeFailed": "No pudimos cambiar tu contraseña y sigue siendo la misma. Probá de nuevo en unos segundos.",
+        "generic": "No pudimos cambiar tu contraseña. Probá de nuevo."
+      }
     },
     "deleted": {
       "title": "Eliminamos tu cuenta",
@@ -971,12 +994,6 @@
     "placeholder": "Escribí tu comentario…",
     "bodyLabel": "Tu comentario",
     "bodyCount": "{count} de {max}",
-    "label": "Tipo de comentario",
-    "labels": {
-      "none": "Comentario",
-      "liked": "Me gustó",
-      "suggestion": "Sugerencia"
-    },
     "submit": "Comentar",
     "reply": "Responder",
     "replyTo": "Respuesta para {name}",
@@ -1001,7 +1018,6 @@
     "errors": {
       "bodyRequired": "Escribí algo para comentar.",
       "bodyTooLong": "El comentario es demasiado largo (hasta 1000 caracteres).",
-      "invalidLabel": "Elegí una etiqueta válida.",
       "replyNotAllowed": "Las respuestas no llevan etiqueta ni se responden entre sí.",
       "parentNotFound": "El comentario que querés responder ya no está disponible.",
       "notFound": "No encontramos eso para comentar.",

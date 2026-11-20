@@ -14,11 +14,14 @@ describe("newCommentSchema", () => {
       id: ID,
       parentId: null,
       questionId: null,
-      label: null,
       body: "Muy lindo juego\n\nsaludos",
     });
-    expect(newCommentSchema.parse({ target: "post", id: ID, label: "suggestion", body: "x" }).label).toBe("suggestion");
-    expect(newCommentSchema.parse({ target: "post", id: ID, label: "", body: "x" }).label).toBeNull();
+    expect(newCommentSchema.parse({ target: "post", id: ID, body: "x" }).target).toBe("post");
+  });
+
+  it("has no kind of comment: a label sent by an old page is dropped, never stored", () => {
+    expect(newCommentSchema.parse({ target: "game", id: ID, label: "suggestion", body: "x" })).not.toHaveProperty("label");
+    expect(editCommentSchema.parse({ id: ID, label: "liked", body: "x" })).toEqual({ id: ID, body: "x" });
   });
 
   it("needs text, up to the limit, counting emoji as one character each", () => {
@@ -28,21 +31,14 @@ describe("newCommentSchema", () => {
     expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, body: "🎮".repeat(COMMENT_BODY_MAX + 1) }))).toBe("bodyTooLong");
   });
 
-  it("only knows the two labels", () => {
-    expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, label: "meh", body: "x" }))).toBe("invalidLabel");
-    expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, label: "LIKED", body: "x" }))).toBe("invalidLabel");
-  });
-
-  it("a reply points to a comment and carries no label", () => {
+  it("a reply points to a comment", () => {
     expect(newCommentSchema.parse({ target: "game", id: ID, parentId: OTHER, body: "gracias" }).parentId).toBe(OTHER);
-    expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, parentId: OTHER, label: "liked", body: "x" }))).toBe("replyNotAllowed");
     expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, parentId: "nope", body: "x" }))).toBe("parentNotFound");
   });
 
-  it("an answer to a creator's question is a comment on a game, with no label and no parent", () => {
+  it("an answer to a creator's question is a comment on a game, with no parent", () => {
     expect(newCommentSchema.parse({ target: "game", id: ID, questionId: OTHER, body: "sí, se entiende" }).questionId).toBe(OTHER);
     expect(messageOf(newCommentSchema.safeParse({ target: "post", id: ID, questionId: OTHER, body: "x" }))).toBe("replyNotAllowed");
-    expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, questionId: OTHER, label: "liked", body: "x" }))).toBe("replyNotAllowed");
     expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, questionId: OTHER, parentId: ID, body: "x" }))).toBe("replyNotAllowed");
     expect(messageOf(newCommentSchema.safeParse({ target: "game", id: ID, questionId: "nope", body: "x" }))).toBe("notFound");
   });
@@ -68,9 +64,8 @@ describe("helpfulSchema", () => {
 });
 
 describe("editCommentSchema and commentIdSchema", () => {
-  it("an edit needs an id and text; the label may go away", () => {
-    expect(editCommentSchema.parse({ id: ID, body: " nuevo ", label: "liked" })).toEqual({ id: ID, body: "nuevo", label: "liked" });
-    expect(editCommentSchema.parse({ id: ID, body: "x", label: "" }).label).toBeNull();
+  it("an edit needs an id and text", () => {
+    expect(editCommentSchema.parse({ id: ID, body: " nuevo " })).toEqual({ id: ID, body: "nuevo" });
     expect(messageOf(editCommentSchema.safeParse({ id: "x", body: "y" }))).toBe("notFound");
     expect(messageOf(editCommentSchema.safeParse({ id: ID, body: "" }))).toBe("bodyRequired");
   });
