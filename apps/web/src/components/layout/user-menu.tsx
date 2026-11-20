@@ -41,9 +41,6 @@ export function UserMenu({ username, displayName, avatarPath, isAdmin }: { usern
         <DropdownMenuItem asChild>
           <Link href="/saved">{t("saved")}</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/settings/profile">{t("settings")}</Link>
-        </DropdownMenuItem>
         {isAdmin ? (
           <DropdownMenuItem asChild>
             <Link href="/admin">{t("admin")}</Link>

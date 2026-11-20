@@ -187,10 +187,11 @@ test("una persona nueva se registra, completa su perfil, lo edita y sigue a otra
   const burger = page.getByRole("button", { name: "Abrir menú" });
   await expect(account.or(burger).first()).toBeVisible();
   await (testInfo.project.name === "desktop" ? account : burger).click();
-  await expect(page.getByRole("menuitem", { name: "Configuración" }).or(page.getByRole("link", { name: "Configuración" }))).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "Guardados" }).or(page.getByRole("link", { name: "Guardados", exact: true })).first()).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "Configuración" }).or(page.getByRole("link", { name: "Configuración" })), "a la configuración se llega con «Editar perfil»").toHaveCount(0);
   await page.waitForTimeout(400);
   await page.screenshot({ path: `screenshots/${testInfo.project.name}-flujo-menu-abierto.png` });
   await page.keyboard.press("Escape");
-  await expect(page.getByRole("menuitem", { name: "Configuración" })).toBeHidden();
+  await expect(page.getByRole("menuitem", { name: "Guardados" })).toBeHidden();
   await logout(page);
 });

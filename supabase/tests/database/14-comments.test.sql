@@ -1,5 +1,5 @@
 -- Comments written, edited and answered from the interface: only your own, only while published, replies only to published
--- comments, labels only on top-level ones, and the counters follow.
+-- comments, no kind of comment (label) from anyone, and the counters follow.
 begin;
 select no_plan();
 select tests.wipe_app_data();
@@ -24,9 +24,10 @@ insert into public.comments (id, author_id, post_id, body) values
 
 -- ------------------------------------------------------------------ writing
 select tests.authenticate_as('b0000000-0000-0000-0000-000000000002');
-select lives_ok($$ insert into public.comments (author_id, game_id, body, label) values ('b0000000-0000-0000-0000-000000000002', '11111111-1111-1111-1111-111111111101', '  Padded text  ', 'suggestion') $$, 'bruno comments on a game with a label');
+select lives_ok($$ insert into public.comments (author_id, game_id, body) values ('b0000000-0000-0000-0000-000000000002', '11111111-1111-1111-1111-111111111101', '  Padded text  ') $$, 'bruno comments on a game');
+select throws_ok($$ insert into public.comments (author_id, game_id, body, label) values ('b0000000-0000-0000-0000-000000000002', '11111111-1111-1111-1111-111111111101', 'With a kind', 'suggestion') $$, '42501', null, 'a comment cannot be given a kind any more');
 select is((select count(*) from public.comments where body = 'Padded text'), 1::bigint, 'the text is trimmed');
-select lives_ok($$ insert into public.comments (author_id, post_id, body) values ('b0000000-0000-0000-0000-000000000002', '55555555-5555-5555-5555-555555555540', 'Another one') $$, 'and on an update, without a label');
+select lives_ok($$ insert into public.comments (author_id, post_id, body) values ('b0000000-0000-0000-0000-000000000002', '55555555-5555-5555-5555-555555555540', 'Another one') $$, 'and on an update');
 select throws_ok($$ insert into public.comments (author_id, game_id, body) values ('b0000000-0000-0000-0000-000000000002', '11111111-1111-1111-1111-111111111101', '   ') $$, '23514', null, 'an empty comment is refused');
 select throws_ok($$ insert into public.comments (author_id, game_id, body) values ('b0000000-0000-0000-0000-000000000002', '11111111-1111-1111-1111-111111111101', repeat('x', 1001)) $$, '23514', null, 'and so is one over 1000 characters');
 select lives_ok($$ insert into public.comments (author_id, game_id, body) values ('b0000000-0000-0000-0000-000000000002', '11111111-1111-1111-1111-111111111101', repeat('x', 1000)) $$, 'exactly 1000 is fine');
@@ -39,16 +40,14 @@ select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
 select lives_ok($$ insert into public.comments (author_id, game_id, parent_id, body) values ('a0000000-0000-0000-0000-000000000001', '11111111-1111-1111-1111-111111111101', '66666666-6666-6666-6666-666666666601', 'Thanks!') $$, 'the creator replies');
 select throws_ok($$ insert into public.comments (author_id, game_id, parent_id, body) values ('a0000000-0000-0000-0000-000000000001', '11111111-1111-1111-1111-111111111101', (select id from public.comments where body = 'Thanks!'), 'a reply to a reply') $$, 'P0001', 'reply_depth_exceeded', 'there is only one level of replies');
 select throws_ok($$ insert into public.comments (author_id, post_id, parent_id, body) values ('a0000000-0000-0000-0000-000000000001', '55555555-5555-5555-5555-555555555540', '66666666-6666-6666-6666-666666666601', 'wrong place') $$, 'P0001', 'parent_target_mismatch', 'a reply stays on the same game or update');
-select throws_ok($$ insert into public.comments (author_id, game_id, parent_id, body, label) values ('a0000000-0000-0000-0000-000000000001', '11111111-1111-1111-1111-111111111101', '66666666-6666-6666-6666-666666666601', 'labelled reply', 'liked') $$, 'P0001', 'reply_cannot_have_label', 'a reply carries no label');
-select throws_ok($$ update public.comments set label = 'liked' where body = 'Thanks!' $$, 'P0001', 'reply_cannot_have_label', 'nor can it get one by editing');
 select throws_ok($$ insert into public.comments (author_id, game_id, parent_id, body) values ('a0000000-0000-0000-0000-000000000001', '11111111-1111-1111-1111-111111111101', gen_random_uuid(), 'to nobody') $$, 'P0001', 'parent_not_found', 'a reply needs an existing comment');
 
 -- ------------------------------------------------------------------ editing and deleting
 select tests.authenticate_as('b0000000-0000-0000-0000-000000000002');
-select lives_ok($$ update public.comments set body = 'Loved the music and the art', label = 'suggestion' where id = '66666666-6666-6666-6666-666666666601' $$, 'the author edits the text and the label');
-select is((select label from public.comments where id = '66666666-6666-6666-6666-666666666601'), 'suggestion', 'both changed');
-select throws_ok($$ update public.comments set label = 'meh' where id = '66666666-6666-6666-6666-666666666601' $$, '23514', null, 'an unknown label is refused');
-select lives_ok($$ update public.comments set label = null where id = '66666666-6666-6666-6666-666666666601' $$, 'the label can be taken off');
+select lives_ok($$ update public.comments set body = 'Loved the music and the art' where id = '66666666-6666-6666-6666-666666666601' $$, 'the author edits the text');
+select throws_ok($$ update public.comments set label = 'suggestion' where id = '66666666-6666-6666-6666-666666666601' $$, '42501', null, 'but not the old kind of the comment');
+select throws_ok($$ update public.comments set label = null where id = '66666666-6666-6666-6666-666666666601' $$, '42501', null, 'not even to take it off');
+select is((select label from public.comments where id = '66666666-6666-6666-6666-666666666601'), 'liked', 'what was stored stays, unused');
 select throws_ok($$ update public.comments set author_id = 'c0000000-0000-0000-0000-000000000003' where id = '66666666-6666-6666-6666-666666666601' $$, '42501', null, 'the author cannot be changed');
 select throws_ok($$ update public.comments set game_id = null, post_id = '55555555-5555-5555-5555-555555555540' where id = '66666666-6666-6666-6666-666666666601' $$, '42501', null, 'a comment cannot be moved to another target');
 select throws_ok($$ update public.comments set status = 'hidden' where id = '66666666-6666-6666-6666-666666666601' $$, '42501', null, 'the author cannot hide or restore their own comment');

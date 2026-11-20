@@ -65,9 +65,10 @@ test("quien no tiene sesión ve la lista y una invitación a iniciar sesión, no
   await visitor.context().close();
 });
 
-test("se comenta un juego con una etiqueta y aparece arriba, con el formulario limpio", async () => {
+test("se comenta un juego sin elegir un tipo de comentario y aparece arriba, con el formulario limpio", async () => {
   await gotoReady(writer, GAME);
   const form = writer.getByLabel("Tu comentario").first();
+  await expect(writer.getByLabel("Tipo de comentario")).toHaveCount(0);
   await writer.getByRole("button", { name: "Comentar" }).first().click();
   await expect(writer.getByText("Escribí algo para comentar.")).toBeVisible();
 
@@ -76,41 +77,34 @@ test("se comenta un juego con una etiqueta y aparece arriba, con el formulario l
   await expect(writer.getByText("El comentario es demasiado largo (hasta 1000 caracteres).")).toBeVisible();
 
   await form.fill(say("El segundo nivel se siente muy bien."));
-  await writer.getByLabel("Tipo de comentario").first().selectOption("suggestion");
   await writer.getByRole("button", { name: "Comentar" }).first().click();
 
-  const mine = comment(writer, say("El segundo nivel se siente muy bien."));
-  await expect(mine).toHaveCount(1);
-  await expect(mine.getByText("Sugerencia")).toBeVisible();
+  await expect(comment(writer, say("El segundo nivel se siente muy bien."))).toHaveCount(1);
   await expect(form).toHaveValue("");
-  await expect(writer.getByLabel("Tipo de comentario").first()).toHaveValue("");
   await gotoReady(writer, GAME);
   await expect(comment(writer, say("El segundo nivel se siente muy bien."))).toHaveCount(1);
 });
 
-test("se responde a un comentario ajeno, en un solo nivel y sin etiqueta", async () => {
+test("se responde a un comentario ajeno, en un solo nivel", async () => {
   await gotoReady(writer, GAME);
   const seeded = comment(writer, SEEDED_COMMENT);
   await seeded.getByRole("button", { name: "Responder" }).click();
-  await expect(seeded.getByLabel("Tipo de comentario")).toHaveCount(0);
   await seeded.getByLabel(/Respuesta para/).fill(say("Coincido, la gravedad es lo mejor."));
   await seeded.getByRole("button", { name: "Responder", exact: true }).last().click();
   await expect(comment(writer, say("Coincido, la gravedad es lo mejor."))).toHaveCount(1);
   await expect(comment(writer, say("Coincido, la gravedad es lo mejor.")).getByRole("button", { name: "Responder", exact: true })).toHaveCount(0);
 });
 
-test("se edita el texto y la etiqueta de un comentario propio, y se borra con confirmación", async () => {
+test("se edita el texto de un comentario propio, y se borra con confirmación", async () => {
   await gotoReady(writer, GAME);
   const mine = comment(writer, say("El segundo nivel se siente muy bien."));
   await mine.getByRole("button", { name: "Editar" }).click();
   const dialog = writer.getByRole("dialog", { name: "Editar comentario" });
+  await expect(dialog.getByLabel("Tipo de comentario")).toHaveCount(0);
   await dialog.getByLabel("Tu comentario").fill(say("El segundo nivel se siente genial."));
-  await dialog.getByLabel("Tipo de comentario").selectOption("liked");
   await dialog.getByRole("button", { name: "Guardar cambios" }).click();
   await expect(writer.getByRole("dialog")).toHaveCount(0);
-  const edited = comment(writer, say("El segundo nivel se siente genial."));
-  await expect(edited).toHaveCount(1);
-  await expect(edited.getByText("Me gustó")).toBeVisible();
+  await expect(comment(writer, say("El segundo nivel se siente genial."))).toHaveCount(1);
   await expect(comment(writer, say("El segundo nivel se siente muy bien."))).toHaveCount(0);
 
   await comment(writer, say("Coincido, la gravedad es lo mejor.")).getByRole("button", { name: "Eliminar" }).click();

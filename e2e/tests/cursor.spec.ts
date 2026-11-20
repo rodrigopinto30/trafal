@@ -72,7 +72,7 @@ test("la manito también está en la configuración, el menú de la cuenta, las 
 
   // Menú desplegable de la cuenta: los ítems son role=menuitem.
   await page.getByRole("button", { name: "Tu cuenta" }).click();
-  await expect(page.getByRole("menuitem", { name: "Configuración" })).toBeVisible();
+  await expect(page.getByRole("menuitem", { name: "Mi perfil" })).toBeVisible();
   expect(await clickablesWithoutPointer(page)).toEqual([]);
   await page.keyboard.press("Escape");
 

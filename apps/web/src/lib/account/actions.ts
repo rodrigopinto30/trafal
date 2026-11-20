@@ -10,7 +10,15 @@ import { emailMatches, reauthMethodOf } from "@/lib/auth/reauth";
 import { checkPassword, type PasswordCheck } from "@/lib/auth/reauth.server";
 import type { FormState } from "@/lib/forms";
 import { createClient } from "@/lib/supabase/server";
-import { ACCOUNT_ERROR_KEYS, accountFilesSchema, deleteAccountSchemaFor, type AccountErrorKey } from "@/lib/validation/account";
+import {
+  ACCOUNT_ERROR_KEYS,
+  PASSWORD_CHANGE_ERROR_KEYS,
+  accountFilesSchema,
+  changePasswordSchema,
+  deleteAccountSchemaFor,
+  type AccountErrorKey,
+  type PasswordChangeErrorKey,
+} from "@/lib/validation/account";
 import { parseLocale } from "@/lib/validation/common";
 import { fieldErrorsFrom } from "@/lib/validation/text";
 import { normalizeUsername } from "@/lib/username";
@@ -79,4 +87,52 @@ export async function deleteAccountAction(_prev: FormState, formData: FormData):
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
   redirect(localizePath(locale, "/account-deleted"));
+}
+
+/**
+ * Changes the password from Settings. It asks for the current one, so an open session is not enough to take the account. The change
+ * goes through a brand-new sign-in made with it (Supabase only lets a recent sign-in change the password). Supabase then closes every
+ * other session of the account, this browser's included, so the new sign-in becomes this browser's session: the person stays in
+ * here, and anywhere else they have to sign in with the new password. An account that only signs in with Google or Discord has no
+ * password here to change.
+ */
+export async function changePasswordAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const locale = parseLocale(formData.get("lang"));
+  const t = getTranslationsFor(locale, "settings");
+  const errors = (key: PasswordChangeErrorKey) => t(`password.errors.${key}`);
+
+  const user = await getAuthUser();
+  if (!user) redirect(localizePath(locale, "/login?next=%2Fsettings%2Faccount"));
+  if (reauthMethodOf(user) !== "password" || !user.email) return { status: "error", message: errors("noPassword") };
+
+  const parsed = changePasswordSchema.safeParse({ current: formData.get("current"), password: formData.get("password"), confirm: formData.get("confirm") });
+  if (!parsed.success) return { status: "error", fieldErrors: fieldErrorsFrom(parsed.error, PASSWORD_CHANGE_ERROR_KEYS, errors, "generic") };
+
+  const captchaToken = typeof formData.get("captchaToken") === "string" ? String(formData.get("captchaToken")) : undefined;
+  const checked = await checkPassword(user.email, parsed.data.current, captchaToken || undefined);
+  if (!checked.ok) {
+    if (checked.reason === "invalidCredentials") return { status: "error", fieldErrors: { current: errors("wrongPassword") } };
+    const key: PasswordChangeErrorKey = checked.reason === "rateLimited" ? "rateLimited" : checked.reason === "captchaFailed" ? "captchaFailed" : "changeFailed";
+    return { status: "error", message: errors(key) };
+  }
+
+  const { error } = await checked.client.auth.updateUser({ password: parsed.data.password });
+  if (error) {
+    await checked.end();
+    if (error.code === "same_password") return { status: "error", fieldErrors: { password: errors("samePassword") } };
+    if (error.code === "weak_password") return { status: "error", fieldErrors: { password: errors("weakPassword") } };
+    return { status: "error", message: errors(error.status === 429 ? "rateLimited" : "changeFailed") };
+  }
+
+  const supabase = await createClient();
+  const { data } = await checked.client.auth.getSession();
+  const kept = data.session ? await supabase.auth.setSession({ access_token: data.session.access_token, refresh_token: data.session.refresh_token }) : null;
+  if (!kept || kept.error) {
+    await checked.end();
+    await supabase.auth.signOut({ scope: "local" });
+    redirect(localizePath(locale, "/login?next=%2Fsettings%2Faccount"));
+  }
+  const { error: othersError } = await supabase.auth.signOut({ scope: "others" });
+  if (othersError) console.error("[account] could not close the other sessions after a password change", othersError.code);
+  return { status: "success", message: t("password.changed") };
 }

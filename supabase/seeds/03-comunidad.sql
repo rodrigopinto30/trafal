@@ -42,34 +42,34 @@ from (values
 ) as v(game, kind, body, highlight, age)
 join public.games game on game.public_id = v.game;
 
-insert into public.comments (author_id, game_id, body, label, created_at)
-select author.id, game.id, v.body, v.label, least(now() - interval '1 minute', game.published_at + v.after)
+insert into public.comments (author_id, game_id, body, created_at)
+select author.id, game.id, v.body, least(now() - interval '1 minute', game.published_at + v.after)
 from (values
-  ('luciernaga-valiente', 'tomi_dev',    'La luz que revela plataformas es una idea genial. El nivel 3 me hizo transpirar, pero salió.',            'liked',      interval '5 hours'),
-  ('luciernaga-valiente', 'sofi_pixels', 'Muy lindo el arte de la cueva. Lo terminé en diez minutos y quedé con ganas de más.',                     'liked',      interval '9 hours'),
-  ('luciernaga-valiente', 'mateo_g',     '¿Podrías sumar un modo de práctica sin caídas? A veces cuesta calcular los saltos.',                      'suggestion', interval '14 hours'),
-  ('granja-cuantica',     'julistudio',  'Zanahorias que existen y no existen: la idea más rara y relajante que jugué.',                            'liked',      interval '8 hours'),
-  ('neon-express',        'male_beats',  'La música chiptune me tuvo bailando en la silla. El jefe final está durísimo (en el buen sentido).',      'liked',      interval '1 day'),
-  ('neon-express',        'santi_unity', 'Se siente rapidísimo y justo. Pasé media hora intentando el nivel 4.',                                    'liked',      interval '2 days'),
-  ('neon-express',        'sofi_pixels', 'Sumar una opción de dificultad ayudaría a que lo disfrute más gente.',                                   'suggestion', interval '4 days'),
-  ('chancleta-run',       'santi_unity', 'Mi abuela me hizo correr igual que en este juego. Muy bueno el humor.',                                   'liked',      interval '3 days'),
-  ('colectivo-152',       'caro_pixels', 'Ese 152 existe en mi ciudad, lo juro. Reflejos al máximo.',                                              'liked',      interval '20 hours'),
-  ('orbita',              'mateo_g',     'Me encantó usar la gravedad de las estrellas para lanzar. Lo jugué dos veces seguidas.',                  'liked',      interval '1 hour'),
-  ('orbita',              'caro_pixels', 'Un puzzle con una idea clarísima. Para ser un primer juego, sorprende.',                                  'liked',      interval '3 hours'),
-  ('torre-de-termos',     'mateo_g',     'Estaría bueno ver un contador de altura. Me caí en el piso 5 varias veces.',                              'suggestion', interval '2 days'),
-  ('el-faro',             'valen_makes', 'Lloré con el tercer final. Gracias por una historia tan cuidada.',                                        'liked',      interval '10 hours'),
-  ('el-faro',             'julistudio',  'La ambientación del mar es hermosa. Con un mate en la mano, quince minutos perfectos.',                   'liked',      interval '20 hours'),
-  ('gato-laser',          'caro_pixels', 'Mi gato se quedó mirando la pantalla todo el rato. Aprobado por felinos.',                               'liked',      interval '2 days'),
-  ('bit-bakery',          'valen_makes', 'El caos de la cocina contra el reloj es adictivo. Mi récord: doce facturas.',                            'liked',      interval '7 days'),
-  ('mazmorra-1-bit',      'valen_makes', 'Me gustaría un mapa chiquito de cada piso. Muy buen ritmo por turnos.',                                   'suggestion', interval '3 days'),
-  ('pulpo-dj',            'mateo_g',     'Cero coordinación, diez de diversión. El tentáculo de la J me traicionó.',                                'liked',      interval '2 days'),
-  ('pasillo-9',           'sofi_pixels', 'Jugalo con auriculares y la luz apagada. Encontré la anomalía y igual me asusté.',                        'liked',      interval '1 day'),
-  ('pasillo-9',           'valen_makes', 'Podrías agregar un sonido cuando se marca bien la anomalía, así uno sabe que acertó.',                    'suggestion', interval '3 days'),
-  ('kart-de-carton',      'tomi_dev',    'La física tonta de los autos de cartón me hizo reír mucho.',                                              'liked',      interval '6 days'),
-  ('kart-de-carton',      'male_beats',  'El auto se siente algo resbaloso en la pista 3. Quizás más agarre en las curvas.',                        'suggestion', interval '7 days'),
-  ('hechizo-404',         'male_beats',  'Que el hechizo falle a propósito es una mecánica brillante.',                                             'liked',      interval '4 days'),
-  ('isla-eco',            'nachodev',    'Una isla que responde con ecos es hermoso. Me quedé escuchando un rato largo.',                           'liked',      interval '1 day')
-) as v(game, author, body, label, after)
+  ('luciernaga-valiente', 'tomi_dev',    'La luz que revela plataformas es una idea genial. El nivel 3 me hizo transpirar, pero salió.',            interval '5 hours'),
+  ('luciernaga-valiente', 'sofi_pixels', 'Muy lindo el arte de la cueva. Lo terminé en diez minutos y quedé con ganas de más.',                     interval '9 hours'),
+  ('luciernaga-valiente', 'mateo_g',     '¿Podrías sumar un modo de práctica sin caídas? A veces cuesta calcular los saltos.',                      interval '14 hours'),
+  ('granja-cuantica',     'julistudio',  'Zanahorias que existen y no existen: la idea más rara y relajante que jugué.',                            interval '8 hours'),
+  ('neon-express',        'male_beats',  'La música chiptune me tuvo bailando en la silla. El jefe final está durísimo (en el buen sentido).',      interval '1 day'),
+  ('neon-express',        'santi_unity', 'Se siente rapidísimo y justo. Pasé media hora intentando el nivel 4.',                                    interval '2 days'),
+  ('neon-express',        'sofi_pixels', 'Sumar una opción de dificultad ayudaría a que lo disfrute más gente.',                                   interval '4 days'),
+  ('chancleta-run',       'santi_unity', 'Mi abuela me hizo correr igual que en este juego. Muy bueno el humor.',                                   interval '3 days'),
+  ('colectivo-152',       'caro_pixels', 'Ese 152 existe en mi ciudad, lo juro. Reflejos al máximo.',                                              interval '20 hours'),
+  ('orbita',              'mateo_g',     'Me encantó usar la gravedad de las estrellas para lanzar. Lo jugué dos veces seguidas.',                  interval '1 hour'),
+  ('orbita',              'caro_pixels', 'Un puzzle con una idea clarísima. Para ser un primer juego, sorprende.',                                  interval '3 hours'),
+  ('torre-de-termos',     'mateo_g',     'Estaría bueno ver un contador de altura. Me caí en el piso 5 varias veces.',                              interval '2 days'),
+  ('el-faro',             'valen_makes', 'Lloré con el tercer final. Gracias por una historia tan cuidada.',                                        interval '10 hours'),
+  ('el-faro',             'julistudio',  'La ambientación del mar es hermosa. Con un mate en la mano, quince minutos perfectos.',                   interval '20 hours'),
+  ('gato-laser',          'caro_pixels', 'Mi gato se quedó mirando la pantalla todo el rato. Aprobado por felinos.',                               interval '2 days'),
+  ('bit-bakery',          'valen_makes', 'El caos de la cocina contra el reloj es adictivo. Mi récord: doce facturas.',                            interval '7 days'),
+  ('mazmorra-1-bit',      'valen_makes', 'Me gustaría un mapa chiquito de cada piso. Muy buen ritmo por turnos.',                                   interval '3 days'),
+  ('pulpo-dj',            'mateo_g',     'Cero coordinación, diez de diversión. El tentáculo de la J me traicionó.',                                interval '2 days'),
+  ('pasillo-9',           'sofi_pixels', 'Jugalo con auriculares y la luz apagada. Encontré la anomalía y igual me asusté.',                        interval '1 day'),
+  ('pasillo-9',           'valen_makes', 'Podrías agregar un sonido cuando se marca bien la anomalía, así uno sabe que acertó.',                    interval '3 days'),
+  ('kart-de-carton',      'tomi_dev',    'La física tonta de los autos de cartón me hizo reír mucho.',                                              interval '6 days'),
+  ('kart-de-carton',      'male_beats',  'El auto se siente algo resbaloso en la pista 3. Quizás más agarre en las curvas.',                        interval '7 days'),
+  ('hechizo-404',         'male_beats',  'Que el hechizo falle a propósito es una mecánica brillante.',                                             interval '4 days'),
+  ('isla-eco',            'nachodev',    'Una isla que responde con ecos es hermoso. Me quedé escuchando un rato largo.',                           interval '1 day')
+) as v(game, author, body, after)
 join public.games game on game.public_id = v.game
 join public.profiles author on author.username = v.author;
 

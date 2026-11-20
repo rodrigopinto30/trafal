@@ -43,7 +43,6 @@
     "closeMenu": "Close menu",
     "account": "Your account",
     "myProfile": "My profile",
-    "settings": "Settings",
     "completeProfile": "Finish profile",
     "logout": "Log out",
     "saved": "Saved",
@@ -317,10 +316,6 @@
     "noDevlogs": "There are no updates for this game yet.",
     "commentsTitle": "Comments",
     "noComments": "There are no comments yet. Create an account and be the first to leave one.",
-    "commentLabels": {
-      "liked": "Liked it",
-      "suggestion": "Suggestion"
-    },
     "helpful": "Helped the creator",
     "rank": "Rank {position}",
     "join": {
@@ -773,7 +768,7 @@
     },
     "account": {
       "title": "Account",
-      "subtitle": "What we keep about you and how to leave if you want to.",
+      "subtitle": "Your password, what we keep about you and how to leave if you want.",
       "deleteTitle": "Delete your account",
       "deleteText": "This is final: we cannot recover it or give back anything that is deleted.",
       "removesTitle": "Deleted for good:",
@@ -816,6 +811,34 @@
       "hidePassword": "Hide password",
       "reauthTitle": "First confirm it is you",
       "reauthText": "Your account signs in with {providers}. To delete it, sign in again with that account: then you have a few minutes to confirm it here."
+    },
+    "password": {
+      "title": "Password",
+      "description": "To change it we ask for the current one. Saving it signs you out on your other devices.",
+      "noPasswordText": "Your account signs in with {providers}, so it has no password on Tradfal.",
+      "current": "Current password",
+      "new": "New password",
+      "newHint": "At least 8 characters, with letters and numbers.",
+      "confirm": "Repeat the new password",
+      "submit": "Change password",
+      "submitting": "Changing…",
+      "changed": "Password changed! We signed you out on your other devices.",
+      "forgot": "I don't remember the current one",
+      "show": "Show password",
+      "hide": "Hide password",
+      "errors": {
+        "currentRequired": "Type your current password.",
+        "wrongPassword": "That is not your current password.",
+        "weakPassword": "The new password is too weak. Use at least 8 characters, with letters and numbers.",
+        "confirmRequired": "Repeat the new password.",
+        "passwordsDontMatch": "The passwords do not match.",
+        "samePassword": "The new password has to be different from the current one.",
+        "noPassword": "Your account has no password: it signs in with Google or Discord.",
+        "rateLimited": "Too many attempts. Wait a while and try again.",
+        "captchaFailed": "We could not check that you are a person. Wait for the check to finish and try again.",
+        "changeFailed": "We could not change your password, so it is still the same. Try again in a few seconds.",
+        "generic": "We could not change your password. Try again."
+      }
     },
     "deleted": {
       "title": "Your account is deleted",
@@ -971,12 +994,6 @@
     "placeholder": "Write your comment…",
     "bodyLabel": "Your comment",
     "bodyCount": "{count} of {max}",
-    "label": "Type of comment",
-    "labels": {
-      "none": "Comment",
-      "liked": "Liked it",
-      "suggestion": "Suggestion"
-    },
     "submit": "Comment",
     "reply": "Reply",
     "replyTo": "Reply to {name}",
@@ -1001,7 +1018,6 @@
     "errors": {
       "bodyRequired": "Write something to comment.",
       "bodyTooLong": "The comment is too long (up to 1000 characters).",
-      "invalidLabel": "Pick a valid label.",
       "replyNotAllowed": "Replies carry no label and cannot be answered.",
       "parentNotFound": "The comment you want to reply to is no longer available.",
       "notFound": "We could not find that to comment on.",

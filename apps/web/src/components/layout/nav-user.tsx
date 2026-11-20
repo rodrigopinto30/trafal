@@ -75,9 +75,6 @@ export async function MobileAccount() {
           <Link href="/saved" className={itemClass}>
             {t("saved")}
           </Link>
-          <Link href="/settings/profile" className={itemClass}>
-            {t("settings")}
-          </Link>
           {isAdmin ? (
             <Link href="/admin" className={itemClass}>
               {t("admin")}

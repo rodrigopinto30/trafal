@@ -23,7 +23,7 @@ Postgres (vía Supabase). El esquema completo del MVP está desde la Fase 1: **2
 | `game_questions` | Hasta 3 preguntas de feedback (las capturas se quitaron: un juego tiene portada y un GIF opcional, `games.cover_path` y `games.gif_path`) | Dueño del juego |
 | `game_versions` | Versiones subidas (estado, si necesita aislamiento entre orígenes, errores…) | Creación y estado: **solo funciones/worker** (Fase 2) |
 | `posts`, `post_media` | Avances (4 tipos) y sus archivos | Autor |
-| `comments` | Comentarios (un nivel de respuestas, etiquetas, «Me sirvió») | Autor edita texto/etiqueta solo mientras está publicado; «Me sirvió» solo por la función `set_comment_helpful` (dueño del juego o del avance) |
+| `comments` | Comentarios (un nivel de respuestas, «Me sirvió»; `label` quedó sin uso y nadie la escribe desde la migración `20261120000100`) | Autor edita el texto solo mientras está publicado; «Me sirvió» solo por la función `set_comment_helpful` (dueño del juego o del avance) |
 | `post_likes`, `game_likes`, `post_saves`, `game_saves` | Me gusta y guardados (privados; el público ve solo contadores) | Cada persona, solo los suyos |
 | `plays` | Partidas (inicio, duración aproximada, dispositivo; sin IP) | Solo funciones (Fase 2) |
 | `notifications` | Campanita | Solo triggers y las funciones de moderación (nadie inserta desde el cliente); el destinatario lee, marca como leídas (`read_at`) y descarta las suyas |

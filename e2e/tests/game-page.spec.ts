@@ -12,7 +12,6 @@ test.describe("página del juego", () => {
     await expect(page.getByText("Arrastrá desde el planeta para apuntar")).toBeVisible();
     await expect(page.getByText("Probando un planeta con anillos")).toBeVisible();
     await expect(page.getByText("Me encantó usar la gravedad de las estrellas")).toBeVisible();
-    await expect(page.getByText("Me gustó").first()).toBeVisible();
   });
 
   test("el botón de jugar está activo y apunta al dominio aislado de los juegos (los de ejemplo no tienen archivos)", async ({ page }) => {

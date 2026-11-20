@@ -1,4 +1,3 @@
-import { HeartIcon, LightbulbIcon } from "lucide-react";
 import { UserAvatar } from "@/components/brand/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { CommentActions } from "@/components/games/comment-actions";
@@ -36,25 +35,12 @@ async function CommentBody({ comment, now, viewer, isReply }: { comment: Comment
             {formatRelativeTime(locale, comment.created_at, now)}
           </time>
           {edited ? <span className="text-xs text-text-3">({tc("edited")})</span> : null}
-          {comment.label === "liked" ? (
-            <Badge variant="coral" className="gap-1">
-              <HeartIcon aria-hidden="true" className="size-3" />
-              {t("commentLabels.liked")}
-            </Badge>
-          ) : null}
-          {comment.label === "suggestion" ? (
-            <Badge variant="cyan" className="gap-1">
-              <LightbulbIcon aria-hidden="true" className="size-3" />
-              {t("commentLabels.suggestion")}
-            </Badge>
-          ) : null}
           {comment.is_helpful ? <Badge variant="violet">{t("helpful")}</Badge> : null}
         </div>
         <p className="mt-1 whitespace-pre-line text-text-2">{comment.body}</p>
         <CommentActions
           commentId={comment.id}
           body={comment.body}
-          label={comment.label}
           authorName={comment.author.display_name}
           isReply={isReply}
           isOwn={viewer.userId === comment.author_id}
