@@ -150,7 +150,7 @@ test("la administración no ve el botón, y la base rechaza a admins y a visitan
   const admin = await context.newPage();
   await loginAndWait(admin, "admin@tradfal.test", "tradfal123");
   await gotoReady(admin, "/settings/account");
-  await expect(admin.getByText("Las cuentas de administración no se pueden eliminar desde acá.")).toBeVisible();
+  await expect(admin.getByText("Las cuentas de administración no se pueden eliminar.", { exact: false })).toBeVisible();
   await expect(admin.getByRole("button", { name: "Eliminar mi cuenta" })).toHaveCount(0);
   await context.close();
 

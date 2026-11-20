@@ -20,6 +20,8 @@ describe("notificationSentence", () => {
 
   it("tells moderation notices, and the answers to appeals and counter-notices", () => {
     expect(notificationSentence({ ...base, type: "moderation", data: { action: "suspend" } }, t)).toBe("Suspendimos tu cuenta");
+    expect(notificationSentence({ ...base, type: "moderation", data: { action: "admin_granted", target_type: "profile" } }, t)).toBe("Te sumamos a la administración de Tradfal");
+    expect(notificationSentence({ ...base, type: "moderation", data: { action: "admin_revoked", target_type: "profile" } }, t)).toBe("Ya no sos parte de la administración de Tradfal");
     expect(notificationSentence({ ...base, type: "moderation", data: { action: "appeal_upheld" } }, t)).toBe("Revisamos tu apelación: se mantuvo la decisión");
     expect(notificationSentence({ ...base, type: "moderation", data: { action: "appeal_overturned", kind: "counter_notice" } }, t)).toBe("Revisamos tu contranotificación: volvimos a publicar el contenido");
   });

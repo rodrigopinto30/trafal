@@ -11,6 +11,7 @@ import {
   moderateContentSchema,
   resolveClaimSchema,
   resolveReportSchema,
+  setAccountRoleSchema,
   setFeaturedSchema,
   suspendAccountSchema,
   takeClaimSchema,
@@ -41,11 +42,14 @@ const DATABASE_ERRORS: [RegExp, AdminErrorKey][] = [
   [/cannot_suspend_admin/, "cannotSuspendAdmin"],
   [/already_suspended/, "alreadySuspended"],
   [/not_suspended/, "notSuspended"],
+  [/cannot_change_own_role/, "cannotChangeOwnRole"],
+  [/role_unchanged/, "roleUnchanged"],
+  [/cannot_promote_suspended/, "cannotPromoteSuspended"],
   [/invalid_until/, "invalidInput"],
   [/note_too_long/, "noteTooLong"],
   [/target_not_found/, "targetNotFound"],
   [/invalid_status_for_action/, "invalidStatus"],
-  [/cannot_hide_profile|invalid_target_type|invalid_action|invalid_outcome/, "invalidInput"],
+  [/cannot_hide_profile|invalid_target_type|invalid_action|invalid_outcome|invalid_role/, "invalidInput"],
   [/week_not_monday/, "weekNotMonday"],
   [/week_in_the_past/, "weekInThePast"],
   [/week_too_far/, "weekTooFar"],
@@ -153,6 +157,14 @@ export async function suspendAccountAction(rawInput: unknown): Promise<AdminResu
 /** Lifts the suspension of an account, with the reason (the person is told). */
 export async function liftSuspensionAction(rawInput: unknown): Promise<AdminResult> {
   return asAdmin(rawInput, liftSuspensionSchema, async ({ userId, reason }, supabase) => (await supabase.rpc("lift_suspension", { p_user: userId, p_reason: reason })).error);
+}
+
+/**
+ * Names an admin or takes the role away, with the reason (the person is told). The database refuses one's own role and a suspended
+ * account, and logs it.
+ */
+export async function setAccountRoleAction(rawInput: unknown): Promise<AdminResult> {
+  return asAdmin(rawInput, setAccountRoleSchema, async ({ userId, role, reason }, supabase) => (await supabase.rpc("set_account_role", { p_user: userId, p_role: role, p_reason: reason })).error);
 }
 
 /** Takes a copyright claim to review it. */

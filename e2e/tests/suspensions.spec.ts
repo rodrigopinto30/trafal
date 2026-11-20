@@ -42,12 +42,12 @@ test.afterAll(async () => {
   await admin?.context().close();
 });
 
-test("la administración no puede suspender a la administración", async () => {
+test("quien administra no puede suspenderse ni cambiarse el rol a sí misma", async () => {
   await openAccount(admin, "equipo_tradfal");
   const card = admin.getByRole("article", { name: "@equipo_tradfal" });
   await expect(card).toBeVisible();
-  await expect(card.getByText("No se puede suspender a la administración")).toBeVisible();
-  await expect(card.getByRole("button", { name: /Suspender/ })).toHaveCount(0);
+  await expect(card.getByText("Es tu cuenta: tu rol lo cambia otra persona de la administración.")).toBeVisible();
+  await expect(card.getByRole("button", { name: /Suspender|Quitar admin/ })).toHaveCount(0);
 });
 
 test("una persona común no entra a las cuentas de la administración", async () => {

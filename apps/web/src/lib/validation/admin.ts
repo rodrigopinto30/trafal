@@ -2,6 +2,7 @@ import { z } from "zod";
 import { charLength, sanitizeMultiline, sanitizeLine } from "./text";
 import {
   ACCOUNT_FILTERS,
+  ACCOUNT_ROLES,
   ACCOUNT_SEARCH_MAX,
   FEATURED_QUOTE_MAX,
   MODERATION_ACTIONS,
@@ -9,6 +10,7 @@ import {
   MODERATION_TARGETS,
   REPORT_OUTCOMES,
   REPORT_STATUS_FILTERS,
+  ROLE_REASON_MAX,
   SUSPENSION_DURATIONS,
   SUSPENSION_REASON_MAX,
   type AccountFilter,
@@ -84,6 +86,17 @@ export const suspendAccountSchema = z.object({
 });
 
 export const liftSuspensionSchema = z.object({ userId: z.uuid("invalidInput"), reason: suspensionReason });
+
+/** Naming an admin or taking the role away: whom, the new role and the reason (the person reads it). */
+export const setAccountRoleSchema = z.object({
+  userId: z.uuid("invalidInput"),
+  role: z.enum(ACCOUNT_ROLES, "invalidInput"),
+  reason: z
+    .string()
+    .transform(sanitizeMultiline)
+    .refine((value) => value !== "", "reasonRequired")
+    .refine((value) => charLength(value) <= ROLE_REASON_MAX, "reasonTooLong"),
+});
 
 const ACCOUNT_SEARCH_ALLOWED = /[^\p{L}\p{N}_ ]/gu;
 

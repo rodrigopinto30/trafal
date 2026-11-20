@@ -152,6 +152,7 @@ La revisión completa, cada falla con su arreglo y los **pasos de producción** 
 - Las **dependencias del worker** se instalan desde `worker/requirements.lock`, con hashes. Si cambiás `requirements.txt`: `docker run --rm -v "$PWD/worker":/w -w /w python:3.13.18-slim-bookworm sh -c "pip install -q pip-tools && pip-compile --generate-hashes --strip-extras --no-header -o requirements.lock requirements.txt"` (un test exige que coincidan).
 - **pnpm** no instala versiones publicadas hace menos de 7 días ni paquetes que perdieron su procedencia (`pnpm-workspace.yaml`). Si una dependencia legítima queda frenada, revisala y agregala a `trustPolicyExclude` con su versión exacta.
 - **Los puertos de Supabase** (54321–54324) quedan abiertos a la red local: el CLI no deja limitarlos. La regla de firewall para cerrarlos está en SEGURIDAD.md.
+- **Admins:** en local ya existe `admin@tradfal.test`. Los demás se nombran desde *Administración → Cuentas* («Hacer admin» / «Quitar admin», con motivo; función `set_account_role`). El primer admin de una instalación nueva se nombra a mano, una vez: el SQL está en SEGURIDAD.md → Pasos de producción.
 
 ## Si algo falla
 

@@ -135,6 +135,9 @@ Estados posibles: **Arreglado**; **Mitigado** (el riesgo bajó mucho, queda algo
 4. **Worker:** `WORKER_DATABASE_URL` con `sslmode=verify-full&sslrootcert=…` (el certificado está en Supabase → Database → SSL) y la contraseña puesta con `\password game_worker`.
 5. **Cloudflare:** una regla de límite de pedidos para los POST de `/login` y `/forgot-password`.
 6. **Dominio:** `SITE_URL` con https. Con eso solos se activan la cookie `Secure`, HSTS y `upgrade-insecure-requests`.
+7. **Primer admin:** una sola vez, en el SQL Editor, con el @usuario de una cuenta que ya hizo el onboarding:
+   `update public.profile_private set role = 'admin' where id = (select id from public.profiles where username = '<tu_usuario>');`
+   Es la única escritura del rol fuera de `set_account_role` y no queda en el registro de moderación. Los admins siguientes se nombran desde *Administración → Cuentas*.
 
 ## Entorno local: puertos de Supabase
 

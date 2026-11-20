@@ -30,6 +30,8 @@ export function notificationSentence(item: NotificationItem, t: NotificationsTra
       const action = item.data.action;
       if (action === "suspend") return t("items.moderation.suspend");
       if (action === "lift") return t("items.moderation.lift");
+      if (action === "admin_granted") return t("items.moderation.adminGranted");
+      if (action === "admin_revoked") return t("items.moderation.adminRevoked");
       const counter = item.data.kind === "counter_notice";
       if (action === "appeal_upheld") return t(counter ? "items.moderation.counterUpheld" : "items.moderation.appealUpheld");
       if (action === "appeal_overturned") return t(counter ? "items.moderation.counterOverturned" : "items.moderation.appealOverturned");

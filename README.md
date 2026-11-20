@@ -83,7 +83,8 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Solo se modera ocultando o restaurando** (juegos, avances y comentarios): nada se borra ni se edita. Ocultar o restaurar exige un motivo, que lee la autoría del contenido en sus avisos.
 - **Registro**: toda acción queda anotada (quién, qué, sobre qué, por qué y cuándo) en un registro que solo se agrega.
 - **Juego de la semana**: elegir, ver lo que viene y sacar elecciones.
-- **Cuentas**: buscar a una persona (por el comienzo de su @usuario o de una palabra de su nombre) y **suspender** su cuenta por 1, 7, 30 o 90 días o hasta que se la levante, o **levantarle** la suspensión. Siempre con un **motivo** que la persona lee. No se puede suspender a la administración ni a uno mismo. Desde un reporte hay un enlace directo a la cuenta de quien lo hizo.
+- **Cuentas**: buscar a una persona (por el comienzo de su @usuario o de una palabra de su nombre; o ver solo las suspendidas o solo la administración) y **suspender** su cuenta por 1, 7, 30 o 90 días o hasta que se la levante, o **levantarle** la suspensión. Siempre con un **motivo** que la persona lee. No se puede suspender a la administración ni a uno mismo. Desde un reporte hay un enlace directo a la cuenta de quien lo hizo.
+- **Nombrar admins**: desde la misma pantalla, **Hacer admin** suma a una cuenta a la administración y **Quitar admin** le saca el rol, siempre con un motivo que la persona lee en sus avisos. Nadie cambia su propio rol (lo hace otra persona de la administración), así que siempre queda al menos un admin; una cuenta suspendida no puede ser admin. Queda en el registro. El primer admin de una instalación nueva se nombra a mano (ver docs/SEGURIDAD.md).
 
 ### Reclamos de derechos de autor
 

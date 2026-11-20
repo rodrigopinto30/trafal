@@ -570,6 +570,19 @@ Migración nueva: `20261120000100_comments_without_label.sql`.
 | **Después del cambio se queda la sesión de este dispositivo y se cierran las demás** | Supabase Auth, al cambiar la contraseña, cierra todas las sesiones salvo la que la cambió (se comprobó en local: el refresh de otra sesión da 400). Esa sesión es el ingreso nuevo, no la del navegador. | La acción le pasa ese ingreso al navegador (`setSession`) y después pide cerrar las demás (`signOut({ scope: "others" })`), por si una versión de Auth dejara de hacerlo. `password-change.spec.ts` lo prueba con un segundo navegador que queda afuera. |
 | **El menú de la cuenta ya no tiene «Configuración»** | Pedido del producto: llevaba a «Editar perfil», a lo que ya se llega desde el perfil. | A la configuración se entra con «Editar perfil» en el perfil propio; las pestañas Preferencias, Cuenta y Moderación siguen ahí. Los avisos de moderación enlazan directo a su pestaña. |
 
+## Nombrar admins (2026-11-20)
+
+Migración nueva: `20261120000200_admin_roles.sql`.
+
+| Decisión | Por qué | Consecuencia |
+|---|---|---|
+| **Un admin nombra a otros y les quita el rol, solo con `set_account_role`** | El rol existía pero solo se cambiaba con SQL a mano: no había forma de sumar a alguien al equipo. | Pide un motivo (1 a 500 caracteres), queda en `moderation_log` (`grant_admin` / `revoke_admin`) y la persona recibe un aviso (tipo `moderation`, `admin_granted` / `admin_revoked`) sin saber quién fue. No se borra nada. |
+| **Nadie cambia su propio rol** | Así siempre queda al menos un admin: quien hace el cambio sigue siéndolo. | Para dejar el equipo, otra persona de la administración te quita el rol. La pantalla muestra «Es tu cuenta…» en lugar de botones. Un admin sigue sin poder borrar su cuenta hasta que le quiten el rol. |
+| **Los cambios de rol van de a uno** (`pg_advisory_xact_lock`) y se vuelve a comprobar quién llama | Dos admins quitándose el rol al mismo tiempo podían dejar el sitio sin ninguno. | El segundo espera al primero y, si ya no es admin, recibe `not_admin`. |
+| **Una cuenta suspendida no puede ser admin** | Y a un admin no se lo puede suspender (`suspend_account` ya lo rechazaba): si no, una suspensión se saltearía sumándose al equipo. | `cannot_promote_suspended`; la pantalla ni ofrece el botón mientras dura la suspensión. |
+| **El aviso de «te sumamos» lleva a `/admin` y no ofrece apelar** | No es una sanción. | `notificationHref` y la lista de avisos lo tratan aparte de las suspensiones y lo oculto. |
+| **El primer admin de una instalación se nombra a mano**, una vez, en el SQL Editor | Sin admins, nadie puede llamar a la función. | Es la única escritura del rol fuera de la función y no queda en el registro (SEGURIDAD.md → Pasos de producción). |
+
 ## Géneros que se desmarcaban, botón «Atrás» y seguir desde las listas (2026-11-11)
 
 Sin migraciones. `components/profile/{topic-grid,profile-list,follow-button}.tsx`, `components/layout/back-button.tsx` y `app/[lang]/u/[username]/{following,followers}`; test e2e `profile-lists-and-back.spec.ts`.

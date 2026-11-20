@@ -2,6 +2,7 @@
 export const MODERATION_NOTE_MAX = 1000;
 export const FEATURED_QUOTE_MAX = 280;
 export const SUSPENSION_REASON_MAX = 500;
+export const ROLE_REASON_MAX = 500;
 export const ACCOUNT_SEARCH_MAX = 50;
 
 export const REPORT_OUTCOMES = ["dismissed", "actioned", "hide_content"] as const;
@@ -20,8 +21,11 @@ export type ReportStatusFilter = (typeof REPORT_STATUS_FILTERS)[number];
 export const SUSPENSION_DURATIONS = ["1", "7", "30", "90", "forever"] as const;
 export type SuspensionDuration = (typeof SUSPENSION_DURATIONS)[number];
 
-export const ACCOUNT_FILTERS = ["all", "suspended"] as const;
+export const ACCOUNT_FILTERS = ["all", "suspended", "admins"] as const;
 export type AccountFilter = (typeof ACCOUNT_FILTERS)[number];
+
+export const ACCOUNT_ROLES = ["user", "admin"] as const;
+export type AccountRole = (typeof ACCOUNT_ROLES)[number];
 
 /** Error keys of the admin screens (namespace «admin.errors»). */
 export const ADMIN_ERROR_KEYS = [
@@ -43,6 +47,9 @@ export const ADMIN_ERROR_KEYS = [
   "cannotSuspendAdmin",
   "alreadySuspended",
   "notSuspended",
+  "cannotChangeOwnRole",
+  "roleUnchanged",
+  "cannotPromoteSuspended",
   "noteTooLong",
   "targetNotFound",
   "invalidStatus",
