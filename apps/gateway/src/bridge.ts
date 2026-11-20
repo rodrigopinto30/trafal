@@ -1,9 +1,14 @@
 /**
  * The platform bridge: a few lines of script the gateway puts at the top of every game page served inside Tradfal's frame, so the player
- * can offer controls that belong to the platform and work for any game (today: a mute button, which a page of another origin cannot
- * otherwise reach). It only listens to its parent window, announces itself with a `ready` message and never reads anything from the game.
+ * can offer controls that belong to the platform and work for any game: a mute button, which a page of another origin cannot otherwise
+ * reach, and a way out for the keyboard (holding Escape for `LEAVE_HOLD_MS` asks the player to take the focus back, so a game that keeps
+ * the Tab key cannot trap anyone; a short press still goes to the game). Its key listener is the first one the page registers, in the
+ * capture phase of the window, so no game code runs before it or can stop it. It only listens to its parent window, announces itself with
+ * a `ready` message and never reads anything from the game.
  */
-export const BRIDGE_VERSION = 1;
+export const BRIDGE_VERSION = 2;
+
+export const LEAVE_HOLD_MS = 1000;
 
 export const BRIDGE_SCRIPT = `(function () {
   var w = window;
@@ -14,6 +19,9 @@ export const BRIDGE_SCRIPT = `(function () {
   var tracked = [];
   var mediaGet = null;
   var mediaSet = null;
+  var later = w.setTimeout;
+  var cancel = w.clearTimeout;
+  var leaving = null;
 
   function ramp(gain) {
     try {
@@ -118,6 +126,28 @@ export const BRIDGE_SCRIPT = `(function () {
       w.parent.postMessage({ tradfal: 1, type: "ready" }, "*");
     } catch (e) {}
   }
+
+  function stayInGame() {
+    if (leaving === null) return;
+    cancel.call(w, leaving);
+    leaving = null;
+  }
+
+  try {
+    w.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape" || event.repeat || leaving !== null) return;
+      leaving = later.call(w, function () {
+        leaving = null;
+        try {
+          w.parent.postMessage({ tradfal: 1, type: "leave" }, "*");
+        } catch (e) {}
+      }, ${LEAVE_HOLD_MS});
+    }, true);
+    w.addEventListener("keyup", function (event) {
+      if (event.key === "Escape") stayInGame();
+    }, true);
+    w.addEventListener("blur", stayInGame, true);
+  } catch (e) {}
 
   w.addEventListener("message", function (event) {
     var data = event.data;

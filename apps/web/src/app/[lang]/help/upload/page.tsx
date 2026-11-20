@@ -348,6 +348,7 @@ export default async function UploadGuidePage() {
             </ul>
           </div>
         </div>
+        <p className="text-text-2">{t("sandbox.keyboard")}</p>
         <p className="text-sm text-text-3">{t("sandbox.flags")}</p>
       </Section>
 
