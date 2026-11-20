@@ -10,7 +10,7 @@ import { accessTokenOf, deleteRows, gameIdOf, insertRow, userIdOf } from "./help
 test.describe.configure({ mode: "serial" });
 
 const GAME = "/games/orbita";
-const PASSWORD = "Trafal12345";
+const PASSWORD = "Tradfal12345";
 const LIMIT = 8;
 
 let page: Page;
@@ -24,7 +24,7 @@ const commentRow = (authorId: string, text: string) => ({ author_id: authorId, g
 test.beforeAll(async ({ browser }, testInfo) => {
   test.setTimeout(120_000);
   suffix = uniqueSuffix(testInfo.project.name);
-  email = `e2e_limits_${suffix}@trafal.test`;
+  email = `e2e_limits_${suffix}@tradfal.test`;
   page = await (await browser.newContext({ ...testInfo.project.use })).newPage();
   await registerAccount(page, { email, username: `limits_${lettersOnly(suffix)}`, displayName: "Persona Límites", password: PASSWORD });
   token = await accessTokenOf(email, PASSWORD);
@@ -32,7 +32,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
 });
 
 test.afterAll(async () => {
-  await deleteRows("comments", `body=like.${encodeURIComponent(`Comentario de admin ${suffix}%`)}`, await accessTokenOf("admin@trafal.test", "trafal123"));
+  await deleteRows("comments", `body=like.${encodeURIComponent(`Comentario de admin ${suffix}%`)}`, await accessTokenOf("admin@tradfal.test", "tradfal123"));
   await page?.context().close();
 });
 
@@ -58,7 +58,7 @@ test("desde la página se ve un mensaje claro y no se agrega nada", async () => 
 test("el tope es de cada persona: otra cuenta puede comentar", async ({ browser }, testInfo) => {
   const other = await (await browser.newContext({ ...testInfo.project.use })).newPage();
   const otherSuffix = `${suffix}b`;
-  await registerAccount(other, { email: `e2e_limits_${otherSuffix}@trafal.test`, username: `limitsb_${lettersOnly(suffix)}`, displayName: "Otra Persona", password: PASSWORD });
+  await registerAccount(other, { email: `e2e_limits_${otherSuffix}@tradfal.test`, username: `limitsb_${lettersOnly(suffix)}`, displayName: "Otra Persona", password: PASSWORD });
   await gotoReady(other, GAME);
   await other.getByLabel("Tu comentario").first().fill(`Comentario ajeno ${suffix}`);
   await other.getByRole("button", { name: "Comentar" }).first().click();
@@ -67,7 +67,7 @@ test("el tope es de cada persona: otra cuenta puede comentar", async ({ browser 
 });
 
 test("la administración no tiene tope", async () => {
-  const adminToken = await accessTokenOf("admin@trafal.test", "trafal123");
+  const adminToken = await accessTokenOf("admin@tradfal.test", "tradfal123");
   const admin = userIdOf(adminToken);
   for (let n = 1; n <= LIMIT + 4; n++) expect((await insertRow("comments", commentRow(admin, `Comentario de admin ${suffix} ${n}`), adminToken)).status).toBe(201);
 });

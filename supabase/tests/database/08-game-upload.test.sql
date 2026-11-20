@@ -63,7 +63,10 @@ select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
 select lives_ok($$ select public.confirm_version_upload((select version_id from first_version)) $$, 'ana confirms her upload');
 select is((select status from public.game_versions where id = (select version_id from first_version)), 'processing', 'the version is now in the worker queue');
 select isnt((select uploaded_at from public.game_versions where id = (select version_id from first_version)), null, 'the upload time is recorded');
+select throws_ok($$ select locked_at from public.game_versions where id = (select version_id from first_version) $$, '42501', null, 'the worker''s state of a version is not hers to read');
+select tests.clear_authentication();
 select is((select locked_at from public.game_versions where id = (select version_id from first_version)), null, 'and nobody holds it yet');
+select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
 select throws_ok($$ select public.confirm_version_upload((select version_id from first_version)) $$, 'P0001', 'invalid_state', 'a version cannot be confirmed twice');
 select throws_ok($$ select public.confirm_version_upload('99999999-0000-0000-0000-000000000009') $$, 'P0001', 'version_not_found', 'an unknown version is not found');
 select throws_ok($$ update public.game_versions set status = 'ready' where id = (select version_id from first_version) $$, '42501', null, 'the owner still cannot mark a version ready');
@@ -87,9 +90,12 @@ select throws_ok($$ update public.games set cover_path = 'covers/b0000000-0000-0
 select throws_ok($$ update public.games set cover_path = 'avatars/a0000000-0000-0000-0000-000000000001/0123456789abcdef0123456789abcdef.webp' where id = pg_temp.game_one() $$, '23514', null, 'a cover cannot point to an avatar');
 select throws_ok($$ update public.games set cover_path = 'covers/a0000000-0000-0000-0000-000000000001/../x.webp' where id = pg_temp.game_one() $$, '23514', null, 'path tricks are rejected');
 select throws_ok($$ update public.games set cover_path = 'covers/a0000000-0000-0000-0000-000000000001/0123456789abcdef0123456789abcdef.svg' where id = pg_temp.game_one() $$, '23514', null, 'only webp, jpg and png covers');
-select lives_ok($$ insert into public.game_screenshots (game_id, path, position) values (pg_temp.game_one(), 'screenshots/' || pg_temp.game_one() || '/0123456789abcdef0123456789abcdef.png', 1) $$, 'a screenshot inside the game''s folder is accepted');
-select throws_ok($$ insert into public.game_screenshots (game_id, path, position) values (pg_temp.game_one(), 'screenshots/' || pg_temp.game_two() || '/0123456789abcdef0123456789abcdef.png', 2) $$, '23514', null, 'a screenshot of another game is rejected');
-select throws_ok($$ insert into public.game_screenshots (game_id, path, position) values (pg_temp.game_one(), 'covers/a0000000-0000-0000-0000-000000000001/0123456789abcdef0123456789abcdef.png', 2) $$, '23514', null, 'a screenshot cannot point to a cover');
+select lives_ok($$ update public.games set gif_path = 'covers/a0000000-0000-0000-0000-000000000001/0123456789abcdef0123456789abcdef.gif' where id = pg_temp.game_one() $$, 'a GIF inside the owner''s covers folder is accepted');
+select throws_ok($$ update public.games set gif_path = 'covers/b0000000-0000-0000-0000-000000000002/0123456789abcdef0123456789abcdef.gif' where id = pg_temp.game_one() $$, '23514', null, 'a GIF in someone else''s folder is rejected');
+select throws_ok($$ update public.games set gif_path = 'covers/a0000000-0000-0000-0000-000000000001/0123456789abcdef0123456789abcdef.webp' where id = pg_temp.game_one() $$, '23514', null, 'the GIF must be a .gif');
+select throws_ok($$ update public.games set gif_path = 'covers/a0000000-0000-0000-0000-000000000001/../x.gif' where id = pg_temp.game_one() $$, '23514', null, 'path tricks are rejected for the GIF too');
+select throws_ok($$ update public.games set cover_path = 'covers/a0000000-0000-0000-0000-000000000001/0123456789abcdef0123456789abcdef.gif' where id = pg_temp.game_one() $$, '23514', null, 'and the cover cannot be a GIF');
+select hasnt_table('public', 'game_screenshots', 'screenshots are gone: a game has one image and an optional GIF');
 
 select * from finish();
 rollback;

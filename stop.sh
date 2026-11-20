@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Trafal · baja todo el entorno local.
+# Tradfal · baja todo el entorno local.
 #
 #   ./stop.sh            apaga los contenedores; conserva la base de datos y tus datos
 #   ./stop.sh --purge    además BORRA la base de datos y los volúmenes (empezar de cero)

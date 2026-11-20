@@ -3,14 +3,14 @@ import { helloMessage, isBridgeReady, LOCKED_KEYS, muteMessage, readMutedPrefere
 
 describe("the messages of the platform bridge", () => {
   it("builds the two messages the player sends", () => {
-    expect(muteMessage(true)).toEqual({ trafal: 1, type: "mute", muted: true });
-    expect(muteMessage(false)).toEqual({ trafal: 1, type: "mute", muted: false });
-    expect(helloMessage()).toEqual({ trafal: 1, type: "hello" });
+    expect(muteMessage(true)).toEqual({ tradfal: 1, type: "mute", muted: true });
+    expect(muteMessage(false)).toEqual({ tradfal: 1, type: "mute", muted: false });
+    expect(helloMessage()).toEqual({ tradfal: 1, type: "hello" });
   });
 
   it("trusts only the exact «ready» message", () => {
-    expect(isBridgeReady({ trafal: 1, type: "ready" })).toBe(true);
-    for (const other of [null, undefined, "ready", 1, [], {}, { trafal: 2, type: "ready" }, { trafal: 1, type: "mute" }, { type: "ready" }, { trafal: "1", type: "ready" }]) {
+    expect(isBridgeReady({ tradfal: 1, type: "ready" })).toBe(true);
+    for (const other of [null, undefined, "ready", 1, [], {}, { tradfal: 2, type: "ready" }, { tradfal: 1, type: "mute" }, { type: "ready" }, { tradfal: "1", type: "ready" }]) {
       expect(isBridgeReady(other)).toBe(false);
     }
   });
@@ -33,7 +33,7 @@ describe("the keys handed to the game in fullscreen", () => {
 
 describe("the sound preference", () => {
   function fakeStorage(initial?: string) {
-    const data = new Map<string, string>(initial === undefined ? [] : [["trafal:muted", initial]]);
+    const data = new Map<string, string>(initial === undefined ? [] : [["tradfal:muted", initial]]);
     return { getItem: (key: string) => data.get(key) ?? null, setItem: (key: string, value: string) => void data.set(key, value), data };
   }
 
@@ -41,7 +41,7 @@ describe("the sound preference", () => {
     const storage = fakeStorage();
     expect(readMutedPreference(storage)).toBe(false);
     saveMutedPreference(true, storage);
-    expect(storage.data.get("trafal:muted")).toBe("1");
+    expect(storage.data.get("tradfal:muted")).toBe("1");
     expect(readMutedPreference(storage)).toBe(true);
     saveMutedPreference(false, storage);
     expect(readMutedPreference(storage)).toBe(false);

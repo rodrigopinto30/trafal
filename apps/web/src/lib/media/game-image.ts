@@ -1,9 +1,9 @@
 import type { AvatarFormat } from "./avatar";
 
 /**
- * Rules for the images of a game (cover and screenshots). The browser pre-checks them for a quick answer; the server never
- * trusts that and checks again with inspectImage. The stored path is also validated by a database CHECK
- * (games_cover_path_fmt, game_screenshots_path_fmt).
+ * Rules for the pictures of a game: one cover (a still image) and, optionally, one GIF. The browser pre-checks them for a quick
+ * answer; the server never trusts that and checks again from the bytes. The stored paths are also validated by database CHECKs
+ * (games_cover_path_fmt, games_gif_path_fmt).
  */
 export const GAME_IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 export const GAME_IMAGE_MIN_WIDTH = 320;
@@ -20,6 +20,12 @@ export function coverObjectKey(ownerId: string, token: string, format: AvatarFor
   return `covers/${ownerId}/${token}.${GAME_IMAGE_FORMATS[format].ext}`;
 }
 
-export function screenshotObjectKey(gameId: string, token: string, format: AvatarFormat): string {
-  return `screenshots/${gameId}/${token}.${GAME_IMAGE_FORMATS[format].ext}`;
+export const GAME_GIF_MAX_BYTES = 5 * 1024 * 1024;
+export const GAME_GIF_MAX_SIDE = 1920;
+export const GAME_GIF_MAX_FRAMES = 600;
+export const GAME_GIF_MIME = "image/gif";
+
+/** The GIF lives next to the cover, in the owner's covers folder, so deleting the account deletes it too. */
+export function gifObjectKey(ownerId: string, token: string): string {
+  return `covers/${ownerId}/${token}.gif`;
 }

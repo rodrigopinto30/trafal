@@ -4,8 +4,8 @@
 .git
 .tools
 .pnpm-store
-.env
-.env.*
+**/.env
+**/.env.*
 !.env.example
 supabase/.temp
 supabase/.branches

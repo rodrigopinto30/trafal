@@ -16,10 +16,11 @@ import { useLocale, useTranslations } from "@/i18n/client";
 import { Link } from "@/i18n/link";
 import { localizePath } from "@/i18n/path";
 import { updateGameAction } from "@/lib/games/edit-actions";
-import { CONTROLS_MAX, DESCRIPTION_MAX, MAX_QUESTIONS, MAX_SCREENSHOTS, TITLE_MAX } from "@/lib/games/upload-rules";
+import { CONTROLS_MAX, DESCRIPTION_MAX, MAX_QUESTIONS, TITLE_MAX } from "@/lib/games/upload-rules";
 import { GENRE_IDS } from "@/lib/profile/catalog";
 
 const IMAGE_TYPES = "image/png,image/jpeg,image/webp";
+const GIF_TYPES = "image/gif";
 
 export type EditGameFormProps = {
   game: {
@@ -32,14 +33,14 @@ export type EditGameFormProps = {
     controls: string;
     questions: string[];
     coverUrl: string | null;
-    screenshots: { id: string; url: string }[];
+    gifUrl: string | null;
   };
 };
 
 /**
- * Form to change a game that was already uploaded: details, feedback questions, cover (keep, replace or remove) and screenshots
- * (remove some, add more up to the limit). It sends everything to `updateGameAction`, which validates again and saves it all or
- * nothing. The page gives it a `key` that changes with every save, so it always starts from what is stored.
+ * Form to change a game that was already uploaded: details, feedback questions, cover and GIF (each one kept, replaced or
+ * removed). It sends everything to `updateGameAction`, which validates again and saves it all or nothing. The page gives it a
+ * `key` that changes with every save, so it always starts from what is stored.
  */
 export function EditGameForm({ game }: EditGameFormProps) {
   const t = useTranslations("gameForm");
@@ -51,10 +52,6 @@ export function EditGameForm({ game }: EditGameFormProps) {
   const [saving, setSaving] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formMessage, setFormMessage] = useState<string | undefined>();
-  const [dropped, setDropped] = useState<ReadonlySet<string>>(new Set());
-  const [added, setAdded] = useState(0);
-
-  const room = Math.max(0, MAX_SCREENSHOTS - (game.screenshots.length - dropped.size));
 
   const [errorRound, setErrorRound] = useState(0);
   useEffect(() => {
@@ -67,22 +64,9 @@ export function EditGameForm({ game }: EditGameFormProps) {
     setErrorRound((round) => round + 1);
   }
 
-  function toggleDropped(id: string, checked: boolean) {
-    setDropped((current) => {
-      const next = new Set(current);
-      if (checked) next.add(id);
-      else next.delete(id);
-      return next;
-    });
-  }
-
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (saving) return;
-    if (added > room) {
-      showErrors({ screenshots: t("errors.tooManyScreenshots") });
-      return;
-    }
     const data = new FormData(event.currentTarget);
     data.set("gameId", game.id);
     data.set("lang", locale);
@@ -153,39 +137,22 @@ export function EditGameForm({ game }: EditGameFormProps) {
               {(control) => <Input {...control} name="cover" type="file" accept={IMAGE_TYPES} className="py-2.5" />}
             </Field>
 
-            {game.screenshots.length > 0 ? (
-              <div className="grid gap-3">
-                <p className="text-sm font-semibold">{tEdit("currentScreenshots")}</p>
-                <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                  {game.screenshots.map((shot, index) => (
-                    <li key={shot.id} className="grid gap-2">
-                      <img
-                        src={shot.url}
-                        alt={tEdit("screenshotAlt", { number: index + 1 })}
-                        className={`aspect-video w-full rounded-xl border border-white/10 object-cover ${dropped.has(shot.id) ? "opacity-40" : ""}`}
-                      />
-                      <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
-                        <Checkbox name="dropScreenshots" value={shot.id} onChange={(event) => toggleDropped(shot.id, event.target.checked)} />
-                        {tEdit("removeScreenshot", { number: index + 1 })}
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-            <Field id="screenshots" label={tEdit("screenshotsAdd")} hint={tEdit("screenshotsAddHint", { left: room })} error={fieldErrors.screenshots}>
-              {(control) => (
-                <Input
-                  {...control}
-                  name="screenshots"
-                  type="file"
-                  accept={IMAGE_TYPES}
-                  multiple
-                  disabled={room === 0}
-                  className="py-2.5"
-                  onChange={(event) => setAdded(event.target.files?.length ?? 0)}
-                />
+            <div className="grid gap-3">
+              <p className="text-sm font-semibold">{tEdit("currentGif")}</p>
+              {game.gifUrl ? (
+                <>
+                  <img src={game.gifUrl} alt="" className="aspect-video w-full max-w-sm rounded-2xl border border-white/10 object-cover" />
+                  <label className="flex min-h-11 w-fit cursor-pointer items-center gap-3 text-sm">
+                    <Checkbox name="removeGif" value="1" />
+                    {tEdit("removeGif")}
+                  </label>
+                </>
+              ) : (
+                <p className="text-sm text-text-2">{tEdit("noGif")}</p>
               )}
+            </div>
+            <Field id="gif" label={tEdit("gifReplace")} hint={tEdit("gifReplaceHint")} error={fieldErrors.gif}>
+              {(control) => <Input {...control} name="gif" type="file" accept={GIF_TYPES} className="py-2.5" />}
             </Field>
           </div>
         </SettingsSection>

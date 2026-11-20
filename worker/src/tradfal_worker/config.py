@@ -1,8 +1,10 @@
+import ipaddress
 import os
 import socket
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import parse_qs, urlsplit
 
 
 class ConfigError(Exception):
@@ -35,12 +37,38 @@ REQUIRED = {
 }
 
 
+def _is_local_host(host: str) -> bool:
+    """A database on this machine or its Docker network: a name without dots, a loopback address or the Docker host."""
+    if host in ("localhost", "host.docker.internal") or ("." not in host and ":" not in host):
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+def require_verified_tls(database_url: str) -> None:
+    """
+    A database elsewhere (production) is only reached over TLS that checks the server's certificate: libpq's default
+    would fall back to plain text and accept any certificate, so someone in the middle could pose as the database.
+    """
+    parts = urlsplit(database_url)
+    if _is_local_host(parts.hostname or ""):
+        return
+    if parse_qs(parts.query).get("sslmode", [""])[0] != "verify-full":
+        raise ConfigError(
+            "WORKER_DATABASE_URL points to a remote database: "
+            "add sslmode=verify-full and sslrootcert=<the provider's CA file>"
+        )
+
+
 def load_config(env: Mapping[str, str] | None = None) -> WorkerConfig:
     """Reads the settings from the environment (or a mapping) and fails listing everything that is missing."""
     source = os.environ if env is None else env
     missing = [name for name in REQUIRED.values() if not source.get(name)]
     if missing:
         raise ConfigError("Missing environment variables: " + ", ".join(sorted(missing)))
+    require_verified_tls(source[REQUIRED["database_url"]])
     return WorkerConfig(
         database_url=source[REQUIRED["database_url"]],
         s3_endpoint=source[REQUIRED["s3_endpoint"]],

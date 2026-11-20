@@ -5,8 +5,8 @@ import { gameFrameUrl } from "./frame-url";
 describe("gameFrameUrl", () => {
   it("puts the game id as a subdomain of the games domain, keeping scheme and port", () => {
     expect(gameFrameUrl("http://games.localhost:4000", "orbita")).toBe("http://orbita.games.localhost:4000/");
-    expect(gameFrameUrl("https://trafal-games.example", "hsnf9dggfph5")).toBe("https://hsnf9dggfph5.trafal-games.example/");
-    expect(gameFrameUrl("https://trafal-games.example/ignored/path?x=1", "gato-laser")).toBe("https://gato-laser.trafal-games.example/");
+    expect(gameFrameUrl("https://tradfal-games.example", "hsnf9dggfph5")).toBe("https://hsnf9dggfph5.tradfal-games.example/");
+    expect(gameFrameUrl("https://tradfal-games.example/ignored/path?x=1", "gato-laser")).toBe("https://gato-laser.tradfal-games.example/");
   });
 
   it("returns null when the games domain is missing or not an http(s) address", () => {

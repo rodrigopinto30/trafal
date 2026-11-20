@@ -23,7 +23,7 @@ export async function SiteNav() {
             <Logo />
           </Link>
 
-          {/* El margen separa las dos opciones del logo para que «trafal.» quede solo a la izquierda (48 px desde 768 px de ancho, 56 px en pantallas grandes). */}
+          {/* El margen separa las dos opciones del logo para que «tradfal.» quede solo a la izquierda (48 px desde 768 px de ancho, 56 px en pantallas grandes). */}
           <div className="hidden flex-1 md:ml-6 md:flex lg:ml-8">
             <Suspense fallback={<NavLinksFallback />}>
               <NavLinks />

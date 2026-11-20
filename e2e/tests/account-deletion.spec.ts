@@ -10,7 +10,7 @@ import { accessTokenOf, callRpc, publicProfile } from "./helpers/supabase";
  */
 test.describe.configure({ mode: "serial" });
 
-const PASSWORD = "Trafal12345";
+const PASSWORD = "Tradfal12345";
 const PHOTO_URL = "img[src*='/storage/v1/object/public/media/avatars/']";
 
 let page: Page;
@@ -24,7 +24,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
   const context = await browser.newContext({ ...testInfo.project.use });
   page = await context.newPage();
   const suffix = uniqueSuffix(testInfo.project.name);
-  email = `e2e_leaving_${suffix}@trafal.test`;
+  email = `e2e_leaving_${suffix}@tradfal.test`;
   username = `leaving_${lettersOnly(suffix)}`;
   await registerAccount(page, { email, username, displayName: "Persona Que Se Va", password: PASSWORD });
 });
@@ -148,17 +148,17 @@ test("ya no se puede iniciar sesión con esa cuenta", async () => {
 test("la administración no ve el botón, y la base rechaza a admins y a visitantes", async ({ browser }, testInfo) => {
   const context = await browser.newContext({ ...testInfo.project.use });
   const admin = await context.newPage();
-  await loginAndWait(admin, "admin@trafal.test", "trafal123");
+  await loginAndWait(admin, "admin@tradfal.test", "tradfal123");
   await gotoReady(admin, "/settings/account");
   await expect(admin.getByText("Las cuentas de administración no se pueden eliminar desde acá.")).toBeVisible();
   await expect(admin.getByRole("button", { name: "Eliminar mi cuenta" })).toHaveCount(0);
   await context.close();
 
-  const adminToken = await accessTokenOf("admin@trafal.test", "trafal123");
+  const adminToken = await accessTokenOf("admin@tradfal.test", "tradfal123");
   const refused = await callRpc("delete_my_account", {}, adminToken);
   expect(refused.status).toBe(400);
   expect(JSON.stringify(refused.body)).toContain("admin_cannot_delete");
   expect((await callRpc("delete_my_account", {})).status).toBeGreaterThanOrEqual(400);
   expect((await callRpc("account_files", {})).status).toBeGreaterThanOrEqual(400);
-  expect((await publicProfile("equipo_trafal", "username")).username).toBe("equipo_trafal");
+  expect((await publicProfile("equipo_tradfal", "username")).username).toBe("equipo_tradfal");
 });

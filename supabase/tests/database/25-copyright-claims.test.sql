@@ -18,8 +18,8 @@ insert into public.posts (id, author_id, kind, body) values
   ('55555555-5555-5555-5555-555555555501', 'a0000000-0000-0000-0000-000000000001', 'avance', 'An update of ana'),
   ('55555555-5555-5555-5555-555555555502', 'a0000000-0000-0000-0000-000000000001', 'avance', 'Another update');
 
-create function pg_temp.claim(p_email text default 'owner@example.com', p_game uuid default '11111111-1111-1111-1111-111111111101', p_post uuid default null, p_good boolean default true, p_accurate boolean default true, p_urls text[] default array['https://trafal.example/games/abc']) returns uuid language sql as $$
-  select public.submit_copyright_claim('Carla Owner', p_email, '  ', 'A sprite sheet I drew in 2024 and published on my site', 'https://example.com/original', p_urls, p_good, p_accurate, '  Carla Owner  ', p_game, p_post)
+create function pg_temp.claim(p_email text default 'owner@example.com', p_game uuid default '11111111-1111-1111-1111-111111111101', p_post uuid default null, p_good boolean default true, p_accurate boolean default true, p_urls text[] default array['https://tradfal.example/games/abc']) returns uuid language sql as $$
+  select public.submit_copyright_claim('Carla Owner', p_email, '  ', 'A sprite sheet I drew in 2024 and published on my site', 'https://example.com/original', p_urls, p_good, p_accurate, '  Carla Owner  ', p_game, p_post, tests.claims_server_key())
 $$;
 create function pg_temp.last_log() returns text language sql as $$
   select action || '|' || admin_username || '|' || target_type || '|' || target_id::text || '|' || coalesce(reason, 'null') from public.moderation_log order by id desc limit 1
@@ -42,7 +42,7 @@ select throws_ok($$ select pg_temp.claim(p_email => 'other@example.com', p_game 
 select throws_ok($$ select pg_temp.claim(p_email => 'other@example.com', p_good => false) $$, '23514', null, 'the statement of good faith is required');
 select throws_ok($$ select pg_temp.claim(p_email => 'other@example.com', p_accurate => false) $$, '23514', null, 'and the one of accuracy');
 select throws_ok($$ select pg_temp.claim(p_email => 'not-an-email') $$, '23514', null, 'the email has to look like one');
-select throws_ok($$ select pg_temp.claim(p_email => 'other@example.com', p_urls => array[]::text[]) $$, '23514', null, 'at least one link');
+select throws_ok($$ select pg_temp.claim(p_email => 'other@example.com', p_urls => array[]::text[]) $$, 'P0001', 'invalid_urls', 'at least one link');
 select throws_ok($$ select pg_temp.claim(p_email => 'other@example.com', p_urls => array[repeat('x', 501)]) $$, 'P0001', 'invalid_urls', 'with a sensible length');
 select lives_ok($$ select pg_temp.claim(p_email => 'other@example.com', p_game => null, p_post => '55555555-5555-5555-5555-555555555501') $$, 'a claim can be about an update');
 

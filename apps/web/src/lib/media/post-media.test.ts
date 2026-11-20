@@ -199,3 +199,13 @@ describe("stripImageMetadata", () => {
     expect(stripImageMetadata(broken, "jpeg")).toBe(broken);
   });
 });
+
+describe("GIF frames", () => {
+  it("refuses a frame bigger than the declared picture (it would make the browser decode far more)", () => {
+    const header = concat(text("GIF89a"), u16le(320), u16le(180), Uint8Array.of(0x80, 0, 0), Uint8Array.of(0, 0, 0, 255, 255, 255));
+    const hugeFrame = concat(Uint8Array.of(0x2c, 0, 0, 0, 0), u16le(65535), u16le(65535), Uint8Array.of(0, 2, 2, 0x44, 0x01, 0));
+    expect(inspectGif(concat(header, hugeFrame, Uint8Array.of(0x3b)))).toBeNull();
+    const shiftedFrame = concat(Uint8Array.of(0x2c), u16le(300), u16le(0), u16le(100), u16le(100), Uint8Array.of(0, 2, 2, 0x44, 0x01, 0));
+    expect(inspectGif(concat(header, shiftedFrame, Uint8Array.of(0x3b)))).toBeNull();
+  });
+});

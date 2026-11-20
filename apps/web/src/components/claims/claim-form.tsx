@@ -88,7 +88,7 @@ export function ClaimForm({ example }: { example: string }) {
         {(control) => <Input {...control} name="signature" autoComplete="off" maxLength={CLAIM_SIGNATURE_MAX} required defaultValue={values.signature ?? ""} />}
       </Field>
 
-      <CaptchaField resetKey={state} onReadyChange={setCaptchaReady} />
+      <CaptchaField action="claim" resetKey={state} onReadyChange={setCaptchaReady} />
 
       <Button type="submit" size="lg" disabled={pending || !captchaReady}>
         {pending ? t("submitting") : t("submit")}

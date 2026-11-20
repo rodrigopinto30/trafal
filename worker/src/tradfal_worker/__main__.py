@@ -16,13 +16,13 @@ def main() -> int:
     try:
         config = load_config()
     except ConfigError as error:
-        logging.getLogger("trafal_worker").error("%s", error)
+        logging.getLogger("tradfal_worker").error("%s", error)
         return 2
     stop = threading.Event()
     for signal_number in (signal.SIGTERM, signal.SIGINT):
         signal.signal(signal_number, lambda *_: stop.set())
     worker = Worker(PostgresVersionQueue(config.database_url), S3Storage(config), load_rules(), config)
-    logging.getLogger("trafal_worker").info("worker %s ready", config.worker_name)
+    logging.getLogger("tradfal_worker").info("worker %s ready", config.worker_name)
     worker.run_forever(stop)
     return 0
 

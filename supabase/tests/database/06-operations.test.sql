@@ -73,7 +73,7 @@ select is((select snapshot ->> 'body' from public.reports where target_type = 'c
 
 -- =================================================================== RECLAMOS DE COPYRIGHT
 insert into public.copyright_claims (claimant_name, claimant_email, work_description, infringing_urls, statement_good_faith, statement_accuracy, signature)
-values ('Estudio Pixel SRL', 'legales@estudiopixel.test', 'Los personajes de nuestro juego "Zorro Azul"', array['https://trafal.example/games/juego-de-ana'], true, true, 'María Gómez');
+values ('Estudio Pixel SRL', 'legales@estudiopixel.test', 'Los personajes de nuestro juego "Zorro Azul"', array['https://tradfal.example/games/juego-de-ana'], true, true, 'María Gómez');
 select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
 select is((select count(*) from public.copyright_claims), 0::bigint, 'una cuenta común no ve los reclamos');
 select throws_ok($$ insert into public.copyright_claims (claimant_name, claimant_email, work_description, infringing_urls, statement_good_faith, statement_accuracy, signature) values ('X', 'x@x.test', 'una descripción larga', array['https://x.test'], true, true, 'X') $$, '42501', null, 'los reclamos no se crean por tabla (formulario público = función)');

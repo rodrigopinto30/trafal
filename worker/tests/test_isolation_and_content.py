@@ -1,9 +1,9 @@
 import pytest
 
 from tests.conftest import INDEX  # noqa: F401
-from trafal_worker.content_types import FALLBACK_CONTENT_TYPE, describe_file
-from trafal_worker.isolation import needs_cross_origin_isolation
-from trafal_worker.rules import UploadRules
+from tradfal_worker.content_types import FALLBACK_CONTENT_TYPE, describe_file
+from tradfal_worker.isolation import needs_cross_origin_isolation
+from tradfal_worker.rules import UploadRules
 
 
 def needs_isolation(files: dict[str, str]) -> bool:

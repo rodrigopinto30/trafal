@@ -63,7 +63,8 @@ export const resetPasswordSchema = z
   .superRefine(passwordsMatch);
 
 /** Tipos de link que manda Supabase Auth por mail (los que acepta /auth/confirm). */
-export const OTP_TYPES = ["signup", "invite", "magiclink", "recovery", "email_change", "email"] as const;
+/** The links the emails really send: account confirmation, password reset and email change. Nothing else is accepted. */
+export const OTP_TYPES = ["email", "recovery", "email_change"] as const;
 
 /** Query de /auth/confirm: token_hash es opaco (lo valida Supabase); acá solo se acota su forma. */
 export const confirmQuerySchema = z.object({

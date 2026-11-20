@@ -50,7 +50,7 @@ test("sin cuenta, «Subir juego» pide iniciar sesión y vuelve al formulario de
 });
 
 test("cada opción lleva a su pantalla y queda marcada como la actual", async ({ page }) => {
-  await loginAndWait(page, "valen@trafal.test", "trafal123");
+  await loginAndWait(page, "valen@tradfal.test", "tradfal123");
   await gotoReady(page, "/");
   await (await openNav(page)).getByRole("link", { name: "Subir juego" }).click();
   await expect(page).toHaveURL(/\/games\/new$/);

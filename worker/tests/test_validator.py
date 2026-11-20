@@ -1,4 +1,5 @@
 import dataclasses
+import gzip
 import unicodedata
 from pathlib import Path
 
@@ -6,10 +7,10 @@ import pytest
 
 from tests.conftest import INDEX
 from tests.zipforge import FAT, S_IFIFO, S_IFLNK, ForgedEntry, forge_zip, simple_zip
-from trafal_worker.errors import ErrorCode, UploadRejected
-from trafal_worker.planner import PlannedFile
-from trafal_worker.rules import UploadRules
-from trafal_worker.validator import validate_archive
+from tradfal_worker.errors import ErrorCode, UploadRejected
+from tradfal_worker.planner import PlannedFile
+from tradfal_worker.rules import UploadRules
+from tradfal_worker.validator import validate_archive
 
 
 def reject(path: Path, rules: UploadRules) -> UploadRejected:
@@ -89,7 +90,8 @@ class TestValidArchives:
 
     def test_accepts_precompressed_assets_with_a_second_extension(self, work: Path, rules: UploadRules) -> None:
         archive = simple_zip(
-            work / "g.zip", good({"Build/game.wasm.br": b"\x00" * 10, "Build/game.data.gz": b"\x1f\x8b" + b"\x00" * 10})
+            work / "g.zip",
+            good({"Build/game.wasm.br": b"\x00" * 10, "Build/game.data.gz": gzip.compress(b"level data " * 10)}),
         )
         assert validate_archive(archive, rules).file_count == 4
 
@@ -318,6 +320,27 @@ class TestContent:
         pe[0x80:0x84] = b"PE\x00\x00"
         assert (
             reject(simple_zip(work / "g.zip", good({"cover.png": bytes(pe)})), rules).code is ErrorCode.EXECUTABLE_FILE
+        )
+
+    def test_rejects_an_executable_or_archive_compressed_once_more_as_gz(self, work: Path, rules: UploadRules) -> None:
+        elf = gzip.compress(b"\x7fELF\x02\x01\x01" + b"\x00" * 200)
+        assert (
+            reject(simple_zip(work / "g.zip", good({"payload.bin.gz": elf})), rules).code is ErrorCode.EXECUTABLE_FILE
+        )
+        nested = gzip.compress(b"PK\x03\x04" + b"\x00" * 200)
+        assert (
+            reject(simple_zip(work / "h.zip", good({"levels.dat.gz": nested})), rules).code is ErrorCode.NESTED_ARCHIVE
+        )
+
+    def test_accepts_a_real_compressed_asset_and_refuses_a_gz_that_is_not_gzip(
+        self, work: Path, rules: UploadRules
+    ) -> None:
+        assert validate_archive(
+            simple_zip(work / "g.zip", good({"game.wasm.gz": gzip.compress(b"\x00asm" + b"\x01" * 300)})), rules
+        )
+        assert (
+            reject(simple_zip(work / "h.zip", good({"game.js.gz": b"not gzip at all"})), rules).code
+            is ErrorCode.CORRUPT_ARCHIVE
         )
 
     def test_rejects_an_executable_even_when_it_is_not_in_the_first_file(self, work: Path, rules: UploadRules) -> None:

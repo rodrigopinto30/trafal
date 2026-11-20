@@ -7,6 +7,8 @@ import { publicEnv } from "./env";
  */
 export const serverEnv = {
   supabaseUrl: process.env.SUPABASE_INTERNAL_URL || publicEnv.supabaseUrl,
+  /** The key the database asks for to accept a copyright claim: only this server holds it, after checking the captcha. */
+  claimsServerKey: process.env.CLAIMS_SERVER_KEY ?? "",
 } as const;
 
 /**
@@ -20,6 +22,7 @@ export function assertStorageEnv(): {
   accessKeyId: string;
   secretAccessKey: string;
   bucket: string;
+  hiddenBucket: string;
   quarantineBucket: string;
   gamesBucket: string;
 } {
@@ -39,6 +42,7 @@ export function assertStorageEnv(): {
     accessKeyId,
     secretAccessKey,
     bucket: process.env.S3_BUCKET_MEDIA || "media",
+    hiddenBucket: process.env.S3_BUCKET_MEDIA_HIDDEN || "media-hidden",
     quarantineBucket: process.env.S3_BUCKET_QUARANTINE || "quarantine",
     gamesBucket: process.env.S3_BUCKET_GAMES || "games",
   };

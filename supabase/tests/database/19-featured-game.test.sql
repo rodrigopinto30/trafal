@@ -24,7 +24,9 @@ create function pg_temp.this_week() returns date language sql as $$ select date_
 -- ------------------------------------------------------------------ an admin chooses
 select tests.authenticate_as('d0000000-0000-0000-0000-0000000000ad');
 select is(public.set_featured_game('11111111-1111-1111-1111-111111111101', null, '  A lovely first game  '), pg_temp.this_week(), 'the admin chooses a game for the current week, and gets the week back');
+select tests.clear_authentication();
 select is((select game_id::text || '|' || quote || '|' || (chosen_by = 'd0000000-0000-0000-0000-0000000000ad')::text from public.featured_games where week_start = pg_temp.this_week()), '11111111-1111-1111-1111-111111111101|A lovely first game|true', 'it is saved with the trimmed quote and who chose it');
+select tests.authenticate_as('d0000000-0000-0000-0000-0000000000ad');
 select is((select action || '|' || admin_username || '|' || target_type || '|' || target_id::text || '|' || reason from public.moderation_log order by id desc limit 1), 'feature_game|admina|featured|11111111-1111-1111-1111-111111111101|week ' || pg_temp.this_week(), 'and the log says who, what and which game');
 
 select is(public.set_featured_game('11111111-1111-1111-1111-111111111102', null, '   '), pg_temp.this_week(), 'choosing again for the same week replaces the pick');

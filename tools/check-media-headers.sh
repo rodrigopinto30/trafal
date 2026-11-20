@@ -9,7 +9,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 url="${1:-}"
 if [ -z "$url" ]; then
-  object=$(docker exec supabase_db_trafal psql -U postgres -At -c "select name from storage.objects where bucket_id = 'media' order by created_at desc limit 1" 2>/dev/null || true)
+  object=$(docker exec supabase_db_tradfal psql -U postgres -At -c "select name from storage.objects where bucket_id = 'media' order by created_at desc limit 1" 2>/dev/null || true)
   [ -n "$object" ] || { echo "Pasá la dirección de un archivo subido, o levantá el entorno local con ./start.sh y subí una foto." >&2; exit 2; }
   url="http://127.0.0.1:54321/storage/v1/object/public/media/$object"
 fi

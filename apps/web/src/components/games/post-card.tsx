@@ -3,7 +3,7 @@ import { UserAvatar } from "@/components/brand/user-avatar";
 import { Badge, type badgeVariants } from "@/components/ui/badge";
 import { Link } from "@/i18n/link";
 import { getLocale, getTranslations } from "@/i18n/server";
-import { formatRelativeTime } from "@/lib/format";
+import { formatRelativeTime, machineDateTime } from "@/lib/format";
 import type { MyReactions } from "@/lib/games/reaction-queries";
 import type { PostKind, PostSummary } from "@/lib/games/types";
 import { ReportDialog } from "@/components/reports/report-dialog";
@@ -42,7 +42,7 @@ export async function PostCard({ post, now, showGame = true, viewer, eagerMedia 
           <Link href={`/u/${post.author.username}`} className="inline-flex min-h-11 items-center truncate rounded-lg font-semibold text-foreground hover:text-cyan hover:underline">
             {post.author.display_name}
           </Link>
-          <time dateTime={post.created_at} className="text-xs text-text-3">
+          <time dateTime={machineDateTime(post.created_at)} className="text-xs text-text-3">
             {formatRelativeTime(locale, post.created_at, now)}
           </time>
         </div>
@@ -74,7 +74,7 @@ export async function PostCard({ post, now, showGame = true, viewer, eagerMedia 
         ) : (
           <span />
         )}
-        <span className="flex items-center gap-3">
+        <div className="flex items-center gap-3">
           {viewer ? (
             <ReactionButtons
               target="post"
@@ -100,7 +100,7 @@ export async function PostCard({ post, now, showGame = true, viewer, eagerMedia 
             {post.comment_count}
             <span className="sr-only">{t("comments", { count: post.comment_count })}</span>
           </Link>
-        </span>
+        </div>
       </footer>
     </article>
   );

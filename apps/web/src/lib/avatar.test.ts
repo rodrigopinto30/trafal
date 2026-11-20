@@ -7,7 +7,7 @@ describe("avatarGradient", () => {
     expect(avatarGradient("Valen_Makes")).toEqual(avatarGradient("valen_makes"));
   });
   it("siempre devuelve uno de los degradés de la paleta", () => {
-    for (const seed of ["a", "mateo_g", "equipo_trafal", "x".repeat(40), "ñandú", ""]) {
+    for (const seed of ["a", "mateo_g", "equipo_tradfal", "x".repeat(40), "ñandú", ""]) {
       expect(AVATAR_GRADIENTS).toContainEqual(avatarGradient(seed));
     }
   });

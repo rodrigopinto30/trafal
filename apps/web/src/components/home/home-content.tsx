@@ -23,10 +23,9 @@ const SECTION_CLASS = "mx-0 w-full max-w-none px-0 pt-0";
 
 /**
  * What «/» shows when it is not the static public home: the search view (a search, filters, an order or a later page, for anyone) or
- * the home of someone who is signed in. Both have the same shape: a title (the slogan for someone signed in), the search box and the
- * filters; then either the results or, for the signed-in person with nothing searched, games first, then the news from who they follow
- * and more shelves of games. It reads the address and the
- * session, so it goes inside <Suspense>. A visitor with nothing searched (for example a session that turned out not to be valid) gets
+ * the home of someone who is signed in. Both have the same shape: a title (only for screen readers on the signed-in home), the search
+ * box with «Surprise me» and the filters; then either the results or, for the signed-in person with nothing searched, games first, then
+ * the news from who they follow and more shelves of games. It reads the address and the session, so it goes inside <Suspense>. A visitor with nothing searched (for example a session that turned out not to be valid) gets
  * the public home.
  */
 export async function HomeContent({ searchParams }: { searchParams: RawParams }) {
@@ -42,13 +41,17 @@ export async function HomeContent({ searchParams }: { searchParams: RawParams })
   return (
     <div className="mx-auto grid max-w-[1200px] grid-cols-[minmax(0,1fr)] gap-8 px-5 pt-[clamp(32px,5vw,56px)]">
       <header className="grid gap-5">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <h1 className="font-display text-[clamp(30px,5vw,44px)] leading-[1.1] font-bold text-glow-violet">
-            {signedIn ? t.rich("signedIn.slogan", {}, { accent: (chunks) => <span className="text-gradient">{chunks}</span> }) : t("search.title")}
-          </h1>
+        {exploring ? (
+          <h1 className="font-display text-[clamp(30px,5vw,44px)] leading-[1.1] font-bold text-glow-violet">{t("search.title")}</h1>
+        ) : (
+          <h1 className="sr-only">{t("signedIn.title")}</h1>
+        )}
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <div className="min-w-0 max-w-[640px] flex-[1_1_320px]">
+            <ExploreSearchBar query={query} />
+          </div>
           <SurpriseButton />
         </div>
-        <ExploreSearchBar query={query} />
       </header>
       <ExploreFilterBar query={query} />
       {exploring ? (

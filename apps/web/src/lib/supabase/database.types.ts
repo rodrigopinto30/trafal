@@ -237,26 +237,6 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"game_screenshots": {
-                  Row: {
-                    "alt_text": string,"created_at": string,"game_id": string,"id": string,"path": string,"position": number
-                  }
-                  ComputedFields: never
-                  Insert: {
-                    "alt_text"?: string,"created_at"?: string,"game_id": string,"id"?: string,"path": string,"position": number
-                  }
-                  Update: {
-                    "alt_text"?: string,"created_at"?: string,"game_id"?: string,"id"?: string,"path"?: string,"position"?: number
-                  }
-                  Relationships: [
-                    {
-      foreignKeyName: "game_screenshots_game_id_fkey"
-      columns: ["game_id"]
-isOneToOne: false
-      referencedRelation: "games"
-      referencedColumns: ["id"]
-    }
-                  ]
                 },"game_versions": {
                   Row: {
                     "attempts": number,"changelog": string,"created_at": string,"declared_size_bytes": number | null,"entry_path": string,"error_code": string | null,"error_params": NonNullable<Json>,"file_count": number | null,"game_id": string,"id": string,"label": string,"locked_at": string | null,"locked_by": string | null,"needs_isolation": boolean,"number": number,"processed_at": string | null,"quarantine_key": string | null,"scan_flags": NonNullable<Json>,"size_bytes": number | null,"status": string,"unpacked_bytes": number | null,"uploaded_at": string | null
@@ -279,14 +259,14 @@ isOneToOne: false
                   ]
                 },"games": {
                   Row: {
-                    "active_version_id": string | null,"comment_count": number,"controls": string,"cover_path": string | null,"created_at": string,"external_url": string | null,"genre_id": string | null,"id": string,"is_first_game": boolean,"like_count": number,"owner_id": string,"play_count": number,"public_id": string,"published_at": string | null,"save_count": number,"search_doc": unknown,"share_count": number,"short_description": string,"status": string,"tags": (string)[],"title": string,"updated_at": string
+                    "active_version_id": string | null,"comment_count": number,"controls": string,"cover_path": string | null,"created_at": string,"external_url": string | null,"genre_id": string | null,"gif_path": string | null,"id": string,"is_first_game": boolean,"like_count": number,"owner_id": string,"play_count": number,"public_id": string,"published_at": string | null,"save_count": number,"search_doc": unknown,"share_count": number,"short_description": string,"status": string,"tags": (string)[],"title": string,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "active_version_id"?: string | null,"comment_count"?: number,"controls"?: string,"cover_path"?: string | null,"created_at"?: string,"external_url"?: string | null,"genre_id"?: string | null,"id"?: string,"is_first_game"?: boolean,"like_count"?: number,"owner_id": string,"play_count"?: number,"public_id"?: string,"published_at"?: string | null,"save_count"?: number,"search_doc"?: unknown,"share_count"?: number,"short_description"?: string,"status"?: string,"tags"?: (string)[],"title": string,"updated_at"?: string
+                    "active_version_id"?: string | null,"comment_count"?: number,"controls"?: string,"cover_path"?: string | null,"created_at"?: string,"external_url"?: string | null,"genre_id"?: string | null,"gif_path"?: string | null,"id"?: string,"is_first_game"?: boolean,"like_count"?: number,"owner_id": string,"play_count"?: number,"public_id"?: string,"published_at"?: string | null,"save_count"?: number,"search_doc"?: unknown,"share_count"?: number,"short_description"?: string,"status"?: string,"tags"?: (string)[],"title": string,"updated_at"?: string
                   }
                   Update: {
-                    "active_version_id"?: string | null,"comment_count"?: number,"controls"?: string,"cover_path"?: string | null,"created_at"?: string,"external_url"?: string | null,"genre_id"?: string | null,"id"?: string,"is_first_game"?: boolean,"like_count"?: number,"owner_id"?: string,"play_count"?: number,"public_id"?: string,"published_at"?: string | null,"save_count"?: number,"search_doc"?: unknown,"share_count"?: number,"short_description"?: string,"status"?: string,"tags"?: (string)[],"title"?: string,"updated_at"?: string
+                    "active_version_id"?: string | null,"comment_count"?: number,"controls"?: string,"cover_path"?: string | null,"created_at"?: string,"external_url"?: string | null,"genre_id"?: string | null,"gif_path"?: string | null,"id"?: string,"is_first_game"?: boolean,"like_count"?: number,"owner_id"?: string,"play_count"?: number,"public_id"?: string,"published_at"?: string | null,"save_count"?: number,"search_doc"?: unknown,"share_count"?: number,"short_description"?: string,"status"?: string,"tags"?: (string)[],"title"?: string,"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -656,7 +636,7 @@ isOneToOne: false
 { Args: Record<PropertyKey, never>; Returns: undefined
                            },
 "edit_game":
-{ Args: { "p_controls": string,"p_cover_path": string,"p_game_id": string,"p_genre_id": string,"p_questions": (string)[],"p_screenshots": Json,"p_short_description": string,"p_tags": (string)[],"p_title": string }; Returns: undefined
+{ Args: { "p_controls": string,"p_cover_path": string,"p_game_id": string,"p_genre_id": string,"p_gif_path": string,"p_questions": (string)[],"p_short_description": string,"p_tags": (string)[],"p_title": string }; Returns: undefined
                            },
 "edit_post":
 { Args: { "p_body": string,"p_game_id": string,"p_highlight": string,"p_kind": string,"p_media": Json,"p_post_id": string }; Returns: undefined
@@ -723,7 +703,7 @@ isOneToOne: false
 { Args: { "p_message": string,"p_target_id": string,"p_target_type": string }; Returns: string
                            },
 "submit_copyright_claim":
-{ Args: { "p_claimant_email": string,"p_claimant_name": string,"p_claimant_org": string,"p_game_id": string,"p_infringing_urls": (string)[],"p_original_url": string,"p_post_id": string,"p_signature": string,"p_statement_accuracy": boolean,"p_statement_good_faith": boolean,"p_work_description": string }; Returns: string
+{ Args: { "p_claimant_email": string,"p_claimant_name": string,"p_claimant_org": string,"p_game_id": string,"p_infringing_urls": (string)[],"p_original_url": string,"p_post_id": string,"p_server_key": string,"p_signature": string,"p_statement_accuracy": boolean,"p_statement_good_faith": boolean,"p_work_description": string }; Returns: string
                            },
 "submit_counter_notice":
 { Args: { "p_accuracy": boolean,"p_email": string,"p_good_faith": boolean,"p_message": string,"p_name": string,"p_target_id": string,"p_target_type": string }; Returns: string
@@ -739,6 +719,11 @@ isOneToOne: false
                            },
 "username_available":
 { Args: { "p_username": string }; Returns: boolean
+                           },
+"version_upload_target":
+{ Args: { "p_version_id": string }; Returns: {
+              "declared_size_bytes": number,"quarantine_key": string
+            }[]
                            }
           }
           Enums: {

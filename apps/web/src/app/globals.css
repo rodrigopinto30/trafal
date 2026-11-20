@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* =============================================================================================
-   TRAFAL · tokens de diseño
+   TRADFAL · tokens de diseño
    Estilo oscuro, neón moderado, inspiración retro/pixel sin exagerar.
    La paleta de abajo es la ÚNICA fuente de colores: los tests de contraste (design/contrast.test.ts)
    leen estos valores y exigen ≥ 4,5:1 en cada par de texto/fondo.
@@ -15,46 +15,46 @@
   color-scheme: dark;
 
   /* Superficies */
-  --trafal-bg: #07060e;
-  --trafal-surface: #110f1e; /* tarjetas: se usan al 90 % de opacidad */
-  --trafal-panel: #0e0c1c; /* paneles flotantes: menús, diálogos, nav */
+  --tradfal-bg: #07060e;
+  --tradfal-surface: #110f1e; /* tarjetas: se usan al 90 % de opacidad */
+  --tradfal-panel: #0e0c1c; /* paneles flotantes: menús, diálogos, nav */
 
   /* Texto */
-  --trafal-text: #f4f2ff;
-  --trafal-text-2: #cfcbe8;
-  --trafal-text-3: #a9a4c7;
+  --tradfal-text: #f4f2ff;
+  --tradfal-text-2: #cfcbe8;
+  --tradfal-text-3: #a9a4c7;
 
   /* Acentos. Lima SOLO para acciones de jugar; coral SOLO para me gusta / errores. */
-  --trafal-violet: #8b5cff;
-  --trafal-cyan: #2ee6ff;
-  --trafal-lime: #c6ff3d;
-  --trafal-coral: #ff5c7a;
+  --tradfal-violet: #8b5cff;
+  --tradfal-cyan: #2ee6ff;
+  --tradfal-lime: #c6ff3d;
+  --tradfal-coral: #ff5c7a;
 
   /* Botones principales y etiquetas fuertes: violeta y azul profundos (texto blanco ≥ 5,5:1) y lila claro con índigo (≥ 11:1). */
-  --trafal-violet-deep: #5a2fd6;
-  --trafal-blue-deep: #2a5fe0;
-  --trafal-violet-pale: #d9ccff;
-  --trafal-violet-ink: #1b0f4a;
+  --tradfal-violet-deep: #5a2fd6;
+  --tradfal-blue-deep: #2a5fe0;
+  --tradfal-violet-pale: #d9ccff;
+  --tradfal-violet-ink: #1b0f4a;
 
   /* Variables semánticas (las usan los componentes de shadcn) */
-  --background: var(--trafal-bg);
-  --foreground: var(--trafal-text);
-  --card: color-mix(in srgb, var(--trafal-surface) 90%, transparent);
-  --card-foreground: var(--trafal-text);
-  --popover: var(--trafal-panel);
-  --popover-foreground: var(--trafal-text);
-  --primary: var(--trafal-violet);
-  --primary-foreground: var(--trafal-bg);
-  --secondary: var(--trafal-text);
-  --secondary-foreground: var(--trafal-bg);
+  --background: var(--tradfal-bg);
+  --foreground: var(--tradfal-text);
+  --card: color-mix(in srgb, var(--tradfal-surface) 90%, transparent);
+  --card-foreground: var(--tradfal-text);
+  --popover: var(--tradfal-panel);
+  --popover-foreground: var(--tradfal-text);
+  --primary: var(--tradfal-violet);
+  --primary-foreground: var(--tradfal-bg);
+  --secondary: var(--tradfal-text);
+  --secondary-foreground: var(--tradfal-bg);
   --muted: rgb(255 255 255 / 0.06);
-  --muted-foreground: var(--trafal-text-3);
+  --muted-foreground: var(--tradfal-text-3);
   --accent: rgb(139 92 255 / 0.18);
   --accent-foreground: #ffffff;
-  --destructive: var(--trafal-coral);
+  --destructive: var(--tradfal-coral);
   --border: rgb(255 255 255 / 0.08);
   --input: rgb(255 255 255 / 0.14);
-  --ring: var(--trafal-cyan);
+  --ring: var(--tradfal-cyan);
   --radius: 1.5rem; /* 24 px: tarjetas con bordes muy redondeados */
 }
 
@@ -79,19 +79,19 @@
   --color-ring: var(--ring);
 
   /* Marca */
-  --color-violet: var(--trafal-violet);
-  --color-cyan: var(--trafal-cyan);
-  --color-lime: var(--trafal-lime);
-  --color-coral: var(--trafal-coral);
-  --color-violet-deep: var(--trafal-violet-deep);
-  --color-blue-deep: var(--trafal-blue-deep);
-  --color-violet-pale: var(--trafal-violet-pale);
-  --color-violet-ink: var(--trafal-violet-ink);
-  --color-ink: var(--trafal-bg); /* texto oscuro sobre botones de acento */
-  --color-panel: var(--trafal-panel);
-  --color-surface: var(--trafal-surface);
-  --color-text-2: var(--trafal-text-2);
-  --color-text-3: var(--trafal-text-3);
+  --color-violet: var(--tradfal-violet);
+  --color-cyan: var(--tradfal-cyan);
+  --color-lime: var(--tradfal-lime);
+  --color-coral: var(--tradfal-coral);
+  --color-violet-deep: var(--tradfal-violet-deep);
+  --color-blue-deep: var(--tradfal-blue-deep);
+  --color-violet-pale: var(--tradfal-violet-pale);
+  --color-violet-ink: var(--tradfal-violet-ink);
+  --color-ink: var(--tradfal-bg); /* texto oscuro sobre botones de acento */
+  --color-panel: var(--tradfal-panel);
+  --color-surface: var(--tradfal-surface);
+  --color-text-2: var(--tradfal-text-2);
+  --color-text-3: var(--tradfal-text-3);
 
   /* Tipografías: Oxanium (títulos), Space Grotesk (texto y botones), Pixelify Sans (logo y etiquetas chicas) */
   --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
@@ -118,16 +118,16 @@
   --shadow-float: 0 12px 40px rgb(0 0 0 / 0.45);
 
   /* Degradé principal violeta → cian y bordes de marca */
-  --background-image-brand: linear-gradient(90deg, var(--trafal-violet), var(--trafal-cyan));
-  --background-image-action: linear-gradient(90deg, var(--trafal-violet-deep), var(--trafal-blue-deep));
-  --background-image-brand-diag: linear-gradient(135deg, var(--trafal-violet), var(--trafal-cyan));
+  --background-image-brand: linear-gradient(90deg, var(--tradfal-violet), var(--tradfal-cyan));
+  --background-image-action: linear-gradient(90deg, var(--tradfal-violet-deep), var(--tradfal-blue-deep));
+  --background-image-brand-diag: linear-gradient(135deg, var(--tradfal-violet), var(--tradfal-cyan));
   --background-image-nav-border: linear-gradient(
     90deg,
     rgb(139 92 255 / 0.95),
     rgb(46 230 255 / 0.75) 55%,
     rgb(198 255 61 / 0.55)
   );
-  --background-image-feature-border: linear-gradient(120deg, var(--trafal-lime), var(--trafal-cyan) 45%, var(--trafal-violet));
+  --background-image-feature-border: linear-gradient(120deg, var(--tradfal-lime), var(--tradfal-cyan) 45%, var(--tradfal-violet));
   --background-image-dots: radial-gradient(rgb(255 255 255 / 0.1) 1px, transparent 1.4px);
 
   --animate-aurora-a: aurora-a 24s ease-in-out infinite;
@@ -196,6 +196,13 @@
     overflow-x: clip;
   }
 
+  /* La barra de navegación es fija arriba: lo que se enfoca o se abre con un enlace queda debajo de ella (WCAG 2.4.11). Va en el
+     contenido y no como scroll-padding del html: con eso, devolverle el foco a un botón de la barra (al cerrar un menú) subía la página. */
+  main *,
+  footer * {
+    scroll-margin-top: 6rem;
+  }
+
   h1,
   h2,
   h3,
@@ -205,7 +212,7 @@
 
   /* Foco SIEMPRE visible (accesibilidad): anillo cian neón. */
   :focus-visible {
-    outline: 2px solid var(--trafal-cyan);
+    outline: 2px solid var(--tradfal-cyan);
     outline-offset: 2px;
   }
 

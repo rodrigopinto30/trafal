@@ -1,6 +1,6 @@
-# Trafal · servicios propios. Supabase lo levanta su CLI oficial (también sobre Docker) y comparte su red.
+# Tradfal · servicios propios. Supabase lo levanta su CLI oficial (también sobre Docker) y comparte su red.
 # Se maneja con ./start.sh y ./stop.sh; no hace falta llamar a docker compose a mano.
-name: trafal
+name: tradfal
 
 services:
   web:
@@ -8,7 +8,8 @@ services:
       context: .
       dockerfile: docker/web.Dockerfile
       target: dev
-    image: trafal-web:dev
+    image: tradfal-web:dev
+    restart: unless-stopped
     # Corre con tu usuario: los archivos que genera (node_modules, .next) no quedan de root.
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     working_dir: /app
@@ -19,15 +20,15 @@ services:
       NEXT_PUBLIC_SITE_URL: ${SITE_URL:-http://localhost:3000}
       NEXT_PUBLIC_SUPABASE_URL: ${SUPABASE_PUBLIC_URL}
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY}
-      SUPABASE_INTERNAL_URL: http://supabase_kong_trafal:8000
+      SUPABASE_INTERNAL_URL: http://supabase_kong_tradfal:8000
       NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: ${GOOGLE_AUTH_ENABLED:-false}
       NEXT_PUBLIC_DISCORD_AUTH_ENABLED: ${DISCORD_AUTH_ENABLED:-false}
       # Captcha de Cloudflare Turnstile (opcional en local). La clave del sitio es pública; la secreta la ve SOLO el servidor.
       NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${TURNSTILE_SITE_KEY:-}
-      NEXT_PUBLIC_LEGAL_OPERATOR_NAME: ${LEGAL_OPERATOR_NAME:-}
       NEXT_PUBLIC_LEGAL_CONTACT_EMAIL: ${LEGAL_CONTACT_EMAIL:-}
-      NEXT_PUBLIC_LEGAL_JURISDICTION: ${LEGAL_JURISDICTION:-}
       TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+      # Clave con la que la web firma los reclamos de derechos de autor ante la base (la genera ./start.sh; solo la ve el servidor).
+      CLAIMS_SERVER_KEY: ${CLAIMS_SERVER_KEY:-}
       # Almacenamiento de imágenes (S3 compatible: en producción, Cloudflare R2). Las credenciales las ve SOLO el servidor;
       # el navegador únicamente conoce la URL pública de lectura (NEXT_PUBLIC_MEDIA_URL).
       S3_ENDPOINT: ${S3_ENDPOINT}
@@ -36,6 +37,7 @@ services:
       S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
       S3_PUBLIC_ENDPOINT: ${S3_PUBLIC_ENDPOINT}
       S3_BUCKET_MEDIA: ${S3_BUCKET_MEDIA:-media}
+      S3_BUCKET_MEDIA_HIDDEN: ${S3_BUCKET_MEDIA_HIDDEN:-media-hidden}
       S3_BUCKET_QUARANTINE: ${S3_BUCKET_QUARANTINE:-quarantine}
       S3_BUCKET_GAMES: ${S3_BUCKET_GAMES:-games}
       NEXT_PUBLIC_MEDIA_URL: ${MEDIA_PUBLIC_URL}
@@ -45,8 +47,9 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       - ./:/app
+    # Solo en esta máquina: para abrir la web desde el celular por la red, WEB_BIND=0.0.0.0 en .env.
     ports:
-      - "${WEB_PORT:-3000}:3000"
+      - "${WEB_BIND:-127.0.0.1}:${WEB_PORT:-3000}:3000"
     networks: [default, supabase]
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then((r) => process.exit(r.status < 500 ? 0 : 1)).catch(() => process.exit(1))"]
@@ -61,14 +64,14 @@ services:
     build:
       context: .
       dockerfile: docker/gateway.Dockerfile
-    image: trafal-gateway:run
+    image: tradfal-gateway:run
     restart: unless-stopped
     init: true
     environment:
       PORT: 4000
       GAMES_BASE_URL: ${GAMES_BASE_URL}
       SITE_URL: ${SITE_URL:-http://localhost:3000}
-      SUPABASE_URL: http://supabase_kong_trafal:8000
+      SUPABASE_URL: http://supabase_kong_tradfal:8000
       SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY}
       S3_ENDPOINT: ${S3_ENDPOINT}
       S3_REGION: ${S3_REGION:-local}
@@ -78,7 +81,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      - "${GAMES_PORT:-4000}:4000"
+      - "${GAMES_BIND:-127.0.0.1}:${GAMES_PORT:-4000}:4000"
     networks: [default, supabase]
     read_only: true
     tmpfs:
@@ -102,7 +105,7 @@ services:
       context: .
       dockerfile: docker/worker.Dockerfile
       target: run
-    image: trafal-worker:run
+    image: tradfal-worker:run
     restart: unless-stopped
     init: true
     environment:
@@ -127,7 +130,7 @@ services:
     pids_limit: 128
     mem_limit: 1g
     healthcheck:
-      test: ["CMD", "python", "-m", "trafal_worker.healthcheck"]
+      test: ["CMD", "python", "-m", "tradfal_worker.healthcheck"]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -139,5 +142,5 @@ volumes:
 networks:
   # La crea el CLI de Supabase al hacer `supabase start` (por eso start.sh levanta Supabase primero).
   supabase:
-    name: supabase_network_trafal
+    name: supabase_network_tradfal
     external: true

@@ -2,21 +2,21 @@ import { expect, test } from "@playwright/test";
 import { gotoReady } from "./helpers/session";
 
 /**
- * The four legal documents: each one is a real text in both languages (not a placeholder), says it is a draft while it is one,
+ * The four legal documents: each one is a real text in both languages (not a placeholder), final (no draft mark, no gap to fill in),
  * has a table of contents that jumps to its sections, and never shows a raw {token}. The signup form links to the terms.
  */
 const DOCUMENTS = [
-  { path: "/legal/terms", es: "Términos y condiciones", en: "Terms and conditions", firstSection: "Quiénes somos y qué es Trafal" },
-  { path: "/legal/privacy", es: "Política de privacidad", en: "Privacy policy", firstSection: "Quién es responsable de tus datos" },
+  { path: "/legal/terms", es: "Términos y condiciones", en: "Terms and conditions", firstSection: "Qué es Tradfal" },
+  { path: "/legal/privacy", es: "Política de privacidad", en: "Privacy policy", firstSection: "Quién cuida tus datos" },
   { path: "/legal/guidelines", es: "Normas de la comunidad", en: "Community guidelines", firstSection: "La idea" },
-  { path: "/legal/copyright", es: "Derechos de autor", en: "Copyright", firstSection: "Nuestro principio" },
+  { path: "/legal/copyright", es: "Derechos de autor", en: "Copyright", firstSection: "La regla" },
 ] as const;
 
 for (const document of DOCUMENTS) {
-  test(`${document.path}: texto completo en español, marcado como borrador, con índice que lleva a cada sección`, async ({ page }) => {
+  test(`${document.path}: texto completo y definitivo en español, con índice que lleva a cada sección`, async ({ page }) => {
     await gotoReady(page, document.path);
     await expect(page.getByRole("heading", { level: 1, name: document.es })).toBeVisible();
-    await expect(page.getByText("Borrador sujeto a revisión legal")).toBeVisible();
+    await expect(page.getByText(/Borrador sujeto a revisión|Este documento es un borrador|a completar/)).toHaveCount(0);
     await expect(page.getByText(/Última actualización: \d{1,2} de \w+ de \d{4}/)).toBeVisible();
     await expect(page.getByText("Estamos terminando de redactar este documento")).toHaveCount(0);
 
@@ -37,7 +37,7 @@ for (const document of DOCUMENTS) {
   test(`${document.path}: existe en inglés`, async ({ page }) => {
     await gotoReady(page, `/en${document.path}`);
     await expect(page.getByRole("heading", { level: 1, name: document.en })).toBeVisible();
-    await expect(page.getByText("Draft pending legal review")).toBeVisible();
+    await expect(page.getByText(/Draft pending legal review|This document is a draft|to be filled in/)).toHaveCount(0);
     await expect(page.getByRole("navigation", { name: "Contents" })).toBeVisible();
     expect(await page.locator("article").innerText()).not.toMatch(/\{\w+\}/);
   });

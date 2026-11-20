@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { CaptchaField, captchaEnabled } from "@/components/security/captcha-field";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { FormMessage } from "@/components/ui/form-message";
@@ -17,6 +18,7 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
   const [state, formAction, pending] = useActionState(loginAction, initialFormState);
   // Controlada: React 19 vacía los campos no controlados al terminar la acción, y la contraseña nunca vuelve del servidor.
   const [password, setPassword] = useState("");
+  const [captchaReady, setCaptchaReady] = useState(!captchaEnabled);
   const message = state.message ?? (state.status === "idle" ? initialError : undefined);
 
   return (
@@ -55,7 +57,9 @@ export function LoginForm({ next, initialError }: { next: string; initialError?:
         )}
       </Field>
 
-      <Button type="submit" size="lg" disabled={pending}>
+      <CaptchaField action="login" resetKey={state} onReadyChange={setCaptchaReady} />
+
+      <Button type="submit" size="lg" disabled={pending || !captchaReady}>
         {pending ? t("login.submitting") : t("login.submit")}
       </Button>
     </form>

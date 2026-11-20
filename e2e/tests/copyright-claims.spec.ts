@@ -22,21 +22,21 @@ async function fillClaim(target: Page, links: string) {
   await target.getByLabel("Organización o empresa (opcional)").fill("Estudio Carla");
   await target.getByLabel("Qué obra es tuya y por qué creés que la copiaron").fill("Una hoja de sprites que dibujé en 2024 y publiqué en mi sitio.");
   await target.getByLabel("Enlace a la obra original (opcional)").fill("https://example.com/mi-obra");
-  await target.getByLabel("Enlaces a lo que reclamás en Trafal").fill(links);
+  await target.getByLabel("Enlaces a lo que reclamás en Tradfal").fill(links);
   await target.getByLabel("Firma (escribí tu nombre completo)").fill("Carla Titular");
   await target.getByLabel(/Creo de buena fe/).check();
   await target.getByLabel(/Declaro que la información/).check();
 }
 
 test.beforeAll(async ({ browser }, testInfo) => {
-  email = `e2e_claim_${uniqueSuffix(testInfo.project.name)}@trafal.test`;
+  email = `e2e_claim_${uniqueSuffix(testInfo.project.name)}@tradfal.test`;
   visitor = await (await browser.newContext({ ...testInfo.project.use })).newPage();
   admin = await (await browser.newContext({ ...testInfo.project.use })).newPage();
-  await loginAndWait(admin, "admin@trafal.test", "trafal123");
+  await loginAndWait(admin, "admin@tradfal.test", "tradfal123");
 });
 
 test.afterAll(async () => {
-  const token = await accessTokenOf("admin@trafal.test", "trafal123");
+  const token = await accessTokenOf("admin@tradfal.test", "tradfal123");
   const row = await publicGame(GAME, "id,status");
   if (row?.status === "hidden") await callRpc("moderate_content", { p_target_type: "game", p_target_id: row.id, p_action: "restore", p_reason: "Limpieza de la prueba" }, token);
   await visitor?.context().close();
@@ -51,7 +51,7 @@ test("desde la página de derechos de autor se llega al formulario, sin necesida
   await expect(visitor.getByText("No hace falta tener una cuenta.")).toBeVisible();
 });
 
-test("el formulario avisa de lo que falta y de enlaces que no son de Trafal", async () => {
+test("el formulario avisa de lo que falta y de enlaces que no son de Tradfal", async () => {
   await gotoReady(visitor, "/legal/copyright/claim");
   await visitor.getByRole("button", { name: "Enviar reclamo" }).click();
   await expect(visitor.getByText("Escribí tu nombre completo.").first()).toBeVisible();
@@ -61,7 +61,7 @@ test("el formulario avisa de lo que falta y de enlaces que no son de Trafal", as
 
   await fillClaim(visitor, "https://otro-sitio.example/games/colectivo-152");
   await visitor.getByRole("button", { name: "Enviar reclamo" }).click();
-  await expect(visitor.getByText("Ninguno de los enlaces es de un juego o un avance de Trafal que esté publicado.")).toBeVisible();
+  await expect(visitor.getByText("Ninguno de los enlaces es de un juego o un avance de Tradfal que esté publicado.")).toBeVisible();
   await expect(visitor.getByLabel("Tu nombre completo", { exact: true })).toHaveValue("Carla Titular");
 });
 

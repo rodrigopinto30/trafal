@@ -11,3 +11,14 @@ storeDir: .pnpm-store
 allowBuilds:
   sharp: false
   unrs-resolver: false
+
+# Cadena de suministro: una versión publicada hace menos de 7 días no se instala (da tiempo a que se detecte si era maliciosa),
+# las dependencias de las dependencias solo vienen del registro (nada de git ni de URLs sueltas) y una actualización no puede bajar
+# las garantías de procedencia que ya tenía un paquete.
+minimumReleaseAge: 10080
+blockExoticSubdeps: true
+trustPolicy: no-downgrade
+# Excepción revisada a mano (2026-11-19): esta versión, que trae eslint-config-next solo para desarrollo, se publicó sin la
+# procedencia que tenían las anteriores. Vale solo para esa versión exacta: una nueva vuelve a pasar por la regla.
+trustPolicyExclude:
+  - eslint-import-resolver-typescript@3.10.1

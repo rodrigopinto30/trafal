@@ -36,12 +36,12 @@ async function expectSecure(response: Response): Promise<void> {
 }
 
 describe("serving a game", () => {
-  it("serves the entry file inside a frame of Trafal", async () => {
+  it("serves the entry file inside a frame of Tradfal", async () => {
     const response = await handle(request(HOST, "/", { headers: IFRAME }));
     expect(response.status).toBe(200);
     const body = await response.text();
     expect(body).toContain("<h1>hola</h1>");
-    expect(body).toContain("data-trafal-bridge");
+    expect(body).toContain("data-tradfal-bridge");
     expect(response.headers.get("content-type")).toBe(HTML);
     await expectSecure(response);
   });
@@ -88,8 +88,8 @@ describe("serving a game", () => {
   });
 });
 
-describe("HTML is only for frames of Trafal", () => {
-  it.each([["document"], ["frame"], ["embed"], ["object"], ["script"], [""]])("redirects Sec-Fetch-Dest «%s» to the game page on Trafal", async (destination) => {
+describe("HTML is only for frames of Tradfal", () => {
+  it.each([["document"], ["frame"], ["embed"], ["object"], ["script"], [""]])("redirects Sec-Fetch-Dest «%s» to the game page on Tradfal", async (destination) => {
     const response = await handle(request(HOST, "/", { headers: destination ? { "sec-fetch-dest": destination } : {} }));
     expect(response.status).toBe(302);
     expect(response.headers.get("location")).toBe("http://localhost:3000/games/orbita");
@@ -119,11 +119,35 @@ describe("HTML is only for frames of Trafal", () => {
     expect((await handle(request(HOST, "/game.js", { headers: { "sec-fetch-dest": "document" } }))).status).toBe(200);
   });
 
-  it("an SVG or text file named like a page is still just that type", async () => {
+  it("a text file named like a page is still just that type", async () => {
     storage.put("orbita/v2/trap.txt", "<script>alert(1)</script>", "text/plain; charset=utf-8");
     const response = await handle(request(HOST, "/trap.txt", { headers: { "sec-fetch-dest": "document" } }));
     expect(response.headers.get("content-type")).toBe("text/plain; charset=utf-8");
     expect(response.headers.get("x-content-type-options")).toBe("nosniff");
+  });
+
+  it("an SVG or XML file opened as a page sends the person to the game's page, like HTML (they run scripts as pages)", async () => {
+    storage.put("orbita/v2/login.svg", "<svg xmlns='http://www.w3.org/2000/svg'><script>alert(1)</script></svg>", "image/svg+xml");
+    storage.put("orbita/v2/login.xml", "<html xmlns='http://www.w3.org/1999/xhtml'><script>alert(1)</script></html>", "application/xml");
+    for (const path of ["/login.svg", "/login.xml"]) {
+      for (const destination of ["document", "iframe", null]) {
+        const headers: Record<string, string> = destination ? { "sec-fetch-dest": destination } : {};
+        const response = await handle(request(HOST, path, { headers }));
+        expect(response.status, `${path} as ${destination}`).toBe(302);
+        expect(response.headers.get("location")).toBe("http://localhost:3000/games/orbita");
+      }
+    }
+  });
+
+  it("but the game can still use an SVG as an image or read an XML file, which then cannot run anything", async () => {
+    storage.put("orbita/v2/icon.svg", "<svg xmlns='http://www.w3.org/2000/svg'/>", "image/svg+xml");
+    storage.put("orbita/v2/level.xml", "<level/>", "application/xml");
+    const image = await handle(request(HOST, "/icon.svg", { headers: { "sec-fetch-dest": "image" } }));
+    expect(image.status).toBe(200);
+    expect(image.headers.get("content-security-policy")).toContain("sandbox");
+    const data = await handle(request(HOST, "/level.xml", { headers: { "sec-fetch-dest": "empty" } }));
+    expect(data.status).toBe(200);
+    expect(data.headers.get("content-security-policy")).toBe("default-src 'none'; img-src data:; style-src 'unsafe-inline'; sandbox");
   });
 });
 
@@ -221,9 +245,9 @@ describe("content security policy", () => {
     expect(directive("media-src")).not.toContain("http");
   });
 
-  it("can only be framed by Trafal", () => {
+  it("can only be framed by Tradfal", () => {
     expect(directive("frame-ancestors")).toBe("frame-ancestors http://localhost:3000");
-    expect(contentSecurityPolicy(makeConfig({ SITE_URL: "https://trafal.example/x" }))).toContain("frame-ancestors https://trafal.example");
+    expect(contentSecurityPolicy(makeConfig({ SITE_URL: "https://tradfal.example/x" }))).toContain("frame-ancestors https://tradfal.example");
   });
 
   it("allows what game engines need: inline scripts, eval and WebAssembly", () => {

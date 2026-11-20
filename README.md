@@ -1,4 +1,4 @@
-# Trafal
+# Tradfal
 
 La red social para quienes hacen videojuegos que se juegan en el navegador. Subís tu juego, mostrás cómo lo hacés con avances (devlogs), y la comunidad lo juega gratis, lo comenta y te da feedback. No es una tienda ni una competencia: es un lugar para quienes están empezando a crear y quieren que alguien juegue lo que hicieron.
 
@@ -6,7 +6,7 @@ Para levantar el proyecto y correr las pruebas: [docs/DESARROLLO.md](docs/DESARR
 
 En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está planificado.
 
-## Qué hace Trafal
+## Qué hace Tradfal
 
 ### Cuentas y acceso
 
@@ -55,7 +55,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Hoy**
 - **Cada página dice quién es**: título, descripción, **dirección canónica** (siempre la limpia: una vista filtrada de la portada, Comunidad o Creadores apunta a la base y pide no figurar), **su versión en el otro idioma** (`hreflang`, con el español como predeterminado) y las tarjetas de **Open Graph** y de **Twitter**. Las pantallas de acceso, las listas de seguidores y las páginas que no existen piden no figurar.
-- **Imagen para compartir** en la portada, en cada juego, en cada perfil y en cada avance (1200 × 630, con los colores de Trafal, el nombre, quién lo hizo y, en los juegos, «Jugá gratis en el navegador»), en el idioma de la página. Lo que escribe una persona solo se dibuja como texto, recortado.
+- **Imagen para compartir** en la portada, en cada juego, en cada perfil y en cada avance (1200 × 630, con los colores de Tradfal, el nombre, quién lo hizo y, en los juegos, «Jugá gratis en el navegador»), en el idioma de la página. Lo que escribe una persona solo se dibuja como texto, recortado.
 - **Datos estructurados** para los buscadores: el sitio con su buscador, cada juego como videojuego (gratis, en el navegador, con quién lo hizo y cuántas partidas lleva), cada perfil como persona y cada avance como publicación. Nada de lo que escribe una persona puede cerrar la etiqueta que los contiene.
 - **`robots.txt` y `sitemap.xml`**: el sitemap lista las páginas fijas, todos los juegos publicados, los creadores y los avances, cada uno en los dos idiomas y con sus traducciones. `robots.txt` deja afuera las zonas privadas (cuenta, formularios, administración del juego) y las rutas técnicas. **Un sitio que no es público (localhost, `.local`, `.test`) se cierra por completo**: no se indexa una copia de prueba por error; en producción hay que poner el dominio real en `SITE_URL`.
 
@@ -88,7 +88,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 ### Reclamos de derechos de autor
 
 **Hoy**
-- Quien es titular de una obra y cree que algo en Trafal la infringe puede mandar un **reclamo** desde un **formulario público** (`/legal/copyright/claim`, con enlace desde la página de Derechos de autor), **sin cuenta**: nombre, email, organización (opcional), qué obra es suya, enlace a la original (opcional), **enlaces a lo reclamado** (juegos o avances de Trafal), las dos **declaraciones** (buena fe y exactitud) y su firma.
+- Quien es titular de una obra y cree que algo en Tradfal la infringe puede mandar un **reclamo** desde un **formulario público** (`/legal/copyright/claim`, con enlace desde la página de Derechos de autor), **sin cuenta**: nombre, email, organización (opcional), qué obra es suya, enlace a la original (opcional), **enlaces a lo reclamado** (juegos o avances de Tradfal), las dos **declaraciones** (buena fe y exactitud) y su firma.
 - Un reclamo tiene que apuntar a **algo publicado** del sitio (el servidor lo deduce de los enlaces). Para que el formulario no sirva para inundar al equipo: **3 reclamos por día por email** y **60 por hora** en todo el sitio. Al enviar se muestra un **número de referencia**.
 - Los datos del reclamo los ve **solo la administración** (no la autoría del contenido). En **Administración → Reclamos** se puede **tomar**, **descartar**, **marcar como resuelto** u **ocultar lo reclamado y resolver**: lo reclamado se oculta (reversible, como cualquier moderación), su autoría recibe un aviso con el **motivo** y todo queda en el registro. Si se aclara el reclamo, se puede **restaurar**.
 - **No se manda nada por email** a quien reclama: el sitio no envía emails de este tipo (solo avisos dentro del sitio).
@@ -137,22 +137,22 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Hoy**
 - En *Configuración → Cuenta* podés **eliminar tu cuenta**. Para confirmar escribís tu @usuario **y tu contraseña** (o tu email, si tu cuenta entra solo con Google o Discord y no tiene contraseña): una sesión abierta en una pantalla ajena no alcanza. El botón se habilita cuando están completos y el servidor lo vuelve a comprobar todo; una contraseña equivocada no borra nada ni cierra tu sesión.
-- Se borra **todo lo tuyo**, de verdad y sin vuelta atrás: tu perfil y tu inicio de sesión, tus juegos (con versiones, portadas, capturas y los archivos publicados), tus avances con sus imágenes y videos, tus comentarios, me gusta, guardados, seguidos y avisos, y tu foto. Los comentarios que otras personas dejaron en tus juegos se van con ellos.
+- Se borra **todo lo tuyo**, de verdad y sin vuelta atrás: tu perfil y tu inicio de sesión, tus juegos (con versiones, portadas, GIF y los archivos publicados), tus avances con sus imágenes y videos, tus comentarios, me gusta, guardados, seguidos y avisos, y tu foto. Los comentarios que otras personas dejaron en tus juegos se van con ellos.
 - Se conserva lo que el sitio necesita para su seguridad: el registro de moderación y los reclamos de derechos de autor sobre tu contenido (sin tu cuenta).
 - Las cuentas de administración no se pueden eliminar desde acá (primero hay que quitarles el rol), para que el sitio nunca se quede sin administración por un clic.
 
 ### Documentos legales
 
 **Hoy**
-- Los cuatro documentos están escritos, en español y en inglés: **Términos y condiciones**, **Política de privacidad**, **Normas de la comunidad** y **Derechos de autor** (`/legal/...`, enlazados desde el pie y desde el registro). Cada uno tiene su fecha de última actualización y un **índice** que lleva a cada sección.
-- Dicen lo que Trafal hace de verdad: qué datos se guardan (y que no se vende nada ni hay publicidad ni analítica de terceros), cómo funcionan la moderación, las suspensiones y los reclamos, que se puede eliminar la cuenta, y que cada juego corre aislado y bajo responsabilidad de quien juega.
-- **Son un borrador**: cada página lo avisa con una marca visible hasta que un abogado los revise. Los datos del titular (nombre, email de contacto y jurisdicción) salen de `LEGAL_OPERATOR_NAME`, `LEGAL_CONTACT_EMAIL` y `LEGAL_JURISDICTION`; si faltan, el texto muestra un hueco «a completar» y un aviso, nunca un valor inventado.
+- Los cuatro documentos están escritos, cortos y en lenguaje claro, en español y en inglés: **Términos y condiciones**, **Política de privacidad**, **Normas de la comunidad** y **Derechos de autor** (`/legal/...`, enlazados desde el pie y desde el registro). Cada uno tiene su fecha de última actualización y un **índice** que lleva a cada sección.
+- Dicen lo que Tradfal hace de verdad: qué datos se guardan (y que no se vende nada ni hay publicidad ni analítica de terceros), cómo funcionan la moderación, las suspensiones y los reclamos, que se puede eliminar la cuenta, y que cada juego corre aislado y bajo responsabilidad de quien juega.
+- **Sin titular ni jurisdicción**: el contacto es por los canales del sitio (reportar, apelar desde Configuración → Moderación y el formulario de reclamos). Si se carga `LEGAL_CONTACT_EMAIL`, los documentos también ofrecen ese email; si no, esas frases no aparecen.
 - **Aceptar de nuevo**: cuando cambian los textos se sube `TERMS_VERSION` y a las cuentas que aceptaron una versión anterior se les muestra un aviso en todas las páginas; las pantallas de la cuenta las llevan a `/accept-terms` (leer los documentos, confirmar la edad y aceptar) y vuelven a donde iban. Mientras no acepten pueden mirar el sitio, y la pantalla de eliminar la cuenta sigue disponible.
 
 ### Portada con sesión
 
 **Hoy**
-- Quien inició sesión ve **otra portada en la misma dirección** (`/` y `/en`) y con la misma estética que la búsqueda: el lema «Juegos del navegador, hechos por la comunidad» con **Sorprendeme**, el **buscador** y los **filtros** (género, motor, «funciona en celular» y orden).
+- Quien inició sesión ve **otra portada en la misma dirección** (`/` y `/en`) y con la misma estética que la búsqueda: el **buscador** junto a **Sorprendeme** y los **filtros** (género y orden), sin lema.
 - Sin nada buscado, debajo van primero los **juegos** (**Recién agregados**, 8 de una vez), luego las **Novedades de quienes seguís** (los últimos avances de los creadores que sigue, con me gusta y guardar, y un enlace al feed filtrado; si no sigue a nadie, una invitación a descubrir creadores) y después **Los más jugados** y **Primeros juegos**. No hay banners ni invitaciones a crear una cuenta.
 - Al buscar o filtrar, los resultados aparecen ahí mismo (con paginación), en lugar de las novedades y los estantes.
 - Los visitantes siguen viendo la portada pública, que no cambia (sigue estática y rápida); si buscan, ven los resultados en `/?q=…`.
@@ -161,7 +161,7 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 
 **Hoy**
 - **Creadores** (`/creators`, abierta a cualquier persona): un directorio de **quienes tienen al menos un juego publicado** (quien solo juega todavía no es creador), con foto, nombre, @usuario, ubicación, bio, los géneros que les gustan, cantidad de juegos y de seguidores, y un botón para **seguir** desde la misma tarjeta. Quien no tiene cuenta pasa por el inicio de sesión y vuelve.
-- **Buscar** por nombre o @usuario (sin importar tildes ni mayúsculas; cada palabra tiene que empezar una palabra del nombre o del @usuario), **filtrar** por el género que les gusta, y **ordenar** por más nuevos (el orden por defecto: Trafal es para quienes recién empiezan), más seguidos o con más juegos. De a 12 por página.
+- **Buscar** por nombre o @usuario (sin importar tildes ni mayúsculas; cada palabra tiene que empezar una palabra del nombre o del @usuario), **filtrar** por el género que les gusta, y **ordenar** por más nuevos (el orden por defecto: Tradfal es para quienes recién empiezan), más seguidos o con más juegos. De a 12 por página.
 - La vista vive en la dirección (`/creators?q=…&genre=…&sort=…&page=…`), con los mismos cuidados que Explorar: enlaces cortos, valores raros ignorados y páginas que no existen explicadas.
 
 ### Comunidad y compartir
@@ -207,19 +207,20 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
   - tarjeta del creador con acceso a su perfil;
   - los **avances** de ese juego y los **comentarios** con sus respuestas;
   - una invitación a crear cuenta para quien no tiene.
-- **Jugar en el navegador, sin cuenta** (botón «Jugar gratis» de la página del juego): el juego corre en un marco aislado, en proporción 16:9 que se adapta al ancho de la pantalla (el diseño es responsive; no hay opciones de medida ni de dispositivo), y se sirve desde un **dominio distinto al de Trafal** (`<id>.games…`), de modo que no puede leer tu sesión ni tu almacenamiento. El marco no puede navegar la ventana de Trafal, abrir ventanas, enviar formularios ni descargar archivos. Trae **pantalla completa** (se sale con el mismo botón, como en YouTube: en Chrome y Edge un toque de Esc va al juego y para salir con el teclado hay que mantenerlo apretado; en Firefox y Safari el navegador sigue saliendo con Esc. Donde no hay pantalla completa, un modo que ocupa toda la ventana y no se cierra con Esc), **reiniciar**, un aviso de que el juego puede tener sonido y el conteo de partidas, que no guarda IP ni datos del navegador, solo si se jugó desde computadora, celular o tableta.
+- **Jugar en el navegador, sin cuenta** (botón «Jugar gratis» de la página del juego): el juego corre en un marco aislado, en proporción 16:9 que se adapta al ancho de la pantalla (el diseño es responsive; no hay opciones de medida ni de dispositivo), y se sirve desde un **dominio distinto al de Tradfal** (`<id>.games…`), de modo que no puede leer tu sesión ni tu almacenamiento. El marco no puede navegar la ventana de Tradfal, abrir ventanas, enviar formularios ni descargar archivos. Trae **pantalla completa** (se sale con el mismo botón, como en YouTube: en Chrome y Edge un toque de Esc va al juego y para salir con el teclado hay que mantenerlo apretado; en Firefox y Safari el navegador sigue saliendo con Esc. Donde no hay pantalla completa, un modo que ocupa toda la ventana y no se cierra con Esc), **reiniciar**, un aviso de que el juego puede tener sonido y el conteo de partidas, que no guarda IP ni datos del navegador, solo si se jugó desde computadora, celular o tableta.
 - **Reportar** un juego (desde el reproductor), un avance, un comentario o un perfil (con cuenta; quien no la tiene es llevado a iniciar sesión y vuelve): motivo y detalles. «No funciona» es solo para juegos. Lo mismo no se puede reportar dos veces mientras el primer reporte siga abierto, solo se reporta lo que está **publicado**, y el equipo conserva una copia de cómo era al reportarlo. No hay botón de reporte en lo propio.
 - **Versiones de un juego**: desde la pantalla de estado, el creador sube un `.zip` nuevo con un nombre (v0.2…) y lo que cambió; la nueva versión pasa por la misma revisión y **la gente sigue jugando la actual hasta que el creador elige otra** («Usar esta versión», y también se puede volver a una anterior). Se puede renombrar cualquier versión y editar su registro de cambios. La página pública del juego muestra una sección **Versiones** con las listas, la actual marcada y sus cambios. Hasta 5 subidas por día entre todos tus juegos.
-- **Servidor de juegos**: solo responde a `GET` y `HEAD`; entrega siempre la versión activa, con tipo de contenido y codificación correctos y soporte de rangos (audio y video). Cada respuesta lleva una política que deja al juego hablar solo con su propio origen (sin pedidos externos, sin formularios, sin plugins, sin marcos anidados) y solo permite que lo muestre Trafal. Las páginas HTML solo se entregan dentro de un marco: abrir la dirección del juego directamente lleva a su página en Trafal, para que ningún juego pueda hacerse pasar por una página propia. Un juego oculto o dado de baja deja de servirse a los pocos segundos.
-- **Portadas**: la imagen que suba el creador o, mientras no haya, un arte generado con el color e ícono de su género.
-- **Subir un juego** (`/games/new`, con cuenta): título, descripción corta, género, hasta 8 etiquetas, cómo se juega, hasta 3 preguntas para quienes jueguen, portada y hasta 6 capturas (PNG, JPG o WebP de hasta 5 MB; el servidor mira los bytes reales y rechaza imágenes falsas, animadas o fuera de medida). El `.zip` (hasta 200 MB) viaja **directo del navegador a un espacio de cuarentena** con una dirección firmada que vence en una hora, con barra de progreso y la posibilidad de reintentar si se corta. El progreso es una sola tarjeta junto al botón (preparar, subir, revisar) y **espera la revisión ahí mismo**: si el `.zip` no pasa, el motivo aparece al lado del botón y se puede mandar otro `.zip` para el mismo borrador; si pasa, lleva a la **página del juego** con un aviso y el botón **Publicar juego**. **No puede haber dos juegos con el mismo nombre** (sin distinguir mayúsculas; los acentos cuentan): se avisa en el campo Título antes de subir nada, y lo mismo al editar. Hasta 5 subidas por día por persona.
+- **Servidor de juegos**: solo responde a `GET` y `HEAD`; entrega siempre la versión activa, con tipo de contenido y codificación correctos y soporte de rangos (audio y video). Cada respuesta lleva una política que deja al juego hablar solo con su propio origen (sin pedidos externos, sin formularios, sin plugins, sin marcos anidados) y solo permite que lo muestre Tradfal. Las páginas HTML solo se entregan dentro de un marco: abrir la dirección del juego directamente lleva a su página en Tradfal, para que ningún juego pueda hacerse pasar por una página propia. Un juego oculto o dado de baja deja de servirse a los pocos segundos.
+- **La imagen de cada juego**: el **GIF** que suba el creador; si no hay, su **portada**; si tampoco, un arte generado con el color e ícono de su género. Los GIF se pueden **pausar** con un botón (vale para todo el sitio y se recuerda en el navegador) y quien pidió a su sistema reducir el movimiento ve la portada en su lugar.
+- **Subir un juego** (`/games/new`, con cuenta): título, descripción corta, género, hasta 8 etiquetas, cómo se juega, hasta 3 preguntas para quienes jueguen, **una portada** (PNG, JPG o WebP de hasta 5 MB) y **un GIF** opcional (hasta 5 MB y 1920 × 1920 píxeles): una sola imagen por juego, para cuidar el espacio. El servidor mira los bytes reales y rechaza imágenes falsas, portadas animadas, GIF con datos pegados o fuera de medida. El `.zip` (hasta 200 MB) viaja **directo del navegador a un espacio de cuarentena** con una dirección firmada que vence en una hora, con barra de progreso y la posibilidad de reintentar si se corta. El progreso es una sola tarjeta junto al botón (preparar, subir, revisar) y **espera la revisión ahí mismo**: si el `.zip` no pasa, el motivo aparece al lado del botón y se puede mandar otro `.zip` para el mismo borrador; si pasa, lleva a la **página del juego** con un aviso y el botón **Publicar juego**. **No puede haber dos juegos con el mismo nombre** (sin distinguir mayúsculas; los acentos cuentan): se avisa en el campo Título antes de subir nada, y lo mismo al editar. Hasta 5 subidas por día por persona.
 - **Revisión automática del `.zip`**: un proceso aparte (el *worker*) toma cada subida, comprueba su tamaño real, la descomprime en una carpeta temporal y la valida: rechaza rutas peligrosas, ejecutables (también los disfrazados con otra extensión), archivos comprimidos adentro, tipos no permitidos, bombas de descompresión y zips sin `index.html`, y marca (sin bloquear) minería, campos de contraseña e intentos de navegar la ventana superior. Detecta el motor (Godot, Unity, GameMaker, Phaser, PICO-8, Scratch, Twine, Construct) y si necesita aislamiento. **Solo si todo pasa** copia los archivos al espacio de juegos, con su tipo de contenido y su codificación (`.wasm.br`, `.gz`), y borra el zip de la cuarentena. Si algo falla por un problema nuestro, lo reintenta hasta 3 veces.
+- **Guía «Cómo subir un juego»** (`/help/upload`, enlazada desde el pie y desde el formulario): paso a paso para exportar y armar el `.zip` (con ejemplos de carpetas bien y mal armadas), los límites reales (salen de las mismas constantes que aplica el sitio), los tipos de archivo aceptados, qué puede y qué no puede hacer un juego, cómo arreglar los rechazos más comunes y preguntas frecuentes.
 - **Estado del juego** (`/games/<id>/manage`, solo para su dueño): el juego nace como borrador, que solo ve su creador, y cada versión muestra si está subiendo, en revisión, lista o con un error explicado para principiantes («Falta el archivo index.html», «No aceptamos programas ejecutables»…). La página se actualiza sola. Cuando una versión está lista, el creador puede **publicar el juego** o **bajarlo** (vuelve a borrador). Los juegos sin publicar aparecen en el propio perfil.
 - **Panel del creador en la página del juego** (solo lo ve su dueño, arriba del reproductor): estado (borrador o publicado), **Publicar juego** o **Bajar juego** (pide confirmación: deja de verse, pero se conservan comentarios, me gusta y partidas), **Editar** y **Versiones**. Un borrador tiene página, que solo ve su creador (no se indexa, sin me gusta ni comentarios); mientras su `.zip` se revisa, la página se actualiza sola.
 
 **Próximamente**
 - **Godot con hilos** (necesita aislamiento entre orígenes) y **jugar un borrador antes de publicarlo** (el dominio de juegos solo sirve juegos publicados): el reproductor avisa que todavía no se puede.
-- **Ficha completa**: mostrar en la página del juego las capturas y las preguntas de feedback, enlace externo opcional y más cupos por persona.
+- **Ficha completa**: enlace externo opcional y más cupos por persona.
 
 ### Comunidad
 
@@ -265,12 +266,13 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 **Hoy**
 - **Estética oscura con neón moderado e inspiración retro/pixel**: tipografías Oxanium, Space Grotesk y Pixelify Sans, botones en forma de píldora, barra de navegación flotante con borde neón y un fondo con aurora y píxeles flotantes que se apagan en celular y si pedís menos movimiento.
 - **Menú superior mínimo**: el nombre de la app, «Creadores», «Comunidad» y «Subir juego», y tu cuenta (Mi perfil, Configuración, Cerrar sesión). En celular se abre con una hamburguesa.
-- **Marca**: el ícono de Trafal (un **gamepad en pixel art** sobre el degradé violeta-cian) está en el logo, en la pestaña del navegador (`icon.svg`) y como ícono de pantalla de inicio (`apple-icon.png`). El título de cada pestaña es **«Trafal - <página>»** (por ejemplo «Trafal - Comunidad»).
+- **Marca**: el ícono de Tradfal (un **gamepad en pixel art** sobre el degradé violeta-cian) está en el logo, en la pestaña del navegador (`icon.svg`) y como ícono de pantalla de inicio (`apple-icon.png`). El título de cada pestaña es **«Tradfal - <página>»** (por ejemplo «Tradfal - Comunidad»).
 - **Botones y etiquetas con más contraste**: el botón principal es un degradé de violeta a azul profundos con texto blanco (≥ 5,5:1), y las etiquetas (**1ER JUEGO**, géneros, estados) van rellenas o con borde claro (≥ 7:1).
 - **Botón «Atrás»** debajo de la barra de arriba en todas las secciones (menos la portada): vuelve a la pantalla anterior y, si la sección se abrió directamente en una pestaña nueva, lleva a la portada.
 - **Cursor propio**: flecha pixelada, y la manita en todo lo que se puede apretar.
 - **Responsive**: se adapta a cualquier ancho, desde pantallas de 360 px, sin scroll horizontal y con botón para volver arriba. No hay opciones por dispositivo.
-- **Accesible**: contraste de texto de al menos 4,5:1, objetivos táctiles de al menos 44 px, uso completo con teclado, enlace «Saltar al contenido», etiquetas y errores conectados para lectores de pantalla, y una auditoría automática WCAG 2.2 AA sobre las pantallas principales.
+- **Accesible**: contraste de texto de al menos 4,5:1, objetivos táctiles de al menos 44 px, uso completo con teclado, enlace «Saltar al contenido», etiquetas y errores conectados para lectores de pantalla, y una auditoría automática WCAG 2.2 AA sobre todas las pantallas. Además se prueba lo que la auditoría no ve (reflujo a 320 px, espaciado de texto, foco nunca tapado por la barra, «reducir movimiento»).
+- **HTML válido**: cada pantalla pasa por el validador de la W3C en las pruebas.
 - **Los colores tienen un significado fijo**: el lima es solo para acciones de jugar y el coral solo para me gusta y errores.
 
 ### Seguridad y privacidad
@@ -280,7 +282,11 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Datos mínimos**: no se pide fecha de nacimiento ni teléfono, y las contraseñas las gestiona un servicio de autenticación que nunca las guarda en texto plano.
 - **Todo lo que escribís se limpia y se valida en el servidor**: sin HTML, sin caracteres invisibles que sirvan para falsificar nombres, con límites de longitud.
 - **Las imágenes se revisan byte a byte** antes de guardarse y solo se aceptan en tres formatos.
-- **Cabeceras de seguridad** en todo el sitio, que además no puede incrustarse en otras páginas.
+- **Cabeceras de seguridad** en todo el sitio, que además no puede incrustarse en otras páginas: una **Content-Security-Policy** que solo deja cargar scripts del propio sitio y del captcha y conectarse con Supabase y el almacenamiento, **HSTS** y cookie de sesión `Secure` cuando el sitio es https.
+- **Lo sensible pide un ingreso reciente**, controlado por la base: eliminar la cuenta (con la contraseña, o volviendo a entrar con Google o Discord) y cambiar la contraseña (solo desde el link del mail).
+- **Lo que la moderación oculta deja de verse de verdad**: sus imágenes, GIF y videos pasan a un almacenamiento privado y vuelven si se restaura.
+- **Captcha** en el registro, el login, la recuperación de contraseña, el borrado de cuenta y los reclamos. Los reclamos, además, solo los acepta la base si los firma el servidor.
+- **Revisión de seguridad** según OWASP: ver [docs/SEGURIDAD.md](docs/SEGURIDAD.md).
 - **Los archivos que sube la gente se sirven con `nosniff`** (en producción, con una regla de Cloudflare sobre el dominio de medios), para que un archivo con forma de imagen nunca se interprete como otra cosa. `tools/check-media-headers.sh` comprueba un archivo real.
 
 **Próximamente**
@@ -294,4 +300,4 @@ En esta guía, **Hoy** es lo que ya funciona y **Próximamente** lo que está pl
 - **Almacenamiento de imágenes:** Cloudflare R2 en producción y el almacenamiento S3 de Supabase en local, con el SDK de AWS.
 - **Procesamiento de juegos** *(planificado)*: worker en Python, en contenedor y desplegado en Fly.io; servido por un gateway en Cloudflare Workers.
 - **Infraestructura:** Docker y Docker Compose; pnpm y Node 24. Despliegue previsto en Vercel y Cloudflare.
-- **Calidad:** Vitest, pgTAP, Playwright con axe-core y ESLint.
+- **Calidad:** Vitest, pgTAP, Playwright con axe-core y el validador de HTML de la W3C, y ESLint.

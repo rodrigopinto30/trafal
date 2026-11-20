@@ -19,7 +19,7 @@ const PERMISSIONS_POLICY = [
 /**
  * Content-Security-Policy of a game. A game may run its own code (including eval and WebAssembly, which engines need) but
  * can only talk to its own origin: no external requests, no forms, no plugins, no nested frames, and it can only be framed
- * by Trafal. Scripts, styles and fonts may come from a short allowlist of public CDNs (Phaser and Google Fonts are common).
+ * by Tradfal. Scripts, styles and fonts may come from a short allowlist of public CDNs (Phaser and Google Fonts are common).
  */
 export function contentSecurityPolicy(config: GatewayConfig): string {
   const join = (sources: string[]) => sources.join(" ");

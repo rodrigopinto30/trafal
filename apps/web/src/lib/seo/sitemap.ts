@@ -8,6 +8,7 @@ const STATIC_PAGES: { path: string; changeFrequency: "daily" | "weekly" | "month
   { path: "/", changeFrequency: "daily", priority: 1 },
   { path: "/creators", changeFrequency: "daily", priority: 0.8 },
   { path: "/feed", changeFrequency: "daily", priority: 0.8 },
+  { path: "/help/upload", changeFrequency: "monthly", priority: 0.5 },
   { path: "/legal/terms", changeFrequency: "monthly", priority: 0.2 },
   { path: "/legal/privacy", changeFrequency: "monthly", priority: 0.2 },
   { path: "/legal/guidelines", changeFrequency: "monthly", priority: 0.2 },

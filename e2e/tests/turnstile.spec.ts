@@ -23,7 +23,7 @@ async function fillClaim(page: import("@playwright/test").Page, email: string) {
   await page.getByLabel("Tu nombre completo", { exact: true }).fill("Carla Titular");
   await page.getByLabel("Email de contacto").fill(email);
   await page.getByLabel("Qué obra es tuya y por qué creés que la copiaron").fill("Una hoja de sprites que dibujé en 2024 y publiqué en mi sitio.");
-  await page.getByLabel("Enlaces a lo que reclamás en Trafal").fill("http://localhost:3000/games/colectivo-152");
+  await page.getByLabel("Enlaces a lo que reclamás en Tradfal").fill("http://localhost:3000/games/colectivo-152");
   await page.getByLabel("Firma (escribí tu nombre completo)").fill("Carla Titular");
   await page.getByLabel(/Creo de buena fe/).check();
   await page.getByLabel(/Declaro que la información/).check();
@@ -34,9 +34,9 @@ test("el registro muestra el captcha, espera a que se resuelva y después deja c
   test.skip(MODE !== "pass", "Con la secreta que siempre falla, el registro lo decide Supabase Auth (que acá no tiene el captcha activado)");
   const submit = await openWithCaptcha(page, "/signup", /Crear cuenta/);
   const suffix = uniqueSuffix(testInfo.project.name);
-  await page.getByLabel("Email").fill(`e2e_captcha_${suffix}@trafal.test`);
-  await page.getByLabel("Contraseña", { exact: true }).fill("Trafal12345");
-  await page.getByLabel("Repetí la contraseña").fill("Trafal12345");
+  await page.getByLabel("Email").fill(`e2e_captcha_${suffix}@tradfal.test`);
+  await page.getByLabel("Contraseña", { exact: true }).fill("Tradfal12345");
+  await page.getByLabel("Repetí la contraseña").fill("Tradfal12345");
   await page.getByRole("checkbox", { name: /18 años o más/ }).check();
   await submit.click();
   await expect(page.getByRole("heading", { name: "Revisá tu email" })).toBeVisible();
@@ -49,7 +49,7 @@ test("el formulario de reclamos no deja enviar hasta que el captcha está resuel
 test("el servidor comprueba el captcha: con la secreta que siempre falla, el reclamo no se envía", async ({ page }) => {
   test.skip(MODE !== "fail", "Solo con la secreta que siempre falla");
   const submit = await openWithCaptcha(page, "/legal/copyright/claim", /Enviar reclamo/);
-  await fillClaim(page, "e2e_claim_captcha@trafal.test");
+  await fillClaim(page, "e2e_claim_captcha@tradfal.test");
   await submit.click();
   await expect(page.getByText("No pudimos comprobar que sos una persona.")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Recibimos tu reclamo" })).toHaveCount(0);
@@ -58,7 +58,7 @@ test("el servidor comprueba el captcha: con la secreta que siempre falla, el rec
 test("el reclamo con el captcha resuelto se envía", async ({ page }, testInfo) => {
   test.skip(MODE !== "pass", "Solo con la secreta que siempre pasa");
   const submit = await openWithCaptcha(page, "/legal/copyright/claim", /Enviar reclamo/);
-  await fillClaim(page, `e2e_claim_captcha_${uniqueSuffix(testInfo.project.name)}@trafal.test`);
+  await fillClaim(page, `e2e_claim_captcha_${uniqueSuffix(testInfo.project.name)}@tradfal.test`);
   await submit.click();
   await expect(page.getByRole("heading", { name: "Recibimos tu reclamo" })).toBeVisible();
 });

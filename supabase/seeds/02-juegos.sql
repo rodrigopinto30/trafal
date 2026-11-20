@@ -104,6 +104,6 @@ begin
   select date_trunc('week', current_date)::date, game.id, admin.id,
          'Un puzzle de gravedad con una idea clarísima. Para ser su primer juego, sorprende.'
   from public.games game, public.profiles admin
-  where game.public_id = 'orbita' and admin.username = 'equipo_trafal';
+  where game.public_id = 'orbita' and admin.username = 'equipo_tradfal';
 end;
 $$;

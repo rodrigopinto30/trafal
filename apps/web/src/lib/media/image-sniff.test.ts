@@ -170,3 +170,16 @@ describe("rutas de la foto", () => {
     expect(pattern.test(`http://evil.example/${token}.webp`)).toBe(false);
   });
 });
+
+describe("where a JPEG really ends", () => {
+  it("refuses data glued after the image even when it also ends in FF D9", () => {
+    const glued = concat(jpeg(640, 360), text("<script>alert(1)</script>"), Uint8Array.of(0xff, 0xd9));
+    expect(inspectImage(glued)).toBeNull();
+  });
+
+  it("is not fooled by escaped bytes and restart marks inside the image data", () => {
+    const image = jpeg(640, 360);
+    const withMarks = concat(image.subarray(0, image.length - 2), Uint8Array.of(0xff, 0x00, 0x22, 0xff, 0xd0, 0x33, 0xff, 0xff, 0xd9));
+    expect(inspectImage(withMarks)).toEqual({ format: "jpeg", width: 640, height: 360, animated: false });
+  });
+});

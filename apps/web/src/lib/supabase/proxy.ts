@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import type { NextRequest, NextResponse } from "next/server";
 import { assertSupabaseEnv } from "@/lib/env.server";
-import { AUTH_COOKIE_NAME } from "./constants";
+import { AUTH_COOKIE_NAME, AUTH_COOKIE_OPTIONS } from "./constants";
 
 type PendingCookie = { name: string; value: string; options: Parameters<NextResponse["cookies"]["set"]>[2] };
 
@@ -18,7 +18,7 @@ export async function updateSession(request: NextRequest, createResponse: (signe
   const { url, key } = assertSupabaseEnv();
   let refreshed: { cookies: PendingCookie[]; headers: Record<string, string> } | null = null;
   const supabase = createServerClient(url, key, {
-    cookieOptions: { name: AUTH_COOKIE_NAME },
+    cookieOptions: AUTH_COOKIE_OPTIONS,
     cookies: {
       getAll: () => request.cookies.getAll(),
       setAll: (cookiesToSet, headers) => {

@@ -23,7 +23,7 @@ function ActiveMark({ vertical = false, active }: { vertical?: boolean; active: 
     <span
       aria-hidden="true"
       className={cn(
-        "absolute rounded-sm bg-linear-to-r from-cyan to-violet shadow-[0_0_8px_var(--trafal-cyan),0_0_16px_rgb(46_230_255/0.5)] transition-[opacity,transform] duration-300",
+        "absolute rounded-sm bg-linear-to-r from-cyan to-violet shadow-[0_0_8px_var(--tradfal-cyan),0_0_16px_rgb(46_230_255/0.5)] transition-[opacity,transform] duration-300",
         vertical ? "top-3.5 left-1 h-[22px] w-[3px] bg-linear-to-b" : "right-3 bottom-1.5 left-3 h-0.5",
         active ? "scale-100 opacity-100" : vertical ? "scale-y-0 opacity-0" : "scale-x-0 opacity-0",
       )}

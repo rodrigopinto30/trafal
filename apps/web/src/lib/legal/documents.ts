@@ -1,12 +1,12 @@
 import type { Locale } from "@/i18n/config";
+import { fillLegalDocument, readLegalContactEmail } from "./contact";
 import { legalEn } from "./content/en";
 import { legalEs } from "./content/es";
-import { fillLegalDocument, readLegalOperator, type LegalOperator } from "./operator";
 import type { LegalContent, LegalDocumentContent, LegalDocumentId } from "./types";
 
 export const LEGAL_CONTENT: Record<Locale, LegalContent> = { es: legalEs, en: legalEn };
 
-/** A legal document in the language, with the operator's details filled in. */
-export function getLegalDocument(id: LegalDocumentId, locale: Locale, operator: LegalOperator = readLegalOperator(locale)): { document: LegalDocumentContent; operator: LegalOperator } {
-  return { document: fillLegalDocument(LEGAL_CONTENT[locale][id], operator), operator };
+/** A legal document in the language, with the minimum age and, when there is one, the contact email filled in. */
+export function getLegalDocument(id: LegalDocumentId, locale: Locale, email: string | null = readLegalContactEmail()): LegalDocumentContent {
+  return fillLegalDocument(LEGAL_CONTENT[locale][id], email);
 }

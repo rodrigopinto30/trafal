@@ -10,6 +10,6 @@ export type LegalDocumentContent = { title: string; summary: string; sections: r
 
 export type LegalContent = Record<LegalDocumentId, LegalDocumentContent>;
 
-/** The words a text can ask the site to fill in: who runs it, how to reach them, which courts, the minimum age. */
-export const LEGAL_TOKENS = ["operator", "email", "jurisdiction", "minAge"] as const;
+/** The words a text can ask the site to fill in: the optional contact email and the minimum age. */
+export const LEGAL_TOKENS = ["email", "minAge"] as const;
 export type LegalToken = (typeof LEGAL_TOKENS)[number];

@@ -18,6 +18,28 @@ export const getAuthUser = cache(async (): Promise<User | null> => {
   return error ? null : data.user;
 });
 
+/** How recent a sign-in has to be for what cannot be undone (the database asks the same: `private.recently_authenticated`). */
+export const RECENT_SIGN_IN_SECONDS = 10 * 60;
+
+/** How long the session left by a password reset email can be used to choose the new password. */
+export const PASSWORD_RESET_SECONDS = 15 * 60;
+
+/**
+ * Whether the current session signed in within the given seconds, optionally with one method: «password», «oauth», or «otp» (the
+ * link of an email, such as the password reset one). Read from the verified token's `amr` claim.
+ */
+export async function signedInRecently(withinSeconds: number, method?: string): Promise<boolean> {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  const methods: unknown = data?.claims?.amr;
+  if (!Array.isArray(methods)) return false;
+  const since = Date.now() / 1000 - withinSeconds;
+  return methods.some(
+    (entry: { method?: unknown; timestamp?: unknown }) =>
+      typeof entry?.timestamp === "number" && entry.timestamp >= since && (method === undefined || entry.method === method),
+  );
+}
+
 export const PROFILE_COLUMNS =
   "id, username, display_name, avatar_path, bio, city, country, favorite_genres, followers_count, following_count, created_at" as const;
 

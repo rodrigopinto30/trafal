@@ -64,7 +64,7 @@ export async function registerAccount(
   page: Page,
   account: { email: string; username: string; displayName: string; password?: string },
 ) {
-  const password = account.password ?? "Trafal12345";
+  const password = account.password ?? "Tradfal12345";
   await gotoReady(page, "/signup");
   await page.getByLabel("Email").fill(account.email);
   await page.getByLabel("Contraseña", { exact: true }).fill(password);
@@ -80,6 +80,6 @@ export async function registerAccount(
   await page.getByLabel("Tu @usuario").fill(account.username);
   await expect(page.getByText("¡Está libre!")).toBeVisible();
   await page.getByLabel("Tu nombre").fill(account.displayName);
-  await page.getByRole("button", { name: "Entrar a Trafal" }).click();
+  await page.getByRole("button", { name: "Entrar a Tradfal" }).click();
   await expect(page).toHaveURL(new RegExp(`/u/${account.username}$`));
 }

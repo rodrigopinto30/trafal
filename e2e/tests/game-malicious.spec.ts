@@ -30,7 +30,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
   context = await browser.newContext({ ...testInfo.project.use });
   player = await context.newPage();
   const suffix = uniqueSuffix(testInfo.project.name);
-  await registerAccount(player, { email: `e2e_malicious_${suffix}@trafal.test`, username: `malicious_${lettersOnly(suffix)}`, displayName: "Persona Hostil" });
+  await registerAccount(player, { email: `e2e_malicious_${suffix}@tradfal.test`, username: `malicious_${lettersOnly(suffix)}`, displayName: "Persona Hostil" });
   gameTitle = uniqueTitle("Totally Fine Game");
   publicId = await uploadAndPublishGame(player, gameTitle, maliciousGameZip());
 });
@@ -43,16 +43,16 @@ test.afterAll(async () => {
   }
 });
 
-test("the game runs its whole attack battery and the person keeps playing on Trafal", async () => {
+test("the game runs its whole attack battery and the person keeps playing on Tradfal", async () => {
   test.setTimeout(120_000);
   await player.goto(`/games/${publicId}`);
   await player.evaluate(() => {
-    document.cookie = "trafal_canary=secret; path=/";
-    localStorage.setItem("trafal_canary", "secret");
-    sessionStorage.setItem("trafal_canary", "secret");
+    document.cookie = "tradfal_canary=secret; path=/";
+    localStorage.setItem("tradfal_canary", "secret");
+    sessionStorage.setItem("tradfal_canary", "secret");
   });
-  const cookiesOnTrafal = await context.cookies("http://localhost:3000");
-  expect(cookiesOnTrafal.some((cookie) => cookie.name.startsWith("sb-"))).toBe(true);
+  const cookiesOnTradfal = await context.cookies("http://localhost:3000");
+  expect(cookiesOnTradfal.some((cookie) => cookie.name.startsWith("sb-"))).toBe(true);
 
   context.on("page", (popup) => popups.push(popup.url()));
   player.on("response", (response) => {

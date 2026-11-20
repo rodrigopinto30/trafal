@@ -6,7 +6,7 @@ select tests.wipe_app_data();
 select tests.create_profile('a0000000-0000-0000-0000-000000000001', 'ana');
 select tests.create_profile('b0000000-0000-0000-0000-000000000002', 'bruno');
 select tests.create_profile('c0000000-0000-0000-0000-000000000003', 'carla');
-select tests.create_user('nuevo@trafal.test', 'e0000000-0000-0000-0000-000000000005');
+select tests.create_user('nuevo@tradfal.test', 'e0000000-0000-0000-0000-000000000005');
 
 select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
 select lives_ok($$ insert into public.follows (follower_id, followee_id) values ('a0000000-0000-0000-0000-000000000001', 'b0000000-0000-0000-0000-000000000002') $$, 'ana sigue a bruno');

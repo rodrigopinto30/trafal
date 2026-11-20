@@ -163,43 +163,42 @@ export function GameSearch({ variant, defaultValue = "", keep = "" }: Props) {
         {announcement}
       </p>
 
-      {expanded ? (
-        <ul
-          id={listboxId}
-          role="listbox"
-          aria-label={t("suggestionsLabel")}
-          className="absolute top-full right-0 left-0 z-30 mt-2 max-h-[60vh] overflow-y-auto rounded-3xl border border-white/10 bg-popover p-2 shadow-[0_20px_60px_rgb(0_0_0/0.55),0_0_24px_rgb(46_230_255/0.15)]"
-        >
-          {options.map((option, index) => (
-            <li
-              key={option.kind === SEE_ALL ? SEE_ALL : option.game.public_id}
-              id={`${ids}-option-${index}`}
-              role="option"
-              aria-selected={index === active}
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => goToOption(option)}
-              onMouseMove={() => setActive(index)}
-              className={cn(
-                "flex min-h-11 items-center gap-3 rounded-2xl px-3 py-2",
-                index === active ? "bg-white/10" : "hover:bg-white/6",
-                option.kind === SEE_ALL && "text-cyan",
-              )}
-            >
-              {option.kind === "game" ? (
-                <>
-                  <GameCover game={option.game} className="aspect-square size-10 shrink-0 rounded-xl" />
-                  <span className="min-w-0">
-                    <span className="block truncate font-semibold text-foreground">{option.game.title}</span>
-                    <span className="block truncate text-sm text-text-3">{t("by", { creator: option.game.creator })}</span>
-                  </span>
-                </>
-              ) : (
-                <span className="truncate font-semibold">{t("viewAll", { query: query ?? "" })}</span>
-              )}
-            </li>
-          ))}
-        </ul>
-      ) : null}
+      <ul
+        id={listboxId}
+        role="listbox"
+        hidden={!expanded}
+        aria-label={t("suggestionsLabel")}
+        className="absolute top-full right-0 left-0 z-30 mt-2 max-h-[60vh] overflow-y-auto rounded-3xl border border-white/10 bg-popover p-2 shadow-[0_20px_60px_rgb(0_0_0/0.55),0_0_24px_rgb(46_230_255/0.15)]"
+      >
+        {options.map((option, index) => (
+          <li
+            key={option.kind === SEE_ALL ? SEE_ALL : option.game.public_id}
+            id={`${ids}-option-${index}`}
+            role="option"
+            aria-selected={index === active}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => goToOption(option)}
+            onMouseMove={() => setActive(index)}
+            className={cn(
+              "flex min-h-11 items-center gap-3 rounded-2xl px-3 py-2",
+              index === active ? "bg-white/10" : "hover:bg-white/6",
+              option.kind === SEE_ALL && "text-cyan",
+            )}
+          >
+            {option.kind === "game" ? (
+              <>
+                <GameCover game={option.game} className="aspect-square size-10 shrink-0 rounded-xl" />
+                <span className="min-w-0">
+                  <span className="block truncate font-semibold text-foreground">{option.game.title}</span>
+                  <span className="block truncate text-sm text-text-3">{t("by", { creator: option.game.creator })}</span>
+                </span>
+              </>
+            ) : (
+              <span className="truncate font-semibold">{t("viewAll", { query: query ?? "" })}</span>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

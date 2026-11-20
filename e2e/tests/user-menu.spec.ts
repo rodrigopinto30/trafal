@@ -37,7 +37,7 @@ function expectSameLayout(actual: Layout, expected: Layout) {
 for (const path of ["/", "/settings/profile", "/u/valen_makes"]) {
   test(`el menú de la cuenta no mueve la página (${path})`, async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== "desktop", "En celular las barras de scroll no ocupan lugar");
-    await loginAndWait(page, "valen@trafal.test", "trafal123");
+    await loginAndWait(page, "valen@tradfal.test", "tradfal123");
     await gotoReady(page, path);
     if (path === "/") await page.evaluate(() => window.scrollTo(0, 400));
     const before = await measure(page);
@@ -54,7 +54,7 @@ for (const path of ["/", "/settings/profile", "/u/valen_makes"]) {
 
 test("con el menú abierto la página sigue pudiendo scrollearse y el menú se cierra al tocar afuera", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "En celular las barras de scroll no ocupan lugar");
-  await loginAndWait(page, "valen@trafal.test", "trafal123");
+  await loginAndWait(page, "valen@tradfal.test", "tradfal123");
   await gotoReady(page, "/");
   await page.getByRole("button", { name: "Tu cuenta" }).click();
   await expect(page.getByRole("menuitem", { name: "Mi perfil" })).toBeVisible();

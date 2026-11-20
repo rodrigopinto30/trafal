@@ -44,11 +44,11 @@ test.beforeAll(async ({ browser }, testInfo) => {
   page = await context.newPage();
   suffix = uniqueSuffix(testInfo.project.name);
   username = `reports_${lettersOnly(suffix)}`;
-  await registerAccount(page, { email: `e2e_reports_${suffix}@trafal.test`, username, displayName: "Persona Reportes" });
+  await registerAccount(page, { email: `e2e_reports_${suffix}@tradfal.test`, username, displayName: "Persona Reportes" });
 });
 
 test.afterAll(async () => {
-  await restoreCommentByBody(SEEDED_COMMENT, await accessTokenOf("admin@trafal.test", "trafal123"));
+  await restoreCommentByBody(SEEDED_COMMENT, await accessTokenOf("admin@tradfal.test", "tradfal123"));
   await page?.context().close();
 });
 
@@ -97,7 +97,7 @@ test("no hay botón de reporte en lo propio", async () => {
 
 test("la administración ve los tres reportes con su evidencia, oculta el comentario y lo restaura", async ({ browser }, testInfo) => {
   await logout(page);
-  await loginAndWait(page, "admin@trafal.test", "trafal123");
+  await loginAndWait(page, "admin@tradfal.test", "tradfal123");
   await gotoReady(page, "/admin");
 
   const post = page.getByRole("article", { name: "Avance · Spam" }).filter({ hasText: `Avance ${suffix}` });

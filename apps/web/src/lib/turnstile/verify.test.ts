@@ -16,6 +16,18 @@ describe("verifyTurnstile", () => {
     expect(String(init.body)).toBe("secret=secret&response=token-1");
   });
 
+  it("on a public site, refuses an answer solved on another site or for another form, and sends who solved it", async () => {
+    const site = { expectedHostname: "tradfal.example" };
+    const solved = (hostname: string, action: string) => answer({ success: true, hostname, action });
+    expect(await verifyTurnstile("token", config(solved("tradfal.example", "claim"), site), { action: "claim" })).toEqual({ ok: true });
+    expect(await verifyTurnstile("token", config(solved("evil.example", "claim"), site), { action: "claim" })).toEqual({ ok: false, reason: "failed" });
+    expect(await verifyTurnstile("token", config(solved("tradfal.example", "signup"), site), { action: "claim" })).toEqual({ ok: false, reason: "failed" });
+    const fetchImpl = solved("tradfal.example", "claim");
+    await verifyTurnstile("token", config(fetchImpl, site), { action: "claim", remoteIp: "203.0.113.7" });
+    const [, init] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+    expect(String(init.body)).toBe("secret=secret&response=token&remoteip=203.0.113.7");
+  });
+
   it("refuses what Cloudflare refuses", async () => {
     expect(await verifyTurnstile("token", config(answer({ success: false, "error-codes": ["timeout-or-duplicate"] })))).toEqual({ ok: false, reason: "failed" });
     expect(await verifyTurnstile("token", config(answer({ success: false, "error-codes": ["invalid-input-response"] })))).toEqual({ ok: false, reason: "failed" });

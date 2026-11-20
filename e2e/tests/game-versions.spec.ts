@@ -31,7 +31,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
   ownerContext = await browser.newContext({ ...testInfo.project.use });
   owner = await ownerContext.newPage();
   const suffix = uniqueSuffix(testInfo.project.name);
-  await registerAccount(owner, { email: `e2e_versions_${suffix}@trafal.test`, username: `versions_${lettersOnly(suffix)}`, displayName: "Persona Versiones" });
+  await registerAccount(owner, { email: `e2e_versions_${suffix}@tradfal.test`, username: `versions_${lettersOnly(suffix)}`, displayName: "Persona Versiones" });
   gameTitle = uniqueTitle("Moon Runner");
   publicId = await uploadAndPublishGame(owner, gameTitle, playableGameZip());
   await gotoReady(owner, `/games/${publicId}/manage`);

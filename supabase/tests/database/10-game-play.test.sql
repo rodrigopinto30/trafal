@@ -6,7 +6,7 @@ select tests.wipe_app_data();
 select tests.create_profile('a0000000-0000-0000-0000-000000000001', 'ana');
 select tests.create_profile('b0000000-0000-0000-0000-000000000002', 'bruno');
 -- A signed-in user who never finished onboarding (no profile row).
-select tests.create_user('ghost@trafal.test', 'c0000000-0000-0000-0000-000000000003');
+select tests.create_user('ghost@tradfal.test', 'c0000000-0000-0000-0000-000000000003');
 
 create function pg_temp.make_game(p_title text, p_status text, p_ready boolean default true) returns text language plpgsql as $$
 declare

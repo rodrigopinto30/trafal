@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { machineDateTime } from "@/lib/format";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { NotificationActions } from "@/components/notifications/notification-actions";
@@ -136,7 +137,7 @@ export function NotificationList({ rows }: { rows: NotificationRow[] }) {
                         {t("appealLink")}
                       </Link>
                     ) : null}
-                    <time dateTime={row.createdAt} className="text-xs text-text-3">
+                    <time dateTime={machineDateTime(row.createdAt)} className="text-xs text-text-3">
                       {row.when}
                     </time>
                   </div>

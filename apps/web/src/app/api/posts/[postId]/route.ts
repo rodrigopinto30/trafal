@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
+import { getAuthUser } from "@/lib/auth/dal";
 import { publicEnv } from "@/lib/env";
 import { POST_REQUEST_MAX_BYTES, updatePost } from "@/lib/games/post-service";
 
@@ -16,6 +17,7 @@ export async function PUT(request: NextRequest, context: { params: Promise<{ pos
   const length = Number(request.headers.get("content-length"));
   if (!Number.isFinite(length) || length <= 0) return json({ ok: false, error: "requestTooLarge" }, 411);
   if (length > POST_REQUEST_MAX_BYTES) return json({ ok: false, error: "requestTooLarge" }, 413);
+  if (!(await getAuthUser())) return json({ ok: false, error: "unauthenticated" }, 401);
 
   let form: FormData;
   try {

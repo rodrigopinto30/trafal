@@ -10,7 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
 import { getLocale, getTranslations } from "@/i18n/server";
 import { listAccounts } from "@/lib/admin/queries";
-import { getAuthUser } from "@/lib/auth/dal";
+import { getAuthUser, requireAdmin } from "@/lib/auth/dal";
 import { ACCOUNT_FILTERS, ACCOUNT_SEARCH_MAX, parseAccountFilter, parseAccountSearch } from "@/lib/validation/admin";
 import { firstParam } from "@/lib/validation/common";
 
@@ -23,6 +23,7 @@ export default function AdminAccountsPage({ searchParams }: PageProps<"/[lang]/a
 }
 
 async function Accounts({ searchParams }: { searchParams: PageProps<"/[lang]/admin/accounts">["searchParams"] }) {
+  await requireAdmin("/admin/accounts");
   const raw = await searchParams;
   const search = parseAccountSearch(firstParam(raw.q));
   const filter = parseAccountFilter(firstParam(raw.filter));
@@ -59,7 +60,7 @@ async function Accounts({ searchParams }: { searchParams: PageProps<"/[lang]/adm
             {t("accounts.search")}
           </Button>
           {search !== "" || filter !== "all" ? (
-            <Button asChild type="button" variant="ghost" size="lg">
+            <Button asChild variant="ghost" size="lg">
               <Link href="/admin/accounts">{t("accounts.clear")}</Link>
             </Button>
           ) : null}

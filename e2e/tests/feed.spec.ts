@@ -77,7 +77,7 @@ test.describe("feed", () => {
     const context = await browser.newContext({ ...testInfo.project.use });
     const page = await context.newPage();
     const suffix = uniqueSuffix(testInfo.project.name);
-    await registerAccount(page, { email: `e2e_feed_${suffix}@trafal.test`, username: `feed_${lettersOnly(suffix)}`, displayName: "Persona Feed" });
+    await registerAccount(page, { email: `e2e_feed_${suffix}@tradfal.test`, username: `feed_${lettersOnly(suffix)}`, displayName: "Persona Feed" });
 
     await gotoReady(page, "/feed");
     await expect(page.getByRole("link", { name: "Publicar un avance" })).toBeVisible();

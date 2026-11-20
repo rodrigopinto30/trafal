@@ -17,8 +17,7 @@ insert into public.game_versions (id, game_id, number, label, status) values
   ('22222222-2222-2222-2222-222222222203', '11111111-1111-1111-1111-111111111103', 1, 'v1', 'ready');
 update public.games set active_version_id = '22222222-2222-2222-2222-222222222201', status = 'published' where id = '11111111-1111-1111-1111-111111111101';
 update public.games set active_version_id = '22222222-2222-2222-2222-222222222203', status = 'published' where id = '11111111-1111-1111-1111-111111111103';
-insert into public.game_screenshots (game_id, path, position) values
-  ('11111111-1111-1111-1111-111111111101', 'screenshots/11111111-1111-1111-1111-111111111101/0123456789abcdef0123456789abcdef.webp', 1);
+update public.games set gif_path = 'covers/a0000000-0000-0000-0000-000000000001/0123456789abcdef0123456789abcdef.gif' where id = '11111111-1111-1111-1111-111111111101';
 
 insert into public.posts (id, author_id, game_id, kind, body) values
   ('55555555-5555-5555-5555-555555555501', 'a0000000-0000-0000-0000-000000000001', '11111111-1111-1111-1111-111111111101', 'avance', 'An update of ana'),
@@ -41,7 +40,7 @@ select tests.clear_authentication();
 insert into public.moderation_log (admin_id, admin_username, action, target_type, target_id, reason)
 values ('d0000000-0000-0000-0000-0000000000ad', 'admina', 'hide', 'game', '11111111-1111-1111-1111-111111111101', 'A reason');
 insert into public.copyright_claims (claimant_name, claimant_email, work_description, infringing_urls, statement_good_faith, statement_accuracy, signature, game_id)
-values ('Carla', 'carla@example.com', 'A work description', array['https://trafal.example/games/anagame01'], true, true, 'Carla', '11111111-1111-1111-1111-111111111101');
+values ('Carla', 'carla@example.com', 'A work description', array['https://tradfal.example/games/anagame01'], true, true, 'Carla', '11111111-1111-1111-1111-111111111101');
 
 -- ------------------------------------------------------------------ who can call it
 select tests.authenticate_as_anon();
@@ -56,7 +55,7 @@ select is(
   || 'media:posts/55555555-5555-5555-5555-555555555501/, media:posts/55555555-5555-5555-5555-555555555502/, '
   || 'media:screenshots/11111111-1111-1111-1111-111111111101/, media:screenshots/11111111-1111-1111-1111-111111111102/, '
   || 'quarantine:11111111-1111-1111-1111-111111111101/, quarantine:11111111-1111-1111-1111-111111111102/',
-  'the files of ana: her avatar and covers, her updates, and the screenshots, zips and published files of each of her games, and nothing of bruno'
+  'the files of ana: her avatar, covers and GIFs, her updates, the zips and published files of each of her games (and the screenshots folders of before), and nothing of bruno'
 );
 select tests.authenticate_as('b0000000-0000-0000-0000-000000000002');
 select is(
@@ -75,7 +74,11 @@ select is((select count(*) from auth.users where id = 'd0000000-0000-0000-0000-0
 -- ------------------------------------------------------------------ deleting
 select ok((select count(*) from public.notifications where actor_id = 'a0000000-0000-0000-0000-000000000001') > 0, 'ana had caused notifications (her follow, her comment, her like)');
 select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
-select lives_ok($$ select public.delete_my_account() $$, 'ana deletes her account');
+select throws_ok($$ select public.delete_my_account() $$, '42501', 'reauthentication_required', 'an open session is not enough: she has to have signed in moments ago');
+select tests.clear_authentication();
+select is((select count(*) from auth.users where id = 'a0000000-0000-0000-0000-000000000001'), 1::bigint, 'so nothing was deleted');
+select tests.authenticate_recently('a0000000-0000-0000-0000-000000000001');
+select lives_ok($$ select public.delete_my_account() $$, 'ana deletes her account right after signing in');
 select tests.clear_authentication();
 select is((select count(*) from auth.users where id = 'a0000000-0000-0000-0000-000000000001'), 0::bigint, 'the sign-in is gone');
 select is((select count(*) from public.profiles where id = 'a0000000-0000-0000-0000-000000000001'), 0::bigint, 'and the profile');
@@ -99,7 +102,7 @@ select is((select count(*) from public.posts where id = '55555555-5555-5555-5555
 select is((select count(*) from public.moderation_log where target_id = '11111111-1111-1111-1111-111111111101'), 1::bigint, 'the moderation log keeps its line');
 select is((select count(*) || '|' || coalesce(max(game_id::text), 'null') from public.copyright_claims), '1|null', 'the copyright claim stays, no longer pointing at the deleted game');
 
-select tests.authenticate_as('b0000000-0000-0000-0000-000000000002');
+select tests.authenticate_recently('b0000000-0000-0000-0000-000000000002');
 select lives_ok($$ select public.delete_my_account() $$, 'bruno can delete too');
 select tests.clear_authentication();
 select is((select count(*) from auth.users where id = 'b0000000-0000-0000-0000-000000000002'), 0::bigint, 'and his sign-in is gone');

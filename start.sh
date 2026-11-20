@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Trafal · levanta TODO el entorno local con un solo comando.
+# Tradfal · levanta TODO el entorno local con un solo comando.
 #
 #   ./start.sh            desarrollo (recarga en caliente)
 #   ./start.sh --prod     la web compilada, como en producción
@@ -47,7 +47,17 @@ fi
 set -a; . ./.env; set +a
 
 # ---------------------------------------------------------------------------------------------
-# CLI de Supabase: versión fija, descargada y verificada por checksum SHA-256.
+# CLI de Supabase: versión fija, descargada y verificada contra el SHA-256 publicado para esa versión, fijado acá (bajarlo del
+# mismo release que el binario no protegería de un release reemplazado). Si cambiás la versión, actualizá estos valores.
+supabase_cli_sha256() {
+  case "$1" in
+    supabase_3.0.0_linux_amd64.tar.gz) echo "eeb61edcd59a4735fcb5e58596574f25d03d420efca779f43ddb307e1cc5c754" ;;
+    supabase_3.0.0_linux_arm64.tar.gz) echo "243474fb5b491a0df04682fc1941cc5519559a1178ae01c225c633eda2e8acb8" ;;
+    supabase_3.0.0_darwin_amd64.tar.gz) echo "d14cdb8536eb37b0f3b6d8c70fa5497b941f71005f0b2ac152b6e6c62864529c" ;;
+    supabase_3.0.0_darwin_arm64.tar.gz) echo "3b0bfc4602cd7d55ffc78a6b72443d3b8e5fdd856b777e75977978dceb3e44cc" ;;
+  esac
+}
+sha256_of() { if command -v sha256sum >/dev/null 2>&1; then sha256sum | awk '{print $1}'; else shasum -a 256 | awk '{print $1}'; fi; }
 install_supabase_cli() {
   local os arch asset base tmp expected actual
   case "$(uname -s)" in Linux) os="linux" ;; Darwin) os="darwin" ;; *) fail "Sistema no soportado para descargar el CLI de Supabase: $(uname -s)" ;; esac
@@ -58,10 +68,9 @@ install_supabase_cli() {
   trap 'rm -rf "$tmp"' RETURN
   step "Descargando el CLI de Supabase ${SUPABASE_CLI_VERSION} (${os}/${arch})"
   curl -fsSL -o "$tmp/$asset" "$base/$asset" || fail "No pude descargar $base/$asset"
-  curl -fsSL -o "$tmp/checksums.txt" "$base/checksums.txt" || fail "No pude descargar los checksums"
-  expected="$(grep " $asset\$" "$tmp/checksums.txt" | awk '{print $1}')"
-  if command -v sha256sum >/dev/null 2>&1; then actual="$(sha256sum "$tmp/$asset" | awk '{print $1}')"; else actual="$(shasum -a 256 "$tmp/$asset" | awk '{print $1}')"; fi
-  [ -n "$expected" ] && [ "$expected" = "$actual" ] || fail "El checksum del CLI de Supabase no coincide: se descarta la descarga."
+  expected="$(supabase_cli_sha256 "$asset")"
+  actual="$(sha256_of < "$tmp/$asset")"
+  [ -n "$expected" ] && [ "$expected" = "$actual" ] || fail "El checksum del CLI de Supabase no coincide con el fijado en start.sh: se descarta la descarga."
   mkdir -p "$TOOLS_DIR"
   tar -xzf "$tmp/$asset" -C "$TOOLS_DIR" supabase
   chmod +x "$SUPABASE_BIN"
@@ -110,9 +119,29 @@ sb seed buckets --yes </dev/null >/dev/null 2>&1 || true
 
 # Rol mínimo del worker de juegos (la migración lo crea sin login): se le pone una contraseña propia de esta máquina, que se
 # conserva entre arranques y vive solo en .env.supabase (ignorado por git).
+# A la base le llega solo el verificador SCRAM (calculado acá con python3), nunca la contraseña: así no queda en su log.
 WORKER_DB_PASSWORD="$(grep '^WORKER_DB_PASSWORD=' .env.supabase 2>/dev/null | cut -d= -f2- || true)"
 [ -n "$WORKER_DB_PASSWORD" ] || WORKER_DB_PASSWORD="$(head -c 24 /dev/urandom | od -An -tx1 | tr -d ' \n')"
-sb db query "alter role game_worker with login password '$WORKER_DB_PASSWORD'" >/dev/null
+scram_verifier() {
+  python3 - "$1" <<'PY'
+import base64, hashlib, hmac, os, sys
+salt, rounds = os.urandom(16), 4096
+salted = hashlib.pbkdf2_hmac("sha256", sys.argv[1].encode(), salt, rounds)
+stored = hashlib.sha256(hmac.new(salted, b"Client Key", hashlib.sha256).digest()).digest()
+server = hmac.new(salted, b"Server Key", hashlib.sha256).digest()
+b64 = lambda data: base64.b64encode(data).decode()
+print(f"SCRAM-SHA-256${rounds}:{b64(salt)}${b64(stored)}:{b64(server)}")
+PY
+}
+WORKER_DB_SECRET="$WORKER_DB_PASSWORD"
+command -v python3 >/dev/null 2>&1 && WORKER_DB_SECRET="$(scram_verifier "$WORKER_DB_PASSWORD")"
+sb db query "alter role game_worker with login password '$WORKER_DB_SECRET'" >/dev/null
+
+# Clave con la que la web firma los reclamos de derechos de autor (la base solo los acepta con ella). La base guarda su SHA-256.
+CLAIMS_SERVER_KEY="$(grep '^CLAIMS_SERVER_KEY=' .env.supabase 2>/dev/null | cut -d= -f2- || true)"
+[ -n "$CLAIMS_SERVER_KEY" ] || CLAIMS_SERVER_KEY="$(head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n')"
+CLAIMS_KEY_SHA256="$(printf '%s' "$CLAIMS_SERVER_KEY" | sha256_of)"
+sb db query "insert into private.server_keys (name, key_sha256) values ('claims', '$CLAIMS_KEY_SHA256') on conflict (name) do update set key_sha256 = excluded.key_sha256, updated_at = now()" >/dev/null
 
 # Claves y URLs de Supabase para la web (archivo generado, ignorado por git).
 STATUS_ENV="$(sb status -o env 2>/dev/null)"
@@ -122,6 +151,7 @@ API_PORT="${API_URL##*:}"
 PUBLISHABLE_KEY="$(status_value PUBLISHABLE_KEY)"
 [ -n "$PUBLISHABLE_KEY" ] || PUBLISHABLE_KEY="$(status_value ANON_KEY)"
 [ -n "$API_URL" ] && [ -n "$PUBLISHABLE_KEY" ] || fail "No pude leer la URL/clave de Supabase («supabase status»)."
+umask 077
 cat > .env.supabase <<EOF
 # Generado por ./start.sh — no editar ni versionar.
 SUPABASE_PUBLIC_URL=$API_URL
@@ -140,12 +170,16 @@ S3_ACCESS_KEY_ID=$(status_value S3_PROTOCOL_ACCESS_KEY_ID)
 S3_SECRET_ACCESS_KEY=$(status_value S3_PROTOCOL_ACCESS_KEY_SECRET)
 MEDIA_PUBLIC_URL=$API_URL/storage/v1/object/public/media
 # Dominio de los juegos: cada juego vive en <id>.games.localhost:<puerto> (los navegadores resuelven *.localhost solos), que es
-# OTRO sitio distinto de localhost:3000: sus cookies y su almacenamiento nunca se mezclan con los de Trafal.
+# OTRO sitio distinto de localhost:3000: sus cookies y su almacenamiento nunca se mezclan con los de Tradfal.
 GAMES_BASE_URL=http://games.localhost:${GAMES_PORT:-4000}
-# Worker de juegos: conexión directa a Postgres con el rol mínimo `game_worker`.
+# Worker de juegos: conexión directa a Postgres con el rol mínimo «game_worker».
 WORKER_DB_PASSWORD=$WORKER_DB_PASSWORD
-WORKER_DATABASE_URL=postgresql://game_worker:$WORKER_DB_PASSWORD@supabase_db_trafal:5432/postgres
+WORKER_DATABASE_URL=postgresql://game_worker:$WORKER_DB_PASSWORD@supabase_db_tradfal:5432/postgres
+# Clave de los reclamos de derechos de autor (solo la ve el servidor de la web).
+CLAIMS_SERVER_KEY=$CLAIMS_SERVER_KEY
 EOF
+umask 022
+chmod 600 .env .env.supabase
 
 # ---------------------------------------------------------------------------------------------
 COMPOSE=(docker compose --env-file .env --env-file .env.supabase -f docker-compose.yml)
@@ -153,15 +187,15 @@ COMPOSE=(docker compose --env-file .env --env-file .env.supabase -f docker-compo
 
 step "Levantando la web (${MODE})"
 UP_ARGS=(up -d --wait --wait-timeout 240 --build)
-[ "$FORCE_BUILD" = "1" ] && "${COMPOSE[@]}" build --no-cache
+[ "$FORCE_BUILD" = "1" ] && "${COMPOSE[@]}" build --no-cache --pull
 "${COMPOSE[@]}" "${UP_ARGS[@]}" || { "${COMPOSE[@]}" logs --tail 60 web >&2 || true; fail "La web no terminó de arrancar (mirá los logs de arriba)."; }
 
 SITE="${SITE_URL:-http://localhost:3000}"
-printf '\n%s✔ Trafal está corriendo%s\n\n' "$GREEN" "$RESET"
+printf '\n%s✔ Tradfal está corriendo%s\n\n' "$GREEN" "$RESET"
 printf '  %sWeb%s                %s\n' "$BOLD" "$RESET" "$SITE"
 printf '  %sCorreo de pruebas%s  http://localhost:54324   %s(acá llegan los mails de confirmación)%s\n' "$BOLD" "$RESET" "$DIM" "$RESET"
 printf '  %sSupabase Studio%s    http://localhost:54323\n' "$BOLD" "$RESET"
 printf '  %sAPI de Supabase%s    %s\n\n' "$BOLD" "$RESET" "$API_URL"
-printf '  %sCuentas de prueba%s  (contraseña: trafal123)\n' "$BOLD" "$RESET"
-printf '    valen@trafal.test   → @valen_makes\n    mateo@trafal.test   → @mateo_g\n    admin@trafal.test   → @equipo_trafal (admin)\n\n'
+printf '  %sCuentas de prueba%s  (contraseña: tradfal123)\n' "$BOLD" "$RESET"
+printf '    valen@tradfal.test   → @valen_makes\n    mateo@tradfal.test   → @mateo_g\n    admin@tradfal.test   → @equipo_tradfal (admin)\n\n'
 printf '  Para bajar todo: %s./stop.sh%s\n' "$BOLD" "$RESET"

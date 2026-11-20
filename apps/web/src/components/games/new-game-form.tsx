@@ -32,6 +32,7 @@ type Phase = "idle" | "creating" | "uploading" | "confirming" | "reviewing" | "d
 type CreatedGame = { id: string; publicId: string };
 
 const IMAGE_TYPES = "image/png,image/jpeg,image/webp";
+const GIF_TYPES = "image/gif";
 const ZIP_TYPES = ".zip,application/zip,application/x-zip-compressed";
 
 /**
@@ -236,8 +237,8 @@ function GameUploadForm() {
           <Field id="cover" label={t("fields.cover")} hint={t("fields.coverHint")} error={fieldErrors.cover}>
             {(control) => <Input {...control} name="cover" type="file" accept={IMAGE_TYPES} className="py-2.5" disabled={locked} />}
           </Field>
-          <Field id="screenshots" label={t("fields.screenshots")} hint={t("fields.screenshotsHint")} error={fieldErrors.screenshots}>
-            {(control) => <Input {...control} name="screenshots" type="file" accept={IMAGE_TYPES} multiple className="py-2.5" disabled={locked} />}
+          <Field id="gif" label={t("fields.gif")} hint={t("fields.gifHint")} error={fieldErrors.gif}>
+            {(control) => <Input {...control} name="gif" type="file" accept={GIF_TYPES} className="py-2.5" disabled={locked} />}
           </Field>
         </div>
       </SettingsSection>

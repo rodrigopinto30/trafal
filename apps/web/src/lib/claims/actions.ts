@@ -1,8 +1,10 @@
 "use server";
 
+import { headers } from "next/headers";
 import { getTranslationsFor } from "@/i18n/server";
 import { readText, type FormState } from "@/lib/forms";
 import { publicEnv } from "@/lib/env";
+import { serverEnv } from "@/lib/env.server";
 import { createClient } from "@/lib/supabase/server";
 import { verifyTurnstile } from "@/lib/turnstile/verify";
 import { CLAIM_ERROR_KEYS, claimFormSchema, parseSiteTarget, type ClaimErrorKey } from "@/lib/validation/claims";
@@ -15,7 +17,8 @@ const REFERENCE_LENGTH = 8;
 /**
  * Sends a copyright claim. Anyone can (no account needed): the form is public, so the data is cleaned and checked here and the
  * database checks it again. The links are turned into what they point at on this site (a game or an update that is published);
- * the database refuses a claim that points at nothing and one that comes too often from the same email or from everybody.
+ * the database refuses a claim that points at nothing and one that comes too often from the same email or from everybody. The
+ * database only takes a claim with this server's key, so nobody can send one straight to it and skip the captcha.
  */
 export async function submitCopyrightClaimAction(_previous: FormState, formData: FormData): Promise<FormState> {
   const t = getTranslationsFor(parseLocale(formData.get("lang")), "claims");
@@ -28,7 +31,13 @@ export async function submitCopyrightClaimAction(_previous: FormState, formData:
   }
   const claim = parsed.data;
 
-  const captcha = await verifyTurnstile(readText(formData, "captchaToken"));
+  if (!serverEnv.claimsServerKey) {
+    console.error("[claim] CLAIMS_SERVER_KEY is not set: claims cannot be sent");
+    return { status: "error", message: message("unavailable"), values };
+  }
+
+  const remoteIp = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() || null;
+  const captcha = await verifyTurnstile(readText(formData, "captchaToken"), undefined, { action: "claim", remoteIp });
   if (!captcha.ok) {
     return { status: "error", message: message(captcha.reason === "missing" || captcha.reason === "failed" ? "captchaFailed" : "captchaUnavailable"), values };
   }
@@ -57,11 +66,17 @@ export async function submitCopyrightClaimAction(_previous: FormState, formData:
     p_signature: claim.signature,
     p_game_id: (game.data?.id ?? null) as string,
     p_post_id: (post.data?.id ?? null) as string,
+    p_server_key: serverEnv.claimsServerKey,
   });
   if (error || !id) {
     if (error?.message.includes("too_many_claims")) return { status: "error", message: message("tooManyClaims"), values };
     if (/claim_target_/.test(error?.message ?? "")) return { status: "error", fieldErrors: { urls: message("urlsNotOnSite") }, values };
-    console.error("[claim] could not save the claim", error);
+    if (error?.message.includes("invalid_urls")) return { status: "error", fieldErrors: { urls: message("urlInvalid") }, values };
+    if (error?.message.includes("server_key_required")) {
+      console.error("[claim] the database refused this server's CLAIMS_SERVER_KEY");
+      return { status: "error", message: message("unavailable"), values };
+    }
+    console.error("[claim] could not save the claim", error?.code, error?.message);
     return { status: "error", message: message("generic"), values };
   }
   return { status: "success", message: t("sent.text", { reference: id.slice(0, REFERENCE_LENGTH).toUpperCase() }) };

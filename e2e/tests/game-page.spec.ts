@@ -37,7 +37,7 @@ test.describe("página del juego", () => {
     await expect(invitation).toContainText("seguir a Sofi Pixels");
     await expect(invitation.getByRole("link", { name: "Crear mi cuenta" })).toHaveAttribute("href", "/signup");
 
-    await loginAndWait(page, "valen@trafal.test", "trafal123");
+    await loginAndWait(page, "valen@tradfal.test", "tradfal123");
     await gotoReady(page, "/games/orbita");
     await expect(page.getByRole("heading", { level: 1, name: "Órbita" })).toBeVisible();
     await expect(page.getByText("Sumate a la comunidad")).toHaveCount(0);
@@ -79,7 +79,7 @@ test.describe("perfil del creador", () => {
   });
 
   test("quien todavía no publicó nada ve el aviso", async ({ page }) => {
-    await gotoReady(page, "/u/equipo_trafal");
+    await gotoReady(page, "/u/equipo_tradfal");
     await expect(page.getByText("Todavía no subió ningún juego.")).toBeVisible();
   });
 });

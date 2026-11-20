@@ -5,7 +5,7 @@
 #   target "prod" → producción local (./start.sh --prod): build "standalone" y usuario sin privilegios.
 # El host solo necesita Docker: Node y pnpm viven acá adentro.
 
-ARG NODE_VERSION=24
+ARG NODE_VERSION=24.22.3
 
 FROM node:${NODE_VERSION}-bookworm-slim AS base
 ARG PNPM_VERSION=12.16.1
@@ -18,7 +18,7 @@ FROM base AS dev
 ENV NODE_ENV=development
 EXPOSE 3000
 # Corre como el usuario del host (compose pasa `user:`), así los archivos generados no quedan de root.
-CMD ["sh", "-c", "mkdir -p \"$HOME\" && CI=true pnpm install --frozen-lockfile=false && exec pnpm --filter @trafal/web dev --hostname 0.0.0.0 --port 3000"]
+CMD ["sh", "-c", "mkdir -p \"$HOME\" && CI=true pnpm install --frozen-lockfile && exec pnpm --filter @tradfal/web dev --hostname 0.0.0.0 --port 3000"]
 
 # ------------------------------------------------------------------------------------------------
 # Compilación (solo para el target "prod"). Las variables NEXT_PUBLIC_* se incrustan en el JS del
@@ -32,9 +32,7 @@ ARG NEXT_PUBLIC_DISCORD_AUTH_ENABLED=false
 ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY=
 ARG NEXT_PUBLIC_MEDIA_URL
 ARG NEXT_PUBLIC_GAMES_BASE_URL
-ARG NEXT_PUBLIC_LEGAL_OPERATOR_NAME=
 ARG NEXT_PUBLIC_LEGAL_CONTACT_EMAIL=
-ARG NEXT_PUBLIC_LEGAL_JURISDICTION=
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
     NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY \
@@ -43,9 +41,7 @@ ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
     NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY \
     NEXT_PUBLIC_MEDIA_URL=$NEXT_PUBLIC_MEDIA_URL \
     NEXT_PUBLIC_GAMES_BASE_URL=$NEXT_PUBLIC_GAMES_BASE_URL \
-    NEXT_PUBLIC_LEGAL_OPERATOR_NAME=$NEXT_PUBLIC_LEGAL_OPERATOR_NAME \
     NEXT_PUBLIC_LEGAL_CONTACT_EMAIL=$NEXT_PUBLIC_LEGAL_CONTACT_EMAIL \
-    NEXT_PUBLIC_LEGAL_JURISDICTION=$NEXT_PUBLIC_LEGAL_JURISDICTION \
     CI=true
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/web/package.json apps/web/package.json

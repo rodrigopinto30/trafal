@@ -40,7 +40,7 @@ test("foto de perfil: se sube, se reemplaza y se quita; el servidor rechaza arch
   test.setTimeout(180_000);
   const suffix = uniqueSuffix(testInfo.project.name);
   const username = `e2e_${lettersOnly(suffix)}`;
-  await registerAccount(page, { email: `e2e_${suffix}@trafal.test`, username, displayName: "Foto de Prueba" });
+  await registerAccount(page, { email: `e2e_${suffix}@tradfal.test`, username, displayName: "Foto de Prueba" });
   await gotoReady(page, "/settings/profile");
   const tamper = await installTamper(page);
 
@@ -104,7 +104,7 @@ test("foto de perfil: se sube, se reemplaza y se quita; el servidor rechaza arch
 });
 
 test("foto de perfil: archivos que no son imágenes o son demasiado grandes se avisan sin mandarlos al servidor", async ({ page }) => {
-  await loginAndWait(page, "mateo@trafal.test", "trafal123");
+  await loginAndWait(page, "mateo@tradfal.test", "tradfal123");
   await gotoReady(page, "/settings/profile");
 
   let uploads = 0;

@@ -2,7 +2,7 @@
 
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
-/** Avisos (toasts) con el estilo de Trafal. Siempre tema oscuro. */
+/** Avisos (toasts) con el estilo de Tradfal. Siempre tema oscuro. */
 function Toaster(props: ToasterProps) {
   return (
     <Sonner

@@ -9,8 +9,8 @@ import { accessTokenOf, callRpc, publicProfile } from "./helpers/supabase";
  */
 test.describe.configure({ mode: "serial" });
 
-const ADMIN = { email: "admin@trafal.test", password: "trafal123" };
-const PASSWORD = "Trafal12345";
+const ADMIN = { email: "admin@tradfal.test", password: "tradfal123" };
+const PASSWORD = "Tradfal12345";
 
 let person: Page;
 let admin: Page;
@@ -34,7 +34,7 @@ async function lift() {
 test.beforeAll(async ({ browser }, testInfo) => {
   test.setTimeout(120_000);
   const suffix = uniqueSuffix(testInfo.project.name);
-  email = `e2e_appeals_${suffix}@trafal.test`;
+  email = `e2e_appeals_${suffix}@tradfal.test`;
   username = `appeals_${lettersOnly(suffix)}`;
   person = await (await browser.newContext({ ...testInfo.project.use })).newPage();
   await registerAccount(person, { email, username, displayName: "Persona Apelaciones", password: PASSWORD });

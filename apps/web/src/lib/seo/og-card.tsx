@@ -31,7 +31,7 @@ function fit(text: string, max: number): string {
 }
 
 /**
- * The picture that shows when a page is shared: Trafal's colors, the name of the page big and who or what it is about, and one
+ * The picture that shows when a page is shared: Tradfal's colors, the name of the page big and who or what it is about, and one
  * line at the bottom. It only has plain text (what a person wrote is never drawn as anything but text), cut to fit.
  */
 export function renderCard({ kicker, title, subtitle, footer, footerTone = "plain" }: Card): ImageResponse {
@@ -51,7 +51,7 @@ export function renderCard({ kicker, title, subtitle, footer, footerTone = "plai
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", fontSize: 46, fontWeight: 700, color: "#2ee6ff" }}>trafal.</div>
+          <div style={{ display: "flex", fontSize: 46, fontWeight: 700, color: "#2ee6ff" }}>tradfal.</div>
           {kicker ? (
             <div style={{ display: "flex", fontSize: 26, color: "#c9c3e6", textTransform: "uppercase", letterSpacing: 2 }}>{fit(kicker, 40)}</div>
           ) : null}

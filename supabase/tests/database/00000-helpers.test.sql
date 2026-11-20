@@ -36,7 +36,7 @@ security definer
 set search_path = ''
 as $$
 begin
-  perform tests.create_user(p_username || '@trafal.test', p_id);
+  perform tests.create_user(p_username || '@tradfal.test', p_id);
   insert into public.profiles (id, username, display_name)
   values (p_id, p_username, initcap(p_username));
   insert into public.profile_private (id, role, terms_version, terms_accepted_at, age_confirmed_at)
@@ -109,6 +109,37 @@ as $$
   delete from auth.users;   -- las claves foráneas en cascada se llevan perfiles, juegos, avances, comentarios, etc.
   delete from public.copyright_claims;   -- no cuelgan de ninguna cuenta: se vacían aparte (los reclamos reales de la base local no cuentan en las pruebas)
 $$;
+
+-- Como authenticate_as, pero con un ingreso de hace instantes (lo que piden las acciones sensibles, como borrar la cuenta).
+create or replace function tests.authenticate_recently(p_id uuid)
+returns void
+language plpgsql
+as $$
+begin
+  perform tests.authenticate_as(p_id);
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', p_id, 'role', 'authenticated', 'aud', 'authenticated',
+      'amr', json_build_array(json_build_object('method', 'password', 'timestamp', floor(extract(epoch from now()))::bigint)))::text, true);
+end;
+$$;
+
+-- La clave con la que el servidor de la web firma los reclamos de derechos de autor, para estos tests: la deja configurada en la
+-- transacción del test que la pide y la devuelve.
+create or replace function tests.claims_server_key()
+returns text
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_key constant text := 'test-claims-server-key-0123456789abcdef';
+begin
+  insert into private.server_keys (name, key_sha256) values ('claims', encode(extensions.digest(v_key, 'sha256'), 'hex'))
+  on conflict (name) do update set key_sha256 = excluded.key_sha256;
+  return v_key;
+end;
+$$;
+grant execute on function tests.authenticate_recently(uuid), tests.claims_server_key() to anon, authenticated;
 
 select plan(1);
 select pass('helpers de tests cargados');

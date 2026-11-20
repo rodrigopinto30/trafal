@@ -5,13 +5,13 @@
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
-docker build -q -f docker/worker.Dockerfile --target test -t trafal-worker:test . >/dev/null
+docker build -q -f docker/worker.Dockerfile --target test -t tradfal-worker:test . >/dev/null
 
 run() {
   docker run --rm --user "$(id -u):$(id -g)" --network none \
     -e RUFF_CACHE_DIR=/tmp/ruff -e MYPY_CACHE_DIR=/tmp/mypy \
     -v "$PWD/worker:/app/worker" -v "$PWD/packages:/app/packages:ro" \
-    trafal-worker:test "$@"
+    tradfal-worker:test "$@"
 }
 
 if [ "${1:-}" = "pytest" ]; then shift; run python -m pytest "$@"; exit; fi

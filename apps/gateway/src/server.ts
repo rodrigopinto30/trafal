@@ -1,20 +1,11 @@
-import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { createServer, type ServerResponse } from "node:http";
 import { Readable } from "node:stream";
 import { CachedDeliveryLookup, SupabaseDeliveryLookup } from "./delivery.ts";
 import { loadGatewayConfig, ConfigError } from "./config.ts";
 import { createGatewayHandler } from "./handler.ts";
 import { securityHeaders } from "./headers.ts";
+import { toRequest } from "./node-request.ts";
 import { S3GameStorage } from "./storage.ts";
-
-/** Node adapter: turns each incoming HTTP request into a standard Request and streams the Response back. */
-function toRequest(incoming: IncomingMessage): Request {
-  const headers = new Headers();
-  for (const [name, value] of Object.entries(incoming.headers)) {
-    if (value !== undefined) headers.set(name, Array.isArray(value) ? value.join(", ") : value);
-  }
-  const host = incoming.headers.host ?? "localhost";
-  return new Request(`http://${host}${incoming.url ?? "/"}`, { method: incoming.method ?? "GET", headers });
-}
 
 async function send(response: Response, outgoing: ServerResponse): Promise<void> {
   outgoing.writeHead(response.status, Object.fromEntries(response.headers));
@@ -47,7 +38,12 @@ function main(): void {
       outgoing.writeHead(200, { "Content-Type": "text/plain" }).end("ok");
       return;
     }
-    handle(toRequest(incoming))
+    const request = toRequest(incoming);
+    if (!request) {
+      outgoing.writeHead(400, Object.fromEntries(securityHeaders(config))).end("Bad request");
+      return;
+    }
+    handle(request)
       .catch((error: unknown) => {
         console.error("gateway error", error);
         return new Response("Internal error", { status: 500, headers: securityHeaders(config) });

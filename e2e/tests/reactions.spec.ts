@@ -22,7 +22,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
   const context = await browser.newContext({ ...testInfo.project.use });
   page = await context.newPage();
   const suffix = uniqueSuffix(testInfo.project.name);
-  await registerAccount(page, { email: `e2e_reactions_${suffix}@trafal.test`, username: `reactions_${lettersOnly(suffix)}`, displayName: "Persona Reacciones" });
+  await registerAccount(page, { email: `e2e_reactions_${suffix}@tradfal.test`, username: `reactions_${lettersOnly(suffix)}`, displayName: "Persona Reacciones" });
 });
 
 test.afterAll(async () => {

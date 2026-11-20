@@ -44,11 +44,11 @@ $$, '23505', null, 'the owner cannot repeat a name of their own either');
 
 -- ------------------------------------------------------------------ editing
 select lives_ok($$
-  select public.edit_game((select cats from ids), 'SPACE CATS', '', null, '{}', '', null, '[]'::jsonb, '{}')
+  select public.edit_game((select cats from ids), 'SPACE CATS', '', null, '{}', '', null, null, '{}')
 $$, 'a game can change the case of its own name');
 select is((select title from public.games where id = (select cats from ids)), 'SPACE CATS', 'and keeps the new spelling');
 select throws_ok($$
-  select public.edit_game((select dogs from ids), 'space cats', '', null, '{}', '', null, '[]'::jsonb, '{}')
+  select public.edit_game((select dogs from ids), 'space cats', '', null, '{}', '', null, null, '{}')
 $$, '23505', null, 'editing cannot take a name that is in use');
 select is((select title from public.games where id = (select dogs from ids)), 'Rocket Dogs', 'and leaves the game as it was');
 select tests.clear_authentication();

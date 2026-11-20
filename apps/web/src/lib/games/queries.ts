@@ -19,10 +19,10 @@ import type {
 } from "./types";
 
 const GAME_COLUMNS =
-  "id, public_id, title, short_description, genre_id, tags, cover_path, is_first_game, play_count, like_count, comment_count, published_at, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
+  "id, public_id, title, short_description, genre_id, tags, cover_path, gif_path, is_first_game, play_count, like_count, comment_count, published_at, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
 
 const GAME_DETAIL_COLUMNS =
-  "id, public_id, title, short_description, genre_id, tags, cover_path, is_first_game, play_count, like_count, comment_count, published_at, controls, save_count, active_version_id, owner_id, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
+  "id, public_id, title, short_description, genre_id, tags, cover_path, gif_path, is_first_game, play_count, like_count, comment_count, published_at, controls, save_count, active_version_id, owner_id, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path)" as const;
 
 const POST_COLUMNS =
   "id, kind, body, highlight, created_at, like_count, comment_count, author_id, author:profiles!posts_author_id_fkey(username, display_name, avatar_path), game:games!posts_game_id_fkey(public_id, title), media:post_media(id, kind, path, mime, width, height, alt_text, position)" as const;
@@ -31,7 +31,7 @@ const COMMENT_COLUMNS =
   "id, question_id, author_id, updated_at, parent_id, body, label, is_helpful, created_at, author:profiles!comments_author_id_fkey(username, display_name, avatar_path)" as const;
 
 const FEATURED_COLUMNS =
-  "quote, game:games!featured_games_game_id_fkey(id, public_id, title, short_description, genre_id, tags, cover_path, is_first_game, play_count, like_count, comment_count, published_at, status, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path))" as const;
+  "quote, game:games!featured_games_game_id_fkey(id, public_id, title, short_description, genre_id, tags, cover_path, gif_path, is_first_game, play_count, like_count, comment_count, published_at, status, owner:profiles!games_owner_id_fkey(username, display_name, avatar_path))" as const;
 
 const PUBLISHED_GAMES_LIMIT = 200;
 
@@ -391,9 +391,9 @@ export type EditableGame = {
   tags: string[];
   controls: string;
   cover_path: string | null;
+  gif_path: string | null;
   status: string;
   updated_at: string;
-  screenshots: { id: string; path: string; alt_text: string }[];
   questions: string[];
 };
 
@@ -402,17 +402,14 @@ export async function findEditableGame(publicId: string, ownerId: string): Promi
   const supabase = await createClient();
   const { data: game } = await supabase
     .from("games")
-    .select("id, public_id, title, short_description, genre_id, tags, controls, cover_path, status, updated_at")
+    .select("id, public_id, title, short_description, genre_id, tags, controls, cover_path, gif_path, status, updated_at")
     .eq("public_id", publicId)
     .eq("owner_id", ownerId)
     .in("status", ["draft", "published"])
     .maybeSingle();
   if (!game) return null;
-  const [screenshots, questions] = await Promise.all([
-    supabase.from("game_screenshots").select("id, path, alt_text").eq("game_id", game.id).order("position"),
-    supabase.from("game_questions").select("question").eq("game_id", game.id).order("position"),
-  ]);
-  return { ...game, screenshots: screenshots.data ?? [], questions: (questions.data ?? []).map((row) => row.question) };
+  const { data: questions } = await supabase.from("game_questions").select("question").eq("game_id", game.id).order("position");
+  return { ...game, questions: (questions ?? []).map((row) => row.question) };
 }
 
 export async function listVersionsOfGame(gameId: string): Promise<OwnGameVersion[]> {

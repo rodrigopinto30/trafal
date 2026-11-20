@@ -1,30 +1,21 @@
-import { Badge } from "@/components/ui/badge";
 import { getLocale, getTranslations } from "@/i18n/server";
 import { getLegalDocument } from "@/lib/legal/documents";
-import { LEGAL_DRAFT, LEGAL_UPDATED } from "@/lib/legal/status";
+import { LEGAL_UPDATED } from "@/lib/legal/status";
 import type { LegalDocumentId } from "@/lib/legal/types";
 
-/** A legal document: title, date, a table of contents and its sections. While it is a draft, or the operator's details are missing, it says so. */
+/** A legal document: title, date, a table of contents and its sections. */
 export async function LegalDocument({ id }: { id: LegalDocumentId }) {
   const [t, locale] = await Promise.all([getTranslations("legal"), getLocale()]);
-  const { document, operator } = getLegalDocument(id, locale);
+  const document = getLegalDocument(id, locale);
   const updated = new Intl.DateTimeFormat(locale, { dateStyle: "long", timeZone: "UTC" }).format(new Date(LEGAL_UPDATED));
 
   return (
     <article className="mx-auto max-w-[760px] px-5 pt-[clamp(32px,5vw,64px)] pb-8">
       <header>
-        {LEGAL_DRAFT ? <Badge variant="soft">{t("draftBadge")}</Badge> : null}
-        <h1 className="mt-4 font-display text-[clamp(30px,5vw,42px)] leading-[1.1] font-bold text-glow-violet">{document.title}</h1>
+        <h1 className="font-display text-[clamp(30px,5vw,42px)] leading-[1.1] font-bold text-glow-violet">{document.title}</h1>
         <p className="mt-3 text-lg text-text-2">{document.summary}</p>
         <p className="mt-2 text-sm text-text-3">{t("updated", { date: updated })}</p>
       </header>
-
-      {LEGAL_DRAFT ? <p className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-text-2">{t("draftNotice")}</p> : null}
-      {operator.complete ? null : (
-        <p role="note" className="mt-3 rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-text-2">
-          {t("operatorMissing")}
-        </p>
-      )}
 
       <nav aria-label={t("contents")} className="mt-8 rounded-[24px] border border-white/8 bg-card p-5">
         <h2 className="font-display text-lg font-bold">{t("contents")}</h2>

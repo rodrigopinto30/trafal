@@ -26,6 +26,7 @@ export const CLAIM_ERROR_KEYS = [
   "tooManyClaims",
   "captchaFailed",
   "captchaUnavailable",
+  "unavailable",
   "generic",
 ] as const;
 export type ClaimErrorKey = (typeof CLAIM_ERROR_KEYS)[number];

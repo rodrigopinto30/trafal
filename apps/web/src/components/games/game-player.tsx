@@ -25,7 +25,7 @@ function fireAndForget(call: PromiseLike<unknown>): void {
 }
 
 type Props = {
-  game: Pick<GameDetail, "id" | "public_id" | "title" | "genre_id" | "cover_path">;
+  game: Pick<GameDetail, "id" | "public_id" | "title" | "genre_id" | "cover_path" | "gif_path">;
   /** Where the game is served from, or null if it cannot be played (no games domain configured, or the game needs isolation). */
   frameUrl: string | null;
   needsIsolation: boolean;
@@ -46,7 +46,7 @@ function originOf(url: string | null): string | null {
 /**
  * The player: the game's cover with a play button and, once started, the game inside an isolated frame with the platform's own
  * control bar under it (restart, sound, fullscreen), the same for every game. The frame points to the games domain (a different site
- * from Trafal) and is sandboxed without top navigation, popups, forms or downloads, so a game cannot touch the visitor's session or
+ * from Tradfal) and is sandboxed without top navigation, popups, forms or downloads, so a game cannot touch the visitor's session or
  * leave the frame. Sound is muted through the bridge the gateway adds to the game's page (see apps/gateway/src/bridge.ts); in
  * fullscreen the game also gets the keys the browser would keep for itself, Escape included: fullscreen (or the maximized view
  * used where there is none) is left with the same button that entered it. Counts the play and keeps a heartbeat while the tab is visible.

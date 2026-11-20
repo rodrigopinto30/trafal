@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from trafal_worker.errors import ErrorParams
-from trafal_worker.version_queue import ClaimedVersion
+from tradfal_worker.errors import ErrorParams
+from tradfal_worker.version_queue import ClaimedVersion
 
 
 class FakeStorage:

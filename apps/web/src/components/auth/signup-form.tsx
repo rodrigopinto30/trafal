@@ -116,7 +116,7 @@ export function SignupForm() {
         ) : null}
       </div>
 
-      <CaptchaField resetKey={state} onReadyChange={setCaptchaReady} />
+      <CaptchaField action="signup" resetKey={state} onReadyChange={setCaptchaReady} />
 
       <Button type="submit" size="lg" disabled={pending || !captchaReady}>
         {pending ? t("signup.submitting") : t("signup.submit")}

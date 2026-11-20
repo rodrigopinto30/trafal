@@ -11,7 +11,7 @@ set -a; . ./.env.supabase; set +a
 
 LOG="$(mktemp)"
 trap 'rm -f "$LOG"' EXIT
-if docker build --progress=plain -f docker/web.Dockerfile --target prod -t trafal-web:build-check \
+if docker build --progress=plain -f docker/web.Dockerfile --target prod -t tradfal-web:build-check \
   --build-arg "NEXT_PUBLIC_SITE_URL=http://localhost:3000" \
   --build-arg "NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_PUBLIC_URL}" \
   --build-arg "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${SUPABASE_PUBLISHABLE_KEY}" \

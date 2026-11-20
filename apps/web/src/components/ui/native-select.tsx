@@ -3,7 +3,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * <select> nativo con el estilo de los campos de Trafal. Se prefiere el nativo (en vez de un menú
+ * <select> nativo con el estilo de los campos de Tradfal. Se prefiere el nativo (en vez de un menú
  * propio) porque en celulares abre el selector del sistema, que es más cómodo y accesible.
  */
 function NativeSelect({ className, children, ...props }: React.ComponentProps<"select">) {

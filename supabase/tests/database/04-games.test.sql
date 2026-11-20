@@ -109,27 +109,23 @@ select is((select count(*) from public.games), 0::bigint, 'un juego oculto desap
 select is((select count(*) from public.game_versions), 0::bigint, 'y sus versiones también');
 select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
 select is((select count(*) from public.games where title = 'Luciérnaga Valiente'), 1::bigint, 'el dueño sigue viéndolo (para saber qué pasó)');
-select throws_ok($$ update public.games set status = 'published' where title = 'Luciérnaga Valiente' $$, 'P0001', 'status_change_not_allowed', 'el dueño no puede volver a publicar un juego moderado');
+select is(tests.dml_count($$ update public.games set status = 'published' where title = 'Luciérnaga Valiente' $$), 0::bigint, 'el dueño no puede volver a publicar un juego moderado: deja de poder cambiarlo');
 select is(tests.dml_count($$ delete from public.games where title = 'Luciérnaga Valiente' $$), 0::bigint, 'ni borrarlo para evadir el reclamo');
 
--- ------------------------------------------------------------------ capturas y preguntas de feedback
+-- ------------------------------------------------------------------ preguntas de feedback
 select tests.clear_authentication();
 update public.games set status = 'published' where title = 'Luciérnaga Valiente';
 select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
-select lives_ok($$ insert into public.game_screenshots (game_id, path, alt_text, position) select id, 'screenshots/' || id || '/0123456789abcdef0123456789abcdef.webp', 'Una luciérnaga en la cueva', 1 from public.games where title = 'Luciérnaga Valiente' $$, 'ana agrega una captura');
-select throws_ok($$ insert into public.game_screenshots (game_id, path, position) select id, 'screenshots/' || id || '/0123456789abcdef0123456789abcdef.webp', 7 from public.games where title = 'Luciérnaga Valiente' $$, '23514', null, 'máximo 6 capturas');
 select lives_ok($$ insert into public.game_questions (game_id, position, question) select id, 1, '¿El salto se siente bien?' from public.games where title = 'Luciérnaga Valiente' $$, 'ana agrega una pregunta de feedback');
 select throws_ok($$ insert into public.game_questions (game_id, position, question) select id, 4, '¿Cuarta pregunta?' from public.games where title = 'Luciérnaga Valiente' $$, '23514', null, 'máximo 3 preguntas');
 select throws_ok($$ insert into public.game_questions (game_id, position, question) select id, 1, 'Repetida en la posición 1' from public.games where title = 'Luciérnaga Valiente' $$, '23505', null, 'una pregunta por posición');
 
 select tests.authenticate_as('b0000000-0000-0000-0000-000000000002');
-select throws_ok($$ insert into public.game_screenshots (game_id, path, position) select id, 'media/b/1.webp', 2 from public.games where title = 'Luciérnaga Valiente' $$, '42501', null, 'bruno NO agrega capturas al juego de ana');
-select throws_ok($$ insert into public.game_questions (game_id, position, question) select id, 2, 'Pregunta intrusa' from public.games where title = 'Luciérnaga Valiente' $$, '42501', null, 'ni preguntas');
-select is(tests.dml_count($$ delete from public.game_screenshots $$), 0::bigint, 'ni borra capturas ajenas');
+select throws_ok($$ insert into public.game_questions (game_id, position, question) select id, 2, 'Pregunta intrusa' from public.games where title = 'Luciérnaga Valiente' $$, '42501', null, 'bruno NO agrega preguntas al juego de ana');
+select is(tests.dml_count($$ update public.games set gif_path = null where title = 'Luciérnaga Valiente' $$), 0::bigint, 'ni le cambia el GIF');
 select is(tests.dml_count($$ update public.game_questions set question = 'Pregunta cambiada por bruno' $$), 0::bigint, 'ni edita preguntas ajenas');
 select tests.authenticate_as_anon();
-select is((select count(*) from public.game_screenshots), 1::bigint, 'el público ve las capturas de un juego publicado');
-select is((select count(*) from public.game_questions), 1::bigint, 'y sus preguntas');
+select is((select count(*) from public.game_questions), 1::bigint, 'el público ve las preguntas de un juego publicado');
 
 -- ------------------------------------------------------------------ al editarse el nombre, se reindexa el buscador
 select tests.clear_authentication();

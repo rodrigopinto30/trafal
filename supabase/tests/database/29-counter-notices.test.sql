@@ -21,7 +21,7 @@ insert into public.posts (id, author_id, kind, body) values
   ('55555555-5555-5555-5555-555555555501', 'a0000000-0000-0000-0000-000000000001', 'avance', 'An update of ana');
 
 create function pg_temp.claim(p_game uuid, p_post uuid) returns uuid language sql as $$
-  select public.submit_copyright_claim('Carla Owner', 'carla' || (random() * 100000)::int || '@example.com', null, 'A sprite sheet I drew', null, array['https://trafal.example/x'], true, true, 'Carla Owner', p_game, p_post)
+  select public.submit_copyright_claim('Carla Owner', 'carla' || (random() * 100000)::int || '@example.com', null, 'A sprite sheet I drew', null, array['https://tradfal.example/x'], true, true, 'Carla Owner', p_game, p_post, tests.claims_server_key())
 $$;
 
 select tests.authenticate_as('d0000000-0000-0000-0000-0000000000ad');

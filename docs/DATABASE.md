@@ -20,7 +20,7 @@ Postgres (vía Supabase). El esquema completo del MVP está desde la Fase 1: **2
 | `profile_private` | Rol, suspensión, términos aceptados, idioma | El dueño solo cambia `locale`; el resto, funciones (`suspend_account` y `lift_suspension` para la suspensión, con registro) |
 | `follows` | Quién sigue a quién (grafo público) | Cada persona, solo sus filas |
 | `games` | Ficha del juego, versión activa, estado, contadores, `search_doc` (texto de búsqueda) | Dueño (borrador ⇄ publicado); moderación: funciones |
-| `game_screenshots`, `game_questions` | Capturas y hasta 3 preguntas de feedback | Dueño del juego |
+| `game_questions` | Hasta 3 preguntas de feedback (las capturas se quitaron: un juego tiene portada y un GIF opcional, `games.cover_path` y `games.gif_path`) | Dueño del juego |
 | `game_versions` | Versiones subidas (estado, si necesita aislamiento entre orígenes, errores…) | Creación y estado: **solo funciones/worker** (Fase 2) |
 | `posts`, `post_media` | Avances (4 tipos) y sus archivos | Autor |
 | `comments` | Comentarios (un nivel de respuestas, etiquetas, «Me sirvió») | Autor edita texto/etiqueta solo mientras está publicado; «Me sirvió» solo por la función `set_comment_helpful` (dueño del juego o del avance) |
@@ -50,7 +50,7 @@ Las imágenes **no** viven en Postgres: la base guarda solo la ruta. Los bytes v
 
 | Bucket | Acceso | Qué guarda | Límites |
 |---|---|---|---|
-| `media` | Lectura pública; escritura solo con las credenciales S3 del **servidor** | `avatars/<id de la persona>/<32 hex>.webp\|jpg\|png` (hoy); capturas y avances (Fases 2–3) | Solo imagen/GIF/MP4/WebM (lista de tipos MIME del bucket), 20 MiB |
+| `media` | Lectura pública; escritura solo con las credenciales S3 del **servidor** | `avatars/<id de la persona>/<32 hex>.webp\|jpg\|png`; portadas y GIF de los juegos (`covers/<id del dueño>/<32 hex>.webp\|jpg\|png\|gif`); archivos de los avances (`posts/<id>/…`) | Solo imagen/GIF/MP4/WebM (lista de tipos MIME del bucket), 20 MiB |
 
 El navegador **nunca** recibe credenciales: la subida pasa por una Server Action que valida los bytes (`lib/media/image-sniff.ts`). Variables (`S3_ENDPOINT`, `S3_REGION`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY`, `S3_BUCKET_MEDIA`, `MEDIA_PUBLIC_URL`): en local las genera `./start.sh`; en producción ver [`.env.example`](../.env.example). Esto **no** usa la `service_role` de Supabase: son las credenciales del almacenamiento (en producción, un token de R2 con permiso solo sobre ese bucket; para eliminar cuentas, además listar y borrar objetos en los buckets de cuarentena y de juegos).
 

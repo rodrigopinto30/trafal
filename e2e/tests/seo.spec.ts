@@ -45,20 +45,20 @@ function pngSize(bytes: Buffer): { width: number; height: number } {
 test.describe("metadatos de cada página", () => {
   test("la portada, en cada idioma: título, descripción, dirección canónica, idiomas, tarjetas y datos del sitio", async ({ request }) => {
     const es = await fetchHtml(request, "/");
-    expect(es).toContain("<title>Trafal - Publicá tu juego. Sumá jugadores.</title>");
+    expect(es).toContain("<title>Tradfal - Publicá tu juego. Sumá jugadores.</title>");
     expect(meta(es, "name", "description")).toContain("red social para quienes hacen videojuegos");
     expect(link(es, "canonical")).toBe(SITE);
     expect(hreflangs(es)).toEqual({ es: `${SITE}`, en: `${SITE}/en`, "x-default": `${SITE}` });
-    expect(meta(es, "property", "og:title")).toBe("Trafal - Publicá tu juego. Sumá jugadores.");
+    expect(meta(es, "property", "og:title")).toBe("Tradfal - Publicá tu juego. Sumá jugadores.");
     expect(meta(es, "property", "og:locale")).toBe("es_AR");
     expect(meta(es, "property", "og:image")).toMatch(/\/es\/opengraph-image\?/);
     expect(meta(es, "name", "twitter:card")).toBe("summary_large_image");
     const [site] = structuredData(es);
-    expect(site).toMatchObject({ "@type": "WebSite", name: "Trafal", inLanguage: "es" });
+    expect(site).toMatchObject({ "@type": "WebSite", name: "Tradfal", inLanguage: "es" });
     expect(JSON.stringify(site)).toContain("/?q={search_term_string}");
 
     const en = await fetchHtml(request, "/en");
-    expect(en).toContain("<title>Trafal - Publish your game. Get players.</title>");
+    expect(en).toContain("<title>Tradfal - Publish your game. Get players.</title>");
     expect(link(en, "canonical")).toBe(`${SITE}/en`);
     expect(meta(en, "property", "og:locale")).toBe("en_US");
     expect(meta(en, "property", "og:locale:alternate")).toBe("es_AR");
@@ -66,7 +66,7 @@ test.describe("metadatos de cada página", () => {
 
   test("un juego: su título y descripción, el idioma alternativo, tarjeta y datos de «videojuego»", async ({ request }) => {
     const html = await fetchHtml(request, "/games/orbita");
-    expect(html).toContain("<title>Trafal - Órbita</title>");
+    expect(html).toContain("<title>Tradfal - Órbita</title>");
     expect(meta(html, "name", "description")).toContain("Lanzá planetas y jugá con la gravedad");
     expect(link(html, "canonical")).toBe(`${SITE}/games/orbita`);
     expect(hreflangs(html)).toMatchObject({ es: `${SITE}/games/orbita`, en: `${SITE}/en/games/orbita` });
@@ -82,7 +82,7 @@ test.describe("metadatos de cada página", () => {
 
   test("un perfil: nombre y @usuario en el título, la bio como descripción y datos de «persona»", async ({ request }) => {
     const html = await fetchHtml(request, "/u/sofi_pixels");
-    expect(html).toContain("<title>Trafal - Sofi Pixels (@sofi_pixels)</title>");
+    expect(html).toContain("<title>Tradfal - Sofi Pixels (@sofi_pixels)</title>");
     expect(meta(html, "name", "description")).toContain("Puzzles de física");
     expect(meta(html, "property", "og:type")).toBe("profile");
     expect(link(html, "canonical")).toBe(`${SITE}/u/sofi_pixels`);
@@ -112,11 +112,11 @@ test.describe("metadatos de cada página", () => {
     }
   });
 
-  test("el ícono de Trafal está en la pestaña (SVG) y como ícono de inicio (PNG), y los títulos son «Trafal - página»", async ({ request }) => {
+  test("el ícono de Tradfal está en la pestaña (SVG) y como ícono de inicio (PNG), y los títulos son «Tradfal - página»", async ({ request }) => {
     const html = await fetchHtml(request, "/feed");
     expect(html).toMatch(/<link rel="icon" href="\/icon\.svg[^"]*"/);
     expect(html).toMatch(/<link rel="apple-touch-icon" href="\/apple-icon\.png[^"]*"/);
-    expect(html).toContain("<title>Trafal - Comunidad</title>");
+    expect(html).toContain("<title>Tradfal - Comunidad</title>");
     const icon = await request.get("/icon.svg");
     expect(icon.status()).toBe(200);
     expect(icon.headers()["content-type"]).toContain("svg");
@@ -138,7 +138,7 @@ test.describe("metadatos de cada página", () => {
 
   test("los documentos legales tienen su propio título y dirección", async ({ request }) => {
     const html = await fetchHtml(request, "/en/legal/privacy");
-    expect(html).toContain("<title>Trafal - Privacy policy</title>");
+    expect(html).toContain("<title>Tradfal - Privacy policy</title>");
     expect(link(html, "canonical")).toBe(`${SITE}/en/legal/privacy`);
   });
 });
@@ -206,7 +206,7 @@ test("lo que una persona escribe en su bio nunca cierra la etiqueta de datos est
   const page = await context.newPage();
   const suffix = uniqueSuffix(testInfo.project.name);
   const username = `seo_${lettersOnly(suffix)}`;
-  await registerAccount(page, { email: `e2e_seo_${suffix}@trafal.test`, username, displayName: "Persona SEO" });
+  await registerAccount(page, { email: `e2e_seo_${suffix}@tradfal.test`, username, displayName: "Persona SEO" });
 
   await gotoReady(page, "/settings/profile");
   await page.getByLabel("Bio").fill('</script><script>window.pwned=1</script> & "comillas"');

@@ -1,7 +1,7 @@
 import { expect, type Page } from "@playwright/test";
 import { gotoReady } from "./session";
 
-/** A game name nobody has: names are unique on Trafal, and every project of a run uploads its own copy of each game. */
+/** A game name nobody has: names are unique on Tradfal, and every project of a run uploads its own copy of each game. */
 export function uniqueTitle(base: string) {
   return `${base} ${Date.now().toString(36).slice(-5)}${Math.random().toString(36).slice(2, 4)}`;
 }
@@ -40,7 +40,7 @@ export async function uploadAndPublishGame(page: Page, title: string, zip: Buffe
   const dialog = page.getByRole("dialog", { name: "¡Tu juego está listo!" });
   await dialog.getByRole("button", { name: "Publicar juego" }).click();
   await expect(dialog).toBeHidden();
-  await expect(page.getByText("Está publicado: cualquiera lo puede ver y jugar en Trafal.")).toBeVisible();
+  await expect(page.getByText("Está publicado: cualquiera lo puede ver y jugar en Tradfal.")).toBeVisible();
   return publicId;
 }
 
