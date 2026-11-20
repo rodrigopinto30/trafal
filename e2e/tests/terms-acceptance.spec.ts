@@ -10,7 +10,7 @@ import { accessTokenOf, callRpc } from "./helpers/supabase";
  */
 test.describe.configure({ mode: "serial" });
 
-const PASSWORD = "Trafal12345";
+const PASSWORD = "Tradfal12345";
 let page: Page;
 let email = "";
 
@@ -24,7 +24,7 @@ async function recordOlderVersion() {
 test.beforeAll(async ({ browser }, testInfo) => {
   test.setTimeout(120_000);
   const suffix = uniqueSuffix(testInfo.project.name);
-  email = `e2e_terms_${suffix}@trafal.test`;
+  email = `e2e_terms_${suffix}@tradfal.test`;
   page = await (await browser.newContext({ ...testInfo.project.use })).newPage();
   await registerAccount(page, { email, username: `terms_${lettersOnly(suffix)}`, displayName: "Persona Términos", password: PASSWORD });
 });

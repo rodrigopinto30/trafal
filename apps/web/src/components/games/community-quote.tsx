@@ -3,7 +3,7 @@ import { UserAvatar } from "@/components/brand/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "@/i18n/link";
 import { getLocale, getTranslations } from "@/i18n/server";
-import { formatRelativeTime } from "@/lib/format";
+import { formatRelativeTime, machineDateTime } from "@/lib/format";
 import type { CommunityHighlight } from "@/lib/games/types";
 
 type CommunityQuoteProps = {
@@ -35,7 +35,7 @@ export async function CommunityQuote({ highlight, now }: CommunityQuoteProps) {
           <Link href={`/games/${game.public_id}`} className={linkClass}>
             {game.title}
           </Link>
-          <time dateTime={highlight.created_at}>{formatRelativeTime(locale, highlight.created_at, now)}</time>
+          <time dateTime={machineDateTime(highlight.created_at)}>{formatRelativeTime(locale, highlight.created_at, now)}</time>
         </span>
       </figcaption>
     </figure>

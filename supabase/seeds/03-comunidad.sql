@@ -102,7 +102,7 @@ select profile.id, game.id, least(now(), game.published_at + interval '30 minute
 from public.games game
 cross join public.profiles profile
 where profile.id <> game.owner_id
-  and profile.username <> 'equipo_trafal'
+  and profile.username <> 'equipo_tradfal'
   and (hashtext(game.public_id || profile.username) % 3 + 3) % 3 = 0;
 
 insert into public.post_likes (user_id, post_id, created_at)
@@ -110,7 +110,7 @@ select profile.id, post.id, least(now(), post.created_at + interval '20 minutes'
 from public.posts post
 cross join public.profiles profile
 where profile.id <> post.author_id
-  and profile.username <> 'equipo_trafal'
+  and profile.username <> 'equipo_tradfal'
   and (hashtext(post.id::text || profile.username) % 2 + 2) % 2 = 0;
 
 update public.games game

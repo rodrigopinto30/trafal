@@ -11,11 +11,12 @@ import { listMyReactions } from "@/lib/games/reaction-queries";
 import { firstParam } from "@/lib/validation/common";
 import { FEED_PAGE_SIZE, feedHref, parseFeedQuery } from "@/lib/validation/feed";
 import { pageMetadata } from "@/lib/seo/metadata";
-import { NoIndex } from "@/components/seo/no-index";
 
-export async function generateMetadata() {
-  const [t, locale] = await Promise.all([getTranslations("feed"), getLocale()]);
-  return pageMetadata({ title: t("title"), description: t("subtitle"), path: "/feed", locale });
+/** A filtered view of the community is the same page: it points at the base one and asks not to be listed. */
+export async function generateMetadata({ searchParams }: PageProps<"/[lang]/feed">) {
+  const [t, locale, raw] = await Promise.all([getTranslations("feed"), getLocale(), searchParams]);
+  const query = parseFeedQuery({ kind: firstParam(raw.kind), scope: firstParam(raw.scope), before: firstParam(raw.before) });
+  return pageMetadata({ title: t("title"), description: t("subtitle"), path: "/feed", locale, noindex: feedHref(query) !== "/feed" });
 }
 
 export default async function FeedPage({ searchParams }: PageProps<"/[lang]/feed">) {
@@ -51,7 +52,6 @@ async function FeedContent({ searchParams }: { searchParams: PageProps<"/[lang]/
 
   return (
     <>
-      {here !== "/feed" ? <NoIndex /> : null}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <FeedFilters query={effective} signedIn={Boolean(user)} />
         {user ? (

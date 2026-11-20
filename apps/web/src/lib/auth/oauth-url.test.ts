@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { browserAuthUrl } from "./oauth-url";
 
-const INTERNAL = "http://supabase_kong_trafal:8000";
+const INTERNAL = "http://supabase_kong_tradfal:8000";
 const PUBLIC = "http://127.0.0.1:54321";
 
 describe("browserAuthUrl", () => {

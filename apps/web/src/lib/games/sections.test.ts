@@ -14,6 +14,7 @@ function game(overrides: Partial<GameSummary> = {}): GameSummary {
     genre_id: "arcade",
     tags: [],
     cover_path: null,
+    gif_path: null,
     is_first_game: false,
     play_count: 0,
     like_count: 0,

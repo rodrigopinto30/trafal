@@ -40,7 +40,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
   author = await context.newPage();
   const suffix = uniqueSuffix(testInfo.project.name);
   username = `posts_${lettersOnly(suffix)}`;
-  await registerAccount(author, { email: `e2e_posts_${suffix}@trafal.test`, username, displayName: "Persona Avances" });
+  await registerAccount(author, { email: `e2e_posts_${suffix}@tradfal.test`, username, displayName: "Persona Avances" });
   gameTitle = uniqueTitle("Juego de avances");
   publicId = await uploadAndPublishGame(author, gameTitle, playableGameZip());
 });
@@ -176,7 +176,7 @@ test("otra persona no ve las opciones de un avance ajeno ni puede abrir su edici
   await author.keyboard.press("Escape");
 
   const other = await (await browser.newContext({ ...testInfo.project.use })).newPage();
-  await loginAndWait(other, "valen@trafal.test", "trafal123");
+  await loginAndWait(other, "valen@tradfal.test", "tradfal123");
   await gotoReady(other, `/u/${username}`);
   await other.getByRole("tab", { name: "Avances" }).click();
   await expect(card(other, "Probé el nivel 2 con salto doble.")).toBeVisible();

@@ -1,10 +1,11 @@
 import { Suspense } from "react";
+import { OAuthButtons } from "@/components/auth/oauth-buttons";
 import { DeleteAccount } from "@/components/settings/delete-account";
 import { SettingsSection } from "@/components/settings/settings-section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getTranslations } from "@/i18n/server";
-import { getIsAdmin, requireProfile } from "@/lib/auth/dal";
-import { reauthMethodOf } from "@/lib/auth/reauth";
+import { RECENT_SIGN_IN_SECONDS, getIsAdmin, requireProfile, signedInRecently } from "@/lib/auth/dal";
+import { oauthProvidersOf, reauthMethodOf } from "@/lib/auth/reauth";
 
 export async function generateMetadata() {
   const t = await getTranslations("settings");
@@ -31,6 +32,9 @@ async function AccountContent() {
   const t = await getTranslations("settings");
   const { user, profile } = await requireProfile("/settings/account", { allowOutdatedTerms: true });
   const isAdmin = await getIsAdmin();
+  const method = reauthMethodOf(user);
+  const providers = oauthProvidersOf(user);
+  const mustSignInAgain = method === "email" && !(await signedInRecently(RECENT_SIGN_IN_SECONDS));
   return (
     <SettingsSection title={t("account.deleteTitle")} description={t("account.deleteText")}>
       <div className="grid gap-5">
@@ -43,7 +47,19 @@ async function AccountContent() {
           </ul>
         </div>
         <p className="text-sm text-text-2">{t("account.keepsText")}</p>
-        {isAdmin ? <p className="text-sm font-medium text-text-2">{t("account.adminNote")}</p> : <div><DeleteAccount username={profile.username} method={reauthMethodOf(user)} /></div>}
+        {isAdmin ? (
+          <p className="text-sm font-medium text-text-2">{t("account.adminNote")}</p>
+        ) : mustSignInAgain ? (
+          <div className="grid max-w-[420px] gap-3 rounded-2xl border border-white/10 p-5">
+            <p className="font-semibold">{t("account.reauthTitle")}</p>
+            <p className="text-sm text-text-2">{t("account.reauthText", { providers: providers.map((name) => name[0]?.toUpperCase() + name.slice(1)).join(" / ") })}</p>
+            <OAuthButtons next="/settings/account" only={providers} />
+          </div>
+        ) : (
+          <div>
+            <DeleteAccount username={profile.username} method={method} />
+          </div>
+        )}
       </div>
     </SettingsSection>
   );

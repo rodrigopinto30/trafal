@@ -1,5 +1,5 @@
 import "server-only";
-import { DeleteObjectCommand, DeleteObjectsCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { CopyObjectCommand, DeleteObjectCommand, DeleteObjectsCommand, ListObjectsV2Command, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { assertStorageEnv } from "@/lib/env.server";
 
@@ -41,10 +41,32 @@ export async function putMediaObject(key: string, body: Uint8Array, contentType:
   );
 }
 
-/** Borra un objeto. Es idempotente: borrar algo que no existe no es un error. */
+/**
+ * Borra un archivo de medios, esté publicado o guardado aparte porque la moderación lo ocultó. Es idempotente: borrar algo que no
+ * existe no es un error.
+ */
 export async function deleteMediaObject(key: string): Promise<void> {
-  const { client, bucket } = s3();
-  await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
+  const { client } = s3();
+  const env = assertStorageEnv();
+  await Promise.all([env.bucket, env.hiddenBucket].map((bucket) => client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }))));
+}
+
+/**
+ * Moves a media file between the public bucket and the private one where moderation keeps what it hid, with its type and cache.
+ * Returns false when there was nothing to move (it is already there, or it never existed).
+ */
+export async function moveMediaObject(key: string, to: "hidden" | "public"): Promise<boolean> {
+  const { client } = s3();
+  const env = assertStorageEnv();
+  const [from, into] = to === "hidden" ? [env.bucket, env.hiddenBucket] : [env.hiddenBucket, env.bucket];
+  try {
+    await client.send(new CopyObjectCommand({ Bucket: into, Key: key, CopySource: `${from}/${encodeURIComponent(key).replaceAll("%2F", "/")}`, MetadataDirective: "COPY" }));
+  } catch (error) {
+    if (error instanceof Error && /NoSuchKey|NotFound|not found/i.test(`${error.name} ${error.message}`)) return false;
+    throw error;
+  }
+  await client.send(new DeleteObjectCommand({ Bucket: from, Key: key }));
+  return true;
 }
 
 export type StorageBucket = "media" | "quarantine" | "games";
@@ -60,20 +82,22 @@ export async function deleteStoragePrefix(bucket: StorageBucket, prefix: string)
   if (!PREFIX_SHAPE.test(prefix)) throw new Error(`Refusing to delete the folder «${prefix}»`);
   const { client } = s3();
   const env = assertStorageEnv();
-  const name = bucket === "media" ? env.bucket : bucket === "quarantine" ? env.quarantineBucket : env.gamesBucket;
+  const names = bucket === "media" ? [env.bucket, env.hiddenBucket] : [bucket === "quarantine" ? env.quarantineBucket : env.gamesBucket];
 
   let deleted = 0;
-  let token: string | undefined;
-  do {
-    const page = await client.send(new ListObjectsV2Command({ Bucket: name, Prefix: prefix, ContinuationToken: token }));
-    const keys = (page.Contents ?? []).flatMap((object) => (object.Key?.startsWith(prefix) ? [{ Key: object.Key }] : []));
-    if (keys.length > 0) {
-      const result = await client.send(new DeleteObjectsCommand({ Bucket: name, Delete: { Objects: keys, Quiet: true } }));
-      if (result.Errors?.length) throw new Error(`Could not delete ${result.Errors.length} objects under «${prefix}»`);
-      deleted += keys.length;
-    }
-    token = page.IsTruncated ? page.NextContinuationToken : undefined;
-  } while (token);
+  for (const name of names) {
+    let token: string | undefined;
+    do {
+      const page = await client.send(new ListObjectsV2Command({ Bucket: name, Prefix: prefix, ContinuationToken: token }));
+      const keys = (page.Contents ?? []).flatMap((object) => (object.Key?.startsWith(prefix) ? [{ Key: object.Key }] : []));
+      if (keys.length > 0) {
+        const result = await client.send(new DeleteObjectsCommand({ Bucket: name, Delete: { Objects: keys, Quiet: true } }));
+        if (result.Errors?.length) throw new Error(`Could not delete ${result.Errors.length} objects under «${prefix}»`);
+        deleted += keys.length;
+      }
+      token = page.IsTruncated ? page.NextContinuationToken : undefined;
+    } while (token);
+  }
   return deleted;
 }
 

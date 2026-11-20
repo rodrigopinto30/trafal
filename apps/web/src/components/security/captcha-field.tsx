@@ -39,7 +39,12 @@ function loadTurnstile(): Promise<TurnstileApi> {
 /** Whether this site shows a captcha (it has the public key of Turnstile). */
 export const captchaEnabled = publicEnv.turnstileSiteKey !== "";
 
+/** The forms that ask for a captcha: each one solves its own, and the server refuses an answer solved for another. */
+export type CaptchaAction = "signup" | "login" | "recover" | "claim" | "delete_account";
+
 type Props = {
+  /** Which form this captcha protects. */
+  action: CaptchaAction;
   /** Anything that changes after each attempt (the result of the form action): a token is good for one use, so the captcha starts again. */
   resetKey: unknown;
   /** Tells the form whether it has a solved captcha, so it can keep its button off until then. */
@@ -50,7 +55,7 @@ type Props = {
  * The captcha of a form: the widget of Cloudflare Turnstile and the hidden field `captchaToken` with its answer. It renders nothing
  * if the site has no key (local development). The server checks the answer again: this only collects it.
  */
-export function CaptchaField({ resetKey, onReadyChange }: Props) {
+export function CaptchaField({ action, resetKey, onReadyChange }: Props) {
   const t = useTranslations("common");
   const locale = useLocale();
   const container = useRef<HTMLDivElement>(null);
@@ -67,6 +72,7 @@ export function CaptchaField({ resetKey, onReadyChange }: Props) {
         if (cancelled || !container.current) return;
         widget.current = turnstile.render(container.current, {
           sitekey: publicEnv.turnstileSiteKey,
+          action,
           theme: "dark",
           language: locale,
           callback: (answer: string) => {
@@ -95,7 +101,7 @@ export function CaptchaField({ resetKey, onReadyChange }: Props) {
       if (widget.current) window.turnstile?.remove(widget.current);
       widget.current = null;
     };
-  }, [locale, onReadyChange]);
+  }, [action, locale, onReadyChange]);
 
   useEffect(() => {
     if (first.current) {

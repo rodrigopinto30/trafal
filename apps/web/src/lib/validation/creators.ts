@@ -21,7 +21,7 @@ function parsePage(value: string | undefined): number {
   return page >= 1 && page <= CREATORS_MAX_PAGE ? page : 1;
 }
 
-/** The order a person gets without choosing one: the newest members first, because Trafal is for people who are just starting out. */
+/** The order a person gets without choosing one: the newest members first, because Tradfal is for people who are just starting out. */
 export const DEFAULT_CREATORS_SORT: CreatorsSort = "newest";
 
 /** Everything on the creators page comes from the address bar, so everything is checked (see parseExploreQuery for the same rules). */

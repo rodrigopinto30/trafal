@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { requireAdmin } from "@/lib/auth/dal";
 import { ReportActions } from "@/components/admin/report-actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,7 @@ function accountOf(report: AdminReport): string | undefined {
 }
 
 async function Reports({ searchParams }: { searchParams: PageProps<"/[lang]/admin">["searchParams"] }) {
+  await requireAdmin("/admin");
   const raw = await searchParams;
   const filter = parseReportStatusFilter(firstParam(raw.status));
   const before = parseBefore(firstParam(raw.before));

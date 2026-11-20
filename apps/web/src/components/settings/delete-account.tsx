@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { CaptchaField, captchaEnabled } from "@/components/security/captcha-field";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
@@ -26,6 +27,7 @@ export function DeleteAccount({ username, method }: { username: string; method: 
   const [open, setOpen] = useState(false);
   const [typed, setTyped] = useState("");
   const [secret, setSecret] = useState("");
+  const [captchaReady, setCaptchaReady] = useState(!captchaEnabled || method !== "password");
   const [state, formAction, pending] = useActionState(deleteAccountAction, initialFormState);
   const matches = typed.trim().replace(/^@/, "").toLowerCase() === username;
 
@@ -79,11 +81,12 @@ export function DeleteAccount({ username, method }: { username: string; method: 
                 )
               }
             </Field>
+            {method === "password" ? <CaptchaField action="delete_account" resetKey={state} onReadyChange={setCaptchaReady} /> : null}
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)} disabled={pending}>
                 {t("account.cancel")}
               </Button>
-              <Button type="submit" variant="destructive" disabled={pending || !matches || secret.trim() === ""}>
+              <Button type="submit" variant="destructive" disabled={pending || !matches || secret.trim() === "" || !captchaReady}>
                 {pending ? t("account.deleting") : t("account.confirm")}
               </Button>
             </DialogFooter>

@@ -56,7 +56,7 @@ for (const path of PUBLIC_PAGES) {
 }
 
 test("la manito también está en la configuración, el menú de la cuenta, las pestañas y el diálogo de la foto", async ({ page }) => {
-  await loginAndWait(page, "mateo@trafal.test", "trafal123");
+  await loginAndWait(page, "mateo@tradfal.test", "tradfal123");
   await expect(page.getByRole("button", { name: "Tu cuenta" })).toBeVisible();
 
   await gotoReady(page, "/settings/profile");

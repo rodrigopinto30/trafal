@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from trafal_worker.rules import UploadRules, load_rules
+from tradfal_worker.rules import UploadRules, load_rules
 
 INDEX = b"<!doctype html><title>Juego</title><script src=game.js></script>"
 

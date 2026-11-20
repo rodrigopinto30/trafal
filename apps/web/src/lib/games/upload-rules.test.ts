@@ -1,12 +1,15 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { DAILY_UPLOAD_LIMIT, MAX_ZIP_BYTES, looksLikeZip } from "./upload-rules";
+import { ALLOWED_FILE_GROUPS, COMPRESSED_SUFFIXES } from "./upload-file-types";
+import { DAILY_UPLOAD_LIMIT, MAX_FILE_BYTES, MAX_FILES, MAX_PATH_LENGTH, MAX_UNCOMPRESSED_BYTES, MAX_ZIP_BYTES, looksLikeZip } from "./upload-rules";
 import { UPLOAD_ERROR_CODES, isUploadErrorCode, uploadErrorParams } from "./upload-error";
 
 const repoRoot = path.resolve(process.cwd(), "../..");
 const rules = JSON.parse(readFileSync(path.join(repoRoot, "packages/shared/upload-rules.json"), "utf8")) as {
-  limits: { maxZipBytes: number };
+  limits: { maxZipBytes: number; maxUncompressedBytes: number; maxFiles: number; maxFileBytes: number; maxPathLength: number };
+  allowedExtensions: string[];
+  compressedSuffixes: string[];
   errorCodes: string[];
 };
 const migration = readFileSync(path.join(repoRoot, "supabase/migrations/20261106000200_game_upload.sql"), "utf8");
@@ -15,6 +18,20 @@ describe("upload limits stay in sync", () => {
   it("the client zip limit equals the shared rules and the SQL function", () => {
     expect(MAX_ZIP_BYTES).toBe(rules.limits.maxZipBytes);
     expect(migration).toContain(`c_max_zip_bytes constant bigint := ${MAX_ZIP_BYTES};`);
+  });
+
+  it("the other limits the guide shows equal the shared rules", () => {
+    expect(MAX_UNCOMPRESSED_BYTES).toBe(rules.limits.maxUncompressedBytes);
+    expect(MAX_FILES).toBe(rules.limits.maxFiles);
+    expect(MAX_FILE_BYTES).toBe(rules.limits.maxFileBytes);
+    expect(MAX_PATH_LENGTH).toBe(rules.limits.maxPathLength);
+  });
+
+  it("the file types the guide lists are exactly the allowed ones, each in one group", () => {
+    const listed = Object.values(ALLOWED_FILE_GROUPS).flat();
+    expect(new Set(listed).size).toBe(listed.length);
+    expect([...listed].sort()).toEqual([...rules.allowedExtensions].sort());
+    expect([...COMPRESSED_SUFFIXES].sort()).toEqual([...rules.compressedSuffixes].sort());
   });
 
   it("the daily upload quota equals the SQL function", () => {

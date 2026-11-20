@@ -52,10 +52,7 @@ async function EditGameContent({ params }: { params: EditGamePageProps["params"]
           controls: game.controls,
           questions: game.questions,
           coverUrl: mediaUrl(game.cover_path),
-          screenshots: game.screenshots.flatMap((shot) => {
-            const url = mediaUrl(shot.path);
-            return url ? [{ id: shot.id, url }] : [];
-          }),
+          gifUrl: mediaUrl(game.gif_path),
         }}
       />
     </ExtraMessages>

@@ -31,7 +31,7 @@ test.describe("creadores", () => {
 
     const names = await usernames(page);
     expect(names).toEqual(expect.arrayContaining(["@valen_makes", "@sofi_pixels", "@mateo_g", "@julistudio"]));
-    expect(names).not.toContain("@equipo_trafal");
+    expect(names).not.toContain("@equipo_tradfal");
     await expect(page.getByRole("status").filter({ hasText: /creadores/ })).toBeVisible();
 
     const card = cards(page).filter({ hasText: "@mateo_g" });
@@ -109,7 +109,7 @@ test.describe("creadores", () => {
     const context = await browser.newContext({ ...testInfo.project.use });
     const page = await context.newPage();
     const suffix = uniqueSuffix(testInfo.project.name);
-    await registerAccount(page, { email: `e2e_creators_${suffix}@trafal.test`, username: `creators_${lettersOnly(suffix)}`, displayName: "Persona Creadores" });
+    await registerAccount(page, { email: `e2e_creators_${suffix}@tradfal.test`, username: `creators_${lettersOnly(suffix)}`, displayName: "Persona Creadores" });
 
     await gotoReady(page, "/creators?q=julistudio");
     const card = cards(page).filter({ hasText: "@julistudio" });

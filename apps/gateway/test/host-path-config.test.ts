@@ -80,6 +80,6 @@ describe("loadGatewayConfig", () => {
   });
 
   it("drops the path of SITE_URL when building the framing origin", () => {
-    expect(makeConfig({ SITE_URL: "https://trafal.example/some/path?x=1" }).siteOrigin).toBe("https://trafal.example");
+    expect(makeConfig({ SITE_URL: "https://tradfal.example/some/path?x=1" }).siteOrigin).toBe("https://tradfal.example");
   });
 });

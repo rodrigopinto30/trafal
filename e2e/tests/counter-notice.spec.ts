@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 import { gotoReady, lettersOnly, loginAndWait, registerAccount, uniqueSuffix } from "./helpers/session";
-import { accessTokenOf, callRpc, latestPostIdOf } from "./helpers/supabase";
+import { accessTokenOf, callRpc, claimsServerKey, latestPostIdOf } from "./helpers/supabase";
 
 /**
  * Counter-notices. An update is hidden because of a copyright claim; its author cannot send a plain appeal, answers with a counter-notice
@@ -10,8 +10,8 @@ import { accessTokenOf, callRpc, latestPostIdOf } from "./helpers/supabase";
  */
 test.describe.configure({ mode: "serial" });
 
-const ADMIN = { email: "admin@trafal.test", password: "trafal123" };
-const PASSWORD = "Trafal12345";
+const ADMIN = { email: "admin@tradfal.test", password: "tradfal123" };
+const PASSWORD = "Tradfal12345";
 
 let person: Page;
 let admin: Page;
@@ -25,7 +25,7 @@ const card = (page: Page) => page.getByRole("article", { name: `Apelación de @$
 test.beforeAll(async ({ browser }, testInfo) => {
   test.setTimeout(150_000);
   suffix = uniqueSuffix(testInfo.project.name);
-  email = `e2e_counter_${suffix}@trafal.test`;
+  email = `e2e_counter_${suffix}@tradfal.test`;
   username = `counter_${lettersOnly(suffix)}`;
   person = await (await browser.newContext({ ...testInfo.project.use })).newPage();
   await registerAccount(person, { email, username, displayName: "Persona Contranotificación", password: PASSWORD });
@@ -42,7 +42,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
 
   const claim = await callRpc("submit_copyright_claim", {
     p_claimant_name: "Carla Titular",
-    p_claimant_email: `e2e_claim_${suffix}@trafal.test`,
+    p_claimant_email: `e2e_claim_${suffix}@tradfal.test`,
     p_claimant_org: null,
     p_work_description: "Una ilustración que publiqué en mi sitio en 2024",
     p_original_url: null,
@@ -52,6 +52,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
     p_signature: "Carla Titular",
     p_game_id: null,
     p_post_id: postId,
+    p_server_key: claimsServerKey(),
   });
   expect(claim.status).toBeLessThan(300);
   const resolved = await callRpc("resolve_claim", { p_claim_id: claim.body, p_outcome: "hide_content", p_note: "La ilustración es de otra persona" }, adminToken);

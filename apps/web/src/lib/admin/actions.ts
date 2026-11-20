@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getAuthUser } from "@/lib/auth/dal";
+import { placeModeratedMedia, type ModeratedTarget } from "@/lib/moderation/media.server";
 import { createClient } from "@/lib/supabase/server";
 import {
   ADMIN_ERROR_KEYS,
@@ -65,14 +66,46 @@ function failureOfDatabase(error: { code?: string; message: string }): AdminResu
   return fail("generic");
 }
 
-async function asAdmin<T>(rawInput: unknown, schema: { safeParse(value: unknown): { success: true; data: T } | { success: false; error: { issues: { message: string }[] } } }, run: (data: T, supabase: Awaited<ReturnType<typeof createClient>>) => Promise<{ message: string; code?: string } | null>): Promise<AdminResult> {
+type Supabase = Awaited<ReturnType<typeof createClient>>;
+
+/**
+ * Runs an admin action: the input is validated, the database decides (it checks that the caller is an admin), and, for a decision
+ * that can hide or restore content, the files of what it touched are then moved to where its new state says.
+ */
+async function asAdmin<T>(
+  rawInput: unknown,
+  schema: { safeParse(value: unknown): { success: true; data: T } | { success: false; error: { issues: { message: string }[] } } },
+  run: (data: T, supabase: Supabase) => Promise<{ message: string; code?: string } | null>,
+  touched?: (data: T, supabase: Supabase) => Promise<ModeratedTarget[]>,
+): Promise<AdminResult> {
   if (!(await getAuthUser())) return fail("unauthenticated");
   const parsed = schema.safeParse(rawInput);
   if (!parsed.success) return failureOfSchema(parsed.error.issues[0]);
-  const error = await run(parsed.data, await createClient());
+  const supabase = await createClient();
+  const error = await run(parsed.data, supabase);
   if (error) return failureOfDatabase(error);
+  if (touched) await placeModeratedMedia(supabase, await touched(parsed.data, supabase));
   revalidatePath("/", "layout");
   return { ok: true };
+}
+
+function contentTarget(type: string | null | undefined, id: string | null | undefined): ModeratedTarget[] {
+  return (type === "game" || type === "post") && id ? [{ type, id }] : [];
+}
+
+async function targetOfReport({ reportId }: { reportId: string }, supabase: Supabase): Promise<ModeratedTarget[]> {
+  const { data } = await supabase.from("reports").select("target_type, target_id").eq("id", reportId).maybeSingle();
+  return contentTarget(data?.target_type, data?.target_id);
+}
+
+async function targetsOfClaim({ claimId }: { claimId: string }, supabase: Supabase): Promise<ModeratedTarget[]> {
+  const { data } = await supabase.from("copyright_claims").select("game_id, post_id").eq("id", claimId).maybeSingle();
+  return [...contentTarget("game", data?.game_id), ...contentTarget("post", data?.post_id)];
+}
+
+async function targetOfAppeal({ appealId }: { appealId: string }, supabase: Supabase): Promise<ModeratedTarget[]> {
+  const { data } = await supabase.from("appeals").select("target_type, target_id").eq("id", appealId).maybeSingle();
+  return contentTarget(data?.target_type, data?.target_id);
 }
 
 /** Takes a report to review it. The database checks that the caller is an admin and leaves a line in the moderation log. */
@@ -82,12 +115,18 @@ export async function takeReportAction(rawInput: unknown): Promise<AdminResult> 
 
 /** Resolves a report: dismiss it, mark it as handled, or hide the reported content and mark it as handled, all in one step. */
 export async function resolveReportAction(rawInput: unknown): Promise<AdminResult> {
-  return asAdmin(rawInput, resolveReportSchema, async ({ reportId, outcome, note }, supabase) => (await supabase.rpc("resolve_report", { p_report_id: reportId, p_outcome: outcome, p_note: note })).error);
+  return asAdmin(rawInput, resolveReportSchema, async ({ reportId, outcome, note }, supabase) => (await supabase.rpc("resolve_report", { p_report_id: reportId, p_outcome: outcome, p_note: note })).error, targetOfReport);
 }
 
 /** Hides or restores a game, an update or a comment, with the reason (the author is told). */
 export async function moderateContentAction(rawInput: unknown): Promise<AdminResult> {
-  return asAdmin(rawInput, moderateContentSchema, async ({ targetType, targetId, action, reason }, supabase) => (await supabase.rpc("moderate_content", { p_target_type: targetType, p_target_id: targetId, p_action: action, p_reason: reason })).error);
+  return asAdmin(
+    rawInput,
+    moderateContentSchema,
+    async ({ targetType, targetId, action, reason }, supabase) =>
+      (await supabase.rpc("moderate_content", { p_target_type: targetType, p_target_id: targetId, p_action: action, p_reason: reason })).error,
+    async ({ targetType, targetId }) => contentTarget(targetType, targetId),
+  );
 }
 
 /** Chooses the first game of a week (the current one if no week is given), with an optional quote. */
@@ -123,10 +162,10 @@ export async function takeClaimAction(rawInput: unknown): Promise<AdminResult> {
 
 /** Resolves a copyright claim: dismiss it, mark it as handled, or hide what was claimed and mark it as handled (the author is told the reason). */
 export async function resolveClaimAction(rawInput: unknown): Promise<AdminResult> {
-  return asAdmin(rawInput, resolveClaimSchema, async ({ claimId, outcome, note }, supabase) => (await supabase.rpc("resolve_claim", { p_claim_id: claimId, p_outcome: outcome, p_note: note })).error);
+  return asAdmin(rawInput, resolveClaimSchema, async ({ claimId, outcome, note }, supabase) => (await supabase.rpc("resolve_claim", { p_claim_id: claimId, p_outcome: outcome, p_note: note })).error, targetsOfClaim);
 }
 
 /** Answers an appeal: keep the decision or reverse it (the suspension is lifted, the content is back), with an answer that the person reads. */
 export async function resolveAppealAction(rawInput: unknown): Promise<AdminResult> {
-  return asAdmin(rawInput, resolveAppealSchema, async ({ appealId, outcome, note }, supabase) => (await supabase.rpc("resolve_appeal", { p_appeal_id: appealId, p_outcome: outcome, p_note: note })).error);
+  return asAdmin(rawInput, resolveAppealSchema, async ({ appealId, outcome, note }, supabase) => (await supabase.rpc("resolve_appeal", { p_appeal_id: appealId, p_outcome: outcome, p_note: note })).error, targetOfAppeal);
 }

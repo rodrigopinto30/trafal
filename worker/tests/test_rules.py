@@ -1,7 +1,7 @@
 import json
 
-from trafal_worker.errors import ErrorCode
-from trafal_worker.rules import default_rules_path, load_rules
+from tradfal_worker.errors import ErrorCode
+from tradfal_worker.rules import default_rules_path, load_rules
 
 
 def test_rules_match_the_documented_limits() -> None:

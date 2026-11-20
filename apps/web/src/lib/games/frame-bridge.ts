@@ -4,22 +4,22 @@
  */
 export const BRIDGE_PROTOCOL = 1;
 
-export type MuteMessage = { trafal: typeof BRIDGE_PROTOCOL; type: "mute"; muted: boolean };
-export type HelloMessage = { trafal: typeof BRIDGE_PROTOCOL; type: "hello" };
+export type MuteMessage = { tradfal: typeof BRIDGE_PROTOCOL; type: "mute"; muted: boolean };
+export type HelloMessage = { tradfal: typeof BRIDGE_PROTOCOL; type: "hello" };
 
 export function muteMessage(muted: boolean): MuteMessage {
-  return { trafal: BRIDGE_PROTOCOL, type: "mute", muted };
+  return { tradfal: BRIDGE_PROTOCOL, type: "mute", muted };
 }
 
 export function helloMessage(): HelloMessage {
-  return { trafal: BRIDGE_PROTOCOL, type: "hello" };
+  return { tradfal: BRIDGE_PROTOCOL, type: "hello" };
 }
 
 /** True only for the bridge's own «ready» message: anything else a game posts is ignored. */
 export function isBridgeReady(data: unknown): boolean {
   if (typeof data !== "object" || data === null) return false;
   const message = data as Record<string, unknown>;
-  return message.trafal === BRIDGE_PROTOCOL && message.type === "ready";
+  return message.tradfal === BRIDGE_PROTOCOL && message.type === "ready";
 }
 
 /**
@@ -78,7 +78,7 @@ export function unlockGameKeys(): void {
   }
 }
 
-const MUTED_KEY = "trafal:muted";
+const MUTED_KEY = "tradfal:muted";
 
 type Storage = Pick<globalThis.Storage, "getItem" | "setItem">;
 

@@ -83,9 +83,47 @@ function inspectPng(bytes: Uint8Array, view: DataView): ImageInfo | null {
   return null;
 }
 
+/**
+ * Where a JPEG really ends: right after the EOI marker that closes its image data, walking every segment and the compressed data of
+ * every scan (where FF 00 is an escaped byte and FF D0–D7 are restart marks). Null if it never closes. Ending in FF D9 is not
+ * enough: something glued after the image can end that way too.
+ */
+export function jpegEnd(bytes: Uint8Array): number | null {
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  let offset = 2;
+  while (offset + 2 <= bytes.length) {
+    if (at(bytes, offset) !== 0xff) return null;
+    const marker = at(bytes, offset + 1);
+    if (marker === 0xff) {
+      offset += 1;
+      continue;
+    }
+    if (marker === 0xd9) return offset + 2;
+    if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) {
+      offset += 2;
+      continue;
+    }
+    if (offset + 4 > bytes.length) return null;
+    const length = view.getUint16(offset + 2);
+    if (length < 2) return null;
+    offset += 2 + length;
+    if (marker !== 0xda) continue;
+    while (offset + 1 < bytes.length) {
+      if (at(bytes, offset) !== 0xff) {
+        offset += 1;
+        continue;
+      }
+      const next = at(bytes, offset + 1);
+      if (next === 0x00 || (next >= 0xd0 && next <= 0xd7)) offset += 2;
+      else if (next === 0xff) offset += 1;
+      else break;
+    }
+  }
+  return null;
+}
+
 function inspectJpeg(bytes: Uint8Array, view: DataView): ImageInfo | null {
-  // Un JPEG termina con el marcador EOI (FF D9): nada pegado atrás.
-  if (at(bytes, bytes.length - 2) !== 0xff || at(bytes, bytes.length - 1) !== 0xd9) return null;
+  if (jpegEnd(bytes) !== bytes.length) return null;
 
   let offset = 2; // después de SOI (FF D8)
   while (offset + 4 <= bytes.length) {

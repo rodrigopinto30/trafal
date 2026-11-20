@@ -26,7 +26,7 @@ const REJECTED_ZIPS = [
 test("el worker rechaza con un motivo claro los zips que rompen las reglas, y el mismo borrador acepta después el bueno", async ({ page }, testInfo) => {
   test.setTimeout(240_000);
   const suffix = uniqueSuffix(testInfo.project.name);
-  await registerAccount(page, { email: `e2e_worker_${suffix}@trafal.test`, username: `worker_${lettersOnly(suffix)}`, displayName: "Persona Worker" });
+  await registerAccount(page, { email: `e2e_worker_${suffix}@tradfal.test`, username: `worker_${lettersOnly(suffix)}`, displayName: "Persona Worker" });
 
   for (const rejected of REJECTED_ZIPS.slice(0, 4)) {
     await submitGameZip(page, uniqueTitle(`Rechazado: ${rejected.name}`), rejected.zip());
@@ -46,7 +46,7 @@ test("el worker rechaza con un motivo claro los zips que rompen las reglas, y el
 test("algo que no es un zip se rechaza también", async ({ page }, testInfo) => {
   test.setTimeout(120_000);
   const suffix = uniqueSuffix(testInfo.project.name);
-  await registerAccount(page, { email: `e2e_notzip_${suffix}@trafal.test`, username: `notzip_${lettersOnly(suffix)}`, displayName: "Persona Texto" });
+  await registerAccount(page, { email: `e2e_notzip_${suffix}@tradfal.test`, username: `notzip_${lettersOnly(suffix)}`, displayName: "Persona Texto" });
   const rejected = REJECTED_ZIPS[4]!;
   await submitGameZip(page, uniqueTitle("Texto con nombre de zip"), rejected.zip());
   await expect(page.getByText(/Tu \.zip no pasó la revisión\./)).toBeVisible({ timeout: 45_000 });

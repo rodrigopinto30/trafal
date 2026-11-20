@@ -1,9 +1,9 @@
 {
   "meta": {
-    "siteName": "Trafal",
-    "defaultTitle": "Trafal - Publish your game. Get players.",
-    "titleTemplate": "Trafal - %s",
-    "description": "Trafal is the social network for people making video games: upload a browser game, show how you build it and get feedback from the community."
+    "siteName": "Tradfal",
+    "defaultTitle": "Tradfal - Publish your game. Get players.",
+    "titleTemplate": "Tradfal - %s",
+    "description": "Tradfal is the social network for people making video games: upload a browser game, show how you build it and get feedback from the community."
   },
   "common": {
     "skipToContent": "Skip to content",
@@ -26,12 +26,14 @@
       "loading": "Checking that you are a person…",
       "error": "We couldn't load the security check. Check your connection, turn off content blockers for this site and reload the page."
     },
-    "backButton": "Back"
+    "backButton": "Back",
+    "gifPause": "Pause GIFs",
+    "gifPlay": "Play GIFs"
   },
   "nav": {
     "label": "Main",
     "mobileLabel": "Mobile menu",
-    "home": "Go to the Trafal home page",
+    "home": "Go to the Tradfal home page",
     "community": "Community",
     "creators": "Creators",
     "upload": "Upload game",
@@ -59,16 +61,14 @@
   },
   "footer": {
     "tagline": "The social network for publishing browser games and sharing how they're made.",
-    "product": "Product",
     "help": "Help",
     "legal": "Legal",
-    "community": "Community",
     "howToUpload": "How to upload a game",
     "guidelines": "Community guidelines",
-    "terms": "Terms",
-    "privacy": "Privacy",
+    "terms": "Terms and conditions",
+    "privacy": "Privacy policy",
     "copyright": "Copyright",
-    "rights": "© {year} Trafal"
+    "rights": "© {year} Tradfal"
   },
   "home": {
     "titleLead": "Publish your game.",
@@ -87,7 +87,7 @@
       },
       "mostPlayed": {
         "title": "Most played",
-        "subtitle": "What people play the most on Trafal."
+        "subtitle": "What people play the most on Tradfal."
       },
       "featured": {
         "eyebrow": "First game of the week",
@@ -135,6 +135,7 @@
     "finalTitle": "Your game doesn't have to be perfect. It has to be published.",
     "finalText": "Create your profile, upload what you have and tell us what you're working on. The community does the rest.",
     "signedIn": {
+      "title": "Home",
       "following": {
         "title": "News from people you follow",
         "subtitle": "The latest from the creators you follow.",
@@ -149,13 +150,12 @@
       },
       "mostPlayed": {
         "title": "Most played",
-        "subtitle": "What is played the most on Trafal."
+        "subtitle": "What is played the most on Tradfal."
       },
       "firstGames": {
         "title": "First games",
         "subtitle": "People who just published their first game. A kind comment goes a long way."
-      },
-      "slogan": "Browser games, <accent>made by the community</accent>"
+      }
     },
     "search": {
       "title": "Find games"
@@ -207,7 +207,8 @@
       "subtitle": "Easy for you to remember, hard for everyone else to guess.",
       "newPassword": "New password",
       "submit": "Change my password",
-      "submitting": "Changing…"
+      "submitting": "Changing…",
+      "forAccount": "For the account {email}."
     },
     "errors": {
       "required": "Please fill in this field.",
@@ -226,7 +227,7 @@
   },
   "onboarding": {
     "title": "Last step: your profile",
-    "subtitle": "This is how people will see you on Trafal. You can change it later (except your @username).",
+    "subtitle": "This is how people will see you on Tradfal. You can change it later (except your @username).",
     "username": "Your @username",
     "usernameHint": "3 to 30 characters: letters, dots (.) and underscores (_). Numbers are optional.",
     "usernameStatus": {
@@ -247,7 +248,7 @@
     "usernameSuggestUse": "Use @{username}",
     "displayName": "Your name",
     "displayNameHint": "It can be your real name or an artist name.",
-    "submit": "Enter Trafal",
+    "submit": "Enter Tradfal",
     "submitting": "Saving…",
     "errors": {
       "username_taken": "Someone else already uses that @username. Pick another one.",
@@ -298,7 +299,7 @@
     "completeCta": "Finish my profile",
     "ownDraftsTitle": "Your games in progress",
     "manageGame": "View status",
-    "seoDescription": "{name}'s profile on Trafal: their browser games and their updates.",
+    "seoDescription": "{name}'s profile on Tradfal: their browser games and their updates.",
     "rateLimited": "You're following many people too fast. Wait a while and try again."
   },
   "games": {
@@ -429,9 +430,9 @@
       "zip": "Game .zip file",
       "zipHint": "Up to {limit}. The index.html file must be in the main folder of the .zip.",
       "cover": "Cover (optional)",
-      "coverHint": "PNG, JPG or WebP, at least 320×180 and up to 5 MB.",
-      "screenshots": "Screenshots (optional)",
-      "screenshotsHint": "Up to 6 PNG, JPG or WebP images, up to 5 MB each."
+      "coverHint": "A PNG, JPG or WebP image, at least 320×180 and up to 5 MB. Without a cover or a GIF, we show an art in the genre's color.",
+      "gif": "GIF (optional)",
+      "gifHint": "If you upload one, it is shown in place of the cover. Up to 5 MB, from 320×180 to 1920×1920 pixels."
     },
     "selectedFile": "{name} · {size}",
     "submit": "Upload game",
@@ -466,15 +467,16 @@
       "coverTooLarge": "The cover is too big: the maximum is 5 MB.",
       "coverDimensions": "The cover must be between 320×180 and 4096×4096 pixels.",
       "coverAnimated": "The cover cannot be animated.",
-      "screenshotsInvalid": "Screenshots must be valid, non-animated PNG, JPG or WebP images of up to 5 MB, between 320×180 and 4096×4096 pixels.",
-      "tooManyScreenshots": "You can upload up to 6 screenshots.",
       "dailyLimit": "You reached the limit of 5 uploads per day (new games and new versions both count). You can't upload any more today: try again tomorrow.",
       "accountRestricted": "Your account can't upload games right now.",
       "unauthenticated": "Log in to upload a game.",
       "storage": "We couldn't save your files. Try again in a while.",
       "generic": "Something went wrong. Check your details and try again.",
       "rateLimited": "You created too many games today. Try again tomorrow.",
-      "gameNotEditable": "We couldn't find that game, or it can no longer be edited."
+      "gameNotEditable": "We couldn't find that game, or it can no longer be edited.",
+      "gifInvalid": "The GIF must be a valid, complete GIF file.",
+      "gifTooLarge": "The GIF can be up to 5 MB.",
+      "gifDimensions": "The GIF must be between 320×180 and 1920×1920 pixels and have up to 600 frames."
     },
     "submitting": "Uploading your game…",
     "reviewingButton": "Reviewing your game…",
@@ -484,7 +486,8 @@
       "confirming": "Finish",
       "reviewing": "Review"
     },
-    "leaveWarning": "Don't close or reload this page until it finishes."
+    "leaveWarning": "Don't close or reload this page until it finishes.",
+    "guideLink": "First time uploading a game? Read the step-by-step guide."
   },
   "gameManage": {
     "title": "Your game",
@@ -515,7 +518,7 @@
     "note": {
       "draft": "Your game is a draft: only you can see it. Once a version passes the review you can publish it.",
       "draftReady": "Your game passed the review and is still a draft only you can see. Publish it whenever you like.",
-      "published": "Your game is published: anyone can see it on Trafal.",
+      "published": "Your game is published: anyone can see it on Tradfal.",
       "hidden": "Your game is hidden by moderation.",
       "removed": "Your game was taken down by moderation."
     },
@@ -565,7 +568,7 @@
       "published": "Published"
     },
     "note": {
-      "published": "It's published: anyone can see it and play it on Trafal.",
+      "published": "It's published: anyone can see it and play it on Tradfal.",
       "ready": "It passed the review. For now it's a draft and only you can see this page: publish it so the community can play it.",
       "reviewing": "We're reviewing your .zip. Once it passes you'll be able to publish it (this page updates by itself).",
       "failed": "Your .zip didn't pass the review. Upload a fixed version from \"Versions\"."
@@ -578,7 +581,7 @@
     "unpublishedToast": "You took your game down. Now only you can see it.",
     "cancel": "Cancel",
     "unpublishTitle": "Take your game down?",
-    "unpublishText": "It stops showing on Trafal and nobody can play it until you publish it again. Comments, likes and plays are kept.",
+    "unpublishText": "It stops showing on Tradfal and nobody can play it until you publish it again. Comments, likes and plays are kept.",
     "readyTitle": "Your game is ready!",
     "readyText": "It passed the review and has its own page. Nobody can see it yet: publish it so the community can play it.",
     "readyLater": "Not now",
@@ -675,7 +678,7 @@
     "OVERLAPPING_ENTRIES": "The .zip has an invalid internal structure (“{path}”). Compress your game again with a common program.",
     "SYMLINK_NOT_ALLOWED": "The .zip has a shortcut or symbolic link (“{path}”). Replace it with the real file.",
     "SPECIAL_FILE": "The .zip has a special file that isn't a regular file (“{path}”). Remove it and compress again.",
-    "EXECUTABLE_FILE": "We don't accept executable programs (“{path}”). Trafal only hosts games that play in the browser.",
+    "EXECUTABLE_FILE": "We don't accept executable programs (“{path}”). Tradfal only hosts games that play in the browser.",
     "NESTED_ARCHIVE": "We don't accept compressed archives inside the .zip (“{path}”). Unpack it and upload its files directly.",
     "EXTENSION_NOT_ALLOWED": "We don't accept “{extension}” files (“{path}”). Remove it from the .zip or switch to a common web format.",
     "NO_INDEX_HTML": "The file {file} is missing from the main folder. It's the one that opens your game in the browser: it must be at the root of the .zip.",
@@ -698,7 +701,7 @@
   },
   "settings": {
     "title": "Settings",
-    "subtitle": "Your profile, your photo and how you want to use Trafal.",
+    "subtitle": "Your profile, your photo and how you want to use Tradfal.",
     "navLabel": "Settings sections",
     "nav": {
       "profile": "Profile",
@@ -753,7 +756,7 @@
     },
     "preferences": {
       "title": "Preferences",
-      "subtitle": "How you want to use Trafal.",
+      "subtitle": "How you want to use Tradfal.",
       "languageTitle": "Language",
       "languageText": "By default we use the language of your browser or your system. If you prefer another one, pick it here and we'll remember it for your account.",
       "languageLabel": "Interface language",
@@ -775,7 +778,7 @@
       "removesTitle": "Deleted for good:",
       "removes": {
         "profile": "Your profile, your photo and your preferences.",
-        "games": "Your games, with their versions, covers and screenshots, and the comments people left on them.",
+        "games": "Your games, with their versions, covers and GIFs, and the comments people left on them.",
         "updates": "Your updates, with their images and videos.",
         "comments": "Your comments, your likes, your saves and who you follow.",
         "files": "The files you uploaded."
@@ -800,18 +803,22 @@
         "wrongPassword": "That password is not correct.",
         "emailMismatch": "That is not the email of your account.",
         "rateLimited": "Too many attempts. Wait a while and try again.",
-        "verifyFailed": "We could not check your password. Nothing was deleted: try again in a few seconds."
+        "verifyFailed": "We could not check your password. Nothing was deleted: try again in a few seconds.",
+        "reauthRequired": "For your security, sign in again with your account and delete it within the next few minutes.",
+        "captchaFailed": "We could not check that you are a person. Wait for the check to finish and try again."
       },
       "passwordLabel": "Your password",
       "passwordHint": "We ask for it again to confirm it is you.",
       "emailLabel": "Your email",
       "emailHint": "Your account has no password: type your email to confirm it is you.",
       "showPassword": "Show password",
-      "hidePassword": "Hide password"
+      "hidePassword": "Hide password",
+      "reauthTitle": "First confirm it is you",
+      "reauthText": "Your account signs in with {providers}. To delete it, sign in again with that account: then you have a few minutes to confirm it here."
     },
     "deleted": {
       "title": "Your account is deleted",
-      "text": "Your profile and everything you published were deleted. Thanks for stopping by Trafal.",
+      "text": "Your profile and everything you published were deleted. Thanks for stopping by Tradfal.",
       "home": "Go to the home page"
     }
   },
@@ -835,11 +842,8 @@
     "other": "Other"
   },
   "legal": {
-    "draftBadge": "Draft pending legal review",
-    "draftNotice": "This document is a draft: a lawyer has not reviewed it yet and it may change before launch.",
     "updated": "Last updated: {date}",
     "contents": "Contents",
-    "operatorMissing": "The site operator's details are missing (name, contact email and jurisdiction). They are set in the site configuration.",
     "terms": "Terms and conditions",
     "privacy": "Privacy policy",
     "guidelines": "Community guidelines",
@@ -1086,7 +1090,7 @@
     "games": "{count, plural, one {# game} other {# games}}",
     "followers": "{count, plural, one {# follower} other {# followers}}",
     "update": "Update",
-    "alt": "Trafal card"
+    "alt": "Tradfal card"
   },
   "admin": {
     "title": "Administration",
@@ -1306,7 +1310,7 @@
         "suspendTitle": "Suspend @{username}'s account",
         "suspendText": "The person will see this reason and how long it lasts. Meanwhile they won't be able to post, comment, report or follow.",
         "liftTitle": "Lift @{username}'s suspension",
-        "liftText": "The person can use Trafal again and is told with this reason.",
+        "liftText": "The person can use Tradfal again and is told with this reason.",
         "reasonLabel": "Reason (shown to the person)",
         "durationLabel": "Duration",
         "durations": {
@@ -1338,7 +1342,7 @@
       "claimant": "Who is claiming",
       "signedBy": "Signed: {signature}",
       "work": "Their work",
-      "claimed": "What they claim on Trafal",
+      "claimed": "What they claim on Tradfal",
       "links": "Links they sent",
       "take": "Take",
       "dismiss": "Dismiss",
@@ -1434,7 +1438,7 @@
   },
   "terms": {
     "title": "We updated our terms",
-    "subtitle": "To keep using Trafal with your account, read and accept the current version.",
+    "subtitle": "To keep using Tradfal with your account, read and accept the current version.",
     "updated": "Last updated: {date}.",
     "readTitle": "What you need to read",
     "documents": {
@@ -1523,9 +1527,9 @@
   },
   "claims": {
     "title": "Copyright claim",
-    "subtitle": "If you own rights and believe something published on Trafal infringes them, fill in this form. The team reviews it and, if it applies, hides the content.",
+    "subtitle": "If you own rights and believe something published on Tradfal infringes them, fill in this form. The team reviews it and, if it applies, hides the content.",
     "noteAccount": "You do not need an account.",
-    "notePrivacy": "Only the Trafal team sees your details: they are not shown to whoever published the content.",
+    "notePrivacy": "Only the Tradfal team sees your details: they are not shown to whoever published the content.",
     "linkFromLegal": "Send a copyright claim",
     "name": "Your full name",
     "email": "Contact email",
@@ -1534,8 +1538,8 @@
     "work": "Which work is yours and why you think it was copied",
     "workHint": "Describe the work and how it shows that it was used without permission (10 to 2000 characters).",
     "original": "Link to the original work (optional)",
-    "urls": "Links to what you are claiming on Trafal",
-    "urlsHint": "One per line, up to 10. At least one must be a game or an update on Trafal, for example {example}.",
+    "urls": "Links to what you are claiming on Tradfal",
+    "urlsHint": "One per line, up to 10. At least one must be a game or an update on Tradfal, for example {example}.",
     "statements": "Statements",
     "goodFaith": "I believe in good faith that the use of the work is not authorized by its owner, its agent or the law.",
     "accuracy": "I declare that the information in this claim is accurate and that I own the rights or am authorized to act on their behalf.",
@@ -1558,10 +1562,11 @@
       "urlsRequired": "Paste at least one link.",
       "urlsTooMany": "You can add up to 10 links.",
       "urlInvalid": "Each line must be a full link starting with http:// or https://.",
-      "urlsNotOnSite": "None of the links is a published game or update on Trafal.",
+      "urlsNotOnSite": "None of the links is a published game or update on Tradfal.",
       "statementsRequired": "You have to tick both statements.",
       "signatureRequired": "Type your full name as the signature.",
       "tooManyClaims": "We got too many claims from this email or from the site in a short time. Try again later.",
+      "unavailable": "The claims form is not available right now. Please try again later.",
       "generic": "We couldn't send the claim. Try again.",
       "captchaFailed": "We couldn't check that you are a person. Wait for the check to finish and try again.",
       "captchaUnavailable": "The security check is not available right now. Try again in a while."
@@ -1646,20 +1651,159 @@
   },
   "gameEdit": {
     "title": "Edit your game",
-    "subtitle": "Change the details, the cover, the screenshots and the questions. To change the game itself, upload a new version from the game page.",
+    "subtitle": "Change the details, the cover, the GIF and the questions. To change the game itself, upload a new version from the game page.",
     "currentCover": "Current cover",
     "noCover": "It has no cover yet: a generated one in its genre's color is shown.",
     "coverReplace": "Replace the cover",
     "coverReplaceHint": "PNG, JPG or WebP, at least 320×180 and up to 5 MB. If you pick none, the current one stays.",
     "removeCover": "Remove the cover",
-    "currentScreenshots": "Current screenshots",
-    "removeScreenshot": "Remove screenshot {number}",
-    "screenshotAlt": "Screenshot {number} of your game",
-    "screenshotsAdd": "Add screenshots",
-    "screenshotsAddHint": "Up to 6 in total: you can add {left} more. PNG, JPG or WebP, up to 5 MB each.",
+    "currentGif": "Current GIF",
+    "noGif": "It has no GIF: the cover is shown.",
+    "gifReplace": "Replace the GIF",
+    "gifReplaceHint": "Up to 5 MB, from 320×180 to 1920×1920 pixels. If you pick none, the current one stays.",
+    "removeGif": "Remove the GIF",
     "submit": "Save changes",
     "submitting": "Saving…",
     "cancel": "Cancel",
     "saved": "Your game changes were saved."
+  },
+  "uploadGuide": {
+    "metaTitle": "How to upload a game",
+    "metaDescription": "Step by step to upload your game to Tradfal: how to build the .zip, the limits, the cover and the GIF, the review and how to publish it.",
+    "title": "How to upload a game",
+    "intro": "Tradfal hosts games that run in the browser. Uploading yours takes a few minutes: you build a .zip, fill in some details and, once it passes the automatic review, you publish it.",
+    "cta": "Upload my game",
+    "contents": "In this guide",
+    "glance": {
+      "title": "At a glance",
+      "zip": "A .zip of up to {size}",
+      "zipNote": "With <code>index.html</code> in the main folder.",
+      "pictures": "A cover and a GIF",
+      "picturesNote": "Both are optional: one image per game, to look after storage.",
+      "daily": "{count} uploads a day",
+      "dailyNote": "New games and new versions both count.",
+      "review": "Automatic review",
+      "reviewNote": "It usually takes less than a minute. Then you publish it."
+    },
+    "steps": {
+      "title": "Step by step",
+      "step": "Step {number}",
+      "export": {
+        "title": "Export your game for the web",
+        "text": "Every engine has an option to export for the web: it builds a folder with an <code>index.html</code> file and everything the game needs.",
+        "godot": "Godot: export with the «Web» template.",
+        "unity": "Unity: build for «Web» (WebGL).",
+        "others": "GameMaker, Construct, Defold and PICO-8 also export to HTML5.",
+        "javascript": "If you made it with JavaScript (Phaser, PixiJS, Three.js…), your folder is ready.",
+        "tip": "Before uploading it, try it with a local server, for example with <code>python3 -m http.server</code> inside the folder. Opening <code>index.html</code> with a double click is not enough: many games do not start that way."
+      },
+      "zip": {
+        "title": "Build the .zip",
+        "text": "Compress the contents of the folder. <code>index.html</code> must end up at the root of the .zip; it also works if everything is inside a single folder.",
+        "good": "Like this",
+        "goodAlso": "This works too",
+        "bad": "Not like this",
+        "badWhy": "<code>index.html</code> ended up two folders deep.",
+        "treeLabel": "Contents of {name}",
+        "folder": "folder",
+        "windows": "Windows: select the files, right click → «Compress to ZIP file» (or «Send to» → «Compressed folder»).",
+        "mac": "macOS: select the files, right click → «Compress».",
+        "linux": "Linux: inside the folder, <code>zip -r ../my-game.zip .</code>",
+        "example": "my-game"
+      },
+      "details": {
+        "title": "Fill in the details",
+        "text": "The title (unique on Tradfal, up to {title} characters), a short description for the cards (up to {description}), the genre, up to {tags} tags and how it is played (up to {controls} characters). If you want, add up to {questions} questions for the players: their answers reach you apart from the comments."
+      },
+      "pictures": {
+        "title": "Pick the cover and, if you want, a GIF",
+        "text": "Every game has a single image, the cover, and optionally a GIF. If you upload a GIF, it is shown in place of the cover; whoever prefers less motion sees the cover and anyone can pause it. Without either, we show an art in the genre's color.",
+        "cover": "Cover: a still PNG, JPG or WebP, from {min} to {max} pixels and up to {size}. It looks best in 16:9.",
+        "gif": "GIF: from {min} to {max} pixels, up to {frames} frames and {size}. A short loop of the game in action works best."
+      },
+      "upload": {
+        "title": "Upload it and wait for the review",
+        "text": "Press «Upload game». The bar shows each step: preparing, uploading and reviewing. The review opens the .zip and checks every file; keep the page open until it finishes.",
+        "rejected": "If something does not pass, the reason shows next to the button. Fix it and use «Upload another .zip»: the details you entered are kept."
+      },
+      "publish": {
+        "title": "Publish it",
+        "text": "Once it passes the review, you land on your game's page with the «Your game is ready!» notice and the «Publish game» button. Until you publish it, it is a draft only you can see. You can take it down any time with «Take game down»."
+      },
+      "update": {
+        "title": "Update it whenever you want",
+        "text": "From «Versions» you upload a new version and choose which one is played. From «Edit» you change the details, the cover or the GIF."
+      }
+    },
+    "limits": {
+      "title": "Limits",
+      "what": "What",
+      "max": "Maximum",
+      "zip": "The .zip",
+      "uncompressed": "The uncompressed game",
+      "files": "Number of files",
+      "file": "A single file",
+      "path": "Length of a path",
+      "pathValue": "{count} characters",
+      "daily": "Uploads a day",
+      "cover": "The cover",
+      "gif": "The GIF",
+      "note": "Limits may change: this page always shows today's."
+    },
+    "types": {
+      "title": "Which files are accepted",
+      "web": "Code and web",
+      "images": "Images and textures",
+      "audio": "Audio",
+      "video": "Video",
+      "fonts": "Fonts",
+      "models": "3D models",
+      "engineData": "Engine data",
+      "compressed": "Pre-compressed versions of those files ({suffixes}) are accepted too, like the ones Unity builds: for example, <code>game.wasm.br</code>.",
+      "forbidden": "Executable programs (.exe, .dll, .sh, .apk…), archives inside the .zip (.zip, .rar, .7z…), shortcuts and symbolic links are not accepted."
+    },
+    "sandbox": {
+      "title": "What your game can do",
+      "text": "Every game runs isolated, on its own domain, so it cannot touch Tradfal or the player's session.",
+      "canTitle": "It can",
+      "canSave": "Save progress in the browser (localStorage, IndexedDB): each game has its own space.",
+      "canInput": "Use the keyboard, mouse, touch screen and sound.",
+      "canPlatform": "Go fullscreen and be muted with the buttons of Tradfal's player.",
+      "cannotTitle": "It cannot",
+      "cannotWindows": "Open windows or tabs, or change Tradfal's page.",
+      "cannotForms": "Submit forms, download files or install service workers.",
+      "cannotData": "Ask for passwords, cards or personal data.",
+      "flags": "The review also flags suspicious signs, like a password field, a cryptocurrency miner or an attempt to break out of the frame, for the team to look at."
+    },
+    "fixes": {
+      "title": "If the review rejects it",
+      "problem": "Problem",
+      "fix": "How to fix it",
+      "noIndex": "index.html is missing",
+      "noIndexFix": "Put it in the main folder of the .zip, not two folders deep.",
+      "tooLarge": "It is too big",
+      "tooLargeFix": "Compress images and audio (WebP, OGG), remove what you do not use or turn on your engine's compression.",
+      "type": "A file type that is not allowed",
+      "typeFix": "Remove that file: it is usually a leftover of the project (.psd, .blend, .exe).",
+      "nested": "There is an archive inside",
+      "nestedFix": "Extract it and upload its files instead.",
+      "path": "An odd name or path",
+      "pathFix": "Rename it without backslashes, «..» or special characters.",
+      "duplicate": "Two files with the same name",
+      "duplicateFix": "They only differ in case or accents: keep one."
+    },
+    "faq": {
+      "title": "Frequently asked questions",
+      "reviewTimeQ": "How long does the review take?",
+      "reviewTimeA": "Almost always less than a minute. If it takes longer, you can go to the game's page: the review goes on and the page updates itself.",
+      "draftQ": "Who sees my game before I publish it?",
+      "draftA": "Only you. Until you publish it, nobody else can see it or play it.",
+      "mobileQ": "Can it be played on a phone?",
+      "mobileA": "The player fits any screen. If your game needs a keyboard or a mouse, say so in «How to play».",
+      "renameQ": "Can I change the name later?",
+      "renameA": "Yes, from «Edit». The name must be unique: two games cannot have the same name, even with different capitals."
+    },
+    "readyTitle": "Ready?",
+    "readyText": "With your .zip at hand, uploading it takes a couple of minutes."
   }
 }

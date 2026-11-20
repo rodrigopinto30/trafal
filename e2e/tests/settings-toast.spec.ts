@@ -20,7 +20,7 @@ test("«Cambios guardados» no reaparece al volver a Editar perfil sin guardar n
   test.setTimeout(150_000);
   const suffix = uniqueSuffix(testInfo.project.name);
   const username = `toast_${lettersOnly(suffix)}`;
-  await registerAccount(page, { email: `e2e_toast_${suffix}@trafal.test`, username, displayName: "Persona Toast" });
+  await registerAccount(page, { email: `e2e_toast_${suffix}@tradfal.test`, username, displayName: "Persona Toast" });
 
   await page.getByRole("link", { name: "Editar perfil" }).click();
   await expect(page).toHaveURL(/\/settings\/profile$/);
@@ -50,7 +50,7 @@ test("«Preferencias guardadas» tampoco reaparece al volver sin guardar", async
   test.setTimeout(150_000);
   const suffix = uniqueSuffix(testInfo.project.name);
   const username = `toastp_${lettersOnly(suffix)}`;
-  await registerAccount(page, { email: `e2e_toastp_${suffix}@trafal.test`, username, displayName: "Persona Toast" });
+  await registerAccount(page, { email: `e2e_toastp_${suffix}@tradfal.test`, username, displayName: "Persona Toast" });
 
   await page.getByRole("link", { name: "Editar perfil" }).click();
   await page.getByRole("link", { name: "Preferencias" }).click();

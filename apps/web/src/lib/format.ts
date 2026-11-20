@@ -14,6 +14,11 @@ export function formatCompactNumber(locale: string, value: number): string {
   return new Intl.NumberFormat(locale, { notation: "compact", maximumFractionDigits: 1 }).format(value);
 }
 
+/** A moment as HTML's `datetime` wants it: ISO 8601 with milliseconds at most (the database keeps microseconds, which HTML refuses). */
+export function machineDateTime(date: Date | string): string {
+  return new Date(date).toISOString();
+}
+
 export function formatRelativeTime(locale: string, date: Date | string, now: Date): string {
   const elapsedSeconds = Math.round((new Date(date).getTime() - now.getTime()) / 1000);
   const formatter = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });

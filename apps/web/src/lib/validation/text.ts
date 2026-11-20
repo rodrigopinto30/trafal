@@ -7,22 +7,31 @@ import type { ZodError } from "zod";
  *
  * Qué se saca:
  *   · caracteres de control (menos el salto de línea en textos largos);
- *   · caracteres invisibles que sirven para falsificar nombres: espacio de ancho cero, word joiner, BOM, y los de
- *     «dirección de escritura» (RLO/LRO y aislados), que permiten que «Admin» se vea como «nimdA»;
+ *   · caracteres invisibles que sirven para falsificar nombres: espacio de ancho cero, word joiner, BOM, guion
+ *     opcional, rellenos de Hangul, marcas y controles de «dirección de escritura» (RLO/LRO, aislados, LRM/RLM/ALM),
+ *     que permiten que «Admin» se vea como «nimdA»;
  *   · espacios repetidos o sobrantes.
- * Qué NO se saca: el pegamento de emojis (ZWJ) ni ZWNJ, porque romperían 👨‍👩‍👧 o textos en persa.
+ * Qué NO se saca: el pegamento de emojis (ZWJ), ZWNJ ni los selectores de variante, porque romperían 👨‍👩‍👧 o textos
+ * en persa. La base rechaza exactamente lo que acá se saca (private.has_hidden_chars; un test los mantiene iguales).
+ * Antes de limpiar, el texto se corta en RAW_TEXT_MAX: así un texto enorme no cuesta nada y falla igual por largo.
  */
 
-// ZWSP, word joiner, BOM y los controles de dirección (embeddings/overrides/aislados).
-const INVISIBLE_OR_BIDI = /[\u200B\u2060\uFEFF\u202A-\u202E\u2066-\u2069]/g;
+export const RAW_TEXT_MAX = 50_000;
+
+const INVISIBLE_OR_BIDI =
+  /[\u00AD\u061C\u115F\u1160\u180E\u200B\u200E\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\u3164\uFEFF\uFFA0]/g;
 // Controles C0 y C1 (incluido \n, \t y \r), más los separadores de línea/párrafo de Unicode.
 const CONTROL_OR_LINE_SEPARATOR = /[\u0000-\u001F\u007F-\u009F\u2028\u2029]/g;
 // Igual, pero dejando pasar \n (U+000A): en los textos largos se conservan los saltos de línea.
 const CONTROL_EXCEPT_NEWLINE = /[\u0000-\u0009\u000B-\u001F\u007F-\u009F]/g;
 
+function bounded(input: string): string {
+  return input.length > RAW_TEXT_MAX ? input.slice(0, RAW_TEXT_MAX) : input;
+}
+
 /** Texto de una sola línea: sin saltos, con los espacios normalizados y sin espacios en los bordes. */
 export function sanitizeLine(input: string): string {
-  return input
+  return bounded(input)
     .normalize("NFC")
     .replace(INVISIBLE_OR_BIDI, "")
     .replace(CONTROL_OR_LINE_SEPARATOR, " ")
@@ -32,12 +41,14 @@ export function sanitizeLine(input: string): string {
 
 /** Texto de varias líneas (bio, comentarios): conserva los saltos, pero como mucho una línea en blanco seguida. */
 export function sanitizeMultiline(input: string): string {
-  return input
+  return bounded(input)
     .normalize("NFC")
     .replace(/\r\n?|\u2028|\u2029/g, "\n")
     .replace(INVISIBLE_OR_BIDI, "")
     .replace(CONTROL_EXCEPT_NEWLINE, "")
-    .replace(/[^\S\n]+\n/g, "\n")
+    .split("\n")
+    .map((line) => line.trimEnd())
+    .join("\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }

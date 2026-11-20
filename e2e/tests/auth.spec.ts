@@ -3,7 +3,7 @@ import { gotoReady, loginWith, logout } from "./helpers/session";
 
 test.describe("acceso", () => {
   test("contraseña incorrecta muestra un error claro", async ({ page }) => {
-    await loginWith(page, "valen@trafal.test", "esto-no-es-la-clave1");
+    await loginWith(page, "valen@tradfal.test", "esto-no-es-la-clave1");
     await expect(page.getByRole("alert").filter({ hasText: "El email o la contraseña no coinciden." })).toBeVisible();
     await expect(page).toHaveURL(/\/login/);
   });
@@ -12,8 +12,8 @@ test.describe("acceso", () => {
     await page.goto("/settings/profile");
     await expect(page).toHaveURL(/\/login\?next=%2Fsettings%2Fprofile/);
 
-    await page.getByLabel("Email").fill("valen@trafal.test");
-    await page.getByLabel("Contraseña", { exact: true }).fill("trafal123");
+    await page.getByLabel("Email").fill("valen@tradfal.test");
+    await page.getByLabel("Contraseña", { exact: true }).fill("tradfal123");
     await page.getByRole("button", { name: "Iniciar sesión" }).click();
 
     await expect(page).toHaveURL(/\/settings\/profile$/);
@@ -24,7 +24,7 @@ test.describe("acceso", () => {
   });
 
   test("una cuenta con sesión no ve el login: la manda al inicio", async ({ page }) => {
-    await loginWith(page, "mateo@trafal.test", "trafal123");
+    await loginWith(page, "mateo@tradfal.test", "tradfal123");
     await expect(page).toHaveURL(/localhost:3000\/?$/);
     await page.goto("/login");
     await expect(page).toHaveURL(/localhost:3000\/?$/);
@@ -33,8 +33,8 @@ test.describe("acceso", () => {
 
   test("no se puede usar un destino externo en ?next (redirección abierta)", async ({ page }) => {
     await gotoReady(page, "/login?next=https%3A%2F%2Fevil.example%2Fphishing");
-    await page.getByLabel("Email").fill("valen@trafal.test");
-    await page.getByLabel("Contraseña", { exact: true }).fill("trafal123");
+    await page.getByLabel("Email").fill("valen@tradfal.test");
+    await page.getByLabel("Contraseña", { exact: true }).fill("tradfal123");
     await page.getByRole("button", { name: "Iniciar sesión" }).click();
     await expect(page).toHaveURL(/localhost:3000\/?$/);
     await logout(page);
@@ -42,7 +42,7 @@ test.describe("acceso", () => {
 
   test("recuperar contraseña: no revela si el email existe", async ({ page }) => {
     await gotoReady(page, "/forgot-password");
-    await page.getByLabel("Email").fill("nadie-existe@trafal.test");
+    await page.getByLabel("Email").fill("nadie-existe@tradfal.test");
     await page.getByRole("button", { name: "Mandame el link" }).click();
     await expect(page.getByRole("heading", { name: "Listo, revisá tu email" })).toBeVisible();
   });

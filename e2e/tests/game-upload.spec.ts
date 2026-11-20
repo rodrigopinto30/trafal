@@ -1,8 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 import { makePng } from "./helpers/images";
+import { makeGif } from "./helpers/post-media";
 import { gotoReady, lettersOnly, registerAccount, uniqueSuffix } from "./helpers/session";
 import { accessTokenOf, callRpc, insertRow, ownGame, userIdOf } from "./helpers/supabase";
-import { GAME_PAGE_URL, publicIdOf, uniqueTitle } from "./helpers/game";
+import { GAME_PAGE_URL, publicIdOf, uniqueTitle, unpublishGame } from "./helpers/game";
 import { validGameZip } from "./helpers/zip";
 
 /**
@@ -14,7 +15,7 @@ import { validGameZip } from "./helpers/zip";
 async function signUp(page: Page, testName: string, projectName: string) {
   const suffix = uniqueSuffix(projectName);
   const username = `${testName}_${lettersOnly(suffix)}`;
-  await registerAccount(page, { email: `e2e_${testName}_${suffix}@trafal.test`, username, displayName: "Persona Subida" });
+  await registerAccount(page, { email: `e2e_${testName}_${suffix}@tradfal.test`, username, displayName: "Persona Subida" });
   return username;
 }
 
@@ -55,10 +56,7 @@ test("subir un juego completo: la revisión se espera abajo, después se llega a
   await page.getByLabel("Pregunta 2").fill("¿Qué cambiarías?");
   await attachZip(page);
   await page.getByLabel("Portada (opcional)").setInputFiles({ name: "cover.png", mimeType: "image/png", buffer: makePng(640, 360) });
-  await page.getByLabel("Capturas (opcional)").setInputFiles([
-    { name: "a.png", mimeType: "image/png", buffer: makePng(640, 360, { color: [255, 100, 100] }) },
-    { name: "b.png", mimeType: "image/png", buffer: makePng(640, 360, { color: [100, 255, 100] }) },
-  ]);
+  await expect(page.getByLabel("Capturas (opcional)")).toHaveCount(0);
   await expect(page.getByText("moon-runner.zip ·")).toBeVisible();
   await page.getByRole("button", { name: "Subir juego" }).click();
 
@@ -167,6 +165,7 @@ test("al terminar de subir, la página del juego se abre arriba con el aviso, y 
   await expect(ready).toBeVisible();
   await expect(ready.getByRole("button", { name: "Publicar juego" })).toBeInViewport({ ratio: 1 });
   await ready.getByRole("button", { name: "Ahora no" }).click();
+  await expect(ready).toBeHidden();
   expect(await page.evaluate(() => window.scrollY)).toBeLessThan(80);
 
   await goToUpload(page);
@@ -193,16 +192,17 @@ test("el servidor valida otra vez: campos vacíos, imágenes falsas y diminutas 
 
   await fillDetails(page, uniqueTitle("Con imágenes malas"));
   await page.getByLabel("Portada (opcional)").setInputFiles({ name: "cover.png", mimeType: "image/png", buffer: Buffer.from("<html>no soy una imagen</html>") });
-  await page.getByLabel("Capturas (opcional)").setInputFiles({ name: "chica.png", mimeType: "image/png", buffer: makePng(100, 100) });
+  await page.getByLabel("GIF (opcional)").setInputFiles({ name: "falso.gif", mimeType: "image/gif", buffer: makePng(640, 360) });
   await page.getByRole("button", { name: "Subir juego" }).click();
   await expect(page.getByText("La portada tiene que ser una imagen PNG, JPG o WebP válida.")).toBeVisible();
-  await expect(page.getByText(/Las capturas tienen que ser imágenes/)).toBeVisible();
+  await expect(page.getByText("El GIF tiene que ser un archivo GIF válido y completo.")).toBeVisible();
   await expect(page.getByLabel("Título")).toHaveValue(/^Con imágenes malas /);
 
   await page.getByLabel("Portada (opcional)").setInputFiles({ name: "animada.png", mimeType: "image/png", buffer: makePng(640, 360, { animated: true }) });
-  await page.getByLabel("Capturas (opcional)").setInputFiles([]);
+  await page.getByLabel("GIF (opcional)").setInputFiles({ name: "chico.gif", mimeType: "image/gif", buffer: makeGif(100, 100) });
   await page.getByRole("button", { name: "Subir juego" }).click();
   await expect(page.getByText("La portada no puede ser animada.")).toBeVisible();
+  await expect(page.getByText("El GIF tiene que medir entre 320×180 y 1920×1920 píxeles y tener hasta 600 cuadros.")).toBeVisible();
 
   await page.goto(`/u/${username}`);
   await expect(page.getByRole("heading", { name: "Tus juegos en preparación" })).toHaveCount(0);
@@ -235,7 +235,7 @@ test("si la subida se corta, el juego ya creado se puede reintentar con el mismo
   await expect(page.getByRole("dialog", { name: "¡Tu juego está listo!" })).toBeVisible();
 });
 
-const PASSWORD = "Trafal12345";
+const PASSWORD = "Tradfal12345";
 
 /** A draft of the person of the token with one version that was registered but never uploaded (the upload «did not finish»). */
 async function draftWithUnfinishedUpload(email: string, title: string) {
@@ -249,7 +249,7 @@ async function draftWithUnfinishedUpload(email: string, title: string) {
 test("mientras el juego no se puede publicar, la gestión dice por qué, muestra los pasos y deja el botón apagado", async ({ page }, testInfo) => {
   test.setTimeout(120_000);
   const suffix = uniqueSuffix(testInfo.project.name);
-  const email = `e2e_estado_${suffix}@trafal.test`;
+  const email = `e2e_estado_${suffix}@tradfal.test`;
   await registerAccount(page, { email, username: `estado_${lettersOnly(suffix)}`, displayName: "Persona Estado" });
   const { game } = await draftWithUnfinishedUpload(email, uniqueTitle("Juego a medio subir"));
 
@@ -266,7 +266,7 @@ test("mientras el juego no se puede publicar, la gestión dice por qué, muestra
 test("al llegar al límite de subidas por día, el aviso aparece pegado al botón y a la vista", async ({ page }, testInfo) => {
   test.setTimeout(180_000);
   const suffix = uniqueSuffix(testInfo.project.name);
-  const email = `e2e_limite_${suffix}@trafal.test`;
+  const email = `e2e_limite_${suffix}@tradfal.test`;
   await registerAccount(page, { email, username: `limite_${lettersOnly(suffix)}`, displayName: "Persona Límite" });
   const { token, game } = await draftWithUnfinishedUpload(email, uniqueTitle("Juego que gasta las subidas"));
   for (let n = 2; n <= 5; n++) expect((await callRpc("create_game_version", { p_game_id: game.id, p_declared_size_bytes: 1000 }, token)).status).toBe(200);
@@ -287,7 +287,7 @@ test("al llegar al límite de subidas por día, el aviso aparece pegado al botó
   await expect(page.getByLabel("Título")).toHaveValue(extraTitle);
 });
 
-test("editar un juego ya subido: cambia los datos, la portada, las capturas y las preguntas, y se guarda todo junto", async ({ page, browser, request }, testInfo) => {
+test("editar un juego ya subido: cambia los datos, la portada, el GIF y las preguntas, y se guarda todo junto", async ({ page, browser, request }, testInfo) => {
   test.setTimeout(240_000);
   const username = await signUp(page, "editar", testInfo.project.name);
 
@@ -299,10 +299,7 @@ test("editar un juego ya subido: cambia los datos, la portada, las capturas y la
   await page.getByLabel("Pregunta 2").fill("¿Qué cambiarías?");
   await attachZip(page);
   await page.getByLabel("Portada (opcional)").setInputFiles({ name: "cover.png", mimeType: "image/png", buffer: makePng(640, 360) });
-  await page.getByLabel("Capturas (opcional)").setInputFiles([
-    { name: "a.png", mimeType: "image/png", buffer: makePng(640, 360, { color: [255, 100, 100] }) },
-    { name: "b.png", mimeType: "image/png", buffer: makePng(640, 360, { color: [100, 255, 100] }) },
-  ]);
+  await page.getByLabel("GIF (opcional)").setInputFiles({ name: "juego.gif", mimeType: "image/gif", buffer: makeGif(640, 360) });
   await page.getByRole("button", { name: "Subir juego" }).click();
   await expect(page).toHaveURL(GAME_PAGE_URL, { timeout: 90_000 });
   const publicId = publicIdOf(page);
@@ -320,13 +317,13 @@ test("editar un juego ya subido: cambia los datos, la portada, las capturas y la
   await expect(page.getByLabel("Pregunta 1")).toHaveValue("¿El salto se siente bien?");
   await expect(page.getByLabel("Pregunta 2")).toHaveValue("¿Qué cambiarías?");
   await expect(page.getByLabel("Pregunta 3")).toHaveValue("");
-  const shots = page.getByRole("img", { name: /^Captura \d de tu juego$/ });
-  await expect(shots).toHaveCount(2);
   const coverImage = page.getByText("Portada actual").locator("xpath=following::img[1]");
   const oldCoverUrl = (await coverImage.getAttribute("src")) ?? "";
-  const oldShotUrl = (await shots.nth(0).getAttribute("src")) ?? "";
+  const oldGifUrl = (await page.getByText("GIF actual").locator("xpath=following::img[1]").getAttribute("src")) ?? "";
   expect(oldCoverUrl).not.toBe("");
+  expect(oldGifUrl).toMatch(/\.gif$/);
   expect((await request.get(oldCoverUrl)).status()).toBe(200);
+  expect((await request.get(oldGifUrl)).status()).toBe(200);
 
   await page.getByLabel("Título").fill("");
   await page.getByRole("button", { name: "Guardar cambios" }).click();
@@ -345,9 +342,8 @@ test("editar un juego ya subido: cambia los datos, la portada, las capturas y la
   await page.getByLabel("Pregunta 1").fill("¿El salto se siente mejor?");
   await page.getByLabel("Pregunta 2").fill("");
   await page.getByLabel("Pregunta 3").fill("¿Cuánto tardaste en terminarlo?");
-  await page.getByLabel("Quitar la captura 1").check();
   await page.getByLabel("Reemplazar la portada").setInputFiles({ name: "nueva.png", mimeType: "image/png", buffer: makePng(800, 450, { color: [10, 10, 200] }) });
-  await page.getByLabel("Agregar capturas").setInputFiles({ name: "c.png", mimeType: "image/png", buffer: makePng(640, 360, { color: [200, 200, 10] }) });
+  await page.getByLabel("Reemplazar el GIF").setInputFiles({ name: "nuevo.gif", mimeType: "image/gif", buffer: makeGif(800, 450, 3) });
   await page.getByRole("button", { name: "Guardar cambios" }).click();
 
   await expect(page.getByText("Guardamos los cambios de tu juego.")).toBeVisible();
@@ -363,20 +359,25 @@ test("editar un juego ya subido: cambia los datos, la portada, las capturas y la
   await expect(page.getByLabel("Pregunta 1")).toHaveValue("¿El salto se siente mejor?");
   await expect(page.getByLabel("Pregunta 2")).toHaveValue("¿Cuánto tardaste en terminarlo?");
   await expect(page.getByLabel("Pregunta 3")).toHaveValue("");
-  await expect(page.getByRole("img", { name: /^Captura \d de tu juego$/ })).toHaveCount(2);
   const newCoverUrl = (await page.getByText("Portada actual").locator("xpath=following::img[1]").getAttribute("src")) ?? "";
+  const newGifUrl = (await page.getByText("GIF actual").locator("xpath=following::img[1]").getAttribute("src")) ?? "";
   expect(newCoverUrl).not.toBe(oldCoverUrl);
+  expect(newGifUrl).not.toBe(oldGifUrl);
   expect((await request.get(newCoverUrl)).status()).toBe(200);
+  expect((await request.get(newGifUrl)).status()).toBe(200);
   expect((await request.get(oldCoverUrl)).status()).not.toBe(200);
-  expect((await request.get(oldShotUrl)).status()).not.toBe(200);
+  expect((await request.get(oldGifUrl)).status()).not.toBe(200);
 
   await page.getByLabel("Quitar la portada").check();
+  await page.getByLabel("Quitar el GIF").check();
   await page.getByRole("button", { name: "Guardar cambios" }).click();
   await expect(page).toHaveURL(new RegExp(`/games/${publicId}/manage$`));
   await page.goto(`/games/${publicId}/edit`);
   await page.waitForLoadState("networkidle");
   await expect(page.getByText("Todavía no tiene portada")).toBeVisible();
+  await expect(page.getByText("No tiene GIF: se muestra la portada.")).toBeVisible();
   expect((await request.get(newCoverUrl)).status()).not.toBe(200);
+  expect((await request.get(newGifUrl)).status()).not.toBe(200);
 
   const stranger = await browser.newContext();
   const visitor = await stranger.newPage();
@@ -384,4 +385,47 @@ test("editar un juego ya subido: cambia los datos, la portada, las capturas y la
   await expect(visitor).toHaveURL(/\/login/);
   await stranger.close();
   expect(username).not.toBe("");
+});
+
+test("un juego con GIF lo muestra en lugar de la portada; se pausa en todo el sitio y quien pide menos movimiento ve la portada", async ({ page }, testInfo) => {
+  test.setTimeout(180_000);
+  await signUp(page, "gif", testInfo.project.name);
+  const title = uniqueTitle("Juego con GIF");
+
+  await gotoReady(page, "/games/new");
+  await fillDetails(page, title);
+  await attachZip(page);
+  await page.getByLabel("Portada (opcional)").setInputFiles({ name: "cover.png", mimeType: "image/png", buffer: makePng(640, 360) });
+  await page.getByLabel("GIF (opcional)").setInputFiles({ name: "juego.gif", mimeType: "image/gif", buffer: makeGif(640, 360) });
+  await page.getByRole("button", { name: "Subir juego" }).click();
+  await expect(page).toHaveURL(GAME_PAGE_URL, { timeout: 90_000 });
+  const publicId = publicIdOf(page);
+  const ready = page.getByRole("dialog", { name: "¡Tu juego está listo!" });
+  await ready.getByRole("button", { name: "Publicar juego" }).click();
+  await expect(ready).toBeHidden();
+
+  await gotoReady(page, "/");
+  const card = page.getByRole("article").filter({ has: page.getByRole("heading", { name: title }) });
+  await expect(card.locator('img[src$=".gif"]')).toHaveCount(1);
+  const pause = card.getByRole("button", { name: "Pausar los GIF" });
+  await expect(pause).toBeVisible();
+  expect((await pause.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+  await pause.click();
+  await expect(card.locator('img[src$=".gif"]')).toHaveCount(0);
+  await expect(card.locator('img[src$=".png"]')).toHaveCount(1);
+  await expect(card.getByRole("button", { name: "Reproducir los GIF" })).toBeVisible();
+
+  await gotoReady(page, `/games/${publicId}`);
+  await expect(page.locator('img[src$=".gif"]')).toHaveCount(0);
+  await page.getByRole("button", { name: "Reproducir los GIF" }).first().click();
+  await expect(page.locator('img[src$=".gif"]')).toHaveCount(1);
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Pausar los GIF" })).toBeHidden();
+  const shown = await page.locator("main picture img").first().evaluate((image: HTMLImageElement) => image.currentSrc);
+  expect(shown).toMatch(/\.png$/);
+
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await unpublishGame(page, publicId);
 });

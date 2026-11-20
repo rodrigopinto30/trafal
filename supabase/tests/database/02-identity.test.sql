@@ -7,7 +7,7 @@ select tests.create_profile('a0000000-0000-0000-0000-000000000001', 'ana');
 select tests.create_profile('b0000000-0000-0000-0000-000000000002', 'bruno');
 select tests.create_profile('d0000000-0000-0000-0000-0000000000ad', 'admina', 'admin');
 -- Alguien que se registró pero todavía no hizo el onboarding (no tiene perfil).
-select tests.create_user('nuevo@trafal.test', 'e0000000-0000-0000-0000-000000000005');
+select tests.create_user('nuevo@tradfal.test', 'e0000000-0000-0000-0000-000000000005');
 
 -- La regla del @usuario también vive en un CHECK de la tabla (no solo en las funciones): se prueba con la conexión privilegiada,
 -- porque las personas comunes no pueden insertar perfiles a mano.
@@ -101,7 +101,7 @@ select is(public.username_available('Nuevo_User'), true, 'disponible (da igual m
 select is(public.username_available('ana'), false, 'ocupado');
 select is(public.username_available('ANA'), false, 'ocupado aunque lo escriban en mayúsculas');
 select is(public.username_available('admin'), false, 'reservado');
-select is(public.username_available('trafal'), false, 'reservado');
+select is(public.username_available('tradfal'), false, 'reservado');
 select is(public.username_available('a'), false, 'muy corto');
 select is(public.username_available('ab'), false, 'muy corto (el mínimo es 3)');
 select is(public.username_available('con espacio'), false, 'sin espacios');
@@ -129,7 +129,7 @@ select throws_ok($$ select public.complete_onboarding('nuevo_user', 'Nuevo', '20
 select throws_ok($$ select public.complete_onboarding('nuevo_user', 'Nuevo', '2026-11', false, true) $$, 'P0001', 'terms_required', 'exige aceptar los términos');
 select throws_ok($$ select public.complete_onboarding('a', 'Nuevo', '2026-11', true, true) $$, 'P0001', 'invalid_username', 'username inválido');
 select throws_ok($$ select public.complete_onboarding('abc.', 'Nuevo', '2026-11', true, true) $$, 'P0001', 'invalid_username', 'username que termina en punto');
-select throws_ok($$ select public.complete_onboarding('trafal', 'Nuevo', '2026-11', true, true) $$, 'P0001', 'reserved_username', 'username reservado');
+select throws_ok($$ select public.complete_onboarding('tradfal', 'Nuevo', '2026-11', true, true) $$, 'P0001', 'reserved_username', 'username reservado');
 select throws_ok($$ select public.complete_onboarding('Soporte', 'Nuevo', '2026-11', true, true) $$, 'P0001', 'reserved_username', 'username reservado (sin distinguir mayúsculas)');
 select throws_ok($$ select public.complete_onboarding('nuevo_user', '   ', '2026-11', true, true) $$, 'P0001', 'invalid_display_name', 'nombre vacío');
 select lives_ok($$ update public.profiles set country = 'AR', city = 'Rosario' where username = 'ana' $$, 'datos válidos');

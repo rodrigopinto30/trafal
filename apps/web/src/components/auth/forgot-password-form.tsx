@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
+import { CaptchaField, captchaEnabled } from "@/components/security/captcha-field";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { FormMessage } from "@/components/ui/form-message";
@@ -14,6 +15,7 @@ export function ForgotPasswordForm() {
   const t = useTranslations("auth");
   const locale = useLocale();
   const [state, formAction, pending] = useActionState(forgotPasswordAction, initialFormState);
+  const [captchaReady, setCaptchaReady] = useState(!captchaEnabled);
 
   if (state.status === "success") {
     return (
@@ -36,7 +38,8 @@ export function ForgotPasswordForm() {
           <Input {...control} name="email" type="email" autoComplete="email" inputMode="email" required defaultValue={state.values?.email} />
         )}
       </Field>
-      <Button type="submit" size="lg" disabled={pending}>
+      <CaptchaField action="recover" resetKey={state} onReadyChange={setCaptchaReady} />
+      <Button type="submit" size="lg" disabled={pending || !captchaReady}>
         {pending ? t("forgot.submitting") : t("forgot.submit")}
       </Button>
     </form>

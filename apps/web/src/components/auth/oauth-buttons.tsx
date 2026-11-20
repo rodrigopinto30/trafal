@@ -28,9 +28,12 @@ function DiscordLogo() {
 
 const LOGOS: Record<OAuthProvider, () => React.JSX.Element> = { google: GoogleLogo, discord: DiscordLogo };
 
-/** One "Continue with …" button for each outside account that has credentials configured (none: nothing is shown). */
-export async function OAuthButtons({ next }: { next: string }) {
-  const providers = enabledOAuthProviders();
+/**
+ * One "Continue with …" button for each outside account that has credentials configured (none: nothing is shown), or only for the
+ * ones listed in `only` (to sign in again with the account a person already uses).
+ */
+export async function OAuthButtons({ next, only }: { next: string; only?: readonly OAuthProvider[] }) {
+  const providers = enabledOAuthProviders().filter((provider) => !only || only.includes(provider));
   if (providers.length === 0) return null;
   const [t, locale] = await Promise.all([getTranslations("auth"), getLocale()]);
   return (

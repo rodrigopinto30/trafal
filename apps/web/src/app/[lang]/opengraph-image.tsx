@@ -1,6 +1,6 @@
 import { OG_CONTENT_TYPE, OG_SIZE, ogLocale, ogTexts, renderCard } from "@/lib/seo/og-card";
 
-export const alt = "Trafal";
+export const alt = "Tradfal";
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 

@@ -8,8 +8,8 @@ import { contrast, hexToRgb, luminance, mix, over, type RGB } from "./color";
 const css = readFileSync(path.resolve(process.cwd(), "src/app/globals.css"), "utf8");
 
 function token(name: string): RGB {
-  const match = new RegExp(`--trafal-${name}:\\s*(#[0-9a-fA-F]{6})`).exec(css);
-  if (!match) throw new Error(`No encontré --trafal-${name} en globals.css`);
+  const match = new RegExp(`--tradfal-${name}:\\s*(#[0-9a-fA-F]{6})`).exec(css);
+  if (!match) throw new Error(`No encontré --tradfal-${name} en globals.css`);
   return hexToRgb(match[1] as string);
 }
 
@@ -115,7 +115,7 @@ describe("utilidades de color", () => {
   });
 });
 
-describe("contraste de la paleta de Trafal (WCAG AA: ≥ 4,5:1 en texto)", () => {
+describe("contraste de la paleta de Tradfal (WCAG AA: ≥ 4,5:1 en texto)", () => {
   it.each(pairs)("$name", ({ fg, bg: background, min = 4.5 }) => {
     const ratio = contrast(fg, background);
     expect(ratio, `contraste ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(min);
@@ -128,13 +128,13 @@ describe("contraste de la paleta de Trafal (WCAG AA: ≥ 4,5:1 en texto)", () =>
   });
 
   it("usa exactamente los colores definidos en el brief", () => {
-    expect(css).toMatch(/--trafal-bg:\s*#07060e/i);
-    expect(css).toMatch(/--trafal-text:\s*#f4f2ff/i);
-    expect(css).toMatch(/--trafal-text-2:\s*#cfcbe8/i);
-    expect(css).toMatch(/--trafal-text-3:\s*#a9a4c7/i);
-    expect(css).toMatch(/--trafal-violet:\s*#8b5cff/i);
-    expect(css).toMatch(/--trafal-cyan:\s*#2ee6ff/i);
-    expect(css).toMatch(/--trafal-lime:\s*#c6ff3d/i);
-    expect(css).toMatch(/--trafal-coral:\s*#ff5c7a/i);
+    expect(css).toMatch(/--tradfal-bg:\s*#07060e/i);
+    expect(css).toMatch(/--tradfal-text:\s*#f4f2ff/i);
+    expect(css).toMatch(/--tradfal-text-2:\s*#cfcbe8/i);
+    expect(css).toMatch(/--tradfal-text-3:\s*#a9a4c7/i);
+    expect(css).toMatch(/--tradfal-violet:\s*#8b5cff/i);
+    expect(css).toMatch(/--tradfal-cyan:\s*#2ee6ff/i);
+    expect(css).toMatch(/--tradfal-lime:\s*#c6ff3d/i);
+    expect(css).toMatch(/--tradfal-coral:\s*#ff5c7a/i);
   });
 });

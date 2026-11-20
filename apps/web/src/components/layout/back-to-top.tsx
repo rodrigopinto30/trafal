@@ -33,7 +33,7 @@ export function BackToTop() {
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0",
       )}
     >
-      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 8 8" shapeRendering="crispEdges" fill="var(--trafal-cyan)">
+      <svg aria-hidden="true" width="24" height="24" viewBox="0 0 8 8" shapeRendering="crispEdges" fill="var(--tradfal-cyan)">
         <rect x="3" y="1" width="2" height="1" />
         <rect x="2" y="2" width="4" height="1" />
         <rect x="1" y="3" width="6" height="1" />

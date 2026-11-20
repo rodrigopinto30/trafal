@@ -1,10 +1,10 @@
-# Trafal — Supabase local (CLI 3.x).
+# Tradfal — Supabase local (CLI 3.x).
 # Referencia: https://supabase.com/docs/guides/local-development/cli/config
 #
 # Este archivo solo configura el entorno LOCAL (lo levanta ./start.sh).
 # La configuración de producción vive en el panel de Supabase; ver docs/DEPLOY.md.
 
-project_id = "trafal"
+project_id = "tradfal"
 
 [api]
 enabled = true
@@ -80,6 +80,13 @@ file_size_limit = "200MiB"
 public = false
 file_size_limit = "500MiB"
 
+# Lo que la moderación ocultó (portadas, GIF y archivos de avances): privado, para que la dirección pública deje de abrirlo. Al
+# restaurar, vuelve a «media».
+[storage.buckets.media-hidden]
+public = false
+file_size_limit = "20MiB"
+allowed_mime_types = ["image/webp", "image/png", "image/jpeg", "image/gif", "video/mp4", "video/webm"]
+
 [edge_runtime]
 enabled = false
 
@@ -112,19 +119,21 @@ enabled = true
 double_confirm_changes = true
 # Confirmación obligatoria, igual que en producción (el mail llega a Mailpit: http://localhost:54324).
 enable_confirmations = true
-secure_password_change = false
+# Cambiar la contraseña por la API pide un ingreso reciente (el link del mail lo es).
+secure_password_change = true
 max_frequency = "1s"
-otp_length = 6
+# Nadie escribe estos códigos (los mails llevan un link): largos, para que adivinarlos sea imposible.
+otp_length = 10
 otp_expiry = 3600
 
-# Plantillas bilingües (es/en) con el estilo de Trafal. Usan el flujo token_hash, que funciona
+# Plantillas bilingües (es/en) con el estilo de Tradfal. Usan el flujo token_hash, que funciona
 # aunque el mail se abra en otro dispositivo (el flujo PKCE exige abrirlo en el mismo navegador).
 [auth.email.template.confirmation]
-subject = "Confirmá tu cuenta de Trafal · Confirm your Trafal account"
+subject = "Confirmá tu cuenta de Tradfal · Confirm your Tradfal account"
 content_path = "./supabase/templates/confirmation.html"
 
 [auth.email.template.recovery]
-subject = "Recuperá tu contraseña de Trafal · Reset your Trafal password"
+subject = "Recuperá tu contraseña de Tradfal · Reset your Tradfal password"
 content_path = "./supabase/templates/recovery.html"
 
 [auth.external.google]

@@ -1,7 +1,7 @@
 {
-  "name": "@trafal/e2e",
+  "name": "@tradfal/e2e",
   "private": true,
-  "description": "Pruebas de punta a punta (Playwright) de Trafal. Se corren con ./e2e/run.sh contra el entorno que levanta ./start.sh.",
+  "description": "Pruebas de punta a punta (Playwright) de Tradfal. Se corren con ./e2e/run.sh contra el entorno que levanta ./start.sh.",
   "scripts": {
     "e2e": "playwright test",
     "typecheck": "tsc --noEmit"

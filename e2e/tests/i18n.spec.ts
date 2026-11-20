@@ -40,7 +40,7 @@ test.describe("idioma", () => {
   test("se cambia desde Configuración, se guarda en la cuenta y vale en otros dispositivos", async ({ page, browser }, testInfo) => {
     test.setTimeout(150_000);
     const suffix = uniqueSuffix(testInfo.project.name);
-    const email = `e2e_${suffix}@trafal.test`;
+    const email = `e2e_${suffix}@tradfal.test`;
     await registerAccount(page, { email, username: `e2e_${suffix}`, displayName: "Idioma de Prueba" });
 
     // Español (el del navegador) → inglés, desde Configuración → Preferencias.
@@ -58,14 +58,14 @@ test.describe("idioma", () => {
     // Queda recordado: entrar a «/» sin prefijo lleva al inglés.
     await page.goto("/");
     await expect(page).toHaveURL(/\/en$/);
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Browser games, made by the community");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Home");
 
     // Otro dispositivo (navegador SIN cookies y en español): al iniciar sesión se usa el idioma de la CUENTA.
     const otherDevice = await browser.newContext({ locale: "es-AR", extraHTTPHeaders: { "Accept-Language": "es-AR,es;q=0.9" } });
     const other = await otherDevice.newPage();
-    await loginWith(other, email, "Trafal12345");
+    await loginWith(other, email, "Tradfal12345");
     await expect(other).toHaveURL(/\/en$/);
-    await expect(other.getByRole("heading", { level: 1 })).toContainText("Browser games, made by the community");
+    await expect(other.getByRole("heading", { level: 1 })).toHaveText("Home");
     await otherDevice.close();
 
     // Y de vuelta a español: la URL pierde el prefijo.

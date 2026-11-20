@@ -10,7 +10,7 @@ import { accessTokenOf, deleteNotificationsSince } from "./helpers/supabase";
 test.describe.configure({ mode: "serial" });
 
 const GAME = "/games/orbita";
-const CREATOR = { email: "sofi@trafal.test", password: "trafal123", username: "sofi_pixels" };
+const CREATOR = { email: "sofi@tradfal.test", password: "tradfal123", username: "sofi_pixels" };
 
 let actor: Page;
 let creator: Page;
@@ -26,7 +26,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
   since = new Date().toISOString();
   suffix = uniqueSuffix(testInfo.project.name);
   actor = await (await browser.newContext({ ...testInfo.project.use })).newPage();
-  await registerAccount(actor, { email: `e2e_notifications_${suffix}@trafal.test`, username: `notifications_${lettersOnly(suffix)}`, displayName: actorName });
+  await registerAccount(actor, { email: `e2e_notifications_${suffix}@tradfal.test`, username: `notifications_${lettersOnly(suffix)}`, displayName: actorName });
   creator = await (await browser.newContext({ ...testInfo.project.use })).newPage();
   await loginAndWait(creator, CREATOR.email, CREATOR.password);
 });

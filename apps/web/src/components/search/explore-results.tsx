@@ -1,5 +1,4 @@
 import { GameShelf } from "@/components/games/game-shelf";
-import { NoIndex } from "@/components/seo/no-index";
 import { ExploreFilters } from "@/components/search/explore-filters";
 import { GameSearch } from "@/components/search/game-search";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,7 @@ export function ExploreFilterBar({ query }: { query: ExploreQuery }) {
 
 /**
  * The games that match the address (a search, filters, an order or a later page), a page at a time. These views are variants of the
- * home, so they ask search engines not to index them. Reads the database: it goes inside <Suspense>.
+ * home, which asks search engines not to index them (its metadata). Reads the database: it goes inside <Suspense>.
  */
 export async function ExploreResults({ query }: { query: ExploreQuery }) {
   const [t, { games, total }] = await Promise.all([getTranslations("explore"), exploreGames(query, EXPLORE_PAGE_SIZE)]);
@@ -31,7 +30,6 @@ export async function ExploreResults({ query }: { query: ExploreQuery }) {
     const narrowed = hasFilters(query);
     return (
       <section aria-labelledby="results-title" className="rounded-3xl border border-dashed border-white/20 px-6 py-12 text-center">
-        <NoIndex />
         <h2 id="results-title" className="font-display text-xl font-bold">
           {query.page > 1 ? t("pageEmpty") : query.q ? t("emptyTitle", { query: query.q }) : narrowed ? t("emptyFilteredTitle") : t("subtitleAll")}
         </h2>
@@ -45,7 +43,6 @@ export async function ExploreResults({ query }: { query: ExploreQuery }) {
 
   return (
     <section aria-labelledby="results-title" className="grid gap-5">
-      <NoIndex />
       <div>
         <h2 id="results-title" className="font-display text-xl font-bold">
           {query.q ? t("subtitleResults", { query: query.q }) : t("subtitleAll")}

@@ -36,8 +36,8 @@ test.beforeAll(async ({ browser }, testInfo) => {
   creator = await creatorContext.newPage();
   answerer = await answererContext.newPage();
 
-  await registerAccount(answerer, { email: `e2e_answerer_${tag}@trafal.test`, username: `answerer_${lettersOnly(tag)}`, displayName: "Persona Respuestas" });
-  await registerAccount(creator, { email: `e2e_asker_${tag}@trafal.test`, username: `asker_${lettersOnly(tag)}`, displayName: "Persona Preguntas" });
+  await registerAccount(answerer, { email: `e2e_answerer_${tag}@tradfal.test`, username: `answerer_${lettersOnly(tag)}`, displayName: "Persona Respuestas" });
+  await registerAccount(creator, { email: `e2e_asker_${tag}@tradfal.test`, username: `asker_${lettersOnly(tag)}`, displayName: "Persona Preguntas" });
   gameTitle = uniqueTitle("Juego con preguntas");
   publicId = await uploadAndPublishGame(creator, gameTitle, playableGameZip(), "game.zip", [question(1), question(2)]);
 });

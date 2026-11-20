@@ -6,10 +6,10 @@ import pytest
 from tests.conftest import INDEX
 from tests.fakes import FakeQueue, FakeStorage
 from tests.zipforge import ForgedEntry, forge_zip, simple_zip
-from trafal_worker.config import ConfigError, WorkerConfig, load_config
-from trafal_worker.rules import UploadRules
-from trafal_worker.runner import Worker
-from trafal_worker.version_queue import ClaimedVersion
+from tradfal_worker.config import ConfigError, WorkerConfig, load_config
+from tradfal_worker.rules import UploadRules
+from tradfal_worker.runner import Worker
+from tradfal_worker.version_queue import ClaimedVersion
 
 QUARANTINE = "quarantine"
 GAMES = "games"
@@ -269,7 +269,7 @@ class TestLoop:
         stop = threading.Event()
         queue = FlakyQueue()
         config = make_config(tmp_path)
-        import trafal_worker.runner as runner_module
+        import tradfal_worker.runner as runner_module
 
         original = runner_module.ERROR_BACKOFF_SECONDS
         runner_module.ERROR_BACKOFF_SECONDS = 0.01
@@ -287,6 +287,39 @@ class TestConfig:
             ConfigError, match="S3_ACCESS_KEY_ID, S3_ENDPOINT, S3_SECRET_ACCESS_KEY, WORKER_DATABASE_URL"
         ):
             load_config({})
+
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "postgresql://game_worker:x@supabase_db_tradfal:5432/postgres",
+            "postgresql://game_worker:x@localhost:5432/postgres",
+            "postgresql://game_worker:x@127.0.0.1:5432/postgres",
+            "postgresql://game_worker:x@db.abc.supabase.co:5432/postgres?sslmode=verify-full&sslrootcert=/ca.crt",
+        ],
+    )
+    def test_accepts_a_local_database_or_a_remote_one_with_verified_tls(self, url: str) -> None:
+        config = load_config(
+            {
+                "WORKER_DATABASE_URL": url,
+                "S3_ENDPOINT": "http://s3",
+                "S3_ACCESS_KEY_ID": "a",
+                "S3_SECRET_ACCESS_KEY": "b",
+            }
+        )
+        assert config.database_url == url
+
+    @pytest.mark.parametrize("query", ["", "?sslmode=require", "?sslmode=prefer", "?sslmode=verify-ca"])
+    def test_refuses_a_remote_database_without_verified_tls(self, query: str) -> None:
+        url = f"postgresql://game_worker:x@db.abc.supabase.co:5432/postgres{query}"
+        with pytest.raises(ConfigError, match="sslmode=verify-full"):
+            load_config(
+                {
+                    "WORKER_DATABASE_URL": url,
+                    "S3_ENDPOINT": "http://s3",
+                    "S3_ACCESS_KEY_ID": "a",
+                    "S3_SECRET_ACCESS_KEY": "b",
+                }
+            )
 
     def test_applies_defaults(self) -> None:
         config = load_config(

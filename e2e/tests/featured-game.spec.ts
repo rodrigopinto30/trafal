@@ -27,7 +27,7 @@ function tuesdayOf(offsetWeeks: number): string {
 let adminToken = "";
 
 test.beforeAll(async () => {
-  adminToken = await accessTokenOf("admin@trafal.test", "trafal123");
+  adminToken = await accessTokenOf("admin@tradfal.test", "tradfal123");
 });
 
 test.afterAll(async () => {
@@ -74,7 +74,7 @@ test("la base rechaza lo que no corresponde y no toca nada", async () => {
 
 test("nadie más que un admin puede elegir ni sacar", async () => {
   const game = await gameIdOf("kart-de-carton");
-  const creator = await accessTokenOf("valen@trafal.test", "trafal123");
+  const creator = await accessTokenOf("valen@tradfal.test", "tradfal123");
 
   const byCreator = await callRpc("set_featured_game", { p_game_id: game, p_week_start: null, p_quote: "yo elijo" }, creator);
   expect(byCreator.status).toBe(403);

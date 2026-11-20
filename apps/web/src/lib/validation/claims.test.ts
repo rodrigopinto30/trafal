@@ -7,7 +7,7 @@ const valid = {
   claimantOrg: "",
   workDescription: "A sprite sheet I drew in 2024 and published on my site",
   originalUrl: "",
-  urls: "https://trafal.example/games/orbita",
+  urls: "https://tradfal.example/games/orbita",
   statementGoodFaith: "on",
   statementAccuracy: "on",
   signature: "Carla Owner",
@@ -66,20 +66,20 @@ describe("claimFormSchema", () => {
 });
 
 describe("parseSiteTarget", () => {
-  const origin = "https://trafal.example";
+  const origin = "https://tradfal.example";
 
   it("finds the game or the update a link of the site points at", () => {
-    expect(parseSiteTarget("https://trafal.example/games/orbita", origin)).toEqual({ type: "game", publicId: "orbita" });
-    expect(parseSiteTarget("https://trafal.example/en/games/kart-de-carton/manage", origin)).toEqual({ type: "game", publicId: "kart-de-carton" });
-    expect(parseSiteTarget("https://trafal.example/posts/55555555-5555-4555-8555-555555555501#comments", origin)).toEqual({ type: "post", postId: "55555555-5555-4555-8555-555555555501" });
+    expect(parseSiteTarget("https://tradfal.example/games/orbita", origin)).toEqual({ type: "game", publicId: "orbita" });
+    expect(parseSiteTarget("https://tradfal.example/en/games/kart-de-carton/manage", origin)).toEqual({ type: "game", publicId: "kart-de-carton" });
+    expect(parseSiteTarget("https://tradfal.example/posts/55555555-5555-4555-8555-555555555501#comments", origin)).toEqual({ type: "post", postId: "55555555-5555-4555-8555-555555555501" });
   });
 
   it("ignores anything that is not on the site or not a game or an update", () => {
     expect(parseSiteTarget("https://other.example/games/orbita", origin)).toBeNull();
-    expect(parseSiteTarget("https://trafal.example.evil.example/games/orbita", origin)).toBeNull();
-    expect(parseSiteTarget("https://trafal.example/u/valen_makes", origin)).toBeNull();
-    expect(parseSiteTarget("https://trafal.example/posts/no-es-un-id", origin)).toBeNull();
-    expect(parseSiteTarget("https://trafal.example/games/Orbita!", origin)).toBeNull();
+    expect(parseSiteTarget("https://tradfal.example.evil.example/games/orbita", origin)).toBeNull();
+    expect(parseSiteTarget("https://tradfal.example/u/valen_makes", origin)).toBeNull();
+    expect(parseSiteTarget("https://tradfal.example/posts/no-es-un-id", origin)).toBeNull();
+    expect(parseSiteTarget("https://tradfal.example/games/Orbita!", origin)).toBeNull();
     expect(parseSiteTarget("no es un enlace", origin)).toBeNull();
   });
 });

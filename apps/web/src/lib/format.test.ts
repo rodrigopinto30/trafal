@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatBytes, formatCompactNumber, formatRelativeTime } from "./format";
+import { formatBytes, formatCompactNumber, formatRelativeTime, machineDateTime } from "./format";
 
 const now = new Date("2026-11-05T12:00:00Z");
 const ago = (seconds: number) => new Date(now.getTime() - seconds * 1000);
@@ -49,5 +49,12 @@ describe("formatBytes", () => {
 
   it("follows the locale for the decimal separator", () => {
     expect(formatBytes("es-AR", 1536)).toBe("1,5 KB");
+  });
+});
+
+describe("machineDateTime", () => {
+  it("writes a moment with milliseconds at most, as HTML's datetime asks (the database keeps microseconds)", () => {
+    expect(machineDateTime("2026-11-13T15:42:34.373506+00:00")).toBe("2026-11-13T15:42:34.373Z");
+    expect(machineDateTime(new Date(Date.UTC(2026, 0, 2, 3, 4, 5)))).toBe("2026-01-02T03:04:05.000Z");
   });
 });

@@ -5,9 +5,9 @@ import { revalidatePath } from "next/cache";
 import { getTranslationsFor } from "@/i18n/server";
 import { getAuthUser } from "@/lib/auth/dal";
 import { readText } from "@/lib/forms";
-import { UPLOAD_URL_TTL_SECONDS, MAX_SCREENSHOTS } from "@/lib/games/upload-rules";
-import { COVER_PROBLEM_KEYS, checkGameImage, discardObjects, filesOf, type CheckedImage } from "@/lib/games/game-media.server";
-import { GAME_IMAGE_FORMATS, coverObjectKey, screenshotObjectKey } from "@/lib/media/game-image";
+import { UPLOAD_URL_TTL_SECONDS } from "@/lib/games/upload-rules";
+import { COVER_PROBLEM_KEYS, GIF_PROBLEM_KEYS, checkGameGif, checkGameImage, discardObjects, filesOf, type CheckedImage } from "@/lib/games/game-media.server";
+import { GAME_GIF_MIME, GAME_IMAGE_FORMATS, coverObjectKey, gifObjectKey } from "@/lib/media/game-image";
 import { createQuarantineUploadUrl, putMediaObject } from "@/lib/storage/s3.server";
 import { createClient } from "@/lib/supabase/server";
 import { isTitleTaken } from "@/lib/games/title";
@@ -32,7 +32,7 @@ export type UploadStepResult = { ok: true; uploadUrl?: string } | { ok: false; m
 export type ReviewStatus = { status: "pending" } | { status: "ready" } | { status: "rejected"; message: string };
 
 /**
- * Creates the game as a draft with its details, images and feedback questions, registers the first version and returns a
+ * Creates the game as a draft with its details, cover, GIF and feedback questions, registers the first version and returns a
  * presigned URL so the browser can upload the zip straight to quarantine. The zip never goes through the server. Everything
  * the browser sends is validated again here; if any step fails, what was already created is undone.
  */
@@ -67,24 +67,18 @@ export async function createGameAction(formData: FormData): Promise<CreateGameRe
   }
 
   const coverFile = filesOf(formData, "cover")[0];
-  const screenshotFiles = filesOf(formData, "screenshots");
+  const gifFile = filesOf(formData, "gif")[0];
   let cover: CheckedImage | undefined;
-  const screenshots: CheckedImage[] = [];
+  let gif: Uint8Array | undefined;
   if (coverFile) {
     const checked = await checkGameImage(coverFile);
     if (typeof checked === "string") fieldErrors.cover = message(COVER_PROBLEM_KEYS[checked]);
     else cover = checked;
   }
-  if (screenshotFiles.length > MAX_SCREENSHOTS) fieldErrors.screenshots = message("tooManyScreenshots");
-  else {
-    for (const file of screenshotFiles) {
-      const checked = await checkGameImage(file);
-      if (typeof checked === "string") {
-        fieldErrors.screenshots = message("screenshotsInvalid");
-        break;
-      }
-      screenshots.push(checked);
-    }
+  if (gifFile) {
+    const checked = await checkGameGif(gifFile);
+    if (typeof checked === "string") fieldErrors.gif = message(GIF_PROBLEM_KEYS[checked]);
+    else gif = checked;
   }
   if (!details.success || !zip.success || Object.keys(fieldErrors).length > 0) return { ok: false, fieldErrors };
 
@@ -119,22 +113,21 @@ export async function createGameAction(formData: FormData): Promise<CreateGameRe
   };
 
   try {
+    const pictures: { cover_path?: string; gif_path?: string } = {};
     if (cover) {
       const key = coverObjectKey(user.id, randomBytes(16).toString("hex"), cover.format);
       await putMediaObject(key, cover.bytes, GAME_IMAGE_FORMATS[cover.format].mime);
       uploadedKeys.push(key);
-      const { error } = await supabase.from("games").update({ cover_path: key }).eq("id", game.id);
-      if (error) return await undo("generic");
+      pictures.cover_path = key;
     }
-    if (screenshots.length > 0) {
-      const rows: { game_id: string; path: string; position: number }[] = [];
-      for (const [index, shot] of screenshots.entries()) {
-        const key = screenshotObjectKey(game.id, randomBytes(16).toString("hex"), shot.format);
-        await putMediaObject(key, shot.bytes, GAME_IMAGE_FORMATS[shot.format].mime);
-        uploadedKeys.push(key);
-        rows.push({ game_id: game.id, path: key, position: index + 1 });
-      }
-      const { error } = await supabase.from("game_screenshots").insert(rows);
+    if (gif) {
+      const key = gifObjectKey(user.id, randomBytes(16).toString("hex"));
+      await putMediaObject(key, gif, GAME_GIF_MIME);
+      uploadedKeys.push(key);
+      pictures.gif_path = key;
+    }
+    if (uploadedKeys.length > 0) {
+      const { error } = await supabase.from("games").update(pictures).eq("id", game.id);
       if (error) return await undo("generic");
     }
   } catch (error) {
@@ -196,14 +189,9 @@ export async function renewUploadUrlAction(rawVersionId: unknown, rawLocale: unk
   if (!(await getAuthUser())) return { ok: false, message: t("errors.unauthenticated") };
 
   const supabase = await createClient();
-  const { data: version } = await supabase
-    .from("game_versions")
-    .select("status, quarantine_key, declared_size_bytes")
-    .eq("id", versionId.data)
-    .maybeSingle();
-  if (!version || version.status !== "uploading" || !version.quarantine_key || !version.declared_size_bytes) {
-    return { ok: false, message: t("errors.generic") };
-  }
+  const { data: version, error } = await supabase.rpc("version_upload_target", { p_version_id: versionId.data }).maybeSingle();
+  if (error?.code === "42501") return { ok: false, message: t("errors.accountRestricted") };
+  if (!version?.quarantine_key || !version.declared_size_bytes) return { ok: false, message: t("errors.generic") };
   try {
     return { ok: true, uploadUrl: await createQuarantineUploadUrl(version.quarantine_key, version.declared_size_bytes, UPLOAD_URL_TTL_SECONDS) };
   } catch (error) {

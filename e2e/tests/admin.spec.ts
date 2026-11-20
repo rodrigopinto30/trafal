@@ -33,11 +33,11 @@ test.beforeAll(async ({ browser }, testInfo) => {
   tag = `Reporte de prueba ${suffix}`;
   hideReason = `Es spam, rompe las reglas ${suffix}`;
   restoreReason = `Fue un error, vuelve a estar publicado ${suffix}`;
-  await registerAccount(page, { email: `e2e_admin_${suffix}@trafal.test`, username: `admin_${lettersOnly(suffix)}`, displayName: "Persona Reportera" });
+  await registerAccount(page, { email: `e2e_admin_${suffix}@tradfal.test`, username: `reporta_${lettersOnly(suffix)}`, displayName: "Persona Reportera" });
 });
 
 test.afterAll(async () => {
-  const token = await accessTokenOf("admin@trafal.test", "trafal123");
+  const token = await accessTokenOf("admin@tradfal.test", "tradfal123");
   const row = await publicGame(GAME, "id,status");
   if (row?.status === "hidden") await callRpc("moderate_content", { p_target_type: "game", p_target_id: row.id, p_action: "restore", p_reason: "Limpieza de la prueba" }, token);
   await callRpc("clear_featured_game", { p_week_start: mondayOfThisWeek() }, token);
@@ -68,7 +68,7 @@ test("el reporte de un juego llega a la cola y queda a la vista con su evidencia
   await expect(dialog).toBeHidden();
 
   await logout(page);
-  await loginAndWait(page, "admin@trafal.test", "trafal123");
+  await loginAndWait(page, "admin@tradfal.test", "tradfal123");
   await gotoReady(page, "/admin");
   await expect(page.getByRole("heading", { name: "Administración" })).toBeVisible();
   const card = page.getByRole("article", { name: "Juego · Spam" }).filter({ hasText: tag });

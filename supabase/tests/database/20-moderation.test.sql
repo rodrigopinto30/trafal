@@ -89,7 +89,7 @@ select tests.authenticate_as('a0000000-0000-0000-0000-000000000001');
 select throws_ok($$ select public.moderate_content('comment', '66666666-6666-6666-6666-666666666610', 'restore', 'I want it back') $$, '42501', 'not_admin', 'the creator cannot restore what was hidden');
 select throws_ok($$ select public.take_report('77777777-7777-7777-7777-777777777704') $$, '42501', 'not_admin', 'nor take a report');
 select throws_ok($$ select public.resolve_report('77777777-7777-7777-7777-777777777704', 'dismissed', null) $$, '42501', 'not_admin', 'nor resolve one');
-select throws_ok($$ update public.games set status = 'published' where id = '11111111-1111-1111-1111-111111111101' $$, 'P0001', 'status_change_not_allowed', 'a creator cannot unhide a game by updating it');
+select is(tests.dml_count($$ update public.games set status = 'published' where id = '11111111-1111-1111-1111-111111111101' $$), 0::bigint, 'a creator cannot unhide a game by updating it: a hidden game is not theirs to change');
 select is((select count(*) from public.moderation_log), 0::bigint, 'the log is not readable by them');
 select is((select count(*) from public.reports), 2::bigint, 'and they see only their own reports');
 

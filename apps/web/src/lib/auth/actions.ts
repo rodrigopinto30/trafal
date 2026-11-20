@@ -20,7 +20,7 @@ import {
 import { parseLocale, parseNextPath } from "@/lib/validation/common";
 import { TERMS_FORM_ERROR_KEYS, acceptTermsSchema } from "@/lib/validation/terms";
 import { fieldErrorsFrom, sanitizeLine } from "@/lib/validation/text";
-import { getAuthUser } from "./dal";
+import { PASSWORD_RESET_SECONDS, getAuthUser, signedInRecently } from "./dal";
 import { authErrorKey } from "./errors";
 import { syncLocaleFromAccount } from "./locale";
 import { enabledOAuthProviders } from "./oauth-providers";
@@ -64,7 +64,8 @@ export async function loginAction(_prev: FormState, formData: FormData): Promise
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
+  const captchaToken = readText(formData, "captchaToken") || undefined;
+  const { data, error } = await supabase.auth.signInWithPassword({ ...parsed.data, options: { captchaToken } });
   if (error || !data.user) {
     return { status: "error", message: t(`errors.${authErrorKey(error ?? {})}`), values: { email: parsed.data.email } };
   }
@@ -146,6 +147,10 @@ export async function acceptTermsAction(_prev: FormState, formData: FormData): P
   redirect(localizePath(locale, next));
 }
 
+/**
+ * Sends the password reset email. The answer never tells whether the account exists: only too many requests from here and a failed
+ * captcha are reported; a limit on emails to that address counts as sent, like an address with no account.
+ */
 export async function forgotPasswordAction(_prev: FormState, formData: FormData): Promise<FormState> {
   const locale = readLocale(formData);
   const t = getTranslationsFor(locale, "auth");
@@ -159,11 +164,9 @@ export async function forgotPasswordAction(_prev: FormState, formData: FormData)
 
   const { email } = parsed.data;
   const supabase = await createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(email);
-  // Solo se informa el límite de intentos; cualquier otro resultado es «listo, revisá tu email» (sin revelar si existe).
-  if (error && authErrorKey(error) === "rateLimited") {
-    return { status: "error", message: t("errors.rateLimited"), values: { email } };
-  }
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { captchaToken: readText(formData, "captchaToken") || undefined });
+  if (error?.code === "captcha_failed") return { status: "error", message: t("errors.captchaFailed"), values: { email } };
+  if (error?.code === "over_request_rate_limit") return { status: "error", message: t("errors.rateLimited"), values: { email } };
   return { status: "success", sentTo: email };
 }
 
@@ -180,9 +183,7 @@ export async function resetPasswordAction(_prev: FormState, formData: FormData):
     return { status: "error", fieldErrors };
   }
 
-  // El link del mail dejó una sesión de recuperación; sin ella no se puede cambiar la contraseña.
-  const user = await getAuthUser();
-  if (!user) return { status: "error", message: t("errors.linkExpired") };
+  if (!(await signedInRecently(PASSWORD_RESET_SECONDS, "otp"))) return { status: "error", message: t("errors.linkExpired") };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });

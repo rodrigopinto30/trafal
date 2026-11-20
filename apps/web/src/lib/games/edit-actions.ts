@@ -5,10 +5,9 @@ import { revalidatePath } from "next/cache";
 import { getTranslationsFor } from "@/i18n/server";
 import { getAuthUser } from "@/lib/auth/dal";
 import { readText } from "@/lib/forms";
-import { COVER_PROBLEM_KEYS, checkGameImage, discardObjects, filesOf, type CheckedImage } from "@/lib/games/game-media.server";
+import { COVER_PROBLEM_KEYS, GIF_PROBLEM_KEYS, checkGameGif, checkGameImage, discardObjects, filesOf, type CheckedImage } from "@/lib/games/game-media.server";
 import { isTitleTaken } from "@/lib/games/title";
-import { MAX_SCREENSHOTS } from "@/lib/games/upload-rules";
-import { GAME_IMAGE_FORMATS, coverObjectKey, screenshotObjectKey } from "@/lib/media/game-image";
+import { GAME_GIF_MIME, GAME_IMAGE_FORMATS, coverObjectKey, gifObjectKey } from "@/lib/media/game-image";
 import { putMediaObject } from "@/lib/storage/s3.server";
 import { createClient } from "@/lib/supabase/server";
 import { parseLocale } from "@/lib/validation/common";
@@ -18,10 +17,10 @@ import { fieldErrorsFrom } from "@/lib/validation/text";
 export type EditGameResult = { ok: true; publicId: string } | { ok: false; fieldErrors: Record<string, string>; message?: string };
 
 /**
- * Saves the changes the owner made to a draft or published game: details, feedback questions, cover (keep, replace or remove)
- * and screenshots (remove some, add new ones). Everything the browser sends is validated again here; the new
- * images are stored first and, if the database rejects the edit, they are removed again. The images that the edit replaced
- * or dropped are deleted only after the edit succeeded, so a failure never leaves the game without a picture it still points at.
+ * Saves the changes the owner made to a draft or published game: details, feedback questions, cover and GIF (each one kept,
+ * replaced or removed). Everything the browser sends is validated again here; the new pictures are stored first and, if the
+ * database rejects the edit, they are removed again. The pictures that the edit replaced or removed are deleted only after the
+ * edit succeeded, so a failure never leaves the game without a picture it still points at.
  */
 export async function updateGameAction(formData: FormData): Promise<EditGameResult> {
   const locale = parseLocale(formData.get("lang"));
@@ -41,13 +40,12 @@ export async function updateGameAction(formData: FormData): Promise<EditGameResu
   const supabase = await createClient();
   const { data: game } = await supabase
     .from("games")
-    .select("id, public_id, cover_path")
+    .select("id, public_id, cover_path, gif_path")
     .eq("id", gameId.data)
     .eq("owner_id", user.id)
     .in("status", ["draft", "published"])
     .maybeSingle();
   if (!game) return fail("gameNotEditable");
-  const { data: currentShots } = await supabase.from("game_screenshots").select("id, path, alt_text").eq("game_id", game.id).order("position");
 
   const details = gameDetailsSchema.safeParse({
     title: readText(formData, "title"),
@@ -60,46 +58,35 @@ export async function updateGameAction(formData: FormData): Promise<EditGameResu
   const fieldErrors: Record<string, string> = {};
   if (!details.success) Object.assign(fieldErrors, fieldErrorsFrom(details.error, GAME_FORM_ERROR_KEYS, message, "generic"));
 
-  const dropIds = new Set(formData.getAll("dropScreenshots").filter((value): value is string => typeof value === "string"));
-  const keptShots = (currentShots ?? []).filter((shot) => !dropIds.has(shot.id));
-  const droppedShots = (currentShots ?? []).filter((shot) => dropIds.has(shot.id));
-
   const coverFile = filesOf(formData, "cover")[0];
-  const screenshotFiles = filesOf(formData, "screenshots");
+  const gifFile = filesOf(formData, "gif")[0];
   let cover: CheckedImage | undefined;
-  const screenshots: CheckedImage[] = [];
+  let gif: Uint8Array | undefined;
   if (coverFile) {
     const checked = await checkGameImage(coverFile);
     if (typeof checked === "string") fieldErrors.cover = message(COVER_PROBLEM_KEYS[checked]);
     else cover = checked;
   }
-  if (keptShots.length + screenshotFiles.length > MAX_SCREENSHOTS) fieldErrors.screenshots = message("tooManyScreenshots");
-  else {
-    for (const file of screenshotFiles) {
-      const checked = await checkGameImage(file);
-      if (typeof checked === "string") {
-        fieldErrors.screenshots = message("screenshotsInvalid");
-        break;
-      }
-      screenshots.push(checked);
-    }
+  if (gifFile) {
+    const checked = await checkGameGif(gifFile);
+    if (typeof checked === "string") fieldErrors.gif = message(GIF_PROBLEM_KEYS[checked]);
+    else gif = checked;
   }
   if (!details.success || Object.keys(fieldErrors).length > 0) return { ok: false, fieldErrors };
 
   const uploadedKeys: string[] = [];
   let coverPath = formData.get("removeCover") === "1" ? null : game.cover_path;
-  const newScreenshotPaths: string[] = [];
+  let gifPath = formData.get("removeGif") === "1" ? null : game.gif_path;
   try {
     if (cover) {
       coverPath = coverObjectKey(user.id, randomBytes(16).toString("hex"), cover.format);
       await putMediaObject(coverPath, cover.bytes, GAME_IMAGE_FORMATS[cover.format].mime);
       uploadedKeys.push(coverPath);
     }
-    for (const shot of screenshots) {
-      const key = screenshotObjectKey(game.id, randomBytes(16).toString("hex"), shot.format);
-      await putMediaObject(key, shot.bytes, GAME_IMAGE_FORMATS[shot.format].mime);
-      uploadedKeys.push(key);
-      newScreenshotPaths.push(key);
+    if (gif) {
+      gifPath = gifObjectKey(user.id, randomBytes(16).toString("hex"));
+      await putMediaObject(gifPath, gif, GAME_GIF_MIME);
+      uploadedKeys.push(gifPath);
     }
   } catch (error) {
     console.error("[game edit] could not store the images", error);
@@ -116,10 +103,7 @@ export async function updateGameAction(formData: FormData): Promise<EditGameResu
     p_tags: tags,
     p_controls: controls,
     p_cover_path: coverPath as string,
-    p_screenshots: [
-      ...keptShots.map((shot) => ({ path: shot.path, alt_text: shot.alt_text })),
-      ...newScreenshotPaths.map((path) => ({ path, alt_text: "" })),
-    ],
+    p_gif_path: gifPath as string,
     p_questions: questions,
   });
   if (error) {
@@ -131,8 +115,8 @@ export async function updateGameAction(formData: FormData): Promise<EditGameResu
     return fail("generic");
   }
 
-  const replacedCover = game.cover_path && game.cover_path !== coverPath ? [game.cover_path] : [];
-  await discardObjects([...replacedCover, ...droppedShots.map((shot) => shot.path)]);
+  const replaced = [game.cover_path !== coverPath ? game.cover_path : null, game.gif_path !== gifPath ? game.gif_path : null];
+  await discardObjects(replaced.filter((key): key is string => key !== null));
   revalidatePath("/", "layout");
   return { ok: true, publicId: game.public_id };
 }

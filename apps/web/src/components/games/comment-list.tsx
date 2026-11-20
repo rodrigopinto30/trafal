@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { CommentActions } from "@/components/games/comment-actions";
 import { Link } from "@/i18n/link";
 import { getLocale, getTranslations } from "@/i18n/server";
-import { formatRelativeTime } from "@/lib/format";
+import { formatRelativeTime, machineDateTime } from "@/lib/format";
 import type { CommentThread } from "@/lib/games/comments";
 import type { CommentSummary } from "@/lib/games/types";
 import type { CommentTarget } from "@/lib/validation/comment";
@@ -32,7 +32,7 @@ async function CommentBody({ comment, now, viewer, isReply }: { comment: Comment
           <Link href={`/u/${comment.author.username}`} className="inline-flex min-h-11 items-center rounded-lg font-semibold text-foreground hover:text-cyan hover:underline">
             {comment.author.display_name}
           </Link>
-          <time dateTime={comment.created_at} className="text-xs text-text-3">
+          <time dateTime={machineDateTime(comment.created_at)} className="text-xs text-text-3">
             {formatRelativeTime(locale, comment.created_at, now)}
           </time>
           {edited ? <span className="text-xs text-text-3">({tc("edited")})</span> : null}

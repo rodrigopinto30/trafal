@@ -6,12 +6,12 @@ import { followsPerson } from "./helpers/supabase";
  * Three details of moving around and editing: the favorite genres stay marked after saving (React 19 resets the form when the action
  * ends), every section has a Back button, and the lists of followers and followed have a follow / unfollow button on each person.
  */
-const VALEN = { email: "valen@trafal.test", password: "trafal123", username: "valen_makes" };
+const VALEN = { email: "valen@tradfal.test", password: "tradfal123", username: "valen_makes" };
 
 test("los géneros elegidos quedan marcados al guardar, sin recargar, y después de recargar", async ({ page }, testInfo) => {
   test.setTimeout(150_000);
   const suffix = uniqueSuffix(testInfo.project.name);
-  await registerAccount(page, { email: `e2e_genres_${suffix}@trafal.test`, username: `genres_${lettersOnly(suffix)}`, displayName: "Persona Géneros" });
+  await registerAccount(page, { email: `e2e_genres_${suffix}@tradfal.test`, username: `genres_${lettersOnly(suffix)}`, displayName: "Persona Géneros" });
   await gotoReady(page, "/settings/profile");
 
   const arcade = page.getByRole("checkbox", { name: "Arcade" });
@@ -45,8 +45,8 @@ test("cada sección tiene el botón «Atrás»: vuelve a la pantalla anterior, y
   await gotoReady(page, "/");
   await expect(page.getByRole("button", { name: "Atrás" })).toHaveCount(0);
 
-  await page.getByRole("contentinfo").getByRole("link", { name: "Creadores" }).click();
-  await expect(page).toHaveURL(/\/creators$/);
+  await page.getByRole("contentinfo").getByRole("link", { name: "Normas de la comunidad" }).click();
+  await expect(page).toHaveURL(/\/legal\/guidelines$/);
   const back = page.getByRole("button", { name: "Atrás" });
   await expect(back).toBeVisible();
   expect((await back.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);

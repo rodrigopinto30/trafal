@@ -24,9 +24,9 @@ test.beforeAll(async ({ browser }, testInfo) => {
   suffix = uniqueSuffix(testInfo.project.name);
   username = `suspended_${lettersOnly(suffix)}`;
   person = await (await browser.newContext({ ...testInfo.project.use })).newPage();
-  await registerAccount(person, { email: `e2e_suspended_${suffix}@trafal.test`, username, displayName: "Persona Suspendida" });
+  await registerAccount(person, { email: `e2e_suspended_${suffix}@tradfal.test`, username, displayName: "Persona Suspendida" });
   admin = await (await browser.newContext({ ...testInfo.project.use })).newPage();
-  await loginAndWait(admin, "admin@trafal.test", "trafal123");
+  await loginAndWait(admin, "admin@tradfal.test", "tradfal123");
 });
 
 test.afterAll(async () => {
@@ -43,8 +43,8 @@ test.afterAll(async () => {
 });
 
 test("la administración no puede suspender a la administración", async () => {
-  await openAccount(admin, "equipo_trafal");
-  const card = admin.getByRole("article", { name: "@equipo_trafal" });
+  await openAccount(admin, "equipo_tradfal");
+  const card = admin.getByRole("article", { name: "@equipo_tradfal" });
   await expect(card).toBeVisible();
   await expect(card.getByText("No se puede suspender a la administración")).toBeVisible();
   await expect(card.getByRole("button", { name: /Suspender/ })).toHaveCount(0);

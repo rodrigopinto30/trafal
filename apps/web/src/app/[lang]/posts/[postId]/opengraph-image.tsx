@@ -3,7 +3,7 @@ import { OG_CONTENT_TYPE, OG_SIZE, ogLocale, ogTexts, renderCard } from "@/lib/s
 import { excerpt } from "@/lib/seo/site";
 import { postIdSchema } from "@/lib/validation/post";
 
-export const alt = "Trafal";
+export const alt = "Tradfal";
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 

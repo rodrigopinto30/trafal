@@ -9,7 +9,14 @@ import type { GameStorage, ObjectMeta } from "./storage.ts";
 export type GatewayDependencies = { config: GatewayConfig; delivery: DeliveryLookup; storage: GameStorage };
 
 const HTML_ALLOWED_DESTINATIONS = new Set(["iframe", "empty"]);
+const PAGE_DESTINATIONS = new Set(["", "document", "frame", "iframe", "embed", "object"]);
 const SERVICE_WORKER_DESTINATION = "serviceworker";
+
+/** Kinds of files a browser also opens as a page of their own, with scripts: an SVG drawing, XHTML and XML. */
+const OTHER_PAGE_TYPES = ["application/xhtml+xml", "image/svg+xml", "application/xml", "text/xml"];
+
+/** Nothing of a file of those kinds runs, if a browser ever opens it as a page: it only shows. */
+const STATIC_DOCUMENT_POLICY = "default-src 'none'; img-src data:; style-src 'unsafe-inline'; sandbox";
 
 function text(config: GatewayConfig, status: number, body: string, extra: Record<string, string> = {}, head = false): Response {
   const headers = securityHeaders(config);
@@ -32,9 +39,24 @@ function isHtml(contentType: string): boolean {
   return contentType.toLowerCase().startsWith("text/html");
 }
 
+function isOtherPageType(contentType: string): boolean {
+  const type = contentType.toLowerCase();
+  return OTHER_PAGE_TYPES.some((page) => type.startsWith(page));
+}
+
+/**
+ * Whether this response could be opened as a page outside Tradfal's frame: HTML anywhere but the frame and the game's own requests,
+ * and an SVG or XML file as a page (it can still be an image, a style or data the game reads).
+ */
+function wouldOpenAsLoosePage(contentType: string, destination: string | null): boolean {
+  if (isHtml(contentType)) return !HTML_ALLOWED_DESTINATIONS.has(destination ?? "");
+  return isOtherPageType(contentType) && PAGE_DESTINATIONS.has(destination ?? "");
+}
+
 function deliveryHeaders(config: GatewayConfig, meta: ObjectMeta, etag: string | null): Headers {
   const headers = securityHeaders(config);
   headers.set("Content-Type", meta.contentType);
+  if (isOtherPageType(meta.contentType)) headers.set("Content-Security-Policy", STATIC_DOCUMENT_POLICY);
   if (meta.contentEncoding) headers.set("Content-Encoding", meta.contentEncoding);
   headers.set("Accept-Ranges", "bytes");
   headers.set("Cache-Control", "no-cache");
@@ -47,8 +69,10 @@ function deliveryHeaders(config: GatewayConfig, meta: ObjectMeta, etag: string |
  * development, a container) and on Cloudflare Workers. It serves GET and HEAD only, for hosts of the form
  * <public_id>.<games domain>, and answers every request, errors included, with the security headers.
  *
- * HTML is only served inside a frame of Trafal (Sec-Fetch-Dest: iframe) or to the game's own scripts (empty): opening a game
- * URL directly sends the person to the game's page on Trafal, so a game can never pose as a page of its own to phish.
+ * HTML is only served inside a frame of Tradfal (Sec-Fetch-Dest: iframe) or to the game's own scripts (empty): opening a game
+ * URL directly sends the person to the game's page on Tradfal, so a game can never pose as a page of its own to phish. The same
+ * goes for SVG and XML files, which a browser also runs as pages: they are served as images or data, never as a page.
+ * What is decided and what is served come from the same description of the file (its type and encoding).
  * The HTML that does go into a frame carries the platform bridge (see bridge.ts), streamed in at the top of the page, so the player's
  * own controls (mute) work for every game; it is not added to ranges, encoded bodies or the game's own fetches.
  * Service worker scripts are never served (Sec-Fetch-Dest: serviceworker): a worker would outlive the game being hidden or
@@ -83,7 +107,7 @@ export function createGatewayHandler({ config, delivery, storage }: GatewayDepen
 
     const meta = await storage.head(key);
     if (!meta) return text(config, 404, "Not found", {}, head);
-    if (isHtml(meta.contentType) && !HTML_ALLOWED_DESTINATIONS.has(destination ?? "")) {
+    if (wouldOpenAsLoosePage(meta.contentType, destination)) {
       return text(config, 302, "", { Location: `${config.siteUrl}/games/${publicId}` }, true);
     }
     const bridged = isHtml(meta.contentType) && destination === "iframe" && !meta.contentEncoding && !request.headers.has("range");
@@ -103,12 +127,13 @@ export function createGatewayHandler({ config, delivery, storage }: GatewayDepen
     const object = await storage.get(key, request.headers.get("range"));
     if (!object) return text(config, 404, "Not found");
     if ("rangeNotSatisfiable" in object) return text(config, 416, "Range not satisfiable", { "Content-Range": `bytes */${meta.contentLength}` });
+    const served = { ...object, contentType: meta.contentType, contentEncoding: meta.contentEncoding };
     if (bridged && object.status === 200) {
-      const headers = deliveryHeaders(config, object, entityTag(found.versionNumber, object.etag, true));
+      const headers = deliveryHeaders(config, served, entityTag(found.versionNumber, object.etag, true));
       headers.set("Accept-Ranges", "none");
       return new Response(injectBridge(object.body), { status: 200, headers });
     }
-    const headers = deliveryHeaders(config, object, entityTag(found.versionNumber, object.etag));
+    const headers = deliveryHeaders(config, served, entityTag(found.versionNumber, object.etag));
     headers.set("Content-Length", String(object.contentLength));
     if (object.contentRange) headers.set("Content-Range", object.contentRange);
     return new Response(object.body, { status: object.status, headers });

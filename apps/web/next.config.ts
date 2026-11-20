@@ -1,18 +1,19 @@
 import path from "node:path";
 import type { NextConfig } from "next";
 
-// Cabeceras de seguridad del SITIO (no de los juegos: esos se sirven desde otro dominio con su propio
-// gateway). La Content-Security-Policy con nonce llega en la Fase 2, cuando se conocen los orígenes
-// del reproductor y del almacenamiento; ver docs/SECURITY-GAMES.md.
+const siteIsHttps = (process.env.NEXT_PUBLIC_SITE_URL ?? "").startsWith("https://");
+
+/**
+ * Security headers of the SITE (games are served from another domain by their own gateway). The Content-Security-Policy is set by
+ * the proxy, because it needs addresses that are only known when the server starts (lib/security/csp.ts). HSTS only on HTTPS.
+ */
 const securityHeaders = [
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+  ...(siteIsHttps ? [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }] : []),
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  // El sitio nunca se embebe en otro (los juegos sí se embeben en el sitio, no al revés).
   { key: "X-Frame-Options", value: "DENY" },
-  {
-    key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
-  },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
 ];
 
 const nextConfig: NextConfig = {

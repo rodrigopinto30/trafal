@@ -1,4 +1,4 @@
--- Cuentas de desarrollo, contraseña de todas: trafal123. Solo local: `supabase db reset` las carga y producción no corre estos archivos.
+-- Cuentas de desarrollo, contraseña de todas: tradfal123. Solo local: `supabase db reset` las carga y producción no corre estos archivos.
 
 do $$
 declare
@@ -6,16 +6,16 @@ declare
 begin
   for u in
     select * from (values
-      ('5eed0000-0000-4000-8000-000000000001'::uuid, 'valen@trafal.test',  'valen_makes',   'Valentina Ruiz', 'user',  'Aprendiendo Godot de noche. Me encantan los plataformas difíciles.',        'Córdoba',      'AR', array['platformer', 'roguelike', 'puzzle']),
-      ('5eed0000-0000-4000-8000-000000000002'::uuid, 'mateo@trafal.test',  'mateo_g',       'Mateo G.',       'user',  'De Scratch a Phaser. Hago juegos de naves con música chiptune.',            'Rosario',      'AR', array['arcade', 'shooter', 'rhythm']),
-      ('5eed0000-0000-4000-8000-0000000000ad'::uuid, 'admin@trafal.test',  'equipo_trafal', 'Equipo Trafal',  'admin', 'Cuenta de moderación del equipo.',                                          null,           null, array[]::text[]),
-      ('5eed0000-0000-4000-8000-000000000003'::uuid, 'sofi@trafal.test',   'sofi_pixels',   'Sofi Pixels',    'user',  'Puzzles de física y planetas. Programo después del laburo.',                'Mendoza',      'AR', array['puzzle', 'simulation']),
-      ('5eed0000-0000-4000-8000-000000000004'::uuid, 'nacho@trafal.test',  'nachodev',      'Nacho Dev',      'user',  'Historias interactivas con olor a mar y a mate.',                           'Montevideo',   'UY', array['narrative', 'adventure']),
-      ('5eed0000-0000-4000-8000-000000000005'::uuid, 'juli@trafal.test',   'julistudio',    'Juli Studio',    'user',  'Hago juegos con gatos. Sí, otra vez gatos.',                                'La Plata',     'AR', array['puzzle', 'roguelike']),
-      ('5eed0000-0000-4000-8000-000000000006'::uuid, 'caro@trafal.test',   'caro_pixels',   'Caro Pixels',    'user',  'Fantasy console y mucho pan dulce.',                                        'Santiago',     'CL', array['cozy', 'adventure']),
-      ('5eed0000-0000-4000-8000-000000000007'::uuid, 'tomi@trafal.test',   'tomi_dev',      'Tomi',           'user',  'Mazmorras y pasillos raros, siempre en Godot.',                             'Bogotá',       'CO', array['roguelike', 'horror']),
-      ('5eed0000-0000-4000-8000-000000000008'::uuid, 'male@trafal.test',   'male_beats',    'Male Beats',     'user',  'Ritmo, chiptune y tentáculos.',                                             'Buenos Aires', 'AR', array['rhythm', 'arcade']),
-      ('5eed0000-0000-4000-8000-000000000009'::uuid, 'santi@trafal.test',  'santi_unity',   'Santi',          'user',  'Autos de cartón y física divertida.',                                       'Lima',         'PE', array['racing', 'sports'])
+      ('5eed0000-0000-4000-8000-000000000001'::uuid, 'valen@tradfal.test',  'valen_makes',   'Valentina Ruiz', 'user',  'Aprendiendo Godot de noche. Me encantan los plataformas difíciles.',        'Córdoba',      'AR', array['platformer', 'roguelike', 'puzzle']),
+      ('5eed0000-0000-4000-8000-000000000002'::uuid, 'mateo@tradfal.test',  'mateo_g',       'Mateo G.',       'user',  'De Scratch a Phaser. Hago juegos de naves con música chiptune.',            'Rosario',      'AR', array['arcade', 'shooter', 'rhythm']),
+      ('5eed0000-0000-4000-8000-0000000000ad'::uuid, 'admin@tradfal.test',  'equipo_tradfal', 'Equipo Tradfal',  'admin', 'Cuenta de moderación del equipo.',                                          null,           null, array[]::text[]),
+      ('5eed0000-0000-4000-8000-000000000003'::uuid, 'sofi@tradfal.test',   'sofi_pixels',   'Sofi Pixels',    'user',  'Puzzles de física y planetas. Programo después del laburo.',                'Mendoza',      'AR', array['puzzle', 'simulation']),
+      ('5eed0000-0000-4000-8000-000000000004'::uuid, 'nacho@tradfal.test',  'nachodev',      'Nacho Dev',      'user',  'Historias interactivas con olor a mar y a mate.',                           'Montevideo',   'UY', array['narrative', 'adventure']),
+      ('5eed0000-0000-4000-8000-000000000005'::uuid, 'juli@tradfal.test',   'julistudio',    'Juli Studio',    'user',  'Hago juegos con gatos. Sí, otra vez gatos.',                                'La Plata',     'AR', array['puzzle', 'roguelike']),
+      ('5eed0000-0000-4000-8000-000000000006'::uuid, 'caro@tradfal.test',   'caro_pixels',   'Caro Pixels',    'user',  'Fantasy console y mucho pan dulce.',                                        'Santiago',     'CL', array['cozy', 'adventure']),
+      ('5eed0000-0000-4000-8000-000000000007'::uuid, 'tomi@tradfal.test',   'tomi_dev',      'Tomi',           'user',  'Mazmorras y pasillos raros, siempre en Godot.',                             'Bogotá',       'CO', array['roguelike', 'horror']),
+      ('5eed0000-0000-4000-8000-000000000008'::uuid, 'male@tradfal.test',   'male_beats',    'Male Beats',     'user',  'Ritmo, chiptune y tentáculos.',                                             'Buenos Aires', 'AR', array['rhythm', 'arcade']),
+      ('5eed0000-0000-4000-8000-000000000009'::uuid, 'santi@tradfal.test',  'santi_unity',   'Santi',          'user',  'Autos de cartón y física divertida.',                                       'Lima',         'PE', array['racing', 'sports'])
     ) as t(id, email, username, display_name, role, bio, city, country, favorite_genres)
   loop
     insert into auth.users (
@@ -25,7 +25,7 @@ begin
       email_change_token_current, phone_change, phone_change_token, reauthentication_token
     ) values (
       '00000000-0000-0000-0000-000000000000', u.id, 'authenticated', 'authenticated', u.email,
-      extensions.crypt('trafal123', extensions.gen_salt('bf')), now(),
+      extensions.crypt('tradfal123', extensions.gen_salt('bf')), now(),
       '{"provider":"email","providers":["email"]}'::jsonb, '{}'::jsonb, now(), now(),
       '', '', '', '', '', '', '', ''
     );

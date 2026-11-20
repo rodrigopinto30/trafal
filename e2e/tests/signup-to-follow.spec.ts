@@ -9,11 +9,11 @@ mkdirSync("screenshots", { recursive: true });
 test("una persona nueva se registra, completa su perfil, lo edita y sigue a otra", async ({ page }, testInfo) => {
   test.setTimeout(150_000);
   const suffix = uniqueSuffix(testInfo.project.name);
-  const email = `e2e_${suffix}@trafal.test`;
+  const email = `e2e_${suffix}@tradfal.test`;
   // Sin un solo número a propósito: si el nombre está libre, se puede usar tal cual.
   const username = `sin_numeros_${lettersOnly(suffix)}`;
   expect(username).not.toMatch(/\d/);
-  const password = "Trafal12345";
+  const password = "Tradfal12345";
 
   /* ---------- 1) Registro: pide 18+ y términos (casilla) y repetir la contraseña ---------- */
   await gotoReady(page, "/signup");
@@ -31,11 +31,11 @@ test("una persona nueva se registra, completa su perfil, lo edita y sigue a otra
   // Con la casilla tildada pero las contraseñas distintas: el error es claro y la casilla SIGUE tildada.
   const adult = page.getByRole("checkbox", { name: /18 años o más/ });
   await adult.check();
-  await page.getByLabel("Repetí la contraseña").fill("Trafal12346");
+  await page.getByLabel("Repetí la contraseña").fill("Tradfal12346");
   await page.getByRole("button", { name: "Crear cuenta" }).click();
   await expect(page.getByText("Las contraseñas no coinciden.")).toBeVisible();
   await expect(adult).toBeChecked();
-  await expect(page.getByLabel("Repetí la contraseña")).toHaveValue("Trafal12346");
+  await expect(page.getByLabel("Repetí la contraseña")).toHaveValue("Tradfal12346");
 
   await page.getByLabel("Repetí la contraseña").fill(password);
   await page.getByRole("button", { name: "Crear cuenta" }).click();
@@ -79,7 +79,7 @@ test("una persona nueva se registra, completa su perfil, lo edita y sigue a otra
   await expect(page.getByRole("checkbox")).toHaveCount(0);
   await page.getByLabel("Tu nombre").fill("Persona de Prueba");
   await page.screenshot({ path: `screenshots/${testInfo.project.name}-flujo-onboarding.png`, fullPage: true });
-  await page.getByRole("button", { name: "Entrar a Trafal" }).click();
+  await page.getByRole("button", { name: "Entrar a Tradfal" }).click();
 
   /* ---------- 4) Su perfil: todavía sin foto ni géneros → la invita a terminarlo ---------- */
   await expect(page).toHaveURL(new RegExp(`/u/${username}$`));

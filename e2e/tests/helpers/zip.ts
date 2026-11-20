@@ -55,7 +55,7 @@ export function playableGameZip(marker = ""): Buffer {
     "index.html":
       '<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Moon Runner</title></head><body><h1>Moon Runner</h1><p id="status">cargando</p><p id="bridge">no</p><p id="patched">no</p><p id="last">nada</p><script src="game.js"></script></body></html>',
     "game.js": `document.getElementById("status").textContent = "corriendo${marker}";
-document.getElementById("bridge").textContent = window.__trafalBridge === 1 ? "si" : "no";
+document.getElementById("bridge").textContent = window.__tradfalBridge === 1 ? "si" : "no";
 const Context = window.AudioContext || window.webkitAudioContext;
 if (Context) {
   const context = new Context();
@@ -64,7 +64,7 @@ if (Context) {
   document.getElementById("patched").textContent = String(AudioNode.prototype.connect).includes("[native code]") ? "native" : "si";
 }
 window.addEventListener("message", (event) => {
-  if (event.data && event.data.trafal === 1) document.getElementById("last").textContent = JSON.stringify(event.data);
+  if (event.data && event.data.tradfal === 1) document.getElementById("last").textContent = JSON.stringify(event.data);
 });`,
   });
 }
@@ -86,8 +86,8 @@ const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const key = (object, ...names) => names.reduce((value, name) => value[name], object);
 
 (async () => {
-  await attempt("read site cookies", () => (/sb-|trafal_canary/.test(document.cookie) ? document.cookie : false));
-  await attempt("read site storage", () => localStorage.getItem("trafal_canary") || sessionStorage.getItem("trafal_canary"));
+  await attempt("read site cookies", () => (/sb-|tradfal_canary/.test(document.cookie) ? document.cookie : false));
+  await attempt("read site storage", () => localStorage.getItem("tradfal_canary") || sessionStorage.getItem("tradfal_canary"));
   await attempt("read top document", () => key(window, "top", "document", "title"));
   await attempt("read parent storage", () => key(window, "parent", "localStorage", "length"));
   await attempt("read parent cookies", () => key(window, "parent", "document", "cookie"));

@@ -1,4 +1,4 @@
-import { inspectImage } from "./image-sniff";
+import { inspectImage, jpegEnd } from "./image-sniff";
 
 /**
  * Rules and byte-level inspection of the files of an update (images, GIFs and short MP4 videos). The browser pre-checks them
@@ -74,7 +74,10 @@ function skipSubBlocks(bytes: Uint8Array, start: number): number {
 
 export type GifInfo = { width: number; height: number; frames: number };
 
-/** Reads a GIF block by block. It has to end exactly at its trailer: bytes glued after it are a second file hiding in the first. */
+/**
+ * Reads a GIF block by block. It has to end exactly at its trailer (bytes glued after it are a second file hiding in the first), and
+ * every frame has to fit inside the declared size (a huge frame would make the browser decode far more than the size says).
+ */
 export function inspectGif(bytes: Uint8Array): GifInfo | null {
   try {
     const signature = ascii(bytes, 0, 6);
@@ -94,6 +97,11 @@ export function inspectGif(bytes: Uint8Array): GifInfo | null {
       } else if (block === 0x2c) {
         frames += 1;
         if (frames > GIF_MAX_FRAMES) return { width, height, frames };
+        const left = view.getUint16(offset + 1, true);
+        const top = view.getUint16(offset + 3, true);
+        const frameWidth = view.getUint16(offset + 5, true);
+        const frameHeight = view.getUint16(offset + 7, true);
+        if (frameWidth === 0 || frameHeight === 0 || left + frameWidth > width || top + frameHeight > height) return null;
         const packed = at(bytes, offset + 9);
         offset += 10 + (packed & 0x80 ? 3 * 2 ** ((packed & 0x07) + 1) : 0);
         offset = skipSubBlocks(bytes, offset + 1);
@@ -217,17 +225,18 @@ const JPEG_DROPPED_MARKERS = new Set([0xe1, 0xed, 0xfe]);
 
 function stripJpeg(bytes: Uint8Array): Uint8Array {
   const view = viewOf(bytes);
+  const end = jpegEnd(bytes) ?? bytes.length;
   const kept: Uint8Array[] = [bytes.subarray(0, 2)];
   let offset = 2;
   while (offset + 4 <= bytes.length) {
     const marker = at(bytes, offset + 1);
     if (at(bytes, offset) !== 0xff || marker === 0xda) break;
-    const end = offset + 2 + view.getUint16(offset + 2);
-    if (end > bytes.length) return bytes;
-    if (!JPEG_DROPPED_MARKERS.has(marker)) kept.push(bytes.subarray(offset, end));
-    offset = end;
+    const segmentEnd = offset + 2 + view.getUint16(offset + 2);
+    if (segmentEnd > bytes.length) return bytes;
+    if (!JPEG_DROPPED_MARKERS.has(marker)) kept.push(bytes.subarray(offset, segmentEnd));
+    offset = segmentEnd;
   }
-  kept.push(bytes.subarray(offset));
+  kept.push(bytes.subarray(offset, end));
   return concatBytes(kept);
 }
 

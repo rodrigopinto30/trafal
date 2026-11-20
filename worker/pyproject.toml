@@ -1,7 +1,7 @@
 [project]
-name = "trafal-worker"
+name = "tradfal-worker"
 version = "0.1.0"
-description = "Validación y procesamiento de los juegos que sube la gente a Trafal."
+description = "Validación y procesamiento de los juegos que sube la gente a Tradfal."
 requires-python = ">=3.13"
 dependencies = []
 

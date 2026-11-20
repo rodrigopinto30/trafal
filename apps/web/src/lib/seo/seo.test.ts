@@ -5,21 +5,21 @@ import { pageMetadata } from "./metadata";
 import { absoluteUrl, excerpt, isPublicSite, languageAlternates } from "./site";
 import { gameData, personData, postData, serializeStructuredData, webSiteData } from "./structured-data";
 
-const SITE = "https://trafal.example";
+const SITE = "https://tradfal.example";
 
 describe("addresses", () => {
   it("builds the public address of a page in each language", () => {
-    expect(absoluteUrl("es", "/games/orbita", SITE)).toBe("https://trafal.example/games/orbita");
-    expect(absoluteUrl("en", "/games/orbita", SITE)).toBe("https://trafal.example/en/games/orbita");
-    expect(absoluteUrl("es", "/", SITE)).toBe("https://trafal.example/");
-    expect(absoluteUrl("en", "/", SITE)).toBe("https://trafal.example/en");
+    expect(absoluteUrl("es", "/games/orbita", SITE)).toBe("https://tradfal.example/games/orbita");
+    expect(absoluteUrl("en", "/games/orbita", SITE)).toBe("https://tradfal.example/en/games/orbita");
+    expect(absoluteUrl("es", "/", SITE)).toBe("https://tradfal.example/");
+    expect(absoluteUrl("en", "/", SITE)).toBe("https://tradfal.example/en");
   });
 
   it("lists the same page in every language, with Spanish as the default", () => {
     expect(languageAlternates("/explore", SITE)).toEqual({
-      es: "https://trafal.example/explore",
-      en: "https://trafal.example/en/explore",
-      "x-default": "https://trafal.example/explore",
+      es: "https://tradfal.example/explore",
+      en: "https://tradfal.example/en/explore",
+      "x-default": "https://tradfal.example/explore",
     });
   });
 
@@ -27,11 +27,11 @@ describe("addresses", () => {
     ["http://localhost:3000", false],
     ["http://127.0.0.1:3000", false],
     ["http://0.0.0.0:3000", false],
-    ["https://staging.trafal.local", false],
-    ["https://trafal.test", false],
+    ["https://staging.tradfal.local", false],
+    ["https://tradfal.test", false],
     ["not a url", false],
-    ["https://trafal.example", true],
-    ["https://www.trafal.com", true],
+    ["https://tradfal.example", true],
+    ["https://www.tradfal.com", true],
   ])("%s is public: %s", (url, expected) => {
     expect(isPublicSite(url)).toBe(expected);
   });
@@ -62,16 +62,16 @@ describe("pageMetadata", () => {
     expect(metadata.title).toBe("Órbita");
     expect(metadata.alternates?.canonical).toBe(`${absoluteUrl("en", "/games/orbita")}`);
     expect(Object.keys(metadata.alternates?.languages ?? {})).toEqual(["es", "en", "x-default"]);
-    expect(metadata.openGraph).toMatchObject({ type: "website", title: "Trafal - Órbita", locale: "en_US", alternateLocale: ["es_AR"] });
-    expect(metadata.twitter).toMatchObject({ card: "summary_large_image", title: "Trafal - Órbita" });
+    expect(metadata.openGraph).toMatchObject({ type: "website", title: "Tradfal - Órbita", locale: "en_US", alternateLocale: ["es_AR"] });
+    expect(metadata.twitter).toMatchObject({ card: "summary_large_image", title: "Tradfal - Órbita" });
     expect(metadata.robots).toBeUndefined();
   });
 
   it("can ask not to be indexed, and use a title that already says the site name", () => {
     expect(pageMetadata({ title: "Iniciar sesión", description: "x", path: "/login", locale: "es", noindex: true }).robots).toEqual({ index: false, follow: true });
-    const home = pageMetadata({ title: "Trafal — Publicá tu juego", description: "x", path: "/", locale: "es", titleIsComplete: true });
-    expect(home.title).toEqual({ absolute: "Trafal — Publicá tu juego" });
-    expect(home.openGraph).toMatchObject({ title: "Trafal — Publicá tu juego" });
+    const home = pageMetadata({ title: "Tradfal — Publicá tu juego", description: "x", path: "/", locale: "es", titleIsComplete: true });
+    expect(home.title).toEqual({ absolute: "Tradfal — Publicá tu juego" });
+    expect(home.openGraph).toMatchObject({ title: "Tradfal — Publicá tu juego" });
   });
 });
 
@@ -89,7 +89,7 @@ describe("robots", () => {
       expect(disallow).toContain(path);
     }
     expect(disallow).not.toContain("/");
-    expect(robots.sitemap).toBe("https://trafal.example/sitemap.xml");
+    expect(robots.sitemap).toBe("https://tradfal.example/sitemap.xml");
   });
 });
 
@@ -105,12 +105,12 @@ describe("sitemap", () => {
   const urls = sitemap.map((entry) => entry.url);
 
   it("lists every page in each language", () => {
-    expect(urls).toContain("https://trafal.example/");
-    expect(urls).toContain("https://trafal.example/en");
-    expect(urls).toContain("https://trafal.example/games/orbita");
-    expect(urls).toContain("https://trafal.example/en/games/orbita");
-    expect(urls).toContain("https://trafal.example/u/sofi_pixels");
-    expect(urls).toContain("https://trafal.example/en/posts/55555555-5555-4555-8555-555555555510");
+    expect(urls).toContain("https://tradfal.example/");
+    expect(urls).toContain("https://tradfal.example/en");
+    expect(urls).toContain("https://tradfal.example/games/orbita");
+    expect(urls).toContain("https://tradfal.example/en/games/orbita");
+    expect(urls).toContain("https://tradfal.example/u/sofi_pixels");
+    expect(urls).toContain("https://tradfal.example/en/posts/55555555-5555-4555-8555-555555555510");
     expect(new Set(urls).size).toBe(urls.length);
   });
 
@@ -119,8 +119,8 @@ describe("sitemap", () => {
   });
 
   it("says where each translation is and when the page last changed", () => {
-    const game = sitemap.find((entry) => entry.url === "https://trafal.example/en/games/orbita");
-    expect(game?.alternates?.languages).toEqual({ es: "https://trafal.example/games/orbita", en: "https://trafal.example/en/games/orbita", "x-default": "https://trafal.example/games/orbita" });
+    const game = sitemap.find((entry) => entry.url === "https://tradfal.example/en/games/orbita");
+    expect(game?.alternates?.languages).toEqual({ es: "https://tradfal.example/games/orbita", en: "https://tradfal.example/en/games/orbita", "x-default": "https://tradfal.example/games/orbita" });
     expect(game?.lastModified).toEqual(new Date("2026-11-01T10:00:00Z"));
   });
 });

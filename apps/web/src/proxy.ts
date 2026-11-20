@@ -1,10 +1,26 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { LOCALE_COOKIE, defaultLocale, isLocale, negotiateLocale, type Locale } from "@/i18n/config";
 import { localizePath, stripLocale } from "@/i18n/path";
+import { publicEnv } from "@/lib/env";
+import { contentSecurityPolicy } from "@/lib/security/csp";
 import { updateSession } from "@/lib/supabase/proxy";
 import { EXPLORE_PARAMS } from "@/lib/validation/explore";
 
 const ONE_YEAR = 60 * 60 * 24 * 365;
+
+const CONTENT_SECURITY_POLICY = contentSecurityPolicy({
+  siteUrl: publicEnv.siteUrl,
+  supabaseUrl: publicEnv.supabaseUrl,
+  mediaUrl: publicEnv.mediaUrl,
+  gamesBaseUrl: publicEnv.gamesBaseUrl,
+  uploadUrl: process.env.S3_PUBLIC_ENDPOINT ?? "",
+  development: process.env.NODE_ENV !== "production",
+});
+
+function withPolicy(response: NextResponse): NextResponse {
+  response.headers.set("Content-Security-Policy", CONTENT_SECURITY_POLICY);
+  return response;
+}
 
 /**
  * Dónde vive la portada dinámica (una ruta propia: la de los visitantes sigue estática y no cambia). La sirven, en la dirección «/»,
@@ -27,8 +43,13 @@ function rememberLocale(response: NextResponse, locale: Locale) {
  * 3) Portada. «/» (o «/en») se REESCRIBE a la portada dinámica si hay una sesión válida o si la dirección pide una búsqueda; el
  *    navegador sigue viendo la misma dirección y quien no inició sesión ni busca recibe la portada estática de siempre.
  * 4) «/explore» (la antigua pantalla de búsqueda) redirige para siempre a la portada, con la misma búsqueda.
+ * Toda respuesta lleva la Content-Security-Policy del sitio (lib/security/csp.ts).
  */
 export async function proxy(request: NextRequest) {
+  return withPolicy(await route(request));
+}
+
+async function route(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
   const { locale: urlLocale, path } = stripLocale(pathname);
 

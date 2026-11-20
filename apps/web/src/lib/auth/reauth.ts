@@ -1,3 +1,5 @@
+import { OAUTH_PROVIDERS, type OAuthProvider } from "@/lib/validation/auth";
+
 export type ReauthMethod = "password" | "email";
 
 /**
@@ -7,6 +9,12 @@ export type ReauthMethod = "password" | "email";
 export function reauthMethodOf(user: { app_metadata?: { providers?: unknown } | null }): ReauthMethod {
   const providers = user.app_metadata?.providers;
   return Array.isArray(providers) && providers.includes("email") ? "password" : "email";
+}
+
+/** The outside accounts (Google, Discord) the person can sign in with, to sign in again before something that cannot be undone. */
+export function oauthProvidersOf(user: { app_metadata?: { providers?: unknown } | null }): OAuthProvider[] {
+  const providers = user.app_metadata?.providers;
+  return Array.isArray(providers) ? OAUTH_PROVIDERS.filter((provider) => providers.includes(provider)) : [];
 }
 
 /** Does what the person typed match the email of their account (ignoring case and stray spaces)? */

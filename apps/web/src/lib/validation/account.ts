@@ -14,6 +14,8 @@ export const ACCOUNT_ERROR_KEYS = [
   "verifyFailed",
   "deleteFailed",
   "adminCannotDelete",
+  "reauthRequired",
+  "captchaFailed",
   "generic",
 ] as const;
 export type AccountErrorKey = (typeof ACCOUNT_ERROR_KEYS)[number];

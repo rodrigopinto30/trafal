@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
-RULES_ENV_VAR = "TRAFAL_UPLOAD_RULES"
+RULES_ENV_VAR = "TRADFAL_UPLOAD_RULES"
 RULES_RELATIVE_PATH = Path("packages") / "shared" / "upload-rules.json"
 
 
@@ -98,7 +98,7 @@ def parse_rules(data: Mapping[str, Any]) -> UploadRules:
 
 
 def default_rules_path() -> Path:
-    """Ruta del JSON: la variable TRAFAL_UPLOAD_RULES o, si no está, la del repositorio."""
+    """Ruta del JSON: la variable TRADFAL_UPLOAD_RULES o, si no está, la del repositorio."""
     override = os.environ.get(RULES_ENV_VAR)
     if override:
         return Path(override)

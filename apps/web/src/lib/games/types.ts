@@ -12,6 +12,8 @@ export type GameSummary = {
   genre_id: string | null;
   tags: string[];
   cover_path: string | null;
+  /** An optional GIF the creator uploaded: when there is one, it is shown in place of the cover. */
+  gif_path: string | null;
   is_first_game: boolean;
   play_count: number;
   like_count: number;

@@ -5,10 +5,10 @@ import pytest
 
 from tests.conftest import INDEX
 from tests.zipforge import simple_zip
-from trafal_worker.planner import PlannedFile
-from trafal_worker.rules import UploadRules
-from trafal_worker.sink import DirectorySink
-from trafal_worker.validator import validate_archive
+from tradfal_worker.planner import PlannedFile
+from tradfal_worker.rules import UploadRules
+from tradfal_worker.sink import DirectorySink
+from tradfal_worker.validator import validate_archive
 
 
 def planned(target: str) -> PlannedFile:

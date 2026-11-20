@@ -4,7 +4,7 @@ import { parsePublicIdParam } from "@/lib/validation/common";
 import { getMessagesFor } from "@/i18n/messages";
 import { createTranslator } from "@/i18n/translator";
 
-export const alt = "Trafal";
+export const alt = "Tradfal";
 export const size = OG_SIZE;
 export const contentType = OG_CONTENT_TYPE;
 

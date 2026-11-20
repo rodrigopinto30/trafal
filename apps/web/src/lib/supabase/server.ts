@@ -3,7 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { connection } from "next/server";
 import { assertSupabaseEnv } from "@/lib/env.server";
-import { AUTH_COOKIE_NAME } from "./constants";
+import { AUTH_COOKIE_OPTIONS } from "./constants";
 import type { Database } from "./database.types";
 
 /**
@@ -19,7 +19,7 @@ export async function createClient() {
   const cookieStore = await cookies();
 
   return createServerClient<Database>(url, key, {
-    cookieOptions: { name: AUTH_COOKIE_NAME },
+    cookieOptions: AUTH_COOKIE_OPTIONS,
     cookies: {
       getAll: () => cookieStore.getAll(),
       setAll: (cookiesToSet) => {

@@ -9,7 +9,7 @@ from .rules import UploadRules
 from .storage import ObjectStorage
 from .version_queue import ClaimedVersion, VersionQueue
 
-LOGGER = logging.getLogger("trafal_worker")
+LOGGER = logging.getLogger("tradfal_worker")
 ERROR_BACKOFF_SECONDS = 5.0
 
 

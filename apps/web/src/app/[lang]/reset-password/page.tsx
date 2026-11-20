@@ -5,7 +5,7 @@ import { ResetPasswordForm } from "@/components/auth/reset-password-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { localizePath } from "@/i18n/path";
 import { getLocale, getTranslations } from "@/i18n/server";
-import { getAuthUser } from "@/lib/auth/dal";
+import { PASSWORD_RESET_SECONDS, getAuthUser, signedInRecently } from "@/lib/auth/dal";
 
 export async function generateMetadata() {
   const t = await getTranslations("auth");
@@ -23,9 +23,18 @@ export default async function ResetPasswordPage() {
   );
 }
 
-/** El link del mail deja una sesión de recuperación; sin ella, no hay nada que cambiar. */
+/**
+ * Solo con la sesión que deja el link del mail, y por unos minutos: una sesión abierta cualquiera (una compu ajena, una pestaña
+ * olvidada) no alcanza para cambiar la contraseña y quedarse con la cuenta. Muestra de qué cuenta es, así un link ajeno que
+ * alguien hizo abrir no pasa desapercibido.
+ */
 async function ResetContent() {
-  const [locale, user] = await Promise.all([getLocale(), getAuthUser()]);
-  if (!user) redirect(localizePath(locale, "/login?error=linkExpired"));
-  return <ResetPasswordForm />;
+  const [locale, fromEmailLink, user, t] = await Promise.all([getLocale(), signedInRecently(PASSWORD_RESET_SECONDS, "otp"), getAuthUser(), getTranslations("auth")]);
+  if (!fromEmailLink || !user) redirect(localizePath(locale, "/login?error=linkExpired"));
+  return (
+    <div className="grid gap-5">
+      <p className="text-sm text-text-2">{t("reset.forAccount", { email: user.email ?? "" })}</p>
+      <ResetPasswordForm />
+    </div>
+  );
 }

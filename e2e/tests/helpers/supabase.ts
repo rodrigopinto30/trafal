@@ -23,7 +23,7 @@ export async function publicProfile(username: string, columns = "avatar_path,fav
 }
 
 /**
- * Crea una cuenta directo en Supabase Auth, SIN pasar por el formulario de registro de Trafal: no queda constancia de que
+ * Crea una cuenta directo en Supabase Auth, SIN pasar por el formulario de registro de Tradfal: no queda constancia de que
  * haya tildado «18 años o más y términos». Es exactamente lo que pasa con quien entra con Google. Manda el mail de confirmación.
  */
 export async function signUpWithoutConsent(email: string, password: string): Promise<void> {
@@ -135,4 +135,12 @@ export async function insertRow(table: string, row: Record<string, unknown>, tok
 /** Deletes the rows of a table that match a PostgREST filter, as the person of the token (only their own, if the policies say so). */
 export async function deleteRows(table: string, filter: string, token: string): Promise<void> {
   await fetch(`${API}/rest/v1/${table}?${filter}`, { method: "DELETE", headers: { apikey: publishableKey(), authorization: `Bearer ${token}` } });
+}
+
+/** The key this machine's web server signs copyright claims with (start.sh keeps it in .env.supabase), to set up a claim directly. */
+export function claimsServerKey(): string {
+  const env = readFileSync(path.resolve(process.cwd(), "../.env.supabase"), "utf8");
+  const key = /^CLAIMS_SERVER_KEY=(.+)$/m.exec(env)?.[1]?.trim();
+  if (!key) throw new Error("CLAIMS_SERVER_KEY is missing from .env.supabase: run ./start.sh");
+  return key;
 }

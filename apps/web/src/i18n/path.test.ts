@@ -51,10 +51,25 @@ describe("isInternalPath (anti redirección abierta)", () => {
     ["evil.com"],
     ["/ok\r\nSet-Cookie: x=1"],
     ["/ok\u0000"],
+    ["/en//evil.com"],
+    ["/es//evil.com"],
+    ["/en/\\evil.com"],
+    ["/es/\\evil.com?x=1"],
+    ["/games//x"],
     [""],
     [null],
     [undefined],
   ])("rechaza %j", (value) => {
     expect(isInternalPath(value as string | null | undefined)).toBe(false);
+  });
+
+  it("y aunque una ruta rara llegara a localizarse, nunca sale con dos barras o una invertida adelante", () => {
+    for (const locale of ["es", "en"] as const) {
+      for (const href of ["/en//evil.com", "/es//evil.com", "/en/\\evil.com", "//evil.com", "/\\evil.com"]) {
+        const target = localizePath(locale, href);
+        expect(target, `${locale} ${href}`).not.toMatch(/^\/[/\\]/);
+        expect(new URL(target, "https://tradfal.example").origin).toBe("https://tradfal.example");
+      }
+    }
   });
 });

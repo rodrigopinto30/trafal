@@ -4,6 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getTranslations } from "@/i18n/server";
 import { requireProfile } from "@/lib/auth/dal";
 import { ExtraMessages } from "@/components/i18n/extra-messages";
+import { Link } from "@/i18n/link";
 
 export async function generateMetadata() {
   const t = await getTranslations("gameForm");
@@ -17,6 +18,11 @@ export default async function NewGamePage() {
       <header>
         <h1 className="font-display text-[clamp(30px,5vw,44px)] leading-[1.1] font-bold text-glow-violet">{t("title")}</h1>
         <p className="mt-2 text-text-2">{t("subtitle")}</p>
+        <p className="mt-2">
+          <Link href="/help/upload" className="inline-flex min-h-11 items-center text-cyan underline underline-offset-2 hover:text-foreground">
+            {t("guideLink")}
+          </Link>
+        </p>
       </header>
       <Suspense fallback={<Skeleton className="h-[640px] rounded-[28px]" />}>
         <NewGameContent />

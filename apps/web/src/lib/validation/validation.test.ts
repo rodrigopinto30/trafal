@@ -76,7 +76,7 @@ describe("emailSchema", () => {
 
 describe("passwordSchema", () => {
   it("acepta 8+ caracteres con letras y números", () => {
-    expect(passwordSchema.safeParse("Trafal12345").success).toBe(true);
+    expect(passwordSchema.safeParse("Tradfal12345").success).toBe(true);
   });
   it.each(["corta1", "sololetrasaa", "12345678", ""])("rechaza %j", (value) => {
     expect(passwordSchema.safeParse(value).success).toBe(false);
@@ -88,20 +88,20 @@ describe("passwordSchema", () => {
     expect(passwordSchema.safeParse("ñ".repeat(35) + "a1x").success).toBe(false);
   });
   it("no recorta ni normaliza la contraseña", () => {
-    const result = passwordSchema.safeParse("  Trafal1  ");
-    expect(result.success && result.data).toBe("  Trafal1  ");
+    const result = passwordSchema.safeParse("  Tradfal1  ");
+    expect(result.success && result.data).toBe("  Tradfal1  ");
   });
 });
 
 describe("signupSchema", () => {
-  const valid = { email: "Nueva@Trafal.test", password: "Trafal12345", confirm: "Trafal12345", consent: true };
+  const valid = { email: "Nueva@Tradfal.test", password: "Tradfal12345", confirm: "Tradfal12345", consent: true };
 
   it("acepta datos válidos y normaliza el email", () => {
     const result = signupSchema.safeParse(valid);
-    expect(result.success && result.data.email).toBe("nueva@trafal.test");
+    expect(result.success && result.data.email).toBe("nueva@tradfal.test");
   });
   it("exige que la confirmación coincida", () => {
-    const result = signupSchema.safeParse({ ...valid, confirm: "Trafal12346" });
+    const result = signupSchema.safeParse({ ...valid, confirm: "Tradfal12346" });
     expect(result.success).toBe(false);
     expect(!result.success && result.error.issues.map((i) => [i.path[0], i.message])).toEqual([["confirm", "passwordsDontMatch"]]);
   });
@@ -135,8 +135,8 @@ describe("login / olvidé mi contraseña / reset", () => {
     expect(forgotPasswordSchema.safeParse({ email: "" }).success).toBe(false);
   });
   it("reset exige contraseña fuerte y que coincida", () => {
-    expect(resetPasswordSchema.safeParse({ password: "Trafal12345", confirm: "Trafal12345" }).success).toBe(true);
-    expect(resetPasswordSchema.safeParse({ password: "Trafal12345", confirm: "x" }).success).toBe(false);
+    expect(resetPasswordSchema.safeParse({ password: "Tradfal12345", confirm: "Tradfal12345" }).success).toBe(true);
+    expect(resetPasswordSchema.safeParse({ password: "Tradfal12345", confirm: "x" }).success).toBe(false);
     expect(resetPasswordSchema.safeParse({ password: "debil", confirm: "debil" }).success).toBe(false);
   });
 });

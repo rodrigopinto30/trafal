@@ -5,7 +5,7 @@ import { publicGame } from "./helpers/supabase";
 import { playableGameZip } from "./helpers/zip";
 
 /**
- * Playing a published game: it runs inside a sandboxed frame served from the games domain (another site from Trafal) by the
+ * Playing a published game: it runs inside a sandboxed frame served from the games domain (another site from Tradfal) by the
  * gateway, which answers with strict security headers. One account publishes one game and the tests below use it; the last
  * one unpublishes it. Needs the gateway running (./start.sh).
  */
@@ -28,7 +28,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
   ownerContext = await browser.newContext({ ...testInfo.project.use });
   owner = await ownerContext.newPage();
   const suffix = uniqueSuffix(testInfo.project.name);
-  await registerAccount(owner, { email: `e2e_player_${suffix}@trafal.test`, username: `player_${lettersOnly(suffix)}`, displayName: "Persona Juegos" });
+  await registerAccount(owner, { email: `e2e_player_${suffix}@tradfal.test`, username: `player_${lettersOnly(suffix)}`, displayName: "Persona Juegos" });
   gameTitle = uniqueTitle("Moon Runner");
   publicId = await uploadAndPublishGame(owner, gameTitle, playableGameZip());
 });
@@ -123,18 +123,18 @@ test("el sonido se silencia desde la plataforma, para cualquier juego, y se recu
 
   const mute = visitor.getByRole("button", { name: "Silenciar", exact: true });
   await expect(mute).toBeVisible();
-  await expect.poll(async () => inner.locator("#last").textContent()).toBe('{"trafal":1,"type":"mute","muted":false}');
+  await expect.poll(async () => inner.locator("#last").textContent()).toBe('{"tradfal":1,"type":"mute","muted":false}');
   await mute.click();
   await expect(visitor.getByRole("button", { name: "Activar sonido", exact: true })).toBeVisible();
-  await expect.poll(async () => inner.locator("#last").textContent()).toBe('{"trafal":1,"type":"mute","muted":true}');
+  await expect.poll(async () => inner.locator("#last").textContent()).toBe('{"tradfal":1,"type":"mute","muted":true}');
   await expect(visitor.locator(`iframe[title="Juego: ${gameTitle}"]`), "the keyboard goes back to the game after pressing a player button").toBeFocused();
 
   await visitor.reload();
   await visitor.getByRole("button", { name: "Jugar gratis" }).click();
   await expect(visitor.getByRole("button", { name: "Activar sonido", exact: true })).toBeVisible();
-  await expect.poll(async () => visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#last").textContent()).toBe('{"trafal":1,"type":"mute","muted":true}');
+  await expect.poll(async () => visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#last").textContent()).toBe('{"tradfal":1,"type":"mute","muted":true}');
   await visitor.getByRole("button", { name: "Activar sonido", exact: true }).click();
-  await expect.poll(async () => visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#last").textContent()).toBe('{"trafal":1,"type":"mute","muted":false}');
+  await expect.poll(async () => visitor.frameLocator(`iframe[title="Juego: ${gameTitle}"]`).locator("#last").textContent()).toBe('{"tradfal":1,"type":"mute","muted":false}');
   await context.close();
 });
 

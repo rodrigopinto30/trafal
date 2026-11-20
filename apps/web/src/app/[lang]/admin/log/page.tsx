@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { requireAdmin } from "@/lib/auth/dal";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "@/i18n/link";
@@ -22,6 +23,7 @@ export default function AdminLogPage({ searchParams }: PageProps<"/[lang]/admin/
 }
 
 async function Log({ searchParams }: { searchParams: PageProps<"/[lang]/admin/log">["searchParams"] }) {
+  await requireAdmin("/admin/log");
   const before = parseBefore(firstParam((await searchParams).before));
   const [t, locale, { entries, nextBefore }] = await Promise.all([getTranslations("admin"), getLocale(), listModerationLog(before)]);
   const date = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" });

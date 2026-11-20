@@ -2,7 +2,7 @@ import { locales, type Locale } from "@/i18n/config";
 import { localizePath } from "@/i18n/path";
 import { publicEnv } from "@/lib/env";
 
-export const SITE_NAME = "Trafal";
+export const SITE_NAME = "Tradfal";
 
 /** The full public address of a page in a language (`/games/orbita` in English is `https://…/en/games/orbita`). */
 export function absoluteUrl(locale: Locale, path: string, siteUrl: string = publicEnv.siteUrl): string {

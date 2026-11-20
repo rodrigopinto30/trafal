@@ -46,7 +46,7 @@ export function MobileMenu({ accountSlot }: { accountSlot: ReactNode }) {
         onClick={() => setOpen((value) => !value)}
         className="grid size-11 shrink-0 place-items-center rounded-xl border border-cyan/50 bg-cyan/8 shadow-glow-cyan transition-colors outline-none hover:bg-cyan/15 focus-visible:ring-2 focus-visible:ring-cyan md:hidden"
       >
-        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 10 10" shapeRendering="crispEdges" fill="var(--trafal-cyan)">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 10 10" shapeRendering="crispEdges" fill="var(--tradfal-cyan)">
           {open ? (
             <>
               <rect x="2" y="2" width="1" height="1" />

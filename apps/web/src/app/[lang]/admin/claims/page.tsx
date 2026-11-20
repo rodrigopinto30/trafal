@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { requireAdmin } from "@/lib/auth/dal";
 import { ClaimActions } from "@/components/admin/claim-actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ export default function AdminClaimsPage({ searchParams }: PageProps<"/[lang]/adm
 const hrefOf = (filter: string, before?: string | null) => `/admin/claims?${new URLSearchParams({ ...(filter !== "open" ? { status: filter } : {}), ...(before ? { before } : {}) }).toString()}`.replace(/\?$/, "");
 
 async function Claims({ searchParams }: { searchParams: PageProps<"/[lang]/admin/claims">["searchParams"] }) {
+  await requireAdmin("/admin/claims");
   const raw = await searchParams;
   const filter = parseReportStatusFilter(firstParam(raw.status));
   const before = parseBefore(firstParam(raw.before));

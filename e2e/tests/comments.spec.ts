@@ -46,7 +46,7 @@ test.beforeAll(async ({ browser }, testInfo) => {
   writer = await context.newPage();
   const suffix = uniqueSuffix(testInfo.project.name);
   tag = suffix;
-  await registerAccount(writer, { email: `e2e_comments_${suffix}@trafal.test`, username: `comments_${lettersOnly(suffix)}`, displayName: "Persona Comentarios" });
+  await registerAccount(writer, { email: `e2e_comments_${suffix}@tradfal.test`, username: `comments_${lettersOnly(suffix)}`, displayName: "Persona Comentarios" });
 });
 
 test.afterAll(async () => {
@@ -121,7 +121,7 @@ test("se edita el texto y la etiqueta de un comentario propio, y se borra con co
 
 test("otra persona puede responder pero no editar ni borrar lo ajeno", async ({ browser }, testInfo) => {
   const other = await (await browser.newContext({ ...testInfo.project.use })).newPage();
-  await loginAndWait(other, "valen@trafal.test", "trafal123");
+  await loginAndWait(other, "valen@tradfal.test", "tradfal123");
   await gotoReady(other, GAME);
   const theirs = comment(other, say("El segundo nivel se siente genial."));
   await expect(theirs).toHaveCount(1);

@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { RESERVED_USERNAMES, USERNAME_PATTERN, checkUsernameFormat, normalizeUsername, suggestUsernames } from "./username";
+import { RESERVED_BRANDS, RESERVED_NAME_PARTS, RESERVED_USERNAMES, USERNAME_PATTERN, checkUsernameFormat, normalizeUsername, suggestUsernames } from "./username";
 
 describe("checkUsernameFormat", () => {
   it.each([
@@ -29,8 +29,13 @@ describe("checkUsernameFormat", () => {
 
   it("marca los nombres reservados (sin distinguir mayúsculas)", () => {
     expect(checkUsernameFormat("admin")).toBe("reserved");
-    expect(checkUsernameFormat("Trafal")).toBe("reserved");
+    expect(checkUsernameFormat("Tradfal")).toBe("reserved");
     expect(checkUsernameFormat("SOPORTE")).toBe("reserved");
+    expect(checkUsernameFormat("tradfal_oficial")).toBe("reserved");
+    expect(checkUsernameFormat("equipo.mateo")).toBe("reserved");
+    expect(checkUsernameFormat("ana_admin")).toBe("reserved");
+    expect(checkUsernameFormat("badminton_club")).toBe("ok");
+    expect(checkUsernameFormat("supporter")).toBe("ok");
   });
 
   it("ya no reserva palabras que solo coinciden con rutas del sitio (los perfiles viven bajo /u/)", () => {
@@ -73,6 +78,15 @@ describe("paridad con la base de datos", () => {
     const latest = blocks[blocks.length - 1]?.[1] ?? "";
     const inDb = [...latest.matchAll(/'([a-z0-9_]+)'/g)].map((m) => m[1] as string);
     expect([...inDb].sort()).toEqual([...RESERVED_USERNAMES].sort());
+  });
+
+  it("las marcas y las partes reservadas son las de private.is_reserved_username()", () => {
+    const fn = /function private\.is_reserved_username\(p_username text\)[\s\S]*?\$\$;/.exec(sql)?.[0] ?? "";
+    expect(fn, "no se encontró private.is_reserved_username() en las migraciones").not.toBe("");
+    const brands = /p_username ~ '\(([a-z|]+)\)'/.exec(fn)?.[1]?.split("|") ?? [];
+    expect([...brands].sort()).toEqual([...RESERVED_BRANDS].sort());
+    const parts = [.../part = any \(array\[([^\]]+)\]/.exec(fn)?.[1]?.matchAll(/'([a-z]+)'/g) ?? []].map((m) => m[1] as string);
+    expect([...parts].sort()).toEqual([...RESERVED_NAME_PARTS].sort());
   });
 
   it("el patrón del @usuario es el de private.is_valid_username()", () => {

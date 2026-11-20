@@ -2,30 +2,22 @@ import { Logo } from "@/components/brand/logo";
 import { Link } from "@/i18n/link";
 import { getTranslations } from "@/i18n/server";
 
+/** The site's footer: the brand and the links that live nowhere else: the upload guide and the legal documents. */
 export async function SiteFooter() {
   const t = await getTranslations("footer");
   const tNav = await getTranslations("nav");
 
   const columns = [
     {
-      title: t("product"),
-      links: [
-        { href: "/feed", label: t("community") },
-        { href: "/creators", label: tNav("creators") },
-      ],
-    },
-    {
       title: t("help"),
-      links: [
-        { href: "/games/new", label: t("howToUpload") },
-        { href: "/legal/guidelines", label: t("guidelines") },
-      ],
+      links: [{ href: "/help/upload", label: t("howToUpload") }],
     },
     {
       title: t("legal"),
       links: [
         { href: "/legal/terms", label: t("terms") },
         { href: "/legal/privacy", label: t("privacy") },
+        { href: "/legal/guidelines", label: t("guidelines") },
         { href: "/legal/copyright", label: t("copyright") },
       ],
     },

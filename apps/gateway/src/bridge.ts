@@ -1,5 +1,5 @@
 /**
- * The platform bridge: a few lines of script the gateway puts at the top of every game page served inside Trafal's frame, so the player
+ * The platform bridge: a few lines of script the gateway puts at the top of every game page served inside Tradfal's frame, so the player
  * can offer controls that belong to the platform and work for any game (today: a mute button, which a page of another origin cannot
  * otherwise reach). It only listens to its parent window, announces itself with a `ready` message and never reads anything from the game.
  */
@@ -7,8 +7,8 @@ export const BRIDGE_VERSION = 1;
 
 export const BRIDGE_SCRIPT = `(function () {
   var w = window;
-  if (w.__trafalBridge) return;
-  w.__trafalBridge = 1;
+  if (w.__tradfalBridge) return;
+  w.__tradfalBridge = 1;
   var muted = false;
   var masters = [];
   var tracked = [];
@@ -81,10 +81,10 @@ export const BRIDGE_SCRIPT = `(function () {
         configurable: true,
         enumerable: original.enumerable,
         get: function () {
-          return this.__trafalMuted !== undefined ? this.__trafalMuted : mediaGet.call(this);
+          return this.__tradfalMuted !== undefined ? this.__tradfalMuted : mediaGet.call(this);
         },
         set: function (value) {
-          this.__trafalMuted = !!value;
+          this.__tradfalMuted = !!value;
           track(this);
           mediaSet.call(this, muted || !!value);
         },
@@ -92,7 +92,7 @@ export const BRIDGE_SCRIPT = `(function () {
       var play = MediaType.prototype.play;
       MediaType.prototype.play = function () {
         track(this);
-        if (this.__trafalMuted === undefined) this.__trafalMuted = mediaGet.call(this);
+        if (this.__tradfalMuted === undefined) this.__tradfalMuted = mediaGet.call(this);
         if (muted) mediaSet.call(this, true);
         return play.apply(this, arguments);
       };
@@ -107,21 +107,21 @@ export const BRIDGE_SCRIPT = `(function () {
       for (var j = 0; j < found.length; j++) if (tracked.indexOf(found[j]) < 0) tracked.push(found[j]);
       for (var k = 0; k < tracked.length; k++) {
         var element = tracked[k];
-        if (element.__trafalMuted === undefined) element.__trafalMuted = mediaGet.call(element);
-        mediaSet.call(element, muted || element.__trafalMuted);
+        if (element.__tradfalMuted === undefined) element.__tradfalMuted = mediaGet.call(element);
+        mediaSet.call(element, muted || element.__tradfalMuted);
       }
     } catch (e) {}
   }
 
   function announce() {
     try {
-      w.parent.postMessage({ trafal: 1, type: "ready" }, "*");
+      w.parent.postMessage({ tradfal: 1, type: "ready" }, "*");
     } catch (e) {}
   }
 
   w.addEventListener("message", function (event) {
     var data = event.data;
-    if (event.source !== w.parent || !data || data.trafal !== 1) return;
+    if (event.source !== w.parent || !data || data.tradfal !== 1) return;
     if (data.type === "mute") {
       muted = data.muted === true;
       apply();
@@ -131,7 +131,7 @@ export const BRIDGE_SCRIPT = `(function () {
 })();`;
 
 const encoder = new TextEncoder();
-const BRIDGE_TAG = encoder.encode(`<script data-trafal-bridge>${BRIDGE_SCRIPT}</script>`);
+const BRIDGE_TAG = encoder.encode(`<script data-tradfal-bridge>${BRIDGE_SCRIPT}</script>`);
 
 /** The bytes the page must have read before a charset declaration stops counting (HTML spec), so the bridge goes after it when it sits that early. */
 const CHARSET_WINDOW = 1100;
