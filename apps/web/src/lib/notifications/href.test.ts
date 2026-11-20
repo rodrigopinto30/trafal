@@ -40,6 +40,11 @@ describe("notificationHref", () => {
     expect(notificationHref({ ...base, type: "moderation", data: { action: "suspend", target_type: "profile" } })).toBeNull();
   });
 
+  it("leads someone who was just named admin to the admin area, and nowhere once the role is gone", () => {
+    expect(notificationHref({ ...base, type: "moderation", data: { action: "admin_granted", target_type: "profile" } })).toBe("/admin");
+    expect(notificationHref({ ...base, type: "moderation", data: { action: "admin_revoked", target_type: "profile" } })).toBeNull();
+  });
+
   it("leads the answer to an appeal to the moderation screen, whatever it was about", () => {
     for (const target_type of ["profile", "game", "post", "comment"]) {
       for (const action of ["appeal_upheld", "appeal_overturned"]) {

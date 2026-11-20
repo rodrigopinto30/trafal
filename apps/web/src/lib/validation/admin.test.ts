@@ -3,6 +3,7 @@ import {
   ADMIN_ERROR_KEYS,
   FEATURED_QUOTE_MAX,
   MODERATION_NOTE_MAX,
+  ROLE_REASON_MAX,
   SUSPENSION_REASON_MAX,
   liftSuspensionSchema,
   moderateContentSchema,
@@ -11,6 +12,7 @@ import {
   parseBefore,
   parseReportStatusFilter,
   resolveReportSchema,
+  setAccountRoleSchema,
   setFeaturedSchema,
   suspendAccountSchema,
 } from "./admin";
@@ -71,6 +73,20 @@ describe("suspendAccountSchema and liftSuspensionSchema", () => {
   });
 });
 
+describe("setAccountRoleSchema", () => {
+  it("names an admin or takes the role away, with a cleaned reason", () => {
+    expect(setAccountRoleSchema.parse({ userId: id, role: "admin", reason: "  Se suma\n\n\n\nal equipo  " })).toEqual({ userId: id, role: "admin", reason: "Se suma\n\nal equipo" });
+    expect(messages(setAccountRoleSchema.safeParse({ userId: id, role: "user", reason: "Deja el equipo" }))).toEqual([]);
+  });
+
+  it("only knows the two roles, real ids and a reason of up to 500 characters", () => {
+    expect(messages(setAccountRoleSchema.safeParse({ userId: id, role: "owner", reason: "x" }))).toEqual(["invalidInput"]);
+    expect(messages(setAccountRoleSchema.safeParse({ userId: "x", role: "admin", reason: "x" }))).toEqual(["invalidInput"]);
+    expect(messages(setAccountRoleSchema.safeParse({ userId: id, role: "admin", reason: "  " }))).toEqual(["reasonRequired"]);
+    expect(messages(setAccountRoleSchema.safeParse({ userId: id, role: "admin", reason: "a".repeat(ROLE_REASON_MAX + 1) }))).toEqual(["reasonTooLong"]);
+  });
+});
+
 describe("accounts search from the address", () => {
   it("keeps letters, numbers, underscores and spaces only, and cuts it short", () => {
     expect(parseAccountSearch("  valen_makes  ")).toBe("valen_makes");
@@ -83,7 +99,8 @@ describe("accounts search from the address", () => {
 
   it("falls back to «all» for unknown filters", () => {
     expect(parseAccountFilter("suspended")).toBe("suspended");
-    expect(parseAccountFilter("admins")).toBe("all");
+    expect(parseAccountFilter("admins")).toBe("admins");
+    expect(parseAccountFilter("owners")).toBe("all");
     expect(parseAccountFilter(undefined)).toBe("all");
   });
 });

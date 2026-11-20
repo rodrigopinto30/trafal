@@ -780,7 +780,7 @@
         "files": "The files you uploaded."
       },
       "keepsText": "We keep what the site's safety needs: the moderation log and the copyright claims about your content, without your account.",
-      "adminNote": "Admin accounts cannot be deleted from here. The role has to be removed first.",
+      "adminNote": "Admin accounts cannot be deleted. First another admin has to remove your role.",
       "delete": "Delete my account",
       "dialogTitle": "Delete your account?",
       "dialogText": "Your profile, games, updates and comments are deleted. This cannot be undone.",
@@ -1227,6 +1227,8 @@
         "unfeature_game": "Took off the game of the week",
         "suspend_account": "Suspended an account",
         "lift_suspension": "Lifted a suspension",
+        "grant_admin": "Added an account to the admin team",
+        "revoke_admin": "Removed the admin role from an account",
         "take_claim": "Took a copyright claim",
         "dismiss_claim": "Dismissed a copyright claim",
         "action_claim": "Resolved a copyright claim"
@@ -1291,6 +1293,9 @@
       "cannotSuspendAdmin": "Administration accounts can't be suspended.",
       "alreadySuspended": "That account is already suspended.",
       "notSuspended": "That account isn't suspended.",
+      "cannotChangeOwnRole": "Another admin changes your own role.",
+      "roleUnchanged": "That account already has that role. Reload the page to see how it is now.",
+      "cannotPromoteSuspended": "A suspended account cannot be an admin. Lift the suspension first.",
       "claimNotFound": "That claim doesn't exist.",
       "claimNotOpen": "That claim isn't open anymore.",
       "claimAlreadyResolved": "That claim is already resolved.",
@@ -1300,13 +1305,14 @@
     },
     "accounts": {
       "title": "Accounts",
-      "subtitle": "Look someone up to suspend their account or lift their suspension. A suspended account can sign in and look around, but cannot post, comment, report, follow or like.",
+      "subtitle": "Find a person to suspend their account, lift their suspension or add them to the admin team. A suspended account can sign in and look around, but cannot post, comment, report, follow or like.",
       "searchLabel": "Search by @username or name",
       "searchPlaceholder": "For example: valen",
       "filterLabel": "Show",
       "filters": {
         "all": "All",
-        "suspended": "Suspended only"
+        "suspended": "Suspended only",
+        "admins": "Admins only"
       },
       "search": "Search",
       "clear": "Clear",
@@ -1320,7 +1326,9 @@
       "suspendedForever": "Suspended with no end date",
       "reason": "Reason",
       "viewProfile": "View profile",
-      "protected": "Administration accounts can't be suspended.",
+      "self": "This is your account: another admin changes your role.",
+      "grant": "Make admin",
+      "revoke": "Remove admin",
       "suspend": "Suspend",
       "lift": "Lift suspension",
       "dialog": {
@@ -1328,6 +1336,10 @@
         "suspendText": "The person will see this reason and how long it lasts. Meanwhile they won't be able to post, comment, report or follow.",
         "liftTitle": "Lift @{username}'s suspension",
         "liftText": "The person can use Tradfal again and is told with this reason.",
+        "grantTitle": "Add @{username} to the admin team",
+        "grantText": "They will be able to moderate, suspend accounts, resolve reports, claims and appeals, pick the game of the week and name or remove admins. They are told with this reason and it goes into the log.",
+        "revokeTitle": "Remove the admin role from @{username}",
+        "revokeText": "They go back to being an ordinary account and no longer see the admin area. They are told with this reason and it goes into the log.",
         "reasonLabel": "Reason (shown to the person)",
         "durationLabel": "Duration",
         "durations": {
@@ -1343,7 +1355,9 @@
       },
       "done": {
         "suspended": "Account suspended",
-        "lifted": "Suspension lifted"
+        "lifted": "Suspension lifted",
+        "granted": "They are now part of the admin team",
+        "revoked": "They are no longer part of the admin team"
       },
       "fromReport": "View @{username}'s account"
     },
@@ -1533,6 +1547,8 @@
         },
         "suspend": "We suspended your account",
         "lift": "We lifted your account suspension",
+        "adminGranted": "You are now part of the Tradfal admin team",
+        "adminRevoked": "You are no longer part of the Tradfal admin team",
         "appealUpheld": "We reviewed your appeal: the decision was kept",
         "appealOverturned": "We reviewed your appeal: we reversed the decision",
         "counterUpheld": "We reviewed your counter-notice: the content stays hidden",

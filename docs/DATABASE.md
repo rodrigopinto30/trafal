@@ -17,7 +17,7 @@ Postgres (vía Supabase). El esquema completo del MVP está desde la Fase 1: **2
 |---|---|---|
 | `genres` | Catálogo (ids estables; los nombres viven en i18n). 17 géneros | Solo migraciones |
 | `profiles` | Perfil público: @usuario (inmutable en el MVP), nombre, bio, ciudad, país, géneros favoritos, ruta de la foto, contadores | Alta: `complete_onboarding`. Edición: dueño, solo 6 columnas |
-| `profile_private` | Rol, suspensión, términos aceptados, idioma | El dueño solo cambia `locale`; el resto, funciones (`suspend_account` y `lift_suspension` para la suspensión, con registro) |
+| `profile_private` | Rol, suspensión, términos aceptados, idioma | El dueño solo cambia `locale`; el resto, funciones (`suspend_account` y `lift_suspension` para la suspensión, `set_account_role` para el rol; todas con registro) |
 | `follows` | Quién sigue a quién (grafo público) | Cada persona, solo sus filas |
 | `games` | Ficha del juego, versión activa, estado, contadores, `search_doc` (texto de búsqueda) | Dueño (borrador ⇄ publicado); moderación: funciones |
 | `game_questions` | Hasta 3 preguntas de feedback (las capturas se quitaron: un juego tiene portada y un GIF opcional, `games.cover_path` y `games.gif_path`) | Dueño del juego |
@@ -32,7 +32,7 @@ Postgres (vía Supabase). El esquema completo del MVP está desde la Fase 1: **2
 | `copyright_claims` | Reclamos de derechos de autor | Se crean solo con `submit_copyright_claim` (también para visitantes); los leen solo admins, que los manejan con `take_claim` / `resolve_claim` (con registro) |
 | `featured_games` | Primer juego de la semana (solo «primeros juegos» publicados) | Solo las funciones de admin `set_featured_game` / `clear_featured_game`, que dejan rastro en `moderation_log` |
 | `usage_events` | Cada acción limitada de cada persona (para contar los topes de uso) | Solo los triggers; nadie la lee ni la escribe desde el cliente (RLS sin policies ni permisos). Se limpia sola: al contar, se borra lo de más de 2 días |
-| `moderation_log` | Registro de acciones de moderación (inmutable) | Funciones de moderación: `take_report`, `resolve_report`, `moderate_content`, `set_featured_game`, `clear_featured_game` |
+| `moderation_log` | Registro de acciones de moderación (inmutable) | Funciones de moderación: `take_report`, `resolve_report`, `moderate_content`, `set_featured_game`, `clear_featured_game`, `suspend_account`, `lift_suspension`, `set_account_role` |
 
 Triggers destacados: contadores (seguidores, me gusta, guardados, comentarios), `search_doc` del juego (texto sin tildes con título, descripción, etiquetas, género y creador, en español e inglés), reglas de comentarios (un nivel, mismo avance/juego), un solo «primer juego» por persona, un juego publicado exige versión activa lista.
 

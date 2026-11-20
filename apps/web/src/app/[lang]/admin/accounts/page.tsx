@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { AccountActions } from "@/components/admin/account-actions";
+import { RoleActions } from "@/components/admin/role-actions";
 import { UserAvatar } from "@/components/brand/user-avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -101,10 +102,15 @@ async function Accounts({ searchParams }: { searchParams: PageProps<"/[lang]/adm
                   <Button asChild variant="ghost">
                     <Link href={`/u/${account.username}`}>{t("accounts.viewProfile")}</Link>
                   </Button>
-                  {account.role === "admin" || account.id === me?.id ? (
-                    <span className="text-sm text-text-3">{t("accounts.protected")}</span>
+                  {account.id === me?.id ? (
+                    <span className="text-sm text-text-3">{t("accounts.self")}</span>
+                  ) : account.role === "admin" ? (
+                    <RoleActions userId={account.id} username={account.username} role="admin" />
                   ) : (
-                    <AccountActions userId={account.id} username={account.username} suspended={account.suspended} />
+                    <>
+                      <AccountActions userId={account.id} username={account.username} suspended={account.suspended} />
+                      {account.suspended ? null : <RoleActions userId={account.id} username={account.username} role="user" />}
+                    </>
                   )}
                 </div>
               </article>

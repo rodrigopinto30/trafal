@@ -53,6 +53,7 @@ export const PAGES: readonly Target[] = [
   { name: "admin-apelaciones-resueltas", path: "/admin/appeals?status=resolved", login: "admin" },
   { name: "admin-cuentas", path: "/admin/accounts", login: "admin" },
   { name: "admin-cuentas-busqueda", path: "/admin/accounts?q=valen&filter=suspended", login: "admin" },
+  { name: "admin-cuentas-administracion", path: "/admin/accounts?filter=admins", login: "admin" },
   { name: "admin-registro", path: "/admin/log", login: "admin" },
   { name: "admin-juego-de-la-semana", path: "/admin/featured", login: "admin" },
 ];

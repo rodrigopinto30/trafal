@@ -780,7 +780,7 @@
         "files": "Los archivos que subiste."
       },
       "keepsText": "Se conserva lo que necesitamos para la seguridad del sitio: el registro de moderación y los reclamos de derechos de autor sobre tu contenido, sin tu cuenta.",
-      "adminNote": "Las cuentas de administración no se pueden eliminar desde acá. Primero hay que quitarles el rol.",
+      "adminNote": "Las cuentas de administración no se pueden eliminar. Primero otra persona de la administración tiene que quitarte el rol.",
       "delete": "Eliminar mi cuenta",
       "dialogTitle": "¿Eliminar tu cuenta?",
       "dialogText": "Se borran tu perfil, tus juegos, tus avances y tus comentarios. No se puede deshacer.",
@@ -1227,6 +1227,8 @@
         "unfeature_game": "Sacó el juego de la semana",
         "suspend_account": "Suspendió una cuenta",
         "lift_suspension": "Levantó una suspensión",
+        "grant_admin": "Sumó una cuenta a la administración",
+        "revoke_admin": "Le quitó el rol de admin a una cuenta",
         "take_claim": "Tomó un reclamo de derechos de autor",
         "dismiss_claim": "Descartó un reclamo de derechos de autor",
         "action_claim": "Resolvió un reclamo de derechos de autor"
@@ -1291,6 +1293,9 @@
       "cannotSuspendAdmin": "No se puede suspender a la administración.",
       "alreadySuspended": "Esa cuenta ya está suspendida.",
       "notSuspended": "Esa cuenta no está suspendida.",
+      "cannotChangeOwnRole": "Tu propio rol lo cambia otra persona de la administración.",
+      "roleUnchanged": "Esa cuenta ya tiene ese rol. Recargá la página para ver el estado actual.",
+      "cannotPromoteSuspended": "Una cuenta suspendida no puede ser admin. Primero levantale la suspensión.",
       "claimNotFound": "Ese reclamo no existe.",
       "claimNotOpen": "Ese reclamo ya no está abierto.",
       "claimAlreadyResolved": "Ese reclamo ya está resuelto.",
@@ -1300,13 +1305,14 @@
     },
     "accounts": {
       "title": "Cuentas",
-      "subtitle": "Buscá a una persona para suspender su cuenta o levantarle la suspensión. Una cuenta suspendida puede entrar y mirar, pero no publicar, comentar, reportar, seguir ni dar me gusta.",
+      "subtitle": "Buscá a una persona para suspender su cuenta, levantarle la suspensión o sumarla a la administración. Una cuenta suspendida puede entrar y mirar, pero no publicar, comentar, reportar, seguir ni dar me gusta.",
       "searchLabel": "Buscar por @usuario o nombre",
       "searchPlaceholder": "Por ejemplo: valen",
       "filterLabel": "Mostrar",
       "filters": {
         "all": "Todas",
-        "suspended": "Solo suspendidas"
+        "suspended": "Solo suspendidas",
+        "admins": "Solo administración"
       },
       "search": "Buscar",
       "clear": "Limpiar",
@@ -1320,7 +1326,9 @@
       "suspendedForever": "Suspendida sin fecha de fin",
       "reason": "Motivo",
       "viewProfile": "Ver perfil",
-      "protected": "No se puede suspender a la administración.",
+      "self": "Es tu cuenta: tu rol lo cambia otra persona de la administración.",
+      "grant": "Hacer admin",
+      "revoke": "Quitar admin",
       "suspend": "Suspender",
       "lift": "Levantar suspensión",
       "dialog": {
@@ -1328,6 +1336,10 @@
         "suspendText": "La persona va a ver este motivo y hasta cuándo dura. No va a poder publicar, comentar, reportar ni seguir mientras tanto.",
         "liftTitle": "Levantar la suspensión de @{username}",
         "liftText": "La persona vuelve a poder usar Tradfal y se le avisa con este motivo.",
+        "grantTitle": "Sumar a @{username} a la administración",
+        "grantText": "Va a poder moderar, suspender cuentas, resolver reportes, reclamos y apelaciones, elegir el juego de la semana y nombrar o quitar admins. Se le avisa con este motivo y queda en el registro.",
+        "revokeTitle": "Quitarle el rol de admin a @{username}",
+        "revokeText": "Vuelve a ser una cuenta común y deja de ver la administración. Se le avisa con este motivo y queda en el registro.",
         "reasonLabel": "Motivo (se le muestra a la persona)",
         "durationLabel": "Duración",
         "durations": {
@@ -1343,7 +1355,9 @@
       },
       "done": {
         "suspended": "Cuenta suspendida",
-        "lifted": "Suspensión levantada"
+        "lifted": "Suspensión levantada",
+        "granted": "Ahora es parte de la administración",
+        "revoked": "Ya no es parte de la administración"
       },
       "fromReport": "Ver cuenta de @{username}"
     },
@@ -1533,6 +1547,8 @@
         },
         "suspend": "Suspendimos tu cuenta",
         "lift": "Levantamos la suspensión de tu cuenta",
+        "adminGranted": "Te sumamos a la administración de Tradfal",
+        "adminRevoked": "Ya no sos parte de la administración de Tradfal",
         "appealUpheld": "Revisamos tu apelación: se mantuvo la decisión",
         "appealOverturned": "Revisamos tu apelación: revertimos la decisión",
         "counterUpheld": "Revisamos tu contranotificación: el contenido sigue oculto",

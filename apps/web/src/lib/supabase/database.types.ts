@@ -687,6 +687,9 @@ isOneToOne: false
               "id": string,"rank": number
             }[]
                            },
+"set_account_role":
+{ Args: { "p_reason": string,"p_role": string,"p_user": string }; Returns: undefined
+                           },
 "set_active_version":
 { Args: { "p_version_id": string }; Returns: undefined
                            },

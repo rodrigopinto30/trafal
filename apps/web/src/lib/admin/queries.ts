@@ -153,8 +153,9 @@ function toAdminAccount(row: AccountRow, now: number): AdminAccount {
 const escapePattern = (text: string) => text.replace(/[\\%_]/g, (character) => `\\${character}`);
 
 /**
- * Accounts for the admin to look at: by the start of the username or of any word of the name, and only the suspended ones if asked.
- * Without text, the newest accounts (or all the suspended ones). It shows at most ACCOUNTS_LIMIT: a more specific search narrows it.
+ * Accounts for the admin to look at: by the start of the username or of any word of the name, and only the suspended ones or only
+ * the admins if asked. Without text, the newest accounts (or all the suspended ones, or all the admins). It shows at most
+ * ACCOUNTS_LIMIT: a more specific search narrows it.
  */
 export async function listAccounts(search: string, filter: AccountFilter): Promise<{ accounts: AdminAccount[]; truncated: boolean }> {
   const supabase = await createClient();
@@ -162,8 +163,9 @@ export async function listAccounts(search: string, filter: AccountFilter): Promi
   const wordStart = pattern.replace(/[,()"]/g, "");
 
   let ids: string[] | null = null;
-  if (filter === "suspended") {
-    const { data } = await supabase.from("profile_private").select("id").eq("status", "suspended").limit(500);
+  if (filter !== "all") {
+    const state = supabase.from("profile_private").select("id");
+    const { data } = await (filter === "suspended" ? state.eq("status", "suspended") : state.eq("role", "admin")).limit(500);
     ids = (data ?? []).map((row) => row.id);
     if (ids.length === 0) return { accounts: [], truncated: false };
   }
